@@ -363,7 +363,11 @@ if (window.gsap && window.ScrollTrigger) {
   const heroWrap    = document.getElementById('heroVideoWrap');
   const heroParticlesWrap = document.getElementById('heroParticles');
   const heroSection = document.querySelector('.hero');
+  const particlesMaxOpacity = 0.85;
+  const setParticlesOpacity = heroParticlesWrap ? gsap.quickSetter(heroParticlesWrap, 'opacity') : null;
   if (heroWrap && heroSection) {
+    if (setParticlesOpacity) setParticlesOpacity(particlesMaxOpacity);
+
     const tl = gsap.timeline({
       scrollTrigger: {
         trigger: heroSection,
@@ -371,7 +375,17 @@ if (window.gsap && window.ScrollTrigger) {
         end: '+=100%',
         scrub: 1.2,
         pin: true,
-        pinSpacing: true
+        pinSpacing: true,
+        onUpdate: (self) => {
+          if (setParticlesOpacity) {
+            setParticlesOpacity((1 - self.progress) * particlesMaxOpacity);
+          }
+        },
+        onLeaveBack: () => {
+          if (setParticlesOpacity) {
+            setParticlesOpacity(particlesMaxOpacity);
+          }
+        }
       }
     });
 
@@ -384,9 +398,6 @@ if (window.gsap && window.ScrollTrigger) {
 
     tl.to('.hero-line-top', { y: -60, opacity: 0, ease: 'none' }, 0);
     tl.to('.hero-line-bottom', { y: 60, opacity: 0, ease: 'none' }, 0);
-    if (heroParticlesWrap) {
-      tl.to(heroParticlesWrap, { opacity: 0, ease: 'none' }, 0);
-    }
     tl.to('.hero-meta, .hero-right-cta, .scroll-indicator', {
       opacity: 0,
       ease: 'none',
