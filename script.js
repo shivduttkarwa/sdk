@@ -8,7 +8,6 @@ const year          = document.getElementById('year');
 year.textContent = new Date().getFullYear();
 
 // Hero starts immediately (preloader removed)
-initHeroParticles();
 startHeroAnimation();
 
 // Menu
@@ -157,168 +156,6 @@ document.querySelectorAll('[data-count]').forEach(el => countObserver.observe(el
   }, 2200);
 })();
 
-function initHeroParticles() {
-  const hero = document.querySelector('.hero');
-  const wrap = document.getElementById('heroParticles');
-  const canvas = document.getElementById('heroParticlesCanvas');
-  if (!hero || !wrap || !canvas) return;
-
-  const ctx = canvas.getContext('2d');
-  if (!ctx) return;
-
-  const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  const pointer = { x: -1000, y: -1000, active: false };
-  const colors = ['#f5ed60', '#f5f2ea', '#2f80ff'];
-
-  let width = 1;
-  let height = 1;
-  let dpr = 1;
-  let particles = [];
-  let animationId = null;
-
-  function buildParticles() {
-    const density = (width * height) / 22000;
-    const count = Math.max(58, Math.min(128, Math.round(density)));
-    particles = Array.from({ length: count }, (_, index) => {
-      const speed = 0.08 + Math.random() * 0.34;
-      const angle = Math.random() * Math.PI * 2;
-      return {
-        x: Math.random() * width,
-        y: Math.random() * height,
-        vx: Math.cos(angle) * speed,
-        vy: Math.sin(angle) * speed,
-        r: 0.7 + Math.random() * 1.9,
-        a: 0.2 + Math.random() * 0.45,
-        pulse: Math.random() * Math.PI * 2,
-        color: colors[index % colors.length]
-      };
-    });
-  }
-
-  function resize() {
-    const rect = hero.getBoundingClientRect();
-    width = Math.max(1, Math.floor(rect.width));
-    height = Math.max(1, Math.floor(rect.height));
-    dpr = Math.min(window.devicePixelRatio || 1, 2);
-
-    canvas.width = Math.floor(width * dpr);
-    canvas.height = Math.floor(height * dpr);
-    canvas.style.width = `${width}px`;
-    canvas.style.height = `${height}px`;
-    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-
-    buildParticles();
-  }
-
-  function drawFrame() {
-    ctx.clearRect(0, 0, width, height);
-    ctx.fillStyle = 'rgba(3, 4, 8, 0.18)';
-    ctx.fillRect(0, 0, width, height);
-
-    for (let i = 0; i < particles.length; i++) {
-      const p = particles[i];
-
-      p.x += p.vx;
-      p.y += p.vy;
-      p.pulse += 0.02;
-
-      if (p.x < -8) p.x = width + 8;
-      if (p.x > width + 8) p.x = -8;
-      if (p.y < -8) p.y = height + 8;
-      if (p.y > height + 8) p.y = -8;
-
-      if (pointer.active) {
-        const dx = pointer.x - p.x;
-        const dy = pointer.y - p.y;
-        const distance = Math.hypot(dx, dy);
-        if (distance > 0 && distance < 150) {
-          const force = (150 - distance) / 1500;
-          p.vx -= (dx / distance) * force;
-          p.vy -= (dy / distance) * force;
-        }
-      }
-
-      p.vx *= 0.997;
-      p.vy *= 0.997;
-
-      const pulseRadius = p.r + Math.sin(p.pulse) * 0.28;
-      const alpha = Math.max(0.07, Math.min(0.72, p.a + Math.sin(p.pulse * 0.9) * 0.11));
-      ctx.beginPath();
-      ctx.arc(p.x, p.y, pulseRadius, 0, Math.PI * 2);
-      ctx.fillStyle = `${p.color}${Math.round(alpha * 255).toString(16).padStart(2, '0')}`;
-      ctx.fill();
-    }
-
-    for (let i = 0; i < particles.length; i++) {
-      const a = particles[i];
-      for (let j = i + 1; j < particles.length; j++) {
-        const b = particles[j];
-        const dx = a.x - b.x;
-        const dy = a.y - b.y;
-        const distance = Math.hypot(dx, dy);
-        if (distance > 128) continue;
-
-        const intensity = (1 - distance / 128) * 0.22;
-        ctx.beginPath();
-        ctx.moveTo(a.x, a.y);
-        ctx.lineTo(b.x, b.y);
-        ctx.strokeStyle = `rgba(204, 223, 255, ${intensity.toFixed(3)})`;
-        ctx.lineWidth = 1;
-        ctx.stroke();
-      }
-    }
-  }
-
-  function tick() {
-    drawFrame();
-    animationId = requestAnimationFrame(tick);
-  }
-
-  function setPointerPosition(clientX, clientY) {
-    const rect = canvas.getBoundingClientRect();
-    pointer.x = clientX - rect.left;
-    pointer.y = clientY - rect.top;
-    pointer.active = true;
-  }
-
-  hero.addEventListener('mousemove', (event) => {
-    setPointerPosition(event.clientX, event.clientY);
-  });
-
-  hero.addEventListener('mouseleave', () => {
-    pointer.active = false;
-  });
-
-  hero.addEventListener('touchmove', (event) => {
-    const touch = event.touches[0];
-    if (!touch) return;
-    setPointerPosition(touch.clientX, touch.clientY);
-  }, { passive: true });
-
-  hero.addEventListener('touchend', () => {
-    pointer.active = false;
-  }, { passive: true });
-
-  document.addEventListener('visibilitychange', () => {
-    if (document.hidden && animationId) {
-      cancelAnimationFrame(animationId);
-      animationId = null;
-      return;
-    }
-    if (!document.hidden && !animationId && !prefersReducedMotion) {
-      animationId = requestAnimationFrame(tick);
-    }
-  });
-
-  window.addEventListener('resize', resize);
-  resize();
-
-  if (prefersReducedMotion) {
-    drawFrame();
-    return;
-  }
-  animationId = requestAnimationFrame(tick);
-}
 
 function startHeroAnimation() {
   if (!window.gsap) return;
@@ -336,16 +173,7 @@ function startHeroAnimation() {
     ease: 'power3.out',
     delay: 0.2
   });
-  gsap.fromTo('#heroParticles',
-    { opacity: 0 },
-    {
-      opacity: 0.85,
-      duration: 1.6,
-      ease: 'power2.out',
-      delay: 0.15
-    }
-  );
-  gsap.from('.hero-meta, .hero-right-cta, .scroll-indicator', {
+gsap.from('.hero-meta, .hero-right-cta, .scroll-indicator', {
     opacity: 0,
     y: 14,
     duration: 1,
