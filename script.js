@@ -441,8 +441,8 @@ if (window.gsap && window.ScrollTrigger) {
     animTl = gsap.timeline({
       scrollTrigger: {
         trigger: '.text-intro',
-        start: 'top bottom',
-        end: 'center top',
+        start: 'top 70%',
+        end: 'top 5%',
         scrub: 1.2,
       }
     });
