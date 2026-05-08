@@ -513,6 +513,7 @@ img {
 }
 
 .nav-panel-col {
+  position: relative;
   transform: translateY(2em);
   opacity: 0;
   transition: transform var(--nav-dur) 0s var(--nav-ease), opacity var(--nav-dur) 0s;
@@ -530,6 +531,17 @@ img {
 
 [data-nav-status="active"] .nav-panel-col:nth-child(2) {
   transition-delay: .575s;
+}
+
+.nav-reveal-canvas {
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: calc((100% - clamp(320px, 62vw, 960px)) / 2);
+  height: 100%;
+  pointer-events: none;
+  z-index: 2;
 }
 
 .nav-links {
@@ -677,6 +689,8 @@ img {
 }
 
 .hero-line {
+  position: relative;
+  z-index: 3;
   font-family: "Space Grotesk", sans-serif;
   font-size: clamp(80px, 14vw, 230px);
   font-weight: 300;

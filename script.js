@@ -268,3 +268,138 @@ if (window.gsap && window.ScrollTrigger) {
     });
   });
 }
+
+// ── Nav reveal: WebGL blob cursor ──
+(function initNavReveal() {
+  const canvas = document.getElementById('navRevealCanvas');
+  if (!canvas) return;
+  const gl = canvas.getContext('webgl', { alpha: true, premultipliedAlpha: false });
+  if (!gl) return;
+
+  const VS = `
+    attribute vec2 a_pos;
+    varying vec2 v_uv;
+    void main() {
+      v_uv = a_pos * 0.5 + 0.5;
+      gl_Position = vec4(a_pos, 0.0, 1.0);
+    }
+  `;
+
+  const FS = `
+    precision mediump float;
+    uniform sampler2D u_img;
+    uniform vec2  u_mouse;
+    uniform vec2  u_res;
+    uniform vec2  u_imgSize;
+    uniform float u_t;
+    varying vec2  v_uv;
+
+    vec2 coverUV(vec2 uv) {
+      float cAspect = u_res.x / u_res.y;
+      float iAspect = u_imgSize.x / u_imgSize.y;
+      if (iAspect > cAspect) {
+        // image wider than canvas: fit height, center-crop x
+        return vec2((uv.x - 0.5) * (cAspect / iAspect) + 0.5, uv.y);
+      } else {
+        // image taller than canvas: fit width, center-crop y
+        return vec2(uv.x, (uv.y - 0.5) * (iAspect / cAspect) + 0.5);
+      }
+    }
+
+    float blob(vec2 uv, vec2 c) {
+      vec2 d = uv - c;
+      d.x *= u_res.x / u_res.y;
+      float a = atan(d.y, d.x);
+      float dist = length(d);
+      float r = 0.21
+        + sin(a * 2.0 + u_t * 0.9)  * 0.038
+        + sin(a * 3.0 - u_t * 1.3)  * 0.025
+        + sin(a * 5.0 + u_t * 0.7)  * 0.015
+        + sin(a * 7.0 - u_t * 1.1)  * 0.008;
+      return smoothstep(r + 0.018, r - 0.018, dist);
+    }
+
+    void main() {
+      vec2 m = vec2(u_mouse.x / u_res.x, 1.0 - u_mouse.y / u_res.y);
+      float mask = blob(v_uv, m);
+      vec4 col = texture2D(u_img, coverUV(v_uv));
+      gl_FragColor = vec4(col.rgb, col.a * mask);
+    }
+  `;
+
+  function mkShader(type, src) {
+    const s = gl.createShader(type);
+    gl.shaderSource(s, src);
+    gl.compileShader(s);
+    return s;
+  }
+
+  const prog = gl.createProgram();
+  gl.attachShader(prog, mkShader(gl.VERTEX_SHADER, VS));
+  gl.attachShader(prog, mkShader(gl.FRAGMENT_SHADER, FS));
+  gl.linkProgram(prog);
+  gl.useProgram(prog);
+
+  const buf = gl.createBuffer();
+  gl.bindBuffer(gl.ARRAY_BUFFER, buf);
+  gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1,-1, 1,-1, -1,1, 1,1]), gl.STATIC_DRAW);
+  const posLoc = gl.getAttribLocation(prog, 'a_pos');
+  gl.enableVertexAttribArray(posLoc);
+  gl.vertexAttribPointer(posLoc, 2, gl.FLOAT, false, 0, 0);
+
+  gl.enable(gl.BLEND);
+  gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
+
+  const uMouse   = gl.getUniformLocation(prog, 'u_mouse');
+  const uRes     = gl.getUniformLocation(prog, 'u_res');
+  const uImgSize = gl.getUniformLocation(prog, 'u_imgSize');
+  const uT       = gl.getUniformLocation(prog, 'u_t');
+
+  const tex = gl.createTexture();
+  gl.bindTexture(gl.TEXTURE_2D, tex);
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+  gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, 1, 1, 0, gl.RGBA, gl.UNSIGNED_BYTE, new Uint8Array([0,0,0,0]));
+
+  const img = new Image();
+  img.onload = () => {
+    gl.bindTexture(gl.TEXTURE_2D, tex);
+    gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true);
+    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, img);
+    gl.useProgram(prog);
+    gl.uniform2f(uImgSize, img.naturalWidth, img.naturalHeight);
+  };
+  img.src = 'assets/1111.png';
+
+  let mx = -9999, my = -9999, tx = -9999, ty = -9999;
+
+  const hero = document.getElementById('home');
+  hero.addEventListener('mousemove', (e) => {
+    const r = canvas.getBoundingClientRect();
+    tx = e.clientX - r.left;
+    ty = e.clientY - r.top;
+  });
+  hero.addEventListener('mouseleave', () => { tx = -9999; ty = -9999; });
+
+  function resize() {
+    canvas.width  = Math.round(canvas.offsetWidth);
+    canvas.height = Math.round(canvas.offsetHeight);
+    gl.viewport(0, 0, canvas.width, canvas.height);
+  }
+
+  new ResizeObserver(resize).observe(canvas);
+  resize();
+
+  (function render(t) {
+    requestAnimationFrame(render);
+    mx += (tx - mx) * 0.08;
+    my += (ty - my) * 0.08;
+    gl.uniform2f(uMouse, mx, my);
+    gl.uniform2f(uRes, canvas.width || 1, canvas.height || 1);
+    gl.uniform1f(uT, t * 0.001);
+    gl.clear(gl.COLOR_BUFFER_BIT);
+    gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
+  })(0);
+})();
