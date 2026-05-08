@@ -461,7 +461,9 @@
       uniform float     u_time;
       uniform float     u_radius;
       uniform vec2      u_res;
-      uniform float     u_portW;   /* left strip width as 0..1 fraction of canvas */
+      uniform float     u_portW;
+      uniform float     u_smoke;   /* 0=formed  1=fully dispersed */
+      uniform float     u_opacity;
       varying vec2      v_uv;
 
       float rand(vec2 n) {
@@ -487,11 +489,12 @@
         vec2  d    = (uv - u_mouse) * vec2(ar, 1.0);
         float dist = length(d);
 
-        /* Organic blob: fbm noise warps the edge */
-        float n       = fbm(d * 6.0 + u_time * 0.35) * 0.09;
+        /* Organic blob: fbm noise warps edge — smoke makes it wispy + expanding */
+        float smokeNoise = 0.09 + u_smoke * 0.26;
+        float n       = fbm(d * 6.0 + u_time * 0.35) * smokeNoise;
         float bDist   = dist + n;
-        float r       = u_radius;
-        float edgeSz  = 0.025;
+        float r       = u_radius + u_smoke * 0.22;
+        float edgeSz  = 0.025 + u_smoke * 0.06;
         float mask    = 1.0 - smoothstep(r - edgeSz, r + edgeSz, bDist);
 
         /* Portrait UV — remapped to left strip only */
@@ -529,8 +532,8 @@
         vec2 vc  = uv * 2.0 - 1.0;
         col *= 1.0 - dot(vc, vc) * 0.32;
 
-        /* Alpha: blob is opaque, outside transparent, glow ring extends alpha slightly */
-        float alpha = clamp(mask + glow * 0.55, 0.0, 1.0);
+        /* Alpha: blob opaque, outside transparent, smoke fades everything */
+        float alpha = clamp(mask + glow * 0.55, 0.0, 1.0) * u_opacity;
         gl_FragColor = vec4(clamp(col, 0.0, 1.0), alpha);
       }`;
 
@@ -568,6 +571,9 @@
     const uRadius  = gl.getUniformLocation(prog, 'u_radius');
     const uRes     = gl.getUniformLocation(prog, 'u_res');
     const uPortW   = gl.getUniformLocation(prog, 'u_portW');
+    const uSmoke   = gl.getUniformLocation(prog, 'u_smoke');
+    const uOpacity = gl.getUniformLocation(prog, 'u_opacity');
+    const anim     = { smoke: 0, opacity: 1 };
 
     /* ── Allocate texture ── */
     function allocTex(unit) {
@@ -644,23 +650,38 @@
       const t = (performance.now() - t0) / 1000;
       gl.clear(gl.COLOR_BUFFER_BIT);
       gl.uniform2f(uMouse, smx, smy);
-      gl.uniform1f(uTime,  t);
+      gl.uniform1f(uTime,   t);
       gl.uniform1f(uRadius, 0.38);
-      gl.uniform2f(uRes, canvas.width, canvas.height);
+      gl.uniform2f(uRes,    canvas.width, canvas.height);
+      gl.uniform1f(uSmoke,   anim.smoke);
+      gl.uniform1f(uOpacity, anim.opacity);
       gl.drawArrays(gl.TRIANGLES, 0, 6);
       requestAnimationFrame(render);
     }
     render();
 
-    /* Drop canvas behind the expanding pill the instant scroll begins */
-    if (window.gsap && window.ScrollTrigger) {
-      ScrollTrigger.create({
-        trigger: hero,
-        start: 'top top',
-        onEnter:     () => { canvas.style.zIndex = '4'; },
-        onLeaveBack: () => { canvas.style.zIndex = '6'; }
-      });
-    }
+    /* Smoke out on scroll, smoke in on return — z-index swaps only after smoke fades */
+    let smokeOut = false;
+    window.addEventListener('scroll', () => {
+      const scrolled = window.scrollY > 5;
+      if (scrolled && !smokeOut) {
+        smokeOut = true;
+        if (window.gsap) {
+          gsap.killTweensOf(anim);
+          gsap.to(anim, {
+            smoke: 1, opacity: 0, duration: 0.45, ease: 'power2.in',
+            onComplete: () => { canvas.style.zIndex = '4'; }
+          });
+        }
+      } else if (!scrolled && smokeOut) {
+        smokeOut = false;
+        canvas.style.zIndex = '6';
+        if (window.gsap) {
+          gsap.killTweensOf(anim);
+          gsap.to(anim, { smoke: 0, opacity: 1, duration: 0.75, ease: 'power3.out' });
+        }
+      }
+    }, { passive: true });
   })();
   </script>
 </body>
