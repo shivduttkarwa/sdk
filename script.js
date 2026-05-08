@@ -397,34 +397,68 @@ if (window.gsap && window.ScrollTrigger) {
 (function initTextIntro() {
   if (!window.gsap || !window.ScrollTrigger) return;
 
-  const display = document.querySelector('.ti-display');
-  const lines   = gsap.utils.toArray('.ti-li');
-  if (!display || !lines.length) return;
+  const textEl = document.querySelector('.ti-text');
+  if (!textEl) return;
 
-  function fitText() {
-    const availW = display.offsetWidth;
-    lines.forEach(li => {
-      li.style.fontSize = '';
-      const base = parseFloat(getComputedStyle(li).fontSize);
-      const ratio = availW / li.scrollWidth;
-      li.style.fontSize = (base * ratio * 0.99) + 'px';
+  function splitIntoWords() {
+    const nodes = Array.from(textEl.childNodes);
+    let html = '';
+    nodes.forEach(node => {
+      if (node.nodeType === 3) {
+        node.textContent.split(/(\s+)/).forEach(part => {
+          if (/^\s+$/.test(part)) { html += part; }
+          else if (part)           { html += `<span class="ti-word">${part}</span>`; }
+        });
+      } else if (node.nodeType === 1) {
+        const cls   = node.className;
+        const parts = node.textContent.split(/(\s+)/);
+        const words = parts.filter(p => p && !/^\s+$/.test(p));
+        let wi = 0;
+        parts.forEach(part => {
+          if (/^\s+$/.test(part)) { html += part; }
+          else if (part) {
+            const isLast = wi === words.length - 1;
+            html += `<span class="ti-word${isLast ? ' ' + cls : ''}">${part}</span>`;
+            wi++;
+          }
+        });
+      }
+    });
+    textEl.innerHTML = html;
+  }
+
+  let animTl = null;
+
+  function setup() {
+    if (animTl) { animTl.kill(); animTl = null; }
+    textEl.innerHTML = textEl.dataset.orig || textEl.innerHTML;
+    if (!textEl.dataset.orig) textEl.dataset.orig = textEl.innerHTML;
+
+    splitIntoWords();
+
+    const words = textEl.querySelectorAll('.ti-word');
+
+    animTl = gsap.timeline({
+      scrollTrigger: {
+        trigger: '.text-intro',
+        start: 'top bottom',
+        end: 'center top',
+        scrub: 1.2,
+      }
+    });
+
+    const dur = 0.25;
+    words.forEach((word, i) => {
+      animTl.fromTo(word,
+        { clipPath: 'inset(-20% 105% -20% 0%)', opacity: 0.05, filter: 'blur(10px)', skewX: -4 },
+        { clipPath: 'inset(-20% 0%   -20% 0%)', opacity: 1,    filter: 'blur(0px)',  skewX: 0,
+          ease: 'power2.out', duration: dur },
+        i * dur
+      );
     });
   }
 
-  fitText();
-  window.addEventListener('resize', fitText);
-
-  gsap.from(lines, {
-    yPercent: 110,
-    stagger: { each: 0.22, ease: 'none' },
-    ease: 'power4.out',
-    scrollTrigger: {
-      trigger: '.text-intro',
-      start: 'top 85%',
-      end: 'top 10%',
-      scrub: 1.2,
-    }
-  });
+  document.fonts?.ready ? document.fonts.ready.then(setup) : setTimeout(setup, 400);
 })();
 
 // ── Hero blob: WebGL cursor reveal ──
