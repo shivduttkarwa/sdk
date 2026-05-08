@@ -540,7 +540,7 @@ img {
   height: 100%;
   display: block;
   pointer-events: none;
-  z-index: 6;
+  z-index: 4;
 }
 
 .nav-reveal-canvas {

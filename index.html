@@ -660,7 +660,7 @@
     }
     render();
 
-    /* Smoke out on scroll, smoke in on return — z-index swaps only after smoke fades */
+    /* Smoke out on scroll, smoke in on return */
     let smokeOut = false;
     window.addEventListener('scroll', () => {
       const scrolled = window.scrollY > 5;
@@ -668,14 +668,10 @@
         smokeOut = true;
         if (window.gsap) {
           gsap.killTweensOf(anim);
-          gsap.to(anim, {
-            smoke: 1, opacity: 0, duration: 0.45, ease: 'power2.in',
-            onComplete: () => { canvas.style.zIndex = '4'; }
-          });
+          gsap.to(anim, { smoke: 1, opacity: 0, duration: 0.45, ease: 'power2.in' });
         }
       } else if (!scrolled && smokeOut) {
         smokeOut = false;
-        canvas.style.zIndex = '6';
         if (window.gsap) {
           gsap.killTweensOf(anim);
           gsap.to(anim, { smoke: 0, opacity: 1, duration: 0.75, ease: 'power3.out' });
