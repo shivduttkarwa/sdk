@@ -173,7 +173,7 @@ function startHeroAnimation() {
     ease: 'power3.out',
     delay: 0.2
   });
-gsap.from('.hero-meta, .hero-right-cta, .scroll-indicator', {
+gsap.from('.hero-meta, .scroll-indicator', {
     opacity: 0,
     y: 14,
     duration: 1,
@@ -226,7 +226,7 @@ if (window.gsap && window.ScrollTrigger) {
 
     tl.to('.hero-line-top', { y: -60, opacity: 0, ease: 'none' }, 0);
     tl.to('.hero-line-bottom', { y: 60, opacity: 0, ease: 'none' }, 0);
-    tl.to('.hero-meta, .hero-right-cta, .scroll-indicator', {
+    tl.to('.hero-meta, .scroll-indicator', {
       opacity: 0,
       ease: 'none',
       duration: 0.3
