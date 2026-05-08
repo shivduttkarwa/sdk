@@ -86,13 +86,15 @@
           <video class="hero-video" autoplay loop muted playsinline>
             <source src="assets/hero-vid.mp4" type="video/mp4" />
           </video>
-          <div class="hero-rotating-wrap" aria-hidden="true">
-            <span class="hero-rotating-word is-active">Full Stack</span>
-            <span class="hero-rotating-word">Creative</span>
-            <span class="hero-rotating-word">Digital</span>
-            <span class="hero-rotating-word">Premium</span>
-          </div>
         </div>
+      </div>
+
+      <!-- Rotating word lives outside the video-wrap stacking context -->
+      <div class="hero-rotating-wrap" aria-hidden="true">
+        <span class="hero-rotating-word is-active">Full Stack</span>
+        <span class="hero-rotating-word">Creative</span>
+        <span class="hero-rotating-word">Digital</span>
+        <span class="hero-rotating-word">Premium</span>
       </div>
 
       <h1 class="hero-line hero-line-bottom">
@@ -438,7 +440,7 @@
   (function () {
     const hero   = document.getElementById('home');
     const canvas = document.getElementById('hero-blob-canvas');
-    const gl     = canvas.getContext('webgl', { antialias: false, alpha: false });
+    const gl     = canvas.getContext('webgl', { antialias: false, alpha: true, premultipliedAlpha: false });
     if (!gl) return;
 
     /* ── Shaders ── */
@@ -527,7 +529,9 @@
         vec2 vc  = uv * 2.0 - 1.0;
         col *= 1.0 - dot(vc, vc) * 0.32;
 
-        gl_FragColor = vec4(clamp(col, 0.0, 1.0), 1.0);
+        /* Alpha: blob is opaque, outside transparent, glow ring extends alpha slightly */
+        float alpha = clamp(mask + glow * 0.55, 0.0, 1.0);
+        gl_FragColor = vec4(clamp(col, 0.0, 1.0), alpha);
       }`;
 
     /* ── Compile ── */
@@ -542,6 +546,9 @@
     gl.attachShader(prog, mkShader(gl.VERTEX_SHADER,   VS));
     gl.attachShader(prog, mkShader(gl.FRAGMENT_SHADER, FS));
     gl.linkProgram(prog); gl.useProgram(prog);
+    gl.enable(gl.BLEND);
+    gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
+    gl.clearColor(0, 0, 0, 0);
 
     /* ── Fullscreen quad ── */
     const buf = gl.createBuffer();
@@ -635,14 +642,25 @@
       smy += (my - smy) * 0.08;
 
       const t = (performance.now() - t0) / 1000;
+      gl.clear(gl.COLOR_BUFFER_BIT);
       gl.uniform2f(uMouse, smx, smy);
       gl.uniform1f(uTime,  t);
-      gl.uniform1f(uRadius, 0.22);
+      gl.uniform1f(uRadius, 0.38);
       gl.uniform2f(uRes, canvas.width, canvas.height);
       gl.drawArrays(gl.TRIANGLES, 0, 6);
       requestAnimationFrame(render);
     }
     render();
+
+    /* Drop canvas behind the expanding pill the instant scroll begins */
+    if (window.gsap && window.ScrollTrigger) {
+      ScrollTrigger.create({
+        trigger: hero,
+        start: 'top top',
+        onEnter:     () => { canvas.style.zIndex = '4'; },
+        onLeaveBack: () => { canvas.style.zIndex = '6'; }
+      });
+    }
   })();
   </script>
 </body>

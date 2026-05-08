@@ -540,7 +540,7 @@ img {
   height: 100%;
   display: block;
   pointer-events: none;
-  z-index: 1;
+  z-index: 6;
 }
 
 .nav-reveal-canvas {
@@ -757,10 +757,11 @@ img {
 .hero-rotating-wrap {
   position: absolute;
   inset: 0;
-  z-index: 2;
+  z-index: 10;
   display: grid;
   place-items: center;
   overflow: hidden;
+  pointer-events: none;
 }
 
 .hero-rotating-word {
