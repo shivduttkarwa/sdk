@@ -573,7 +573,7 @@
     const uPortW   = gl.getUniformLocation(prog, 'u_portW');
     const uSmoke   = gl.getUniformLocation(prog, 'u_smoke');
     const uOpacity = gl.getUniformLocation(prog, 'u_opacity');
-    const anim     = { smoke: 0, opacity: 1 };
+    const anim     = { smoke: 1, opacity: 0 };
 
     /* ── Allocate texture ── */
     function allocTex(unit) {
@@ -618,10 +618,13 @@
     loadBitmap('./assets/1111.png', 1, texPort);
 
     /* ── Mouse tracking ── */
-    let mx = 0.5, my = 0.5;   // normalized, in GL coords (y-flipped)
-    let smx = 0.5, smy = 0.5; // smoothed
+    /* Initial resting position: centre of left portrait strip, upper area (face) */
+    let mx = 0.09, my = 0.68;
+    let smx = 0.09, smy = 0.68;
+    let mouseEntered = false;
 
     document.addEventListener('mousemove', e => {
+      mouseEntered = true;
       const r = hero.getBoundingClientRect();
       mx = (e.clientX - r.left)  / r.width;
       my = 1.0 - (e.clientY - r.top) / r.height;
@@ -659,6 +662,11 @@
       requestAnimationFrame(render);
     }
     render();
+
+    /* Entrance: blob forms from smoke at the face position on page load */
+    if (window.gsap) {
+      gsap.to(anim, { smoke: 0, opacity: 1, duration: 1.1, delay: 0.5, ease: 'power3.out' });
+    }
 
     /* Smoke out on scroll, smoke in on return */
     let smokeOut = false;
