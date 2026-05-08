@@ -621,10 +621,10 @@
     let mx = 0.5, my = 0.5;   // normalized, in GL coords (y-flipped)
     let smx = 0.5, smy = 0.5; // smoothed
 
-    hero.addEventListener('mousemove', e => {
+    document.addEventListener('mousemove', e => {
       const r = hero.getBoundingClientRect();
       mx = (e.clientX - r.left)  / r.width;
-      my = 1.0 - (e.clientY - r.top) / r.height; // flip Y for WebGL
+      my = 1.0 - (e.clientY - r.top) / r.height;
     });
 
     /* ── Resize ── */
