@@ -889,6 +889,30 @@ img {
   padding: 0 5rem;
 }
 
+.ti-header {
+  margin-bottom: clamp(28px, 3.5vw, 56px);
+}
+
+.ti-heading {
+  font-family: "Bricolage Grotesque", sans-serif;
+  font-size: clamp(52px, 9vw, 160px);
+  font-weight: 800;
+  line-height: 0.9;
+  letter-spacing: -.04em;
+  color: #fff;
+  overflow: hidden;
+  margin-top: 16px;
+}
+
+.ti-ch-wrap {
+  display: block;
+}
+
+.ti-char {
+  display: inline-block;
+  will-change: transform;
+}
+
 .ti-text {
   font-family: "Bricolage Grotesque", sans-serif;
   font-size: clamp(36px, 5.8vw, 108px);

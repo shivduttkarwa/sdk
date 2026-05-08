@@ -393,7 +393,35 @@ if (window.gsap && window.ScrollTrigger) {
   })(0);
 })();
 
-// ── Text intro: full-width fit + line-by-line mask reveal on scrub ──
+// ── Section heading: char-by-char mask reveal ──
+(function initTiHeading() {
+  if (!window.gsap || !window.ScrollTrigger) return;
+  const wrap = document.querySelector('.ti-ch-wrap');
+  if (!wrap) return;
+
+  const text = 'Why I Build';
+  wrap.innerHTML = text.split('').map(ch =>
+    ch === ' '
+      ? '<span class="ti-char" style="display:inline-block;width:0.28em;"></span>'
+      : `<span class="ti-char">${ch}</span>`
+  ).join('');
+
+  const chars = wrap.querySelectorAll('.ti-char');
+
+  gsap.from(chars, {
+    yPercent: 110,
+    stagger: 0.04,
+    ease: 'power4.out',
+    duration: 1,
+    scrollTrigger: {
+      trigger: '.ti-header',
+      start: 'top 82%',
+      toggleAction: 'play none none none',
+    }
+  });
+})();
+
+// ── Text intro: word-by-word blur reveal on scrub ──
 (function initTextIntro() {
   if (!window.gsap || !window.ScrollTrigger) return;
 
@@ -441,8 +469,8 @@ if (window.gsap && window.ScrollTrigger) {
     animTl = gsap.timeline({
       scrollTrigger: {
         trigger: '.text-intro',
-        start: 'top 70%',
-        end: 'top 5%',
+        start: 'top 30%',
+        end: 'top -20%',
         scrub: 1.2,
       }
     });
