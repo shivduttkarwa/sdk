@@ -1,3 +1,11 @@
+@font-face {
+  font-family: "WhisperingSignature";
+  src: url("assets/fonts/WhisperingSignature.ttf") format("truetype");
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
 :root {
   --bg: #050505;
   --bg-2: #08080a;
@@ -860,108 +868,54 @@ img {
   50%       { transform: translate(-50%, 8px); }
 }
 
-/* Showreel */
-.showreel {
-  position: relative;
-  min-height: 105svh;
-  padding: 112px 24px;
-  background: #08080a;
+/* Text intro */
+.text-intro {
+  padding: clamp(100px, 14vw, 200px) 0;
+  background: var(--bg);
   overflow: hidden;
 }
 
-.showreel-frame {
-  width: min(1320px, calc(100vw - 48px));
-  height: min(760px, 78vh);
-  margin-inline: auto;
-  border-radius: 32px;
-  border: 1px solid rgba(255,255,255,.13);
-  background:
-    linear-gradient(180deg, rgba(0,0,0,.05), rgba(0,0,0,.55)),
-    url("https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=2400&q=80") center/cover;
-  position: relative;
+.ti-inner {
+  box-sizing: border-box;
+  width: 100%;
+  padding: 0 5rem;
+}
+
+.ti-display {
+  margin-bottom: clamp(32px, 4vw, 56px);
+}
+
+.ti-line {
   overflow: hidden;
-  box-shadow: 0 50px 140px rgba(0,0,0,.6);
+  line-height: 1.3;
+  padding-top: 0.08em;
+  padding-bottom: 0.08em;
 }
 
-.showreel-frame::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background:
-    linear-gradient(90deg, rgba(47,128,255,.26), transparent 30%, transparent 70%, rgba(143,92,255,.24)),
-    repeating-linear-gradient(0deg, rgba(255,255,255,.04) 0 1px, transparent 1px 4px);
-  mix-blend-mode: overlay;
-  opacity: .9;
+.ti-li {
+  display: block;
+  font-family: "WhisperingSignature", sans-serif;
+  font-size: clamp(44px, 7.5vw, 130px);
+  font-weight: normal;
+  letter-spacing: 0;
+  color: #fff;
+  will-change: transform;
+  white-space: nowrap;
 }
 
-.showreel-content {
-  position: absolute;
-  inset: 0;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  padding: clamp(24px, 5vw, 70px);
-}
-
-.showreel-top {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  gap: 20px;
-}
-
-.showreel-label {
+.ti-accent {
   color: var(--green);
+}
+
+.ti-sub {
   font-size: 13px;
-  font-weight: 900;
-  letter-spacing: .16em;
+  font-weight: 700;
+  letter-spacing: .14em;
   text-transform: uppercase;
-}
-
-.play-pill {
-  width: 96px;
-  height: 96px;
-  display: grid;
-  place-items: center;
-  border-radius: 50%;
-  background: rgba(255,255,255,.92);
-  color: #050505;
-  box-shadow: 0 20px 70px rgba(0,0,0,.35);
-  font-weight: 900;
-  transition: transform .4s var(--ease);
-}
-
-.play-pill:hover {
-  transform: scale(1.08) rotate(8deg);
-}
-
-.showreel-title {
-  font-family: "Space Grotesk", sans-serif;
-  font-size: clamp(44px, 9vw, 150px);
-  line-height: .82;
-  letter-spacing: -.09em;
-  text-transform: uppercase;
-  width: min(930px, 100%);
-}
-
-.showreel-bottom {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-end;
-  gap: 24px;
-}
-
-.showreel-desc {
-  color: rgba(245,242,234,.78);
-  width: min(570px, 100%);
-  line-height: 1.6;
-  font-size: 18px;
-}
-
-.showreel-time {
-  color: rgba(255,255,255,.68);
-  font-weight: 800;
-  letter-spacing: .08em;
+  color: rgba(255,255,255,.28);
+  padding-top: 4px;
+  border-top: 1px solid rgba(255,255,255,.1);
+  width: fit-content;
 }
 
 /* Logo wall */
@@ -1872,19 +1826,6 @@ img {
 
   .scroll-indicator { bottom: 18px; }
 
-  .showreel { padding: 70px 16px; }
-
-  .showreel-frame {
-    width: 100%;
-    height: 74vh;
-    border-radius: 24px;
-  }
-
-  .showreel-bottom,
-  .showreel-top {
-    flex-direction: column;
-    align-items: flex-start;
-  }
 
   .play-pill { width: 76px; height: 76px; }
 

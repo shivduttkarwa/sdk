@@ -246,17 +246,6 @@ if (window.gsap && window.ScrollTrigger) {
     );
   });
 
-  gsap.to('.showreel-frame', {
-    scale: 0.96,
-    borderRadius: '44px',
-    ease: 'none',
-    scrollTrigger: {
-      trigger: '.showreel',
-      start: 'top bottom',
-      end: 'bottom top',
-      scrub: true
-    }
-  });
 
   gsap.utils.toArray('.process-step').forEach((step) => {
     ScrollTrigger.create({
@@ -402,4 +391,256 @@ if (window.gsap && window.ScrollTrigger) {
     gl.clear(gl.COLOR_BUFFER_BIT);
     gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
   })(0);
+})();
+
+// ── Text intro: full-width fit + line-by-line mask reveal on scrub ──
+(function initTextIntro() {
+  if (!window.gsap || !window.ScrollTrigger) return;
+
+  const display = document.querySelector('.ti-display');
+  const lines   = gsap.utils.toArray('.ti-li');
+  if (!display || !lines.length) return;
+
+  function fitText() {
+    const availW = display.offsetWidth;
+    lines.forEach(li => {
+      li.style.fontSize = '';
+      const base = parseFloat(getComputedStyle(li).fontSize);
+      const ratio = availW / li.scrollWidth;
+      li.style.fontSize = (base * ratio * 0.99) + 'px';
+    });
+  }
+
+  fitText();
+  window.addEventListener('resize', fitText);
+
+  gsap.from(lines, {
+    yPercent: 110,
+    stagger: { each: 0.22, ease: 'none' },
+    ease: 'power4.out',
+    scrollTrigger: {
+      trigger: '.text-intro',
+      start: 'top 85%',
+      end: 'top 10%',
+      scrub: 1.2,
+    }
+  });
+})();
+
+// ── Hero blob: WebGL cursor reveal ──
+(function initHeroBlob() {
+  const hero   = document.getElementById('home');
+  const canvas = document.getElementById('hero-blob-canvas');
+  if (!hero || !canvas) return;
+  const gl = canvas.getContext('webgl', { antialias: false, alpha: true, premultipliedAlpha: false });
+  if (!gl) return;
+
+  const VS = `
+    attribute vec2 a_pos;
+    varying   vec2 v_uv;
+    void main() {
+      v_uv        = a_pos * 0.5 + 0.5;
+      gl_Position = vec4(a_pos, 0.0, 1.0);
+    }`;
+
+  const FS = `
+    precision highp float;
+    uniform sampler2D u_bg;
+    uniform sampler2D u_portrait;
+    uniform vec2      u_mouse;
+    uniform float     u_time;
+    uniform float     u_radius;
+    uniform vec2      u_res;
+    uniform float     u_portW;
+    uniform float     u_smoke;
+    uniform float     u_opacity;
+    varying vec2      v_uv;
+
+    float rand(vec2 n) {
+      return fract(sin(dot(n, vec2(12.9898, 4.1414))) * 43758.5453);
+    }
+    float noise(vec2 p) {
+      vec2 i = floor(p), f = fract(p);
+      f = f * f * (3.0 - 2.0 * f);
+      return mix(mix(rand(i), rand(i+vec2(1,0)), f.x),
+                 mix(rand(i+vec2(0,1)), rand(i+vec2(1,1)), f.x), f.y);
+    }
+    float fbm(vec2 p) {
+      float v = 0.0, a = 0.5;
+      for (int i = 0; i < 5; i++) { v += a * noise(p); p *= 2.1; a *= 0.5; }
+      return v;
+    }
+
+    void main() {
+      vec2 uv = v_uv;
+      float ar   = u_res.x / u_res.y;
+      vec2  d    = (uv - u_mouse) * vec2(ar, 1.0);
+      float dist = length(d);
+
+      float smokeNoise = 0.09 + u_smoke * 0.26;
+      float n       = fbm(d * 6.0 + u_time * 0.35) * smokeNoise;
+      float bDist   = dist + n;
+      float r       = u_radius + u_smoke * 0.22;
+      float edgeSz  = 0.025 + u_smoke * 0.06;
+      float mask    = 1.0 - smoothstep(r - edgeSz, r + edgeSz, bDist);
+
+      float pw   = max(u_portW, 0.001);
+      vec2  pUV  = vec2(uv.x / pw, uv.y);
+
+      float edgeDist = abs(bDist - r);
+      float ca = smoothstep(0.06, 0.0, edgeDist) * 0.010;
+      vec3 port;
+      port.r = texture2D(u_portrait, pUV + vec2( ca, 0.0)).r;
+      port.g = texture2D(u_portrait, pUV                 ).g;
+      port.b = texture2D(u_portrait, pUV - vec2( ca, 0.0)).b;
+
+      float inStrip = 1.0 - smoothstep(pw * 0.82, pw * 1.08, uv.x);
+      vec3 bg    = texture2D(u_bg, uv).rgb * 0.88;
+      vec3 inner = mix(bg, port, inStrip * 0.78);
+      vec3 col   = inner * mask;
+
+      float glow = exp(-edgeDist * 36.0) * 1.5;
+      col += vec3(0.18, 0.50, 1.00) * glow * 0.55;
+      col += vec3(0.56, 0.36, 1.00) * glow * 0.35;
+
+      float grain = (rand(uv * 540.0 + fract(u_time * 0.07)) - 0.5) * 0.042;
+      col += grain;
+
+      vec2 vc  = uv * 2.0 - 1.0;
+      col *= 1.0 - dot(vc, vc) * 0.32;
+
+      float alpha = clamp(mask + glow * 0.55, 0.0, 1.0) * u_opacity;
+      gl_FragColor = vec4(clamp(col, 0.0, 1.0), alpha);
+    }`;
+
+  function mkShader(type, src) {
+    const s = gl.createShader(type);
+    gl.shaderSource(s, src); gl.compileShader(s);
+    if (!gl.getShaderParameter(s, gl.COMPILE_STATUS))
+      console.error('[blob]', gl.getShaderInfoLog(s));
+    return s;
+  }
+  const prog = gl.createProgram();
+  gl.attachShader(prog, mkShader(gl.VERTEX_SHADER,   VS));
+  gl.attachShader(prog, mkShader(gl.FRAGMENT_SHADER, FS));
+  gl.linkProgram(prog); gl.useProgram(prog);
+  gl.enable(gl.BLEND);
+  gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
+  gl.clearColor(0, 0, 0, 0);
+
+  const buf = gl.createBuffer();
+  gl.bindBuffer(gl.ARRAY_BUFFER, buf);
+  gl.bufferData(gl.ARRAY_BUFFER,
+    new Float32Array([-1,-1, 1,-1, -1,1, 1,-1, 1,1, -1,1]), gl.STATIC_DRAW);
+  const aPos = gl.getAttribLocation(prog, 'a_pos');
+  gl.enableVertexAttribArray(aPos);
+  gl.vertexAttribPointer(aPos, 2, gl.FLOAT, false, 0, 0);
+
+  const uBg      = gl.getUniformLocation(prog, 'u_bg');
+  const uPort    = gl.getUniformLocation(prog, 'u_portrait');
+  const uMouse   = gl.getUniformLocation(prog, 'u_mouse');
+  const uTime    = gl.getUniformLocation(prog, 'u_time');
+  const uRadius  = gl.getUniformLocation(prog, 'u_radius');
+  const uRes     = gl.getUniformLocation(prog, 'u_res');
+  const uPortW   = gl.getUniformLocation(prog, 'u_portW');
+  const uSmoke   = gl.getUniformLocation(prog, 'u_smoke');
+  const uOpacity = gl.getUniformLocation(prog, 'u_opacity');
+  const anim     = { smoke: 1, opacity: 0 };
+
+  function allocTex(unit) {
+    gl.activeTexture(gl.TEXTURE0 + unit);
+    const t = gl.createTexture();
+    gl.bindTexture(gl.TEXTURE_2D, t);
+    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, 1, 1, 0,
+                  gl.RGBA, gl.UNSIGNED_BYTE, new Uint8Array([5,5,10,255]));
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+    return t;
+  }
+  const texBg   = allocTex(0);
+  const texPort = allocTex(1);
+  gl.uniform1i(uBg,   0);
+  gl.uniform1i(uPort, 1);
+  gl.pixelStorei(gl.UNPACK_PREMULTIPLY_ALPHA_WEBGL, false);
+  gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, false);
+
+  function loadBitmap(url, unit, tex) {
+    fetch(url, { mode: 'cors' })
+      .then(r => { if (!r.ok) throw new Error(r.status); return r.blob(); })
+      .then(b  => createImageBitmap(b, { imageOrientation: 'flipY', premultiplyAlpha: 'none' }))
+      .then(bmp => {
+        gl.activeTexture(gl.TEXTURE0 + unit);
+        gl.bindTexture(gl.TEXTURE_2D, tex);
+        gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, bmp);
+        bmp.close();
+      })
+      .catch(e => console.warn('[blob] texture load failed:', url, e));
+  }
+
+  loadBitmap(
+    'https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?auto=format&fit=crop&w=1920&q=80',
+    0, texBg
+  );
+  loadBitmap('./assets/1111.png', 1, texPort);
+
+  let mx = 0.15, my = 0.58;
+  let smx = 0.15, smy = 0.58;
+
+  document.addEventListener('mousemove', e => {
+    const r = hero.getBoundingClientRect();
+    mx = (e.clientX - r.left)  / r.width;
+    my = 1.0 - (e.clientY - r.top) / r.height;
+  });
+
+  function resize() {
+    canvas.width  = hero.clientWidth;
+    canvas.height = hero.clientHeight;
+    gl.viewport(0, 0, canvas.width, canvas.height);
+    const w = canvas.width || 1;
+    const vidW = Math.min(960, Math.max(320, w * 0.62));
+    gl.uniform1f(uPortW, (w - vidW) / 2 / w);
+  }
+  resize();
+  window.addEventListener('resize', resize);
+
+  const t0 = performance.now();
+  function render() {
+    smx += (mx - smx) * 0.08;
+    smy += (my - smy) * 0.08;
+    const t = (performance.now() - t0) / 1000;
+    gl.clear(gl.COLOR_BUFFER_BIT);
+    gl.uniform2f(uMouse,  smx, smy);
+    gl.uniform1f(uTime,   t);
+    gl.uniform1f(uRadius, 0.38);
+    gl.uniform2f(uRes,    canvas.width, canvas.height);
+    gl.uniform1f(uSmoke,   anim.smoke);
+    gl.uniform1f(uOpacity, anim.opacity);
+    gl.drawArrays(gl.TRIANGLES, 0, 6);
+    requestAnimationFrame(render);
+  }
+  render();
+
+  if (window.gsap) {
+    gsap.to(anim, { smoke: 0, opacity: 1, duration: 1.1, delay: 0.5, ease: 'power3.out' });
+  }
+
+  let smokeOut = false;
+  window.addEventListener('scroll', () => {
+    const scrolled = window.scrollY > 5;
+    if (scrolled && !smokeOut) {
+      smokeOut = true;
+      if (window.gsap) {
+        gsap.killTweensOf(anim);
+        gsap.to(anim, { smoke: 1, opacity: 0, duration: 0.45, ease: 'power2.in' });
+      }
+    } else if (!scrolled && smokeOut) {
+      smokeOut = false;
+      if (window.gsap) {
+        gsap.killTweensOf(anim);
+        gsap.to(anim, { smoke: 0, opacity: 1, duration: 0.75, ease: 'power3.out' });
+      }
+    }
+  }, { passive: true });
 })();
