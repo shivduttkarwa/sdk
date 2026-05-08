@@ -533,6 +533,16 @@ img {
   transition-delay: .575s;
 }
 
+#hero-blob-canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+  pointer-events: none;
+  z-index: 1;
+}
+
 .nav-reveal-canvas {
   position: absolute;
   left: 0;
