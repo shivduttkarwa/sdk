@@ -29,6 +29,7 @@
 html {
   scroll-behavior: smooth;
   background: var(--bg);
+  scrollbar-gutter: stable;
 }
 
 body {
@@ -348,7 +349,7 @@ img {
 }
 
 [data-nav-status="active"] .nav-bar {
-  max-width: min(1800px, 100%);
+  max-width: min(840px, 100%);
   border-radius: 0;
   transition: max-width var(--nav-dur) 0s var(--nav-ease), border-radius var(--nav-dur) var(--nav-ease);
 }
@@ -397,16 +398,6 @@ img {
   letter-spacing: -.06em;
   color: #f5ed60;
   text-shadow: 0 0 18px rgba(245, 237, 96, .28);
-}
-
-.nav-logo-center {
-  justify-self: center;
-  font-family: "Space Grotesk", sans-serif;
-  font-size: clamp(30px, 3.4vw, 56px);
-  line-height: 1;
-  font-weight: 900;
-  letter-spacing: -.07em;
-  color: #fff;
 }
 
 .nav-toggle {
@@ -1781,10 +1772,6 @@ img {
 
   .nav-brand {
     font-size: 20px;
-  }
-
-  .nav-logo-center {
-    font-size: clamp(28px, 8vw, 34px);
   }
 
   .nav-panel-inner {
