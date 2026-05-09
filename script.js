@@ -761,6 +761,64 @@ if (window.gsap && window.ScrollTrigger) {
   })(0);
 })();
 
+// ── Recent Work: pinned scroll-reveal ──
+(function initRecentWork() {
+  if (!window.gsap || !window.ScrollTrigger) return;
+  const project = document.querySelector('.rw-project');
+  if (!project) return;
+
+  const stage      = project.querySelector('.rw-stage');
+  const featured   = project.querySelector('.rw-featured-wrap');
+  const featuredImg = featured.querySelector('img');
+  const brand      = project.querySelector('.rw-brand-mark');
+  const caption    = project.querySelector('.rw-caption');
+  const cards      = gsap.utils.toArray(project.querySelectorAll('.rw-float-card'));
+
+  const tl = gsap.timeline({
+    defaults: { ease: 'none' },
+    scrollTrigger: {
+      trigger: project,
+      start: 'top top',
+      end: '+=230%',
+      pin: stage,
+      pinSpacing: true,
+      scrub: 1.25,
+      anticipatePin: 1,
+      invalidateOnRefresh: true
+    }
+  });
+
+  tl.fromTo(featured,
+    { yPercent: 0, scale: 1 },
+    { yPercent: -3, scale: 0.985, duration: 1 }, 0);
+
+  tl.fromTo(featuredImg,
+    { scale: 1.08, yPercent: 1.5 },
+    { scale: 1, yPercent: -2.2, duration: 1 }, 0);
+
+  tl.fromTo(brand,
+    { yPercent: 14, opacity: 1 },
+    { yPercent: -26, opacity: 0.92, duration: 1 }, 0);
+
+  tl.fromTo(caption,
+    { autoAlpha: 1, y: 0 },
+    { autoAlpha: 0, y: -36, duration: 0.28 }, 0.2);
+
+  cards.forEach((card, i) => {
+    const t = 0.04 + i * 0.095;
+    tl.fromTo(card,
+      { y: () => window.innerHeight * (0.85 + i * 0.22), rotate: i % 2 === 0 ? -0.4 : 0.4, scale: 1.01 },
+      { y: () => -window.innerHeight * (2.45 + i * 0.18), rotate: i % 2 === 0 ? 0.3 : -0.3, scale: 1, duration: 1.08 },
+      t);
+    tl.fromTo(card.querySelector('img'),
+      { yPercent: -8, scale: 1.12 },
+      { yPercent: 8,  scale: 1.04, duration: 1.08 },
+      t);
+  });
+
+  tl.to({}, { duration: 0.18 });
+})();
+
 // ── Stats section entrance animation ──
 (function initStats() {
   if (!window.gsap || !window.ScrollTrigger) return;
