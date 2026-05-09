@@ -275,15 +275,16 @@ if (window.gsap && window.ScrollTrigger) {
   const VS = `attribute vec2 a_pos; varying vec2 v_uv;
     void main(){ v_uv=a_pos*.5+.5; gl_Position=vec4(a_pos,0.,1.); }`;
 
-  // 9-tap Gaussian blur + fade + AR-corrected circular splat
+  // Fat organic brush: line-segment distance + 9-tap diffusion + fade
   const TRAIL_FS = `
     precision highp float;
     uniform sampler2D u_trail;
     uniform vec2  u_res, u_mouse, u_pmouse;
-    uniform float u_active, u_ar;
+    uniform float u_moving, u_ar;
     varying vec2  v_uv;
     void main(){
       vec2  px = 1./u_res;
+      // 9-tap Gaussian — spreads the stroke organically each frame
       float c  = texture2D(u_trail,v_uv              ).r*.36;
       float l  = texture2D(u_trail,v_uv-vec2(px.x,0.)).r*.12;
       float r  = texture2D(u_trail,v_uv+vec2(px.x,0.)).r*.12;
@@ -293,10 +294,19 @@ if (window.gsap && window.ScrollTrigger) {
       float ur = texture2D(u_trail,v_uv+vec2( px.x, px.y)).r*.04;
       float dl = texture2D(u_trail,v_uv+vec2(-px.x,-px.y)).r*.04;
       float dr = texture2D(u_trail,v_uv+vec2( px.x,-px.y)).r*.04;
-      float trail = (c+l+r+u+d+ul+ur+dl+dr) * .956;
-      vec2  dv  = (v_uv - u_mouse) * vec2(u_ar, 1.);
-      float spd = length((u_mouse - u_pmouse) * vec2(u_ar, 1.)) * 10.;
-      trail = clamp(trail + exp(-dot(dv,dv)*95.) * clamp(spd,.04,1.8) * u_active, 0., 1.);
+      float trail = (c+l+r+u+d+ul+ur+dl+dr) * .978;
+      // Line-segment distance → continuous stroke, no gaps at any speed
+      vec2  a    = u_pmouse * vec2(u_ar, 1.);
+      vec2  b    = u_mouse  * vec2(u_ar, 1.);
+      vec2  p    = v_uv     * vec2(u_ar, 1.);
+      vec2  ab   = b - a;
+      float len2 = dot(ab, ab);
+      float t    = len2 > 0.00001 ? clamp(dot(p-a, ab)/len2, 0., 1.) : 0.;
+      float dist = length(p - (a + t*ab));
+      float speed = sqrt(len2);
+      // k=120 → ~175px radius at 900px section height (fat brush like cappen)
+      float splat = exp(-dist*dist*120.) * clamp(speed*5.+0.18, 0., 1.8) * u_moving;
+      trail = clamp(trail + splat, 0., 1.);
       gl_FragColor = vec4(trail, 0., 0., 1.);
     }`;
 
@@ -327,7 +337,6 @@ if (window.gsap && window.ScrollTrigger) {
       float s1 = step(seg,      v_uv.x);
       float s2 = step(2.*seg,   v_uv.x);
       vec3  col = mix(mix(c0, c1, s1), c2, s2);
-      col += vec3(.78,1.,.24) * mag*mag*5.;
       gl_FragColor = vec4(clamp(col,0.,1.), smoothstep(.012,.14,trail));
     }`;
 
@@ -382,7 +391,7 @@ if (window.gsap && window.ScrollTrigger) {
     res:    gl.getUniformLocation(trailProg, 'u_res'),
     mouse:  gl.getUniformLocation(trailProg, 'u_mouse'),
     pmouse: gl.getUniformLocation(trailProg, 'u_pmouse'),
-    active: gl.getUniformLocation(trailProg, 'u_active'),
+    moving: gl.getUniformLocation(trailProg, 'u_moving'),
     ar:     gl.getUniformLocation(trailProg, 'u_ar'),
   };
   const rL = {
@@ -436,15 +445,17 @@ if (window.gsap && window.ScrollTrigger) {
   gl.enable(gl.BLEND);
   gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
 
-  let mx = 0.5, my = 0.5, smx = 0.5, smy = 0.5, pmx = 0.5, pmy = 0.5, active = 0;
+  let mx = 0.5, my = 0.5, smx = 0.5, smy = 0.5, pmx = 0.5, pmy = 0.5;
+  let moving = 0, lastMove = 0;
 
   row.addEventListener('mousemove', e => {
     const r = row.getBoundingClientRect();
     mx = (e.clientX - r.left)  / r.width;
     my = 1.0 - (e.clientY - r.top) / r.height;
+    moving = 1;
+    lastMove = performance.now();
   });
-  row.addEventListener('mouseenter', () => { active = 1; });
-  row.addEventListener('mouseleave', () => { active = 0; });
+  // No mouseenter/mouseleave needed — only movement triggers the trail
 
   function resize() {
     canvas.width  = row.clientWidth;
@@ -457,6 +468,10 @@ if (window.gsap && window.ScrollTrigger) {
 
   (function render() {
     requestAnimationFrame(render);
+
+    // Stop adding trail ~120ms after cursor stops
+    if (moving && performance.now() - lastMove > 120) moving = 0;
+
     pmx = smx; pmy = smy;
     smx += (mx - smx) * 0.16;
     smy += (my - smy) * 0.16;
@@ -471,7 +486,7 @@ if (window.gsap && window.ScrollTrigger) {
     gl.activeTexture(gl.TEXTURE0); gl.bindTexture(gl.TEXTURE_2D, fboR.tex);
     gl.uniform2f(tL.mouse,  smx, smy);
     gl.uniform2f(tL.pmouse, pmx, pmy);
-    gl.uniform1f(tL.active, active);
+    gl.uniform1f(tL.moving, moving);
     gl.drawArrays(gl.TRIANGLES, 0, 6);
     [fboR, fboW] = [fboW, fboR];
 

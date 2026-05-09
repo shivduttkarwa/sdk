@@ -1,0 +1,820 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Shivdutt Karwa — Recent Work Section</title>
+
+  <!-- Google Fonts: replace with local fonts if your project requires self-hosting -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --sk-bg: #030303;
+      --sk-ink: #ffffff;
+      --sk-muted: rgba(255, 255, 255, 0.68);
+      --sk-soft: rgba(255, 255, 255, 0.12);
+      --sk-line: rgba(255, 255, 255, 0.18);
+      --sk-card-radius: 0.72rem;
+      --sk-max: 118rem;
+      --sk-gap: clamp(1rem, 1.8vw, 1.75rem);
+      --sk-ease: cubic-bezier(.19, 1, .22, 1);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html {
+      scroll-behavior: smooth;
+      background: var(--sk-bg);
+    }
+
+    body {
+      min-height: 100vh;
+      background:
+        radial-gradient(circle at 16% 18%, rgba(170, 126, 57, 0.13), transparent 32rem),
+        radial-gradient(circle at 86% 40%, rgba(82, 120, 255, 0.10), transparent 30rem),
+        var(--sk-bg);
+      color: var(--sk-ink);
+      font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      overflow-x: hidden;
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    .sk-demo-spacer {
+      min-height: 42vh;
+      display: grid;
+      place-items: center;
+      color: rgba(255,255,255,.35);
+      font-family: Orbitron, monospace;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      font-size: clamp(.8rem, 1vw, 1rem);
+    }
+
+    .sk-work-shell {
+      position: relative;
+      width: 100%;
+      min-height: 130vh;
+      padding: clamp(4rem, 8vw, 8rem) clamp(1rem, 4vw, 3rem);
+      isolation: isolate;
+      background:
+        linear-gradient(180deg, rgba(255,255,255,.025), transparent 18%),
+        #000;
+      overflow: hidden;
+    }
+
+    .sk-work-noise {
+      position: absolute;
+      inset: 0;
+      z-index: -3;
+      pointer-events: none;
+      opacity: .42;
+      background-image:
+        linear-gradient(rgba(255,255,255,.035) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,.03) 1px, transparent 1px);
+      background-size: 5.25rem 5.25rem;
+      mask-image: radial-gradient(circle at 50% 50%, #000, transparent 76%);
+    }
+
+    .sk-work-container {
+      max-width: var(--sk-max);
+      margin-inline: auto;
+      position: relative;
+    }
+
+    .sk-work-kicker {
+      display: flex;
+      align-items: center;
+      gap: .65rem;
+      margin-bottom: clamp(2rem, 5vw, 4rem);
+      color: var(--sk-muted);
+      font-family: Orbitron, monospace;
+      text-transform: uppercase;
+      letter-spacing: .16em;
+      font-size: clamp(.72rem, .86vw, .9rem);
+    }
+
+    .sk-work-kicker::before {
+      content: "";
+      width: .52rem;
+      height: .52rem;
+      border-radius: 50%;
+      background: #b7ff7d;
+      box-shadow: 0 0 1.1rem rgba(183, 255, 125, .85);
+    }
+
+    .sk-work-heading {
+      position: relative;
+      z-index: 2;
+      max-width: 45rem;
+      margin-bottom: clamp(4rem, 8vw, 8rem);
+    }
+
+    .sk-work-heading h2 {
+      font-size: clamp(3rem, 9vw, 10rem);
+      line-height: .82;
+      letter-spacing: -.08em;
+      font-weight: 700;
+    }
+
+    .sk-work-heading p {
+      max-width: 35rem;
+      margin-top: 1.4rem;
+      color: var(--sk-muted);
+      font-size: clamp(.98rem, 1.16vw, 1.16rem);
+      line-height: 1.65;
+    }
+
+    .sk-light-bars {
+      position: absolute;
+      top: clamp(7rem, 14vw, 15rem);
+      right: clamp(1rem, 7vw, 8rem);
+      width: min(42rem, 46vw);
+      display: grid;
+      gap: 2.1rem;
+      opacity: .9;
+      pointer-events: none;
+      transform: translateZ(0);
+    }
+
+    .sk-light-row {
+      display: grid;
+      grid-template-columns: repeat(12, 1fr);
+      gap: 1.6rem;
+      height: 2.2rem;
+    }
+
+    .sk-light-block {
+      display: grid;
+      grid-template-columns: repeat(3, .11rem);
+      gap: 1.8rem;
+      align-items: stretch;
+      justify-content: center;
+    }
+
+    .sk-light-block.wide {
+      grid-template-columns: repeat(4, .11rem);
+    }
+
+    .sk-light-line {
+      display: block;
+      width: .11rem;
+      min-height: 100%;
+      background: #fff;
+      opacity: .18;
+      transform-origin: 50% 100%;
+      animation: skLightPulse 4.8s var(--sk-ease) infinite;
+      box-shadow: 0 0 1.1rem currentColor;
+    }
+
+    .sk-light-line.hot { color: #ff8a2a; background: currentColor; animation-delay: -.8s; }
+    .sk-light-line.warm { color: #f3c5a4; background: currentColor; animation-delay: -1.8s; }
+    .sk-light-line.cool { color: #b8d9ff; background: currentColor; animation-delay: -2.6s; }
+    .sk-light-line.white { color: #ffffff; background: currentColor; animation-delay: -3.4s; }
+
+    @keyframes skLightPulse {
+      0%, 100% { opacity: .16; transform: scaleY(.72); }
+      42% { opacity: 1; transform: scaleY(1.5); }
+      68% { opacity: .24; transform: scaleY(.88); }
+    }
+
+    .sk-case-grid {
+      display: grid;
+      grid-template-columns: repeat(12, 1fr);
+      gap: var(--sk-gap);
+      align-items: start;
+      min-height: 94rem;
+    }
+
+    .sk-case-card {
+      position: relative;
+      display: block;
+      height: clamp(28rem, 42vw, 43rem);
+      border-radius: var(--sk-card-radius);
+      overflow: hidden;
+      background: #171717;
+      border: 1px solid rgba(255,255,255,.08);
+      box-shadow: 0 2rem 7rem rgba(0,0,0,.46);
+      transform: translateY(3.5rem);
+      opacity: 0;
+      transition:
+        transform .9s var(--sk-ease),
+        opacity .9s var(--sk-ease),
+        border-color .5s ease;
+      will-change: transform, opacity;
+    }
+
+    .sk-case-card.is-visible {
+      transform: translateY(0);
+      opacity: 1;
+    }
+
+    .sk-case-card:nth-child(1) {
+      grid-column: 1 / span 5;
+      margin-top: 0;
+    }
+
+    .sk-case-card:nth-child(2) {
+      grid-column: 8 / span 5;
+      margin-top: clamp(13rem, 21vw, 21rem);
+    }
+
+    .sk-case-card:nth-child(3) {
+      grid-column: 2 / span 5;
+      margin-top: clamp(-3rem, -2vw, -1rem);
+    }
+
+    .sk-case-card:nth-child(4) {
+      grid-column: 7 / span 5;
+      margin-top: clamp(10rem, 15vw, 16rem);
+    }
+
+    .sk-case-media-wrap {
+      position: absolute;
+      inset: 0;
+      overflow: hidden;
+      border-radius: inherit;
+    }
+
+    .sk-case-img {
+      width: 100%;
+      height: 118%;
+      object-fit: cover;
+      display: block;
+      transform: translate3d(0, -5%, 0) scale(1.035);
+      filter: saturate(.9) contrast(.95);
+      transition:
+        transform 1.2s var(--sk-ease),
+        filter .9s var(--sk-ease);
+      will-change: transform;
+    }
+
+    .sk-case-card:hover .sk-case-img {
+      transform: translate3d(0, -8%, 0) scale(1.08);
+      filter: saturate(1.1) contrast(1.04);
+    }
+
+    .sk-case-video {
+      position: absolute;
+      inset: 0;
+      z-index: 2;
+      opacity: 0;
+      transform: scale(1.02);
+      transition: opacity .48s ease, transform .8s var(--sk-ease);
+      pointer-events: none;
+      background: rgba(0,0,0,.08);
+    }
+
+    .sk-case-video video,
+    .sk-case-video .sk-video-fallback {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      opacity: .96;
+    }
+
+    .sk-video-fallback {
+      position: relative;
+      background:
+        linear-gradient(135deg, rgba(255,255,255,.12), transparent 36%),
+        linear-gradient(45deg, rgba(4,4,4,.86), rgba(255,255,255,.08)),
+        var(--fallback-img) center/cover;
+    }
+
+    .sk-video-fallback::after {
+      content: "LIVE PREVIEW";
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      translate: -50% -50%;
+      padding: .7rem .95rem;
+      border: 1px solid rgba(255,255,255,.24);
+      border-radius: .35rem;
+      background: rgba(0,0,0,.25);
+      backdrop-filter: blur(.7rem);
+      color: #fff;
+      font-family: Orbitron, monospace;
+      font-size: .75rem;
+      letter-spacing: .12em;
+    }
+
+    .sk-case-card:hover .sk-case-video {
+      opacity: 1;
+      transform: scale(1);
+    }
+
+    .sk-case-shade {
+      position: absolute;
+      inset: 0;
+      z-index: 3;
+      background:
+        radial-gradient(circle at 45% 42%, transparent 0 26%, rgba(0,0,0,.08) 48%, rgba(0,0,0,.35) 100%),
+        linear-gradient(180deg, rgba(0,0,0,.14), rgba(0,0,0,.26) 45%, rgba(0,0,0,.76));
+      pointer-events: none;
+    }
+
+    .sk-case-tags {
+      position: absolute;
+      z-index: 5;
+      top: clamp(1.2rem, 2vw, 2.2rem);
+      left: clamp(1.2rem, 2vw, 2.2rem);
+      right: clamp(1.2rem, 2vw, 2.2rem);
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: .55rem;
+    }
+
+    .sk-case-tag {
+      display: inline-flex;
+      align-items: center;
+      height: 1.95rem;
+      padding: .18rem .65rem .12rem;
+      border: 1px solid rgba(255,255,255,.26);
+      border-radius: .32rem;
+      background: rgba(255,255,255,.045);
+      backdrop-filter: blur(.7rem);
+      color: #fff;
+      font-family: Orbitron, monospace;
+      font-size: clamp(.74rem, .92vw, .92rem);
+      line-height: 1;
+      text-transform: uppercase;
+      letter-spacing: .08em;
+      text-shadow: 0 .1rem .35rem rgba(0,0,0,.24);
+    }
+
+    .sk-case-caption {
+      position: absolute;
+      z-index: 5;
+      left: clamp(1.2rem, 2vw, 2.2rem);
+      bottom: clamp(1.2rem, 2vw, 2.1rem);
+      right: 5.4rem;
+    }
+
+    .sk-case-caption strong {
+      display: block;
+      font-family: Orbitron, monospace;
+      font-size: clamp(.86rem, 1vw, 1.05rem);
+      line-height: 1.15;
+      letter-spacing: .09em;
+      text-transform: uppercase;
+      margin-bottom: .35rem;
+    }
+
+    .sk-case-caption span {
+      display: block;
+      color: var(--sk-muted);
+      font-size: .86rem;
+      line-height: 1.45;
+    }
+
+    .sk-arrow-btn {
+      position: absolute;
+      z-index: 6;
+      right: clamp(1.2rem, 1.8vw, 1.8rem);
+      bottom: clamp(1.2rem, 1.8vw, 1.8rem);
+      width: 2.75rem;
+      height: 2.75rem;
+      border: 1px solid rgba(255,255,255,.26);
+      border-radius: .38rem;
+      display: grid;
+      place-items: center;
+      color: #fff;
+      background: rgba(255,255,255,.08);
+      backdrop-filter: blur(.8rem);
+      transition:
+        transform .55s var(--sk-ease),
+        background .35s ease,
+        border-color .35s ease;
+    }
+
+    .sk-arrow-btn svg {
+      width: 1rem;
+      height: 1rem;
+      transition: transform .55s var(--sk-ease);
+    }
+
+    .sk-case-card:hover {
+      border-color: rgba(255,255,255,.24);
+    }
+
+    .sk-case-card:hover .sk-arrow-btn {
+      transform: translate(.12rem, -.12rem);
+      background: rgba(255,255,255,.18);
+      border-color: rgba(255,255,255,.42);
+    }
+
+    .sk-case-card:hover .sk-arrow-btn svg {
+      transform: translate(.12rem, -.12rem);
+    }
+
+    .sk-view-all {
+      position: relative;
+      z-index: 4;
+      margin: clamp(3rem, 5vw, 5rem) auto 0;
+      width: fit-content;
+    }
+
+    .sk-view-all a {
+      display: inline-flex;
+      align-items: center;
+      gap: .7rem;
+      min-height: 3rem;
+      padding: .8rem 1rem;
+      border: 1px solid rgba(255,255,255,.18);
+      border-radius: .45rem;
+      color: #fff;
+      font-family: Orbitron, monospace;
+      font-size: .82rem;
+      text-transform: uppercase;
+      letter-spacing: .1em;
+      background: rgba(255,255,255,.04);
+      backdrop-filter: blur(.8rem);
+      transition: transform .4s var(--sk-ease), background .3s ease;
+    }
+
+    .sk-view-all a:hover {
+      transform: translateY(-.18rem);
+      background: rgba(255,255,255,.1);
+    }
+
+    .sk-magnetic-dot {
+      width: .52rem;
+      height: .52rem;
+      border-radius: 50%;
+      background: #fff;
+      box-shadow: 0 0 1rem rgba(255,255,255,.68);
+    }
+
+    @media (max-width: 1100px) {
+      .sk-light-bars {
+        width: 60vw;
+        opacity: .38;
+      }
+
+      .sk-case-grid {
+        min-height: auto;
+      }
+
+      .sk-case-card:nth-child(1),
+      .sk-case-card:nth-child(2),
+      .sk-case-card:nth-child(3),
+      .sk-case-card:nth-child(4) {
+        grid-column: span 6;
+        margin-top: 0;
+      }
+
+      .sk-case-card:nth-child(even) {
+        margin-top: 8rem;
+      }
+    }
+
+    @media (max-width: 760px) {
+      .sk-work-shell {
+        min-height: auto;
+        padding-inline: 1rem;
+      }
+
+      .sk-work-heading {
+        margin-bottom: 3rem;
+      }
+
+      .sk-light-bars {
+        position: relative;
+        top: auto;
+        right: auto;
+        width: 100%;
+        margin: -1rem 0 3rem auto;
+        opacity: .48;
+      }
+
+      .sk-light-row {
+        height: 1.6rem;
+        gap: .9rem;
+      }
+
+      .sk-case-grid {
+        display: flex;
+        gap: 1rem;
+        overflow-x: auto;
+        padding: 0 0 1rem;
+        scroll-snap-type: x mandatory;
+        scrollbar-width: none;
+      }
+
+      .sk-case-grid::-webkit-scrollbar {
+        display: none;
+      }
+
+      .sk-case-card:nth-child(1),
+      .sk-case-card:nth-child(2),
+      .sk-case-card:nth-child(3),
+      .sk-case-card:nth-child(4),
+      .sk-case-card {
+        flex: 0 0 min(88vw, 25rem);
+        height: 34rem;
+        margin-top: 0;
+        scroll-snap-align: start;
+      }
+
+      .sk-case-tag {
+        font-size: .72rem;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *,
+      *::before,
+      *::after {
+        animation-duration: .001ms !important;
+        animation-iteration-count: 1 !important;
+        scroll-behavior: auto !important;
+        transition-duration: .001ms !important;
+      }
+
+      .sk-case-card {
+        transform: none;
+        opacity: 1;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="sk-demo-spacer">Dummy top section</div>
+
+  <section class="sk-work-shell" id="shivdutt-recent-work">
+    <div class="sk-work-noise" aria-hidden="true"></div>
+
+    <div class="sk-work-container">
+      <div class="sk-work-kicker">Selected builds by Shivdutt Karwa</div>
+
+      <div class="sk-work-heading">
+        <h2>Recent<br>Work</h2>
+        <p>
+          A bold showcase section for websites, digital products, UI systems and animated brand experiences —
+          built with smooth interactions, strong visuals and clean front-end execution.
+        </p>
+      </div>
+
+      <div class="sk-light-bars" aria-hidden="true">
+        <div class="sk-light-row">
+          <span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span>
+          <div class="sk-light-block">
+            <i class="sk-light-line hot"></i>
+            <i class="sk-light-line warm"></i>
+            <i class="sk-light-line cool"></i>
+          </div>
+          <span></span><span></span>
+        </div>
+        <div class="sk-light-row">
+          <span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span>
+          <div class="sk-light-block">
+            <i class="sk-light-line hot"></i>
+            <i class="sk-light-line warm"></i>
+            <i class="sk-light-line cool"></i>
+          </div>
+          <div class="sk-light-block wide">
+            <i class="sk-light-line warm"></i>
+            <i class="sk-light-line cool"></i>
+            <i class="sk-light-line white"></i>
+            <i class="sk-light-line hot"></i>
+          </div>
+          <div class="sk-light-block">
+            <i class="sk-light-line white"></i>
+            <i class="sk-light-line cool"></i>
+            <i class="sk-light-line hot"></i>
+          </div>
+          <span></span>
+        </div>
+        <div class="sk-light-row">
+          <span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span>
+          <div class="sk-light-block">
+            <i class="sk-light-line hot"></i>
+            <i class="sk-light-line warm"></i>
+            <i class="sk-light-line cool"></i>
+          </div>
+          <span></span>
+          <div class="sk-light-block">
+            <i class="sk-light-line white"></i>
+            <i class="sk-light-line hot"></i>
+            <i class="sk-light-line cool"></i>
+          </div>
+          <span></span>
+        </div>
+      </div>
+
+      <div class="sk-case-grid">
+        <a class="sk-case-card" href="#" aria-label="View Real Gold Properties case">
+          <div class="sk-case-media-wrap">
+            <img
+              class="sk-case-img"
+              src="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1400&q=80"
+              alt="Premium real estate website preview"
+            />
+          </div>
+          <div class="sk-case-video">
+            <video autoplay muted loop playsinline poster="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1400&q=80">
+              <source src="https://videos.pexels.com/video-files/7578545/7578545-hd_1920_1080_30fps.mp4" type="video/mp4">
+            </video>
+          </div>
+          <div class="sk-case-shade"></div>
+          <div class="sk-case-tags">
+            <span class="sk-case-tag">Design</span>
+            <span class="sk-case-tag">Development</span>
+            <span class="sk-case-tag">Motion</span>
+          </div>
+          <div class="sk-case-caption">
+            <strong>Real Gold Properties</strong>
+            <span>Premium real estate interface with cinematic sections and GSAP-style motion.</span>
+          </div>
+          <span class="sk-arrow-btn" aria-hidden="true">
+            <svg viewBox="0 0 10 10" fill="none">
+              <path d="M1 9L9 1M9 1H1M9 1V9" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </span>
+        </a>
+
+        <a class="sk-case-card" href="#" aria-label="View Farmizo case">
+          <div class="sk-case-media-wrap">
+            <img
+              class="sk-case-img"
+              src="https://images.unsplash.com/photo-1500937386664-56d1dfef3854?auto=format&fit=crop&w=1400&q=80"
+              alt="Organic farm website preview"
+            />
+          </div>
+          <div class="sk-case-video">
+            <video autoplay muted loop playsinline poster="https://images.unsplash.com/photo-1500937386664-56d1dfef3854?auto=format&fit=crop&w=1400&q=80">
+              <source src="https://videos.pexels.com/video-files/2169880/2169880-hd_1920_1080_30fps.mp4" type="video/mp4">
+            </video>
+          </div>
+          <div class="sk-case-shade"></div>
+          <div class="sk-case-tags">
+            <span class="sk-case-tag">UI Design</span>
+            <span class="sk-case-tag">Frontend</span>
+          </div>
+          <div class="sk-case-caption">
+            <strong>Farmizo</strong>
+            <span>Organic food brand website with product storytelling and clean responsive pages.</span>
+          </div>
+          <span class="sk-arrow-btn" aria-hidden="true">
+            <svg viewBox="0 0 10 10" fill="none">
+              <path d="M1 9L9 1M9 1H1M9 1V9" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </span>
+        </a>
+
+        <a class="sk-case-card" href="#" aria-label="View Kanchan Makeover case">
+          <div class="sk-case-media-wrap">
+            <img
+              class="sk-case-img"
+              src="https://images.unsplash.com/photo-1487412912498-0447578fcca8?auto=format&fit=crop&w=1400&q=80"
+              alt="Beauty studio website preview"
+            />
+          </div>
+          <div class="sk-case-video">
+            <div class="sk-video-fallback" style="--fallback-img: url('https://images.unsplash.com/photo-1487412912498-0447578fcca8?auto=format&fit=crop&w=1400&q=80');"></div>
+          </div>
+          <div class="sk-case-shade"></div>
+          <div class="sk-case-tags">
+            <span class="sk-case-tag">Branding</span>
+            <span class="sk-case-tag">Website</span>
+            <span class="sk-case-tag">Gallery</span>
+          </div>
+          <div class="sk-case-caption">
+            <strong>Kanchan's Makeover</strong>
+            <span>Elegant beauty studio website with service pages, reviews and visual gallery flow.</span>
+          </div>
+          <span class="sk-arrow-btn" aria-hidden="true">
+            <svg viewBox="0 0 10 10" fill="none">
+              <path d="M1 9L9 1M9 1H1M9 1V9" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </span>
+        </a>
+
+        <a class="sk-case-card" href="#" aria-label="View St Edward's Wagtail case">
+          <div class="sk-case-media-wrap">
+            <img
+              class="sk-case-img"
+              src="https://images.unsplash.com/photo-1523050854058-8df90110c9f1?auto=format&fit=crop&w=1400&q=80"
+              alt="School website preview"
+            />
+          </div>
+          <div class="sk-case-video">
+            <div class="sk-video-fallback" style="--fallback-img: url('https://images.unsplash.com/photo-1523050854058-8df90110c9f1?auto=format&fit=crop&w=1400&q=80');"></div>
+          </div>
+          <div class="sk-case-shade"></div>
+          <div class="sk-case-tags">
+            <span class="sk-case-tag">Wagtail</span>
+            <span class="sk-case-tag">Django</span>
+            <span class="sk-case-tag">CMS</span>
+          </div>
+          <div class="sk-case-caption">
+            <strong>St Edward's School</strong>
+            <span>Modern CMS-driven school platform with structured pages, news and events.</span>
+          </div>
+          <span class="sk-arrow-btn" aria-hidden="true">
+            <svg viewBox="0 0 10 10" fill="none">
+              <path d="M1 9L9 1M9 1H1M9 1V9" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </span>
+        </a>
+      </div>
+
+      <div class="sk-view-all">
+        <a href="#">
+          <span class="sk-magnetic-dot"></span>
+          View full portfolio
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <div class="sk-demo-spacer">Dummy bottom section</div>
+
+  <script>
+    /*
+      Shivdutt Karwa recent work section
+      - Original class names prefixed with sk-
+      - Lightweight vanilla JS only
+      - Scroll reveal + subtle image parallax
+    */
+
+    const skCards = document.querySelectorAll(".sk-case-card");
+    const skImages = document.querySelectorAll(".sk-case-img");
+
+    const skRevealObserver = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add("is-visible");
+          skRevealObserver.unobserve(entry.target);
+        }
+      });
+    }, {
+      threshold: 0.18
+    });
+
+    skCards.forEach((card, index) => {
+      card.style.transitionDelay = `${index * 120}ms`;
+      skRevealObserver.observe(card);
+    });
+
+    function skParallaxImages() {
+      const viewportHeight = window.innerHeight;
+
+      skImages.forEach((img) => {
+        const card = img.closest(".sk-case-card");
+        const rect = card.getBoundingClientRect();
+        const progress = (rect.top + rect.height / 2 - viewportHeight / 2) / viewportHeight;
+        const move = progress * -46;
+
+        img.style.transform = `translate3d(0, calc(-5% + ${move}px), 0) scale(1.035)`;
+      });
+    }
+
+    let skTicking = false;
+
+    function skOnScroll() {
+      if (!skTicking) {
+        window.requestAnimationFrame(() => {
+          skParallaxImages();
+          skTicking = false;
+        });
+        skTicking = true;
+      }
+    }
+
+    window.addEventListener("scroll", skOnScroll, { passive: true });
+    window.addEventListener("resize", skParallaxImages);
+    skParallaxImages();
+
+    // Small cursor-like tilt for desktop hover
+    skCards.forEach((card) => {
+      card.addEventListener("mousemove", (event) => {
+        if (window.innerWidth < 900) return;
+
+        const rect = card.getBoundingClientRect();
+        const x = (event.clientX - rect.left) / rect.width - 0.5;
+        const y = (event.clientY - rect.top) / rect.height - 0.5;
+
+        card.style.transform = `translateY(0) rotateX(${y * -2.4}deg) rotateY(${x * 2.4}deg)`;
+      });
+
+      card.addEventListener("mouseleave", () => {
+        card.style.transform = "";
+      });
+    });
+  </script>
+</body>
+</html>
