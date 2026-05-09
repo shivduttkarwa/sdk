@@ -772,13 +772,15 @@ if (window.gsap && window.ScrollTrigger) {
   const featuredImg = featured.querySelector('img');
   const caption    = project.querySelector('.rw-caption');
   const cards      = gsap.utils.toArray(project.querySelectorAll('.rw-float-card'));
+  const extraCards = Math.max(cards.length - 3, 0);
+  const getPinDistance = () => window.innerHeight * (2.3 + extraCards * 0.72);
 
   const tl = gsap.timeline({
     defaults: { ease: 'none' },
     scrollTrigger: {
       trigger: project,
       start: 'top top',
-      end: '+=230%',
+      end: () => `+=${getPinDistance()}`,
       pin: stage,
       pinSpacing: true,
       scrub: 1.25,
