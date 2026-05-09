@@ -653,7 +653,7 @@ if (window.gsap && window.ScrollTrigger) {
   const items    = section.querySelectorAll('.si');
 
   const master = gsap.timeline({
-    scrollTrigger: { trigger: section, start: 'top 75%', toggleActions: 'play none none none' }
+    scrollTrigger: { trigger: section, start: 'top 90%', toggleActions: 'play none none none' }
   });
 
   master.to(ruleTop, { scaleX: 1, duration: 1, ease: 'power3.inOut' });
