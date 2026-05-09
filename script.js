@@ -393,6 +393,43 @@ if (window.gsap && window.ScrollTrigger) {
   })(0);
 })();
 
+// ── Stats section entrance animation ──
+(function initStats() {
+  if (!window.gsap || !window.ScrollTrigger) return;
+  const section = document.querySelector('.stats-section');
+  if (!section) return;
+
+  const ruleTop  = section.querySelector('.stats-rule--top');
+  const ruleBot  = section.querySelector('.stats-rule--bot');
+  const dividers = section.querySelectorAll('.stats-divider');
+  const items    = section.querySelectorAll('.si');
+
+  const master = gsap.timeline({
+    scrollTrigger: { trigger: section, start: 'top 75%', toggleActions: 'play none none none' }
+  });
+
+  master.to(ruleTop, { scaleX: 1, duration: 1, ease: 'power3.inOut' });
+  master.to(dividers, { scaleY: 1, duration: 1, ease: 'power3.inOut', stagger: 0.15 }, '-=0.7');
+
+  items.forEach((item, i) => {
+    const num    = item.querySelector('.si-num');
+    const sup    = item.querySelector('.si-sup');
+    const foot   = item.querySelector('.si-foot');
+    const target = parseInt(num.dataset.target || '0', 10);
+
+    master
+      .to([num, sup], { y: '0%', duration: 1, ease: 'power4.out', stagger: 0.06 }, '-=0.6')
+      .to(foot,       { opacity: 1, y: 0, duration: 0.7, ease: 'power3.out' }, '-=0.5')
+      .to({}, {
+        duration: 1, ease: 'power2.out',
+        onUpdate() { num.textContent = Math.round(this.progress() * target); },
+        onComplete() { num.textContent = target; },
+      }, '-=0.8');
+  });
+
+  master.to(ruleBot, { scaleX: 1, duration: 1, ease: 'power3.inOut' }, '-=0.4');
+})();
+
 // ── Section heading: char-by-char mask reveal ──
 (function initTiHeading() {
   if (!window.gsap || !window.ScrollTrigger) return;
