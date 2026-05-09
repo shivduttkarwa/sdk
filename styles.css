@@ -1091,6 +1091,7 @@ img {
   width: 100%;
   overflow: hidden;
   position: relative;
+  background: #E03F4F;
 }
 
 .stats-rule {
