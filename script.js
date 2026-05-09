@@ -789,11 +789,11 @@ if (window.gsap && window.ScrollTrigger) {
 
   tl.fromTo(featured,
     { yPercent: 0, scale: 1 },
-    { yPercent: -3, scale: 0.985, duration: 1 }, 0);
+    { yPercent: -4, scale: 0.72, duration: 1 }, 0);
 
   tl.fromTo(featuredImg,
-    { scale: 1.08, yPercent: 1.5 },
-    { scale: 1, yPercent: -2.2, duration: 1 }, 0);
+    { scale: 1.1, yPercent: 2 },
+    { scale: 0.96, yPercent: -3, duration: 1 }, 0);
 
   tl.fromTo(caption,
     { autoAlpha: 1, y: 0 },

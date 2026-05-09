@@ -1819,14 +1819,14 @@ img {
 
 .rw-featured-wrap {
   position: relative;
-  width: min(78vw, 1100px);
-  height: clamp(26rem, 60vh, 40rem);
-  margin-top: 1.5rem;
+  width: min(92vw, 1380px);
+  height: clamp(36rem, 78vh, 60rem);
   z-index: 3;
   overflow: hidden;
   background: var(--bg-3);
   will-change: transform;
   border: 1px solid var(--line);
+  border-radius: 22px;
 }
 
 .rw-featured-wrap img {
@@ -1839,7 +1839,7 @@ img {
 
 .rw-caption {
   position: absolute;
-  left: calc((100vw - min(78vw, 1100px)) / 2);
+  left: calc((100vw - min(92vw, 1380px)) / 2);
   bottom: 3rem;
   z-index: 15;
   font-size: clamp(1rem, 1.4vw, 1.5rem);
@@ -1857,62 +1857,155 @@ img {
   position: absolute;
   inset: 0;
   z-index: 10;
-  pointer-events: none;
 }
 
 .rw-float-card {
   position: absolute;
   overflow: hidden;
-  background: var(--bg-2);
+  background: #0c0c0f;
   will-change: transform;
-  box-shadow: 0 24px 80px rgba(0,0,0,0.55);
-  border: 1px solid var(--line);
+  box-shadow: 0 48px 120px rgba(0,0,0,0.72), 0 12px 36px rgba(0,0,0,0.5);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 20px;
+  display: flex;
+  flex-direction: column;
 }
 
 .rw-float-card:nth-child(1) {
-  left: 18vw;
-  top: 62vh;
-  width: 28vw;
-  height: 20vw;
+  left: 12vw;
+  top: 60vh;
+  width: 26vw;
+  height: 38vw;
   z-index: 11;
 }
 
 .rw-float-card:nth-child(2) {
-  right: 9vw;
-  top: 96vh;
-  width: 27vw;
-  height: 34vw;
+  right: 7vw;
+  top: 94vh;
+  width: 28vw;
+  height: 42vw;
   z-index: 12;
 }
 
 .rw-float-card:nth-child(3) {
-  left: 9vw;
-  top: 138vh;
+  left: 7vw;
+  top: 134vh;
   width: 26vw;
-  height: 34vw;
+  height: 38vw;
   z-index: 13;
 }
 
-.rw-float-card img {
+.rw-float-card:nth-child(4) {
+  right: 10vw;
+  top: 174vh;
+  width: 28vw;
+  height: 42vw;
+  z-index: 14;
+}
+
+.rw-float-card:nth-child(5) {
+  left: 9vw;
+  top: 214vh;
+  width: 26vw;
+  height: 38vw;
+  z-index: 15;
+}
+
+.rw-float-card:nth-child(6) {
+  right: 7vw;
+  top: 254vh;
+  width: 28vw;
+  height: 42vw;
+  z-index: 16;
+}
+
+/* ── Editorial card layout (content top / image bottom) ── */
+.rw-card-body {
+  flex-shrink: 0;
+  padding: clamp(1rem, 1.6vw, 1.8rem);
+  display: flex;
+  flex-direction: column;
+  border-bottom: 1px solid rgba(255,255,255,0.07);
+}
+
+.rw-card-idx {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: clamp(40px, 4vw, 72px);
+  font-weight: 300;
+  letter-spacing: -0.06em;
+  line-height: 1;
+  color: rgba(255,255,255,0.1);
+  margin-bottom: clamp(0.5rem, 0.8vw, 1rem);
+}
+
+.rw-card-tag {
+  display: inline-flex;
+  align-self: flex-start;
+  align-items: center;
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: clamp(9px, 0.7vw, 10px);
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--green);
+  background: rgba(199,255,61,0.08);
+  border: 1px solid rgba(199,255,61,0.2);
+  margin-bottom: 0.65rem;
+}
+
+.rw-card-title {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: clamp(16px, 1.55vw, 26px);
+  font-weight: 600;
+  line-height: 1.08;
+  letter-spacing: -0.04em;
+  color: var(--text);
+  margin-bottom: 0.55rem;
+}
+
+.rw-card-desc {
+  font-size: clamp(11px, 0.78vw, 12px);
+  color: var(--muted);
+  line-height: 1.65;
+  margin-bottom: 0.9rem;
+}
+
+.rw-card-cta {
+  display: inline-flex;
+  align-self: flex-start;
+  align-items: center;
+  gap: 4px;
+  font-size: clamp(11px, 0.82vw, 13px);
+  font-weight: 700;
+  color: var(--text);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  text-decoration-color: rgba(255,255,255,0.25);
+  transition: color 0.22s ease, text-decoration-color 0.22s ease;
+}
+
+.rw-card-cta:hover {
+  color: var(--green);
+  text-decoration-color: var(--green);
+}
+
+.rw-card-img {
+  flex: 1;
+  overflow: hidden;
+  min-height: 0;
+}
+
+.rw-card-img img {
   width: 100%;
   height: 100%;
   object-fit: cover;
   display: block;
+  transition: transform 0.6s var(--ease);
 }
 
-.rw-float-label {
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  padding: 0.6rem 1rem;
-  font-size: 0.78rem;
-  font-weight: 700;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  color: var(--text);
-  background: rgba(5,5,5,0.72);
-  backdrop-filter: blur(8px);
+.rw-float-card:hover .rw-card-img img {
+  transform: scale(1.04);
 }
 
 /* Footer */
