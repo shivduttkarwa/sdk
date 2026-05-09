@@ -509,11 +509,11 @@ if (window.gsap && window.ScrollTrigger) {
   resize();
   new ResizeObserver(resize).observe(row);
 
-  const SPLAT_RADIUS = 0.0008;
+  const SPLAT_RADIUS = 0.002;
   const SPLAT_FORCE  = 5000;
   const CURL_STR     = 28;
   const VEL_DISS     = 0.992;
-  const DYE_DISS     = 0.994;
+  const DYE_DISS     = 0.953;
   const PRESSURE_ITS = 25;
 
   let last = 0;
