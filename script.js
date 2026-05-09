@@ -490,17 +490,20 @@ if (window.gsap && window.ScrollTrigger) {
 
   const TXS = [1/SIM_W, 1/SIM_H];
 
-  let mx = 0.5, my = 0.5, pmx = 0.5, pmy = 0.5;
+  let mx = 0.5, my = 0.5;
+  let dmx = 0, dmy = 0;   // total delta accumulated across all events this frame
   let hasMouse = false;
 
   row.addEventListener('mousemove', e => {
     const r = row.getBoundingClientRect();
-    pmx = mx; pmy = my;
-    mx = (e.clientX - r.left) / r.width;
-    my = 1 - (e.clientY - r.top) / r.height;
+    const nx = (e.clientX - r.left) / r.width;
+    const ny = 1 - (e.clientY - r.top) / r.height;
+    dmx += nx - mx;
+    dmy += ny - my;
+    mx = nx; my = ny;
     hasMouse = true;
   });
-  row.addEventListener('mouseleave', () => { hasMouse = false; });
+  row.addEventListener('mouseleave', () => { hasMouse = false; dmx = 0; dmy = 0; });
 
   function resize() {
     canvas.width  = row.clientWidth;
@@ -522,30 +525,28 @@ if (window.gsap && window.ScrollTrigger) {
     const dt = Math.min((t - last) * 0.001, 0.016);
     last = t;
 
-    // 1. Splat cursor velocity + dye
-    if (hasMouse) {
-      const dx = mx - pmx, dy = my - pmy;
-      if (Math.abs(dx) + Math.abs(dy) > 0.0001) {
-        const ar = (canvas.width || 1) / (canvas.height || 1);
-        blit(vel1, splatProg, p => {
-          tex(0, vel0.tex); u1i(p,'u_src',0);
-          u2f(p,'u_point',mx,my);
-          u2f(p,'u_aspect',ar,1.);
-          u3f(p,'u_color',dx*SPLAT_FORCE,dy*SPLAT_FORCE,0.);
-          u1f(p,'u_radius',SPLAT_RADIUS);
-        });
-        [vel0,vel1]=[vel1,vel0];
+    // 1. Splat cursor velocity + dye — use frame-accumulated delta so fast swipes don't lose data
+    if (hasMouse && Math.abs(dmx) + Math.abs(dmy) > 0.0001) {
+      const ar = (canvas.width || 1) / (canvas.height || 1);
+      blit(vel1, splatProg, p => {
+        tex(0, vel0.tex); u1i(p,'u_src',0);
+        u2f(p,'u_point',mx,my);
+        u2f(p,'u_aspect',ar,1.);
+        u3f(p,'u_color',dmx*SPLAT_FORCE,dmy*SPLAT_FORCE,0.);
+        u1f(p,'u_radius',SPLAT_RADIUS);
+      });
+      [vel0,vel1]=[vel1,vel0];
 
-        blit(dye1, splatProg, p => {
-          tex(0, dye0.tex); u1i(p,'u_src',0);
-          u2f(p,'u_point',mx,my);
-          u2f(p,'u_aspect',ar,1.);
-          u3f(p,'u_color',1.,1.,1.);
-          u1f(p,'u_radius',SPLAT_RADIUS);
-        });
-        [dye0,dye1]=[dye1,dye0];
-      }
+      blit(dye1, splatProg, p => {
+        tex(0, dye0.tex); u1i(p,'u_src',0);
+        u2f(p,'u_point',mx,my);
+        u2f(p,'u_aspect',ar,1.);
+        u3f(p,'u_color',1.,1.,1.);
+        u1f(p,'u_radius',SPLAT_RADIUS);
+      });
+      [dye0,dye1]=[dye1,dye0];
     }
+    dmx = 0; dmy = 0; // reset after each frame
 
     // 2. Curl
     blit(curlFBO, curlProg, p => {
@@ -600,12 +601,13 @@ if (window.gsap && window.ScrollTrigger) {
     });
     [vel0,vel1]=[vel1,vel0];
 
-    // 8. Advect dye
+    // 8. Advect dye — collapse fast when cursor stops/leaves
+    const dyeDiss = hasMouse ? DYE_DISS : 0.55;
     blit(dye1, advectProg, p => {
       tex(0,vel0.tex); u1i(p,'u_velocity',0);
       tex(1,dye0.tex); u1i(p,'u_quantity',1);
       u2f(p,'u_texelSize',TXS[0],TXS[1]);
-      u1f(p,'u_dt',dt); u1f(p,'u_dissipation',DYE_DISS);
+      u1f(p,'u_dt',dt); u1f(p,'u_dissipation',dyeDiss);
     });
     [dye0,dye1]=[dye1,dye0];
 
@@ -621,7 +623,6 @@ if (window.gsap && window.ScrollTrigger) {
       tex(7,bgTex[2]); u1i(p,'u_bg2',7);
     });
 
-    pmx = mx; pmy = my;
   })(0);
 })();
 
