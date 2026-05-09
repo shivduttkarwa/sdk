@@ -770,7 +770,6 @@ if (window.gsap && window.ScrollTrigger) {
   const stage      = project.querySelector('.rw-stage');
   const featured   = project.querySelector('.rw-featured-wrap');
   const featuredImg = featured.querySelector('img');
-  const brand      = project.querySelector('.rw-brand-mark');
   const caption    = project.querySelector('.rw-caption');
   const cards      = gsap.utils.toArray(project.querySelectorAll('.rw-float-card'));
 
@@ -795,10 +794,6 @@ if (window.gsap && window.ScrollTrigger) {
   tl.fromTo(featuredImg,
     { scale: 1.08, yPercent: 1.5 },
     { scale: 1, yPercent: -2.2, duration: 1 }, 0);
-
-  tl.fromTo(brand,
-    { yPercent: 14, opacity: 1 },
-    { yPercent: -26, opacity: 0.92, duration: 1 }, 0);
 
   tl.fromTo(caption,
     { autoAlpha: 1, y: 0 },

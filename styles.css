@@ -1816,27 +1816,6 @@ img {
   isolation: isolate;
 }
 
-.rw-brand-mark {
-  position: absolute;
-  left: 50%;
-  top: 6rem;
-  transform: translateX(-50%);
-  z-index: 1;
-  pointer-events: none;
-  text-align: center;
-}
-
-.rw-word-logo {
-  font-family: "Space Grotesk", sans-serif;
-  font-size: clamp(3.2rem, 9vw, 10rem);
-  font-weight: 800;
-  line-height: 0.88;
-  letter-spacing: -0.08em;
-  text-transform: uppercase;
-  color: var(--text);
-  text-align: center;
-  white-space: nowrap;
-}
 
 .rw-featured-wrap {
   position: relative;
