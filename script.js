@@ -258,6 +258,239 @@ if (window.gsap && window.ScrollTrigger) {
   });
 }
 
+// ── Stats row: single water-trail cursor reveal (3 bg images) ──
+(function initStatsWater() {
+  const row = document.querySelector('.stats-row');
+  if (!row) return;
+
+  const IMAGES = [
+    'https://images.unsplash.com/photo-1487014679447-9f8336841d58?auto=format&fit=crop&w=900&q=80',
+    'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?auto=format&fit=crop&w=900&q=80',
+    'https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&w=900&q=80',
+  ];
+
+  // Wide sim to match the 3-column row (~3:1)
+  const SIM_W = 384, SIM_H = 128;
+
+  const VS = `attribute vec2 a_pos; varying vec2 v_uv;
+    void main(){ v_uv=a_pos*.5+.5; gl_Position=vec4(a_pos,0.,1.); }`;
+
+  // 9-tap Gaussian blur + fade + AR-corrected circular splat
+  const TRAIL_FS = `
+    precision highp float;
+    uniform sampler2D u_trail;
+    uniform vec2  u_res, u_mouse, u_pmouse;
+    uniform float u_active, u_ar;
+    varying vec2  v_uv;
+    void main(){
+      vec2  px = 1./u_res;
+      float c  = texture2D(u_trail,v_uv              ).r*.36;
+      float l  = texture2D(u_trail,v_uv-vec2(px.x,0.)).r*.12;
+      float r  = texture2D(u_trail,v_uv+vec2(px.x,0.)).r*.12;
+      float u  = texture2D(u_trail,v_uv+vec2(0.,px.y)).r*.12;
+      float d  = texture2D(u_trail,v_uv-vec2(0.,px.y)).r*.12;
+      float ul = texture2D(u_trail,v_uv+vec2(-px.x, px.y)).r*.04;
+      float ur = texture2D(u_trail,v_uv+vec2( px.x, px.y)).r*.04;
+      float dl = texture2D(u_trail,v_uv+vec2(-px.x,-px.y)).r*.04;
+      float dr = texture2D(u_trail,v_uv+vec2( px.x,-px.y)).r*.04;
+      float trail = (c+l+r+u+d+ul+ur+dl+dr) * .956;
+      vec2  dv  = (v_uv - u_mouse) * vec2(u_ar, 1.);
+      float spd = length((u_mouse - u_pmouse) * vec2(u_ar, 1.)) * 10.;
+      trail = clamp(trail + exp(-dot(dv,dv)*95.) * clamp(spd,.04,1.8) * u_active, 0., 1.);
+      gl_FragColor = vec4(trail, 0., 0., 1.);
+    }`;
+
+  // Render: 3 bg textures selected per horizontal third, refraction, no edge border
+  const RENDER_FS = `
+    precision highp float;
+    uniform sampler2D u_trail, u_bg0, u_bg1, u_bg2;
+    uniform vec2 u_simRes;
+    varying vec2 v_uv;
+    void main(){
+      vec2  spx  = 1./u_simRes;
+      float tR   = texture2D(u_trail,v_uv+vec2(spx.x,0.)).r;
+      float tL   = texture2D(u_trail,v_uv-vec2(spx.x,0.)).r;
+      float tU   = texture2D(u_trail,v_uv+vec2(0.,spx.y)).r;
+      float tD   = texture2D(u_trail,v_uv-vec2(0.,spx.y)).r;
+      vec2  grad = vec2(tR-tL, tU-tD);
+      float mag  = length(grad);
+      float trail = texture2D(u_trail,v_uv).r;
+      vec2  dUV  = v_uv + grad*0.030;
+      float ca   = mag*0.006;
+      float seg  = 1./3.;
+      vec2 uv0 = vec2( dUV.x           / seg, dUV.y);
+      vec2 uv1 = vec2((dUV.x -   seg)  / seg, dUV.y);
+      vec2 uv2 = vec2((dUV.x - 2.*seg) / seg, dUV.y);
+      vec3 c0 = vec3(texture2D(u_bg0,uv0+vec2(ca,0.)).r, texture2D(u_bg0,uv0).g, texture2D(u_bg0,uv0-vec2(ca,0.)).b) * .86;
+      vec3 c1 = vec3(texture2D(u_bg1,uv1+vec2(ca,0.)).r, texture2D(u_bg1,uv1).g, texture2D(u_bg1,uv1-vec2(ca,0.)).b) * .86;
+      vec3 c2 = vec3(texture2D(u_bg2,uv2+vec2(ca,0.)).r, texture2D(u_bg2,uv2).g, texture2D(u_bg2,uv2-vec2(ca,0.)).b) * .86;
+      float s1 = step(seg,      v_uv.x);
+      float s2 = step(2.*seg,   v_uv.x);
+      vec3  col = mix(mix(c0, c1, s1), c2, s2);
+      col += vec3(.78,1.,.24) * mag*mag*5.;
+      gl_FragColor = vec4(clamp(col,0.,1.), smoothstep(.012,.14,trail));
+    }`;
+
+  function mkShader(gl, type, src) {
+    const s = gl.createShader(type);
+    gl.shaderSource(s, src); gl.compileShader(s);
+    if (!gl.getShaderParameter(s, gl.COMPILE_STATUS)) console.error('[stats-water]', gl.getShaderInfoLog(s));
+    return s;
+  }
+  function mkProg(gl, fs) {
+    const p = gl.createProgram();
+    gl.attachShader(p, mkShader(gl, gl.VERTEX_SHADER, VS));
+    gl.attachShader(p, mkShader(gl, gl.FRAGMENT_SHADER, fs));
+    gl.linkProgram(p); return p;
+  }
+  function mkFBO(gl, w, h) {
+    const tex = gl.createTexture();
+    gl.bindTexture(gl.TEXTURE_2D, tex);
+    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, w, h, 0, gl.RGBA, gl.UNSIGNED_BYTE, null);
+    [gl.TEXTURE_MIN_FILTER, gl.TEXTURE_MAG_FILTER].forEach(k => gl.texParameteri(gl.TEXTURE_2D, k, gl.LINEAR));
+    [gl.TEXTURE_WRAP_S, gl.TEXTURE_WRAP_T].forEach(k => gl.texParameteri(gl.TEXTURE_2D, k, gl.CLAMP_TO_EDGE));
+    const fbo = gl.createFramebuffer();
+    gl.bindFramebuffer(gl.FRAMEBUFFER, fbo);
+    gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, tex, 0);
+    gl.bindFramebuffer(gl.FRAMEBUFFER, null);
+    return { tex, fbo };
+  }
+  function mkTex(gl, unit) {
+    gl.activeTexture(gl.TEXTURE0 + unit);
+    const t = gl.createTexture();
+    gl.bindTexture(gl.TEXTURE_2D, t);
+    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, 1, 1, 0, gl.RGBA, gl.UNSIGNED_BYTE, new Uint8Array([5,5,10,255]));
+    [gl.TEXTURE_MIN_FILTER, gl.TEXTURE_MAG_FILTER].forEach(k => gl.texParameteri(gl.TEXTURE_2D, k, gl.LINEAR));
+    [gl.TEXTURE_WRAP_S, gl.TEXTURE_WRAP_T].forEach(k => gl.texParameteri(gl.TEXTURE_2D, k, gl.CLAMP_TO_EDGE));
+    return t;
+  }
+
+  // Single canvas covering the full row
+  const canvas = document.createElement('canvas');
+  canvas.className = 'stats-blob-canvas';
+  row.prepend(canvas);
+
+  const gl = canvas.getContext('webgl', { alpha: true, premultipliedAlpha: false, antialias: false });
+  if (!gl) { canvas.remove(); return; }
+
+  const trailProg  = mkProg(gl, TRAIL_FS);
+  const renderProg = mkProg(gl, RENDER_FS);
+
+  const tL = {
+    pos:    gl.getAttribLocation(trailProg,  'a_pos'),
+    trail:  gl.getUniformLocation(trailProg, 'u_trail'),
+    res:    gl.getUniformLocation(trailProg, 'u_res'),
+    mouse:  gl.getUniformLocation(trailProg, 'u_mouse'),
+    pmouse: gl.getUniformLocation(trailProg, 'u_pmouse'),
+    active: gl.getUniformLocation(trailProg, 'u_active'),
+    ar:     gl.getUniformLocation(trailProg, 'u_ar'),
+  };
+  const rL = {
+    pos:    gl.getAttribLocation(renderProg,  'a_pos'),
+    trail:  gl.getUniformLocation(renderProg, 'u_trail'),
+    bg0:    gl.getUniformLocation(renderProg, 'u_bg0'),
+    bg1:    gl.getUniformLocation(renderProg, 'u_bg1'),
+    bg2:    gl.getUniformLocation(renderProg, 'u_bg2'),
+    simRes: gl.getUniformLocation(renderProg, 'u_simRes'),
+  };
+
+  // Static uniforms
+  gl.useProgram(trailProg);
+  gl.uniform1i(tL.trail, 0);
+  gl.uniform2f(tL.res, SIM_W, SIM_H);
+  gl.useProgram(renderProg);
+  gl.uniform1i(rL.trail, 0);
+  gl.uniform1i(rL.bg0, 1);
+  gl.uniform1i(rL.bg1, 2);
+  gl.uniform1i(rL.bg2, 3);
+  gl.uniform2f(rL.simRes, SIM_W, SIM_H);
+
+  const quad = gl.createBuffer();
+  gl.bindBuffer(gl.ARRAY_BUFFER, quad);
+  gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1,-1,1,-1,-1,1,1,-1,1,1,-1,1]), gl.STATIC_DRAW);
+
+  let fboR = mkFBO(gl, SIM_W, SIM_H);
+  let fboW = mkFBO(gl, SIM_W, SIM_H);
+  [fboR, fboW].forEach(f => {
+    gl.bindFramebuffer(gl.FRAMEBUFFER, f.fbo);
+    gl.viewport(0, 0, SIM_W, SIM_H);
+    gl.clearColor(0,0,0,1); gl.clear(gl.COLOR_BUFFER_BIT);
+  });
+  gl.bindFramebuffer(gl.FRAMEBUFFER, null);
+  gl.clearColor(0,0,0,0);
+
+  // Load 3 bg textures onto units 1, 2, 3
+  const bgTextures = [mkTex(gl,1), mkTex(gl,2), mkTex(gl,3)];
+  IMAGES.forEach((url, i) => {
+    fetch(url, { mode: 'cors' })
+      .then(r => r.blob())
+      .then(b => createImageBitmap(b, { imageOrientation: 'flipY', premultiplyAlpha: 'none' }))
+      .then(bmp => {
+        gl.activeTexture(gl.TEXTURE1 + i);
+        gl.bindTexture(gl.TEXTURE_2D, bgTextures[i]);
+        gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, bmp);
+        bmp.close();
+      }).catch(() => {});
+  });
+
+  gl.enable(gl.BLEND);
+  gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
+
+  let mx = 0.5, my = 0.5, smx = 0.5, smy = 0.5, pmx = 0.5, pmy = 0.5, active = 0;
+
+  row.addEventListener('mousemove', e => {
+    const r = row.getBoundingClientRect();
+    mx = (e.clientX - r.left)  / r.width;
+    my = 1.0 - (e.clientY - r.top) / r.height;
+  });
+  row.addEventListener('mouseenter', () => { active = 1; });
+  row.addEventListener('mouseleave', () => { active = 0; });
+
+  function resize() {
+    canvas.width  = row.clientWidth;
+    canvas.height = row.clientHeight;
+    gl.useProgram(trailProg);
+    gl.uniform1f(tL.ar, (canvas.width || 1) / (canvas.height || 1));
+  }
+  resize();
+  new ResizeObserver(resize).observe(row);
+
+  (function render() {
+    requestAnimationFrame(render);
+    pmx = smx; pmy = smy;
+    smx += (mx - smx) * 0.16;
+    smy += (my - smy) * 0.16;
+
+    // ── Trail ping-pong ───────────────────────────────────────────────────
+    gl.bindFramebuffer(gl.FRAMEBUFFER, fboW.fbo);
+    gl.viewport(0, 0, SIM_W, SIM_H);
+    gl.useProgram(trailProg);
+    gl.bindBuffer(gl.ARRAY_BUFFER, quad);
+    gl.enableVertexAttribArray(tL.pos);
+    gl.vertexAttribPointer(tL.pos, 2, gl.FLOAT, false, 0, 0);
+    gl.activeTexture(gl.TEXTURE0); gl.bindTexture(gl.TEXTURE_2D, fboR.tex);
+    gl.uniform2f(tL.mouse,  smx, smy);
+    gl.uniform2f(tL.pmouse, pmx, pmy);
+    gl.uniform1f(tL.active, active);
+    gl.drawArrays(gl.TRIANGLES, 0, 6);
+    [fboR, fboW] = [fboW, fboR];
+
+    // ── Render to canvas ──────────────────────────────────────────────────
+    gl.bindFramebuffer(gl.FRAMEBUFFER, null);
+    gl.viewport(0, 0, canvas.width || 1, canvas.height || 1);
+    gl.useProgram(renderProg);
+    gl.bindBuffer(gl.ARRAY_BUFFER, quad);
+    gl.enableVertexAttribArray(rL.pos);
+    gl.vertexAttribPointer(rL.pos, 2, gl.FLOAT, false, 0, 0);
+    gl.activeTexture(gl.TEXTURE0); gl.bindTexture(gl.TEXTURE_2D, fboR.tex);
+    gl.activeTexture(gl.TEXTURE1); gl.bindTexture(gl.TEXTURE_2D, bgTextures[0]);
+    gl.activeTexture(gl.TEXTURE2); gl.bindTexture(gl.TEXTURE_2D, bgTextures[1]);
+    gl.activeTexture(gl.TEXTURE3); gl.bindTexture(gl.TEXTURE_2D, bgTextures[2]);
+    gl.clear(gl.COLOR_BUFFER_BIT);
+    gl.drawArrays(gl.TRIANGLES, 0, 6);
+  })();
+})();
+
 // ── Nav reveal: WebGL blob cursor ──
 (function initNavReveal() {
   const canvas = document.getElementById('navRevealCanvas');

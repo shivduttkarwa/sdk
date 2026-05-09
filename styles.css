@@ -1127,6 +1127,7 @@ img {
   padding: clamp(48px, 7vw, 120px) clamp(32px, 4vw, 72px);
   position: relative;
   overflow: hidden;
+  z-index: 2;
 }
 
 .si--mid { justify-content: center; }
@@ -1196,7 +1197,7 @@ img {
   width: 100%;
   height: 100%;
   pointer-events: none;
-  z-index: 20;
+  z-index: 1;
 }
 
 /* Services */
