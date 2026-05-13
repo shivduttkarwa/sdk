@@ -691,59 +691,27 @@ if (window.gsap && window.ScrollTrigger) {
   })(0);
 })();
 
-// ── Recent Work: pinned scroll-reveal ──
-(function initRecentWork() {
+// ── Bento cards: staggered scroll-reveal ──
+(function initBentoCards() {
   if (!window.gsap || !window.ScrollTrigger) return;
-  const project = document.querySelector('.rw-project');
-  if (!project) return;
+  const cards = document.querySelectorAll('.bento-card');
+  if (!cards.length) return;
 
-  const stage      = project.querySelector('.rw-stage');
-  const featured   = project.querySelector('.rw-featured-wrap');
-  const featuredImg = featured.querySelector('img');
-  const caption    = project.querySelector('.rw-caption');
-  const cards      = gsap.utils.toArray(project.querySelectorAll('.rw-float-card'));
-  const extraCards = Math.max(cards.length - 3, 0);
-  const getPinDistance = () => window.innerHeight * (2.3 + extraCards * 0.72);
-
-  const tl = gsap.timeline({
-    defaults: { ease: 'none' },
-    scrollTrigger: {
-      trigger: project,
-      start: 'top top',
-      end: () => `+=${getPinDistance()}`,
-      pin: stage,
-      pinSpacing: true,
-      scrub: 1.25,
-      anticipatePin: 1,
-      invalidateOnRefresh: true
+  gsap.fromTo(cards,
+    { y: 48, opacity: 0 },
+    {
+      y: 0,
+      opacity: 1,
+      duration: 0.9,
+      ease: 'power3.out',
+      stagger: { each: 0.08, from: 'start' },
+      scrollTrigger: {
+        trigger: '.bento-grid',
+        start: 'top 82%',
+        once: true
+      }
     }
-  });
-
-  tl.fromTo(featured,
-    { yPercent: 0, scale: 1 },
-    { yPercent: -4, scale: 0.72, duration: 1 }, 0);
-
-  tl.fromTo(featuredImg,
-    { scale: 1.1, yPercent: 2 },
-    { scale: 0.96, yPercent: -3, duration: 1 }, 0);
-
-  tl.fromTo(caption,
-    { autoAlpha: 1, y: 0 },
-    { autoAlpha: 0, y: -36, duration: 0.28 }, 0.2);
-
-  cards.forEach((card, i) => {
-    const t = 0.04 + i * 0.095;
-    tl.fromTo(card,
-      { y: () => window.innerHeight * (0.85 + i * 0.22), rotate: i % 2 === 0 ? -0.4 : 0.4, scale: 1.01 },
-      { y: () => -window.innerHeight * (2.45 + i * 0.18), rotate: i % 2 === 0 ? 0.3 : -0.3, scale: 1, duration: 1.08 },
-      t);
-    tl.fromTo(card.querySelector('img'),
-      { yPercent: -8, scale: 1.12 },
-      { yPercent: 8,  scale: 1.04, duration: 1.08 },
-      t);
-  });
-
-  tl.to({}, { duration: 0.18 });
+  );
 })();
 
 // ── Stats section entrance animation ──
