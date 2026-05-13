@@ -726,30 +726,32 @@ if (window.gsap && window.ScrollTrigger) {
   const items    = section.querySelectorAll('.si');
 
   const master = gsap.timeline({
-    scrollTrigger: { trigger: section, start: 'top 85%', toggleActions: 'play none none none' }
+    scrollTrigger: { trigger: section, start: 'top 70%', toggleActions: 'play none none none' }
   });
 
   master.to(ruleTop, { scaleX: 1, duration: 0.8, ease: 'power3.inOut' });
-  master.to(dividers, { scaleY: 1, duration: 0.6, ease: 'power3.inOut', stagger: 0.1 }, '-=0.4');
+  master.to(dividers, { scaleY: 1, duration: 0.6, ease: 'power3.inOut', stagger: 0.18 }, '-=0.3');
 
   const allNums  = [...items].map(el => el.querySelector('.si-num'));
   const allSups  = [...items].map(el => el.querySelector('.si-sup'));
   const allFeet  = [...items].map(el => el.querySelector('.si-foot'));
 
-  master.to([...allNums, ...allSups], { y: '0%', duration: 0.9, ease: 'power4.out', stagger: 0.08 }, '-=0.3');
-  master.to(allFeet, { opacity: 1, y: 0, duration: 0.6, ease: 'power3.out', stagger: 0.08 }, '-=0.7');
-
-  items.forEach((item) => {
+  items.forEach((item, i) => {
     const num    = item.querySelector('.si-num');
+    const sup    = item.querySelector('.si-sup');
+    const foot   = item.querySelector('.si-foot');
     const target = parseInt(num.dataset.target || '0', 10);
+
+    master.to([num, sup], { y: '0%', duration: 0.9, ease: 'power4.out' }, i === 0 ? '-=0.2' : '<0.18');
     master.to({}, {
       duration: 1, ease: 'power2.out',
       onUpdate() { num.textContent = Math.round(this.progress() * target); },
       onComplete() { num.textContent = target; },
-    }, '-=0.9');
+    }, '<');
+    master.to(foot, { opacity: 1, y: 0, duration: 0.6, ease: 'power3.out' }, '<0.1');
   });
 
-  master.to(ruleBot, { scaleX: 1, duration: 0.8, ease: 'power3.inOut' }, '-=0.3');
+  master.to(ruleBot, { scaleX: 1, duration: 0.8, ease: 'power3.inOut' }, '-=0.2');
 })();
 
 // ── Section heading: char-by-char mask reveal ──
