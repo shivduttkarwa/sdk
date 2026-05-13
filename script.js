@@ -691,190 +691,6 @@ if (window.gsap && window.ScrollTrigger) {
   })(0);
 })();
 
-// ── Stacked project showcase (premium) ──
-(function initStackedWork() {
-  const workSection  = document.getElementById('work');
-  const hud          = document.getElementById('projHud');
-  const hudDots      = document.querySelectorAll('.proj-hud-dot');
-  const projSections = Array.from(document.querySelectorAll('.project-section'));
-  const projStack    = document.querySelector('.proj-stack');
-  const modal        = document.getElementById('projModal');
-  const modalBg      = document.getElementById('projModalBg');
-  const modalClose   = document.getElementById('projModalClose');
-
-  if (!workSection || !projStack || !projSections.length) return;
-  if (!window.gsap || !window.ScrollTrigger) return;
-
-  // Inner wrappers receive all animation — never animate the sticky element itself
-  const inners = projSections.map(s => s.querySelector('.proj-inner'));
-
-  // ── Programmatic scroll helper ──────────────────────────────────
-  function scrollToSlide(idx) {
-    const stackTop = projStack.getBoundingClientRect().top + window.scrollY;
-    window.scrollTo({ top: stackTop + idx * window.innerHeight, behavior: 'smooth' });
-  }
-
-  // ── HUD visibility ──────────────────────────────────────────────
-  ScrollTrigger.create({
-    trigger: workSection,
-    start: 'top 80%',
-    end: 'bottom 20%',
-    onEnter:     () => hud && hud.classList.add('is-visible'),
-    onLeave:     () => hud && hud.classList.remove('is-visible'),
-    onEnterBack: () => hud && hud.classList.add('is-visible'),
-    onLeaveBack: () => hud && hud.classList.remove('is-visible'),
-  });
-
-  // ── Active dot tracking ─────────────────────────────────────────
-  function setActiveDot(idx) {
-    hudDots.forEach((dot, i) => dot.classList.toggle('is-active', i === idx));
-  }
-  setActiveDot(0);
-
-  projSections.forEach((_, i) => {
-    ScrollTrigger.create({
-      trigger: projStack,
-      start: () => `top+=${i * window.innerHeight}px top`,
-      end:   () => `top+=${(i + 1) * window.innerHeight}px top`,
-      onEnter:     () => setActiveDot(i),
-      onEnterBack: () => setActiveDot(i),
-    });
-  });
-
-  // ── Set initial hidden state for slides 1–3 ────────────────────
-  inners.forEach((inner, i) => {
-    if (i > 0 && inner) gsap.set(inner, { yPercent: 100 });
-  });
-
-  // ── Slide-up reveal + outgoing scale per transition ────────────
-  // Each transition occupies the scroll zone from (i-0.6)*vh to i*vh
-  // scrub: 1.2 → 1.2 second easing lag after scroll stops (gives organic physics feel)
-  projSections.forEach((_, i) => {
-    if (i === 0) return;
-    const inner     = inners[i];
-    const prevInner = inners[i - 1];
-    if (!inner || !prevInner) return;
-
-    const startFn = () => `top+=${(i - 0.6) * window.innerHeight}px top`;
-    const endFn   = () => `top+=${i * window.innerHeight}px top`;
-    const st      = { trigger: projStack, start: startFn, end: endFn, scrub: 1.2 };
-
-    // Incoming: slide up from below viewport
-    gsap.fromTo(inner,
-      { yPercent: 100 },
-      { yPercent: 0, ease: 'none', scrollTrigger: st }
-    );
-
-    // Outgoing: previous inner scales back into darkness
-    gsap.fromTo(prevInner,
-      { scale: 1, borderRadius: '0px', filter: 'brightness(1)' },
-      { scale: 0.88, borderRadius: '18px', filter: 'brightness(0.4)', ease: 'none', scrollTrigger: st }
-    );
-  });
-
-  // ── Content fade-in per slide (fires once on activation) ───────
-  projSections.forEach((section, i) => {
-    const inner   = inners[i];
-    if (!inner) return;
-    const topRow  = inner.querySelector('.proj-top-row');
-    const tags    = inner.querySelectorAll('.proj-tag');
-    const title   = inner.querySelector('.proj-title');
-    const sub     = inner.querySelector('.proj-subtitle');
-    const desc    = inner.querySelector('.proj-desc');
-    const metrics = inner.querySelectorAll('.proj-metric');
-    const stCard  = inner.querySelector('.proj-stack-card');
-    const actions = inner.querySelector('.proj-actions');
-    const botRow  = inner.querySelector('.proj-bottom-row');
-
-    const els = [topRow, ...tags, title, sub, desc, ...metrics, stCard, actions, botRow].filter(Boolean);
-    gsap.set(els, { opacity: 0, y: 20 });
-
-    gsap.timeline({
-      scrollTrigger: i === 0
-        ? { trigger: workSection, start: 'top 62%', once: true }
-        : { trigger: projStack, start: () => `top+=${i * window.innerHeight + window.innerHeight * 0.05}px top`, once: true },
-    })
-    .to(topRow,   { opacity: 1, y: 0, duration: 0.5,  ease: 'power3.out' }, 0)
-    .to(tags,     { opacity: 1, y: 0, duration: 0.45, stagger: 0.06, ease: 'power3.out' }, 0.08)
-    .to(title,    { opacity: 1, y: 0, duration: 0.7,  ease: 'power3.out' }, 0.14)
-    .to(sub,      { opacity: 1, y: 0, duration: 0.6,  ease: 'power3.out' }, 0.26)
-    .to(desc,     { opacity: 1, y: 0, duration: 0.6,  ease: 'power3.out' }, 0.34)
-    .to(metrics,  { opacity: 1, y: 0, duration: 0.5,  stagger: 0.09, ease: 'power3.out' }, 0.38)
-    .to(stCard,   { opacity: 1, y: 0, duration: 0.45, ease: 'power3.out' }, 0.52)
-    .to(actions,  { opacity: 1, y: 0, duration: 0.5,  ease: 'power3.out' }, 0.58)
-    .to(botRow,   { opacity: 1, y: 0, duration: 0.45, ease: 'power3.out' }, 0.64);
-  });
-
-  // ── Parallax on bg images ───────────────────────────────────────
-  projSections.forEach(section => {
-    const img = section.querySelector('.proj-bg-img');
-    if (!img) return;
-    gsap.fromTo(img,
-      { yPercent: -6 },
-      { yPercent: 6, ease: 'none',
-        scrollTrigger: { trigger: projStack, start: 'top bottom', end: 'bottom top', scrub: true } }
-    );
-  });
-
-  // ── Navigation ─────────────────────────────────────────────────
-  hudDots.forEach(dot => {
-    dot.addEventListener('click', () => scrollToSlide(parseInt(dot.dataset.projIdx, 10)));
-  });
-
-  workSection.addEventListener('click', e => {
-    const nextBtn = e.target.closest('.proj-next-btn[data-next-idx]');
-    if (nextBtn) { scrollToSlide(parseInt(nextBtn.dataset.nextIdx, 10)); return; }
-
-    if (e.target.closest('.proj-back-top')) {
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-      return;
-    }
-
-    const openBtn = e.target.closest('.proj-btn-primary[data-open-proj]');
-    if (openBtn) openModal(parseInt(openBtn.dataset.openProj, 10));
-  });
-
-  // ── Modal ───────────────────────────────────────────────────────
-  if (!modal) return;
-
-  function openModal(idx) {
-    const article = document.getElementById(`proj-${idx}`);
-    if (!article) return;
-
-    const set = (id, val) => { const el = document.getElementById(id); if (el) el.textContent = val; };
-    set('pmNum',       `0${idx + 1}`);
-    set('pmTitle',     article.dataset.client    || '');
-    set('pmMeta',      `${article.dataset.category || ''} · ${article.dataset.year || ''}`);
-    set('pmOverview',  article.dataset.overview  || '');
-    set('pmChallenge', article.dataset.challenge || '');
-    set('pmSolution',  article.dataset.solution  || '');
-
-    const setList = (id, raw) => {
-      const el = document.getElementById(id);
-      if (!el) return;
-      el.innerHTML = (raw || '').split(',').map(s => s.trim()).filter(Boolean)
-        .map(s => `<span>${s}</span>`).join('');
-    };
-    setList('pmDeliverables', article.dataset.deliverables);
-    setList('pmTech',         article.dataset.tech);
-
-    modal.classList.add('is-open');
-    modal.removeAttribute('aria-hidden');
-    document.body.style.overflow = 'hidden';
-  }
-
-  function closeModal() {
-    modal.classList.remove('is-open');
-    modal.setAttribute('aria-hidden', 'true');
-    document.body.style.overflow = '';
-  }
-
-  if (modalClose) modalClose.addEventListener('click', closeModal);
-  if (modalBg)    modalBg.addEventListener('click', closeModal);
-  document.addEventListener('keydown', e => {
-    if (e.key === 'Escape' && modal.classList.contains('is-open')) closeModal();
-  });
-})();
 
 // ── Stats section entrance animation ──
 (function initStats() {
@@ -1225,4 +1041,61 @@ if (window.gsap && window.ScrollTrigger) {
       }
     }
   }, { passive: true });
+})();
+
+// ── Featured Work section ──
+(function initFeaturedWork() {
+  const section = document.querySelector('.jg-featured');
+  if (!section || !window.gsap || !window.ScrollTrigger) return;
+
+  const title = section.querySelector('[data-split]');
+  if (title) {
+    const text = title.textContent.trim();
+    title.innerHTML = text.split('').map(ch =>
+      ch === ' '
+        ? '<span style="display:inline-block;width:0.18em"></span>'
+        : `<span class="char-wrap"><span class="char">${ch}</span></span>`
+    ).join('');
+  }
+
+  gsap.timeline({
+    scrollTrigger: { trigger: section, start: 'top 72%', once: true }
+  })
+    .from('.jg-title .char', { yPercent: 110, duration: 1, stagger: 0.04, ease: 'power4.out' })
+    .to('.jg-line',          { scaleX: 1, duration: 1.1, ease: 'power4.inOut' }, '-=0.55')
+    .to('.jg-kicker span',   { y: 0, duration: 0.85, ease: 'power4.out' }, '-=0.65')
+    .to('.jg-pill',          { y: 0, opacity: 1, duration: 0.8, stagger: 0.08, ease: 'power4.out' }, '-=0.7');
+
+  gsap.utils.toArray('.jg-card').forEach((card, i) => {
+    gsap.to(card, {
+      y: 0, opacity: 1, duration: 1.1, ease: 'power4.out', delay: i * 0.04,
+      scrollTrigger: { trigger: card, start: 'top 82%', once: true }
+    });
+    [card.querySelector('.jg-card__image'), card.querySelector('.jg-card__video')]
+      .filter(Boolean)
+      .forEach(el => gsap.fromTo(el, { yPercent: -7 }, {
+        yPercent: 7, ease: 'none',
+        scrollTrigger: { trigger: card, start: 'top bottom', end: 'bottom top', scrub: 1.2 }
+      }));
+  });
+
+  gsap.to('.jg-cta', {
+    y: 0, opacity: 1, duration: 0.9, ease: 'power4.out',
+    scrollTrigger: { trigger: '.jg-cta-wrap', start: 'top 88%', once: true }
+  });
+
+  const cta = section.querySelector('.jg-cta');
+  if (cta) {
+    cta.addEventListener('mousemove', e => {
+      const r = cta.getBoundingClientRect();
+      gsap.to(cta, {
+        x: (e.clientX - r.left - r.width / 2) * 0.18,
+        y: (e.clientY - r.top - r.height / 2) * 0.18,
+        duration: 0.35, ease: 'power3.out'
+      });
+    });
+    cta.addEventListener('mouseleave', () => {
+      gsap.to(cta, { x: 0, y: 0, duration: 0.55, ease: 'elastic.out(1, 0.45)' });
+    });
+  }
 })();

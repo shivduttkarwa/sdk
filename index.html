@@ -164,292 +164,103 @@
       <div class="stats-rule stats-rule--bot"></div>
     </section>
 
-    <!-- ── Recent Work ── -->
-    <section class="rw-section" id="work">
+    <!-- ── Featured Work ── -->
+    <section class="jg-featured" id="work">
+      <div class="jg-featured__inner">
 
-      <!-- Right floating HUD -->
-      <div class="proj-hud" id="projHud" aria-hidden="true">
-        <span class="proj-hud-label">HUD</span>
-        <button class="proj-hud-dot is-active" data-proj-idx="0" title="Real Gold Properties">01</button>
-        <button class="proj-hud-dot" data-proj-idx="1" title="St Edward's School">02</button>
-        <button class="proj-hud-dot" data-proj-idx="2" title="Farmizo Organics">03</button>
-        <button class="proj-hud-dot" data-proj-idx="3" title="Kanchan's Makeover">04</button>
-      </div>
+        <span class="eyebrow">Work</span>
+        <div class="jg-title-wrap">
+          <h2 class="jg-title" data-split>Selected Work</h2>
+        </div>
 
-      <div class="proj-stack">
+        <div class="jg-meta">
+          <div class="jg-line"></div>
+          <div class="jg-meta-row">
+            <div class="jg-kicker"><span>Portfolio &middot; 2024</span></div>
+            <div class="jg-top-tags">
+              <span class="jg-pill">Full Stack</span>
+              <span class="jg-pill">Motion</span>
+              <span class="jg-pill">CMS</span>
+            </div>
+          </div>
+        </div>
 
-        <article class="project-section" style="--idx:0" id="proj-0"
-          data-client="Real Gold Properties" data-year="2024" data-category="Real Estate"
-          data-overview="Designed as a luxury property website for selling, renting, and consulting services. The focus was a premium visual tone, strong property presentation, smooth animated movement, and a professional enquiry experience that helps visitors trust the brand quickly."
-          data-challenge="The client needed a website that felt premium and trustworthy to high-value property buyers, while being easy to maintain and update with new listings."
-          data-solution="Built with React for the frontend and GSAP for smooth scroll-driven animations, backed by a Django REST API for dynamic property data management and PostgreSQL for listings."
-          data-deliverables="Full Bleed Hero Experience,Property Listings System,Animated Enquiry Flow,Mobile Responsive Layout,Admin Dashboard"
-          data-tech="React,GSAP,Django,REST API,PostgreSQL">
-          <div class="proj-inner">
-          <div class="proj-bg">
-            <img class="proj-bg-img" src="https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?auto=format&fit=crop&w=2000&q=80" alt="Real Gold Properties">
-            <div class="proj-overlay"></div>
-            <div class="proj-grid-lines"></div>
-          </div>
-          <div class="proj-body">
-            <div class="proj-top-row">
-              <div class="proj-serial-group">
-                <span class="proj-num">01</span>
-                <div class="proj-num-divider"></div>
-                <span class="proj-cat-badge">Real Estate</span>
-              </div>
-              <span class="proj-year-badge">2024</span>
-            </div>
-            <div class="proj-mid-row">
-              <div class="proj-main-col">
-                <div class="proj-tags">
-                  <span class="proj-tag">#React</span><span class="proj-tag">#GSAP</span><span class="proj-tag">#Django</span>
-                </div>
-                <h2 class="proj-title">Real Gold Properties</h2>
-                <p class="proj-subtitle">Premium Real Estate Platform With Cinematic Visuals</p>
-                <p class="proj-desc">Designed as a luxury property website for selling, renting, and consulting. Strong visual tone, smooth animated movement, and a professional enquiry experience that helps visitors trust the brand quickly.</p>
-                <div class="proj-actions">
-                  <button class="proj-btn-primary" data-open-proj="0">Explore Case Study <span>↗</span></button>
-                  <a href="#" class="proj-btn-secondary">View Live</a>
-                </div>
-              </div>
-              <div class="proj-side-col">
-                <span class="proj-side-label">// Key Metrics</span>
-                <div class="proj-metrics">
-                  <div class="proj-metric glass-panel"><div class="pm-info"><span class="pm-label">Load Time</span><span class="pm-val">1.2s</span></div><span class="pm-trend">Optimized</span></div>
-                  <div class="proj-metric glass-panel"><div class="pm-info"><span class="pm-label">Mobile Score</span><span class="pm-val">96/100</span></div><span class="pm-trend">Responsive</span></div>
-                  <div class="proj-metric glass-panel"><div class="pm-info"><span class="pm-label">Client Rating</span><span class="pm-val">5/5</span></div><span class="pm-trend">Verified ✓</span></div>
-                </div>
-                <div class="proj-stack-card glass-panel">
-                  <span class="proj-side-label">Stack Architecture</span>
-                  <div class="proj-stack-pills"><span>React</span><span>GSAP</span><span>Django</span><span>REST API</span></div>
-                </div>
-              </div>
-            </div>
-            <div class="proj-bottom-row">
-              <div class="proj-client-info"><span class="proj-client-label">CLIENT //</span><span class="proj-client-name">Real Gold Properties</span></div>
-              <div class="proj-nav"><span class="proj-slide-num">SLIDE 01 OF 04</span><button class="proj-next-btn" data-next-idx="1">NEXT WORK <span>›</span></button></div>
-            </div>
-          </div>
-          </div><!-- /.proj-inner -->
-        </article>
+        <div class="jg-work-grid">
 
-        <article class="project-section" style="--idx:1" id="proj-1"
-          data-client="St Patrick's College" data-year="2024" data-category="Wagtail CMS"
-          data-overview="A structured, accessible school website with custom Wagtail page models, event management, staff profiles, news sections, and a mobile-first layout maintained entirely through the CMS without developer involvement."
-          data-challenge="The school needed a website they could manage themselves without developer involvement for day-to-day content updates, events, and news."
-          data-solution="Built on Django and Wagtail CMS with custom StreamField blocks, rich text editors, and configurable page templates giving editors full control over all content."
-          data-deliverables="Custom Wagtail Page Types,Events Calendar System,Staff Directory,News & Blog Archive,Mobile Responsive Layout"
-          data-tech="Django,Wagtail,PostgreSQL,Python,HTML/CSS">
-          <div class="proj-inner">
-          <div class="proj-bg">
-            <img class="proj-bg-img" src="https://images.unsplash.com/photo-1523050854058-8df90110c9f1?auto=format&fit=crop&w=2000&q=80" alt="St Edward's School">
-            <div class="proj-overlay"></div>
-            <div class="proj-grid-lines"></div>
-          </div>
-          <div class="proj-body">
-            <div class="proj-top-row">
-              <div class="proj-serial-group">
-                <span class="proj-num">02</span>
-                <div class="proj-num-divider"></div>
-                <span class="proj-cat-badge">Wagtail CMS</span>
-              </div>
-              <span class="proj-year-badge">2024</span>
+          <!-- 01 -->
+          <a href="#" class="jg-card jg-card--wide">
+            <div class="jg-card__media">
+              <img class="jg-card__image" src="https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?auto=format&fit=crop&w=2000&q=80" alt="Real Gold Properties" />
             </div>
-            <div class="proj-mid-row">
-              <div class="proj-main-col">
-                <div class="proj-tags">
-                  <span class="proj-tag">#Django</span><span class="proj-tag">#Wagtail</span><span class="proj-tag">#PostgreSQL</span>
-                </div>
-                <h2 class="proj-title">St Edward's School</h2>
-                <p class="proj-subtitle">Full CMS School Website Built On Wagtail + Django</p>
-                <p class="proj-desc">A structured, accessible school website with custom Wagtail page models, event management, staff profiles, news sections, and a mobile-first layout maintained entirely through the CMS.</p>
-                <div class="proj-actions">
-                  <button class="proj-btn-primary" data-open-proj="1">Explore Case Study <span>↗</span></button>
-                  <a href="#" class="proj-btn-secondary">View Live</a>
-                </div>
-              </div>
-              <div class="proj-side-col">
-                <span class="proj-side-label">// Key Metrics</span>
-                <div class="proj-metrics">
-                  <div class="proj-metric glass-panel"><div class="pm-info"><span class="pm-label">CMS Pages</span><span class="pm-val">40+</span></div><span class="pm-trend">Managed</span></div>
-                  <div class="proj-metric glass-panel"><div class="pm-info"><span class="pm-label">Accessibility</span><span class="pm-val">WCAG AA</span></div><span class="pm-trend">Compliant</span></div>
-                  <div class="proj-metric glass-panel"><div class="pm-info"><span class="pm-label">Editor Training</span><span class="pm-val">2hrs</span></div><span class="pm-trend">Ready</span></div>
-                </div>
-                <div class="proj-stack-card glass-panel">
-                  <span class="proj-side-label">Stack Architecture</span>
-                  <div class="proj-stack-pills"><span>Django</span><span>Wagtail</span><span>PostgreSQL</span><span>Python</span></div>
-                </div>
+            <div class="jg-card__shade"></div>
+            <div class="jg-card__info">
+              <div class="jg-number">01</div>
+              <h3 class="jg-card__title">Real Gold Properties</h3>
+              <div class="jg-card__tags">
+                <span class="jg-term">React</span>
+                <span class="jg-term">GSAP</span>
+                <span class="jg-term">Django</span>
               </div>
             </div>
-            <div class="proj-bottom-row">
-              <div class="proj-client-info"><span class="proj-client-label">CLIENT //</span><span class="proj-client-name">St Patrick's College</span></div>
-              <div class="proj-nav"><span class="proj-slide-num">SLIDE 02 OF 04</span><button class="proj-next-btn" data-next-idx="2">NEXT WORK <span>›</span></button></div>
-            </div>
-          </div>
-          </div><!-- /.proj-inner -->
-        </article>
+          </a>
 
-        <article class="project-section" style="--idx:2" id="proj-2"
-          data-client="Farmizo Organics" data-year="2024" data-category="Organic Brand"
-          data-overview="Designed for a fresh organic food brand with a strong focus on product browsing, farm trust, natural storytelling, testimonials, newsletter signup, and simple shopping-style interaction for organic products."
-          data-challenge="Present a diverse organic product catalog in a visually appealing way while keeping the interface clean, fast, and easy to navigate for first-time visitors."
-          data-solution="Built with React and Tailwind CSS for rapid development, consuming a REST API for dynamic product data with category filters and smooth hover interactions."
-          data-deliverables="Product Catalog & Filters,Farm Story Section,Testimonials Block,Newsletter Signup,Mobile Responsive Layout"
-          data-tech="React,Tailwind CSS,REST API,JavaScript,Vite">
-          <div class="proj-inner">
-          <div class="proj-bg">
-            <img class="proj-bg-img" src="https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&w=2000&q=80" alt="Farmizo Organics">
-            <div class="proj-overlay"></div>
-            <div class="proj-grid-lines"></div>
-          </div>
-          <div class="proj-body">
-            <div class="proj-top-row">
-              <div class="proj-serial-group">
-                <span class="proj-num">03</span>
-                <div class="proj-num-divider"></div>
-                <span class="proj-cat-badge">Organic Brand</span>
-              </div>
-              <span class="proj-year-badge">2024</span>
+          <!-- 02 -->
+          <a href="#" class="jg-card jg-card--small">
+            <div class="jg-card__media">
+              <img class="jg-card__image" src="https://images.unsplash.com/photo-1523050854058-8df90110c9f1?auto=format&fit=crop&w=1200&q=80" alt="St Patrick's College" />
             </div>
-            <div class="proj-mid-row">
-              <div class="proj-main-col">
-                <div class="proj-tags">
-                  <span class="proj-tag">#React</span><span class="proj-tag">#Tailwind</span><span class="proj-tag">#REST API</span>
-                </div>
-                <h2 class="proj-title">Farmizo Organics</h2>
-                <p class="proj-subtitle">Fresh Organic Food Website With Product First Layout</p>
-                <p class="proj-desc">Designed for a fresh organic food brand with a strong focus on product browsing, farm trust, natural storytelling, and simple shopping-style interaction for organic products.</p>
-                <div class="proj-actions">
-                  <button class="proj-btn-primary" data-open-proj="2">Explore Case Study <span>↗</span></button>
-                  <a href="#" class="proj-btn-secondary">View Live</a>
-                </div>
-              </div>
-              <div class="proj-side-col">
-                <span class="proj-side-label">// Key Metrics</span>
-                <div class="proj-metrics">
-                  <div class="proj-metric glass-panel"><div class="pm-info"><span class="pm-label">Products</span><span class="pm-val">80+</span></div><span class="pm-trend">Dynamic</span></div>
-                  <div class="proj-metric glass-panel"><div class="pm-info"><span class="pm-label">Page Speed</span><span class="pm-val">94/100</span></div><span class="pm-trend">Optimized</span></div>
-                  <div class="proj-metric glass-panel"><div class="pm-info"><span class="pm-label">Conversion</span><span class="pm-val">+32%</span></div><span class="pm-trend">After Launch</span></div>
-                </div>
-                <div class="proj-stack-card glass-panel">
-                  <span class="proj-side-label">Stack Architecture</span>
-                  <div class="proj-stack-pills"><span>React</span><span>Tailwind</span><span>REST API</span><span>Vite</span></div>
-                </div>
+            <div class="jg-card__shade"></div>
+            <div class="jg-card__info">
+              <div class="jg-number">02</div>
+              <h3 class="jg-card__title">St Patrick's College</h3>
+              <div class="jg-card__tags">
+                <span class="jg-term">Django</span>
+                <span class="jg-term">Wagtail</span>
               </div>
             </div>
-            <div class="proj-bottom-row">
-              <div class="proj-client-info"><span class="proj-client-label">CLIENT //</span><span class="proj-client-name">Farmizo Organics</span></div>
-              <div class="proj-nav"><span class="proj-slide-num">SLIDE 03 OF 04</span><button class="proj-next-btn" data-next-idx="3">NEXT WORK <span>›</span></button></div>
-            </div>
-          </div>
-          </div><!-- /.proj-inner -->
-        </article>
+          </a>
 
-        <article class="project-section" style="--idx:3" id="proj-3"
-          data-client="Kanchan's Beauty Studio" data-year="2023" data-category="Beauty Studio"
-          data-overview="Built for a bridal makeup and beauty studio — soft premium design with service sections, gallery highlights, reviews, studio story, and a clear contact path for consultation bookings."
-          data-challenge="Showcase the studio's bridal work in a visually rich way that appeals to brides planning their wedding, while making it easy to contact for consultations."
-          data-solution="Created with pure HTML, CSS, and GSAP animations for a lightweight, fast-loading premium experience with an image gallery, smooth reveals, and an enquiry form."
-          data-deliverables="Bridal Gallery System,Service Detail Sections,Client Testimonials,Studio About Story,Booking Contact Form"
-          data-tech="HTML5,CSS3,GSAP,JavaScript">
-          <div class="proj-inner">
-          <div class="proj-bg">
-            <img class="proj-bg-img" src="https://images.unsplash.com/photo-1522335789203-aabd1fc54bc9?auto=format&fit=crop&w=2000&q=80" alt="Kanchan's Makeover">
-            <div class="proj-overlay"></div>
-            <div class="proj-grid-lines"></div>
-          </div>
-          <div class="proj-body">
-            <div class="proj-top-row">
-              <div class="proj-serial-group">
-                <span class="proj-num">04</span>
-                <div class="proj-num-divider"></div>
-                <span class="proj-cat-badge">Beauty Studio</span>
-              </div>
-              <span class="proj-year-badge">2023</span>
+          <!-- 03 -->
+          <a href="#" class="jg-card jg-card--small">
+            <div class="jg-card__media">
+              <img class="jg-card__image" src="https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&w=1200&q=80" alt="Farmizo Organics" />
             </div>
-            <div class="proj-mid-row">
-              <div class="proj-main-col">
-                <div class="proj-tags">
-                  <span class="proj-tag">#HTML/CSS</span><span class="proj-tag">#GSAP</span><span class="proj-tag">#JavaScript</span>
-                </div>
-                <h2 class="proj-title">Kanchan's Makeover</h2>
-                <p class="proj-subtitle">Elegant Bridal Makeup Studio With Gallery Storytelling</p>
-                <p class="proj-desc">Built for a bridal makeup and beauty studio — soft premium design with service sections, gallery highlights, reviews, studio story, and a clear contact path for consultation bookings.</p>
-                <div class="proj-actions">
-                  <button class="proj-btn-primary" data-open-proj="3">Explore Case Study <span>↗</span></button>
-                  <a href="#" class="proj-btn-secondary">View Live</a>
-                </div>
-              </div>
-              <div class="proj-side-col">
-                <span class="proj-side-label">// Key Metrics</span>
-                <div class="proj-metrics">
-                  <div class="proj-metric glass-panel"><div class="pm-info"><span class="pm-label">Gallery Items</span><span class="pm-val">60+</span></div><span class="pm-trend">Curated</span></div>
-                  <div class="proj-metric glass-panel"><div class="pm-info"><span class="pm-label">Enquiries</span><span class="pm-val">+240%</span></div><span class="pm-trend">After Launch</span></div>
-                  <div class="proj-metric glass-panel"><div class="pm-info"><span class="pm-label">Load Speed</span><span class="pm-val">1.8s</span></div><span class="pm-trend">Fast & Light</span></div>
-                </div>
-                <div class="proj-stack-card glass-panel">
-                  <span class="proj-side-label">Stack Architecture</span>
-                  <div class="proj-stack-pills"><span>HTML5</span><span>CSS3</span><span>GSAP</span><span>JavaScript</span></div>
-                </div>
+            <div class="jg-card__shade"></div>
+            <div class="jg-card__info">
+              <div class="jg-number">03</div>
+              <h3 class="jg-card__title">Farmizo Organics</h3>
+              <div class="jg-card__tags">
+                <span class="jg-term">React</span>
+                <span class="jg-term">Tailwind</span>
               </div>
             </div>
-            <div class="proj-bottom-row">
-              <div class="proj-client-info"><span class="proj-client-label">CLIENT //</span><span class="proj-client-name">Kanchan's Beauty Studio</span></div>
-              <div class="proj-nav"><span class="proj-slide-num">SLIDE 04 OF 04</span><button class="proj-next-btn proj-back-top">↑ BACK TO TOP</button></div>
+          </a>
+
+          <!-- 04 -->
+          <a href="#" class="jg-card jg-card--wide">
+            <div class="jg-card__media">
+              <img class="jg-card__image" src="https://images.unsplash.com/photo-1522335789203-aabd1fc54bc9?auto=format&fit=crop&w=2000&q=80" alt="Kanchan's Makeover" />
             </div>
-          </div>
-          </div><!-- /.proj-inner -->
-        </article>
+            <div class="jg-card__shade"></div>
+            <div class="jg-card__info">
+              <div class="jg-number">04</div>
+              <h3 class="jg-card__title">Kanchan's Makeover</h3>
+              <div class="jg-card__tags">
+                <span class="jg-term">HTML/CSS</span>
+                <span class="jg-term">GSAP</span>
+              </div>
+            </div>
+          </a>
+
+        </div>
+
+        <div class="jg-cta-wrap">
+          <a href="#" class="jg-cta"><span>View All Work</span></a>
+        </div>
 
       </div>
     </section>
 
-    <!-- Case Study Modal -->
-    <div class="proj-modal" id="projModal" aria-hidden="true">
-      <div class="proj-modal-bg" id="projModalBg"></div>
-      <div class="proj-modal-drawer" id="projModalDrawer">
-        <div class="proj-modal-header">
-          <div class="proj-modal-header-info">
-            <span class="proj-modal-num" id="pmNum">01</span>
-            <div>
-              <h3 class="proj-modal-title" id="pmTitle"></h3>
-              <p class="proj-modal-meta" id="pmMeta"></p>
-            </div>
-          </div>
-          <button class="proj-modal-close" id="projModalClose" aria-label="Close">✕</button>
-        </div>
-        <div class="proj-modal-body">
-          <div class="proj-modal-sect">
-            <span class="proj-modal-sect-label">// Executive Summary</span>
-            <p id="pmOverview"></p>
-          </div>
-          <div class="proj-modal-two-col">
-            <div class="proj-modal-card glass-panel proj-modal-card--red">
-              <span class="proj-modal-card-label">THE CHALLENGE</span>
-              <p id="pmChallenge"></p>
-            </div>
-            <div class="proj-modal-card glass-panel proj-modal-card--green">
-              <span class="proj-modal-card-label">THE SOLUTION</span>
-              <p id="pmSolution"></p>
-            </div>
-          </div>
-          <div class="proj-modal-sect">
-            <span class="proj-modal-sect-label">// Key Deliverables</span>
-            <div class="proj-modal-deliverables" id="pmDeliverables"></div>
-          </div>
-          <div class="proj-modal-sect">
-            <span class="proj-modal-sect-label">// Tech Stack</span>
-            <div class="proj-modal-tech" id="pmTech"></div>
-          </div>
-        </div>
-        <div class="proj-modal-footer">
-          <a href="#" class="proj-modal-cta">View Live Project ↗</a>
-        </div>
-      </div>
-    </div>
-
-    </section>
   </main>
 
   <footer class="footer">
@@ -485,7 +296,6 @@
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/SplitText.min.js"></script>
   <script src="script.js"></script>
   <a href="#contact" class="hero-fixed-cta">
     <span>Get in Touch</span>
