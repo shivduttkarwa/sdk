@@ -691,76 +691,148 @@ if (window.gsap && window.ScrollTrigger) {
   })(0);
 })();
 
-// ── Stacked project showcase ──
+// ── Stacked project showcase (premium) ──
 (function initStackedWork() {
   const workSection  = document.getElementById('work');
   const hud          = document.getElementById('projHud');
   const hudDots      = document.querySelectorAll('.proj-hud-dot');
-  const projSections = document.querySelectorAll('.project-section');
+  const projSections = Array.from(document.querySelectorAll('.project-section'));
   const projStack    = document.querySelector('.proj-stack');
   const modal        = document.getElementById('projModal');
   const modalBg      = document.getElementById('projModalBg');
-  const modalDrawer  = document.getElementById('projModalDrawer');
   const modalClose   = document.getElementById('projModalClose');
 
   if (!workSection || !projStack || !projSections.length) return;
+  if (!window.gsap || !window.ScrollTrigger) return;
 
-  // ── HUD visibility ──────────────────────────────────────────────
-  const hudObserver = new IntersectionObserver(([entry]) => {
-    hud && hud.classList.toggle('is-visible', entry.isIntersecting);
-  }, { threshold: 0.01 });
-  hudObserver.observe(workSection);
+  // Inner wrappers receive all animation — never animate the sticky element itself
+  const inners = projSections.map(s => s.querySelector('.proj-inner'));
 
-  // ── Active slide tracking via scroll position ───────────────────
-  const count = projSections.length;
-
-  function getActiveIdx() {
+  // ── Programmatic scroll helper ──────────────────────────────────
+  function scrollToSlide(idx) {
     const stackTop = projStack.getBoundingClientRect().top + window.scrollY;
-    const progress = window.scrollY - stackTop;
-    return Math.min(count - 1, Math.max(0, Math.floor(progress / window.innerHeight)));
+    window.scrollTo({ top: stackTop + idx * window.innerHeight, behavior: 'smooth' });
   }
 
+  // ── HUD visibility ──────────────────────────────────────────────
+  ScrollTrigger.create({
+    trigger: workSection,
+    start: 'top 80%',
+    end: 'bottom 20%',
+    onEnter:     () => hud && hud.classList.add('is-visible'),
+    onLeave:     () => hud && hud.classList.remove('is-visible'),
+    onEnterBack: () => hud && hud.classList.add('is-visible'),
+    onLeaveBack: () => hud && hud.classList.remove('is-visible'),
+  });
+
+  // ── Active dot tracking ─────────────────────────────────────────
   function setActiveDot(idx) {
     hudDots.forEach((dot, i) => dot.classList.toggle('is-active', i === idx));
   }
-
-  window.addEventListener('scroll', () => setActiveDot(getActiveIdx()), { passive: true });
   setActiveDot(0);
 
-  // ── HUD dot navigation ──────────────────────────────────────────
-  hudDots.forEach(dot => {
-    dot.addEventListener('click', () => {
-      const idx       = parseInt(dot.dataset.projIdx, 10);
-      const stackTop  = projStack.getBoundingClientRect().top + window.scrollY;
-      window.scrollTo({ top: stackTop + idx * window.innerHeight, behavior: 'smooth' });
+  projSections.forEach((_, i) => {
+    ScrollTrigger.create({
+      trigger: projStack,
+      start: () => `top+=${i * window.innerHeight}px top`,
+      end:   () => `top+=${(i + 1) * window.innerHeight}px top`,
+      onEnter:     () => setActiveDot(i),
+      onEnterBack: () => setActiveDot(i),
     });
   });
 
-  // ── NEXT WORK / BACK TO TOP buttons ────────────────────────────
+  // ── Set initial hidden state for slides 1–3 ────────────────────
+  inners.forEach((inner, i) => {
+    if (i > 0 && inner) gsap.set(inner, { yPercent: 100 });
+  });
+
+  // ── Slide-up reveal + outgoing scale per transition ────────────
+  // Each transition occupies the scroll zone from (i-0.6)*vh to i*vh
+  // scrub: 1.2 → 1.2 second easing lag after scroll stops (gives organic physics feel)
+  projSections.forEach((_, i) => {
+    if (i === 0) return;
+    const inner     = inners[i];
+    const prevInner = inners[i - 1];
+    if (!inner || !prevInner) return;
+
+    const startFn = () => `top+=${(i - 0.6) * window.innerHeight}px top`;
+    const endFn   = () => `top+=${i * window.innerHeight}px top`;
+    const st      = { trigger: projStack, start: startFn, end: endFn, scrub: 1.2 };
+
+    // Incoming: slide up from below viewport
+    gsap.fromTo(inner,
+      { yPercent: 100 },
+      { yPercent: 0, ease: 'none', scrollTrigger: st }
+    );
+
+    // Outgoing: previous inner scales back into darkness
+    gsap.fromTo(prevInner,
+      { scale: 1, borderRadius: '0px', filter: 'brightness(1)' },
+      { scale: 0.88, borderRadius: '18px', filter: 'brightness(0.4)', ease: 'none', scrollTrigger: st }
+    );
+  });
+
+  // ── Content fade-in per slide (fires once on activation) ───────
+  projSections.forEach((section, i) => {
+    const inner   = inners[i];
+    if (!inner) return;
+    const topRow  = inner.querySelector('.proj-top-row');
+    const tags    = inner.querySelectorAll('.proj-tag');
+    const title   = inner.querySelector('.proj-title');
+    const sub     = inner.querySelector('.proj-subtitle');
+    const desc    = inner.querySelector('.proj-desc');
+    const metrics = inner.querySelectorAll('.proj-metric');
+    const stCard  = inner.querySelector('.proj-stack-card');
+    const actions = inner.querySelector('.proj-actions');
+    const botRow  = inner.querySelector('.proj-bottom-row');
+
+    const els = [topRow, ...tags, title, sub, desc, ...metrics, stCard, actions, botRow].filter(Boolean);
+    gsap.set(els, { opacity: 0, y: 20 });
+
+    gsap.timeline({
+      scrollTrigger: i === 0
+        ? { trigger: workSection, start: 'top 62%', once: true }
+        : { trigger: projStack, start: () => `top+=${i * window.innerHeight + window.innerHeight * 0.05}px top`, once: true },
+    })
+    .to(topRow,   { opacity: 1, y: 0, duration: 0.5,  ease: 'power3.out' }, 0)
+    .to(tags,     { opacity: 1, y: 0, duration: 0.45, stagger: 0.06, ease: 'power3.out' }, 0.08)
+    .to(title,    { opacity: 1, y: 0, duration: 0.7,  ease: 'power3.out' }, 0.14)
+    .to(sub,      { opacity: 1, y: 0, duration: 0.6,  ease: 'power3.out' }, 0.26)
+    .to(desc,     { opacity: 1, y: 0, duration: 0.6,  ease: 'power3.out' }, 0.34)
+    .to(metrics,  { opacity: 1, y: 0, duration: 0.5,  stagger: 0.09, ease: 'power3.out' }, 0.38)
+    .to(stCard,   { opacity: 1, y: 0, duration: 0.45, ease: 'power3.out' }, 0.52)
+    .to(actions,  { opacity: 1, y: 0, duration: 0.5,  ease: 'power3.out' }, 0.58)
+    .to(botRow,   { opacity: 1, y: 0, duration: 0.45, ease: 'power3.out' }, 0.64);
+  });
+
+  // ── Parallax on bg images ───────────────────────────────────────
+  projSections.forEach(section => {
+    const img = section.querySelector('.proj-bg-img');
+    if (!img) return;
+    gsap.fromTo(img,
+      { yPercent: -6 },
+      { yPercent: 6, ease: 'none',
+        scrollTrigger: { trigger: projStack, start: 'top bottom', end: 'bottom top', scrub: true } }
+    );
+  });
+
+  // ── Navigation ─────────────────────────────────────────────────
+  hudDots.forEach(dot => {
+    dot.addEventListener('click', () => scrollToSlide(parseInt(dot.dataset.projIdx, 10)));
+  });
+
   workSection.addEventListener('click', e => {
     const nextBtn = e.target.closest('.proj-next-btn[data-next-idx]');
-    if (nextBtn) {
-      const idx      = parseInt(nextBtn.dataset.nextIdx, 10);
-      const stackTop = projStack.getBoundingClientRect().top + window.scrollY;
-      window.scrollTo({ top: stackTop + idx * window.innerHeight, behavior: 'smooth' });
-      return;
-    }
+    if (nextBtn) { scrollToSlide(parseInt(nextBtn.dataset.nextIdx, 10)); return; }
+
     if (e.target.closest('.proj-back-top')) {
       window.scrollTo({ top: 0, behavior: 'smooth' });
+      return;
     }
-  });
 
-  // ── Subtle parallax on bg images ───────────────────────────────
-  if (window.gsap && window.ScrollTrigger) {
-    projSections.forEach(section => {
-      const img = section.querySelector('.proj-bg-img');
-      if (!img) return;
-      gsap.to(img, {
-        yPercent: -8, ease: 'none',
-        scrollTrigger: { trigger: section, start: 'top bottom', end: 'bottom top', scrub: true }
-      });
-    });
-  }
+    const openBtn = e.target.closest('.proj-btn-primary[data-open-proj]');
+    if (openBtn) openModal(parseInt(openBtn.dataset.openProj, 10));
+  });
 
   // ── Modal ───────────────────────────────────────────────────────
   if (!modal) return;
@@ -769,35 +841,22 @@ if (window.gsap && window.ScrollTrigger) {
     const article = document.getElementById(`proj-${idx}`);
     if (!article) return;
 
-    const numEl = document.getElementById('pmNum');
-    if (numEl) numEl.textContent = `0${idx + 1}`;
+    const set = (id, val) => { const el = document.getElementById(id); if (el) el.textContent = val; };
+    set('pmNum',       `0${idx + 1}`);
+    set('pmTitle',     article.dataset.client    || '');
+    set('pmMeta',      `${article.dataset.category || ''} · ${article.dataset.year || ''}`);
+    set('pmOverview',  article.dataset.overview  || '');
+    set('pmChallenge', article.dataset.challenge || '');
+    set('pmSolution',  article.dataset.solution  || '');
 
-    const titleEl = document.getElementById('pmTitle');
-    if (titleEl) titleEl.textContent = article.dataset.client || '';
-
-    const metaEl = document.getElementById('pmMeta');
-    if (metaEl) metaEl.textContent = `${article.dataset.category || ''} · ${article.dataset.year || ''}`;
-
-    const overviewEl = document.getElementById('pmOverview');
-    if (overviewEl) overviewEl.textContent = article.dataset.overview || '';
-
-    const challengeEl = document.getElementById('pmChallenge');
-    if (challengeEl) challengeEl.textContent = article.dataset.challenge || '';
-
-    const solutionEl = document.getElementById('pmSolution');
-    if (solutionEl) solutionEl.textContent = article.dataset.solution || '';
-
-    const delEl = document.getElementById('pmDeliverables');
-    if (delEl) {
-      const items = (article.dataset.deliverables || '').split(',').map(s => s.trim()).filter(Boolean);
-      delEl.innerHTML = items.map(d => `<span class="pm-del-item">${d}</span>`).join('');
-    }
-
-    const techEl = document.getElementById('pmTech');
-    if (techEl) {
-      const items = (article.dataset.tech || '').split(',').map(s => s.trim()).filter(Boolean);
-      techEl.innerHTML = items.map(t => `<span class="pm-tech-item">${t}</span>`).join('');
-    }
+    const setList = (id, raw) => {
+      const el = document.getElementById(id);
+      if (!el) return;
+      el.innerHTML = (raw || '').split(',').map(s => s.trim()).filter(Boolean)
+        .map(s => `<span>${s}</span>`).join('');
+    };
+    setList('pmDeliverables', article.dataset.deliverables);
+    setList('pmTech',         article.dataset.tech);
 
     modal.classList.add('is-open');
     modal.removeAttribute('aria-hidden');
@@ -810,14 +869,8 @@ if (window.gsap && window.ScrollTrigger) {
     document.body.style.overflow = '';
   }
 
-  workSection.addEventListener('click', e => {
-    const openBtn = e.target.closest('.proj-btn-primary[data-open-proj]');
-    if (openBtn) openModal(parseInt(openBtn.dataset.openProj, 10));
-  });
-
   if (modalClose) modalClose.addEventListener('click', closeModal);
   if (modalBg)    modalBg.addEventListener('click', closeModal);
-
   document.addEventListener('keydown', e => {
     if (e.key === 'Escape' && modal.classList.contains('is-open')) closeModal();
   });
