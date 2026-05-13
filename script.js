@@ -704,15 +704,11 @@ if (window.gsap && window.ScrollTrigger) {
   const items    = section.querySelectorAll('.si');
 
   const master = gsap.timeline({
-    scrollTrigger: { trigger: section, start: 'top 70%', toggleActions: 'play none none none' }
+    scrollTrigger: { trigger: section, start: 'top 50%', toggleActions: 'play none none none' }
   });
 
   master.to(ruleTop, { scaleX: 1, duration: 0.8, ease: 'power3.inOut' });
   master.to(dividers, { scaleY: 1, duration: 0.6, ease: 'power3.inOut', stagger: 0.18 }, '-=0.3');
-
-  const allNums  = [...items].map(el => el.querySelector('.si-num'));
-  const allSups  = [...items].map(el => el.querySelector('.si-sup'));
-  const allFeet  = [...items].map(el => el.querySelector('.si-foot'));
 
   items.forEach((item, i) => {
     const num    = item.querySelector('.si-num');
@@ -720,7 +716,7 @@ if (window.gsap && window.ScrollTrigger) {
     const foot   = item.querySelector('.si-foot');
     const target = parseInt(num.dataset.target || '0', 10);
 
-    master.to([num, sup], { y: '0%', duration: 0.9, ease: 'power4.out' }, i === 0 ? '-=0.2' : '<0.18');
+    master.to([num, sup], { y: '0%', duration: 0.9, ease: 'power4.out' }, i === 0 ? 0 : '<0.18');
     master.to({}, {
       duration: 1, ease: 'power2.out',
       onUpdate() { num.textContent = Math.round(this.progress() * target); },
