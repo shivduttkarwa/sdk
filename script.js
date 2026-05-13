@@ -1066,19 +1066,6 @@ if (window.gsap && window.ScrollTrigger) {
     .to('.jg-kicker span',   { y: 0, duration: 0.85, ease: 'power4.out' }, '-=0.65')
     .to('.jg-pill',          { y: 0, opacity: 1, duration: 0.8, stagger: 0.08, ease: 'power4.out' }, '-=0.7');
 
-  gsap.utils.toArray('.jg-card').forEach((card, i) => {
-    gsap.to(card, {
-      y: 0, opacity: 1, duration: 1.1, ease: 'power4.out', delay: i * 0.04,
-      scrollTrigger: { trigger: card, start: 'top 82%', once: true }
-    });
-    [card.querySelector('.jg-card__image'), card.querySelector('.jg-card__video')]
-      .filter(Boolean)
-      .forEach(el => gsap.fromTo(el, { yPercent: -7 }, {
-        yPercent: 7, ease: 'none',
-        scrollTrigger: { trigger: card, start: 'top bottom', end: 'bottom top', scrub: 1.2 }
-      }));
-  });
-
   gsap.to('.jg-cta', {
     y: 0, opacity: 1, duration: 0.9, ease: 'power4.out',
     scrollTrigger: { trigger: '.jg-cta-wrap', start: 'top 88%', once: true }

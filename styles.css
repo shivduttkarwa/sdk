@@ -1181,8 +1181,6 @@ img {
   overflow: hidden;
   background: #1a1a1a;
   color: #fff;
-  opacity: 0;
-  transform: translateY(5rem);
   cursor: pointer;
 }
 
