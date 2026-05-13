@@ -1,0 +1,4 @@
+Hero Section: Electric Indigo (#4F46E5) with White text.
+About / Skills: Soft Mint (#ECFDF5) with Deep Teal text.
+Projects Grid: Warm Amber (#FFF7ED) with Dark Charcoal text.
+Contact Form: Electric Indigo (#4F46E5) to close the design loop.

@@ -691,27 +691,106 @@ if (window.gsap && window.ScrollTrigger) {
   })(0);
 })();
 
-// ── Bento cards: staggered scroll-reveal ──
-(function initBentoCards() {
+// ── Showcase work: sticky left + scroll-driven right ──
+(function initShowcase() {
   if (!window.gsap || !window.ScrollTrigger) return;
-  const cards = document.querySelectorAll('.bento-card');
-  if (!cards.length) return;
+  const blocks = document.querySelectorAll('.site-block');
+  if (!blocks.length) return;
 
-  gsap.fromTo(cards,
-    { y: 48, opacity: 0 },
-    {
-      y: 0,
-      opacity: 1,
-      duration: 0.9,
-      ease: 'power3.out',
-      stagger: { each: 0.08, from: 'start' },
-      scrollTrigger: {
-        trigger: '.bento-grid',
-        start: 'top 82%',
-        once: true
+  const slIndex = document.getElementById('slIndex');
+  const slNum   = document.getElementById('slNum');
+  const slTitle = document.getElementById('slTitle');
+  const slCopy  = document.getElementById('slCopy');
+  if (!slIndex) return;
+
+  function updateLeft(block) {
+    const num   = block.dataset.num;
+    const title = block.dataset.title;
+    const text  = block.dataset.text;
+    if (slNum.textContent === num) return;
+
+    gsap.to([slIndex, slNum, slTitle, slCopy], {
+      y: -24, opacity: 0, filter: 'blur(8px)', duration: 0.2, ease: 'power2.in',
+      onComplete() {
+        slIndex.textContent = `// ${num}`;
+        slNum.textContent   = num;
+        slTitle.textContent = title;
+        slCopy.textContent  = text;
+        gsap.fromTo([slIndex, slNum, slTitle, slCopy],
+          { y: 32, opacity: 0, filter: 'blur(8px)' },
+          { y: 0, opacity: 1, filter: 'blur(0px)', duration: 0.5, stagger: 0.04, ease: 'power4.out' }
+        );
       }
-    }
-  );
+    });
+  }
+
+  blocks.forEach(block => {
+    ScrollTrigger.create({
+      trigger: block,
+      start: 'top center',
+      end: 'bottom center',
+      onEnter:     () => updateLeft(block),
+      onEnterBack: () => updateLeft(block),
+    });
+  });
+
+  // hero panel animations
+  function splitWords(el) {
+    el.innerHTML = el.innerHTML
+      .split(/(<br\s*\/?>|\s+)/g)
+      .map(p => p.match(/<br/) ? p : p.trim() ? `<span class="wm"><span>${p}</span></span>` : p)
+      .join('');
+  }
+
+  document.querySelectorAll('.sh-title, .sd-heading').forEach(splitWords);
+
+  document.querySelectorAll('.site-hero').forEach(hero => {
+    const words  = hero.querySelectorAll('.wm span');
+    const img    = hero.querySelector('.hero-img-wrap img');
+    const shapes = hero.querySelectorAll('.hero-shape');
+    const label  = hero.querySelector('.sh-side-label');
+
+    gsap.set(words,  { y: '115%', opacity: 0, filter: 'blur(12px)' });
+    gsap.set(img,    { scale: 1.14, y: 36, opacity: 0 });
+    gsap.set(shapes, { scaleX: 0 });
+    if (label) gsap.set(label, { x: 70, opacity: 0 });
+
+    const tl = gsap.timeline({
+      scrollTrigger: { trigger: hero, start: 'top 70%', end: 'bottom 35%', toggleActions: 'play none none reverse' }
+    });
+
+    tl.to(shapes, { scaleX: 1, duration: 0.85, stagger: 0.08, ease: 'power4.out' })
+      .to(img,    { scale: 1.06, y: 0, opacity: 1, duration: 1.1, ease: 'power4.out' }, '-=0.75')
+      .to(words,  { y: '0%', opacity: 1, filter: 'blur(0px)', duration: 0.78, stagger: 0.032, ease: 'power4.out' }, '-=0.7')
+      .to(label,  { x: 0, opacity: 1, duration: 0.6, ease: 'power4.out' }, '-=0.55');
+
+    gsap.to(img, {
+      yPercent: -8, ease: 'none',
+      scrollTrigger: { trigger: hero, start: 'top bottom', end: 'bottom top', scrub: true }
+    });
+  });
+
+  // detail panel animations
+  document.querySelectorAll('.site-detail').forEach(detail => {
+    const words = detail.querySelectorAll('.wm span');
+    const copy  = detail.querySelector('.sd-copy');
+    const rows  = detail.querySelectorAll('.sd-row');
+    const tags  = detail.querySelectorAll('.sd-tags span');
+    const link  = detail.querySelector('.sd-link');
+
+    gsap.set(words,           { y: '115%', opacity: 0, filter: 'blur(12px)' });
+    gsap.set([copy, rows, tags, link], { y: 44, opacity: 0, filter: 'blur(8px)' });
+
+    const tl = gsap.timeline({
+      scrollTrigger: { trigger: detail, start: 'top 72%', end: 'bottom 45%', toggleActions: 'play none none reverse' }
+    });
+
+    tl.to(words, { y: '0%', opacity: 1, filter: 'blur(0px)', duration: 0.72, stagger: 0.025, ease: 'power4.out' })
+      .to(copy,  { y: 0, opacity: 1, filter: 'blur(0px)', duration: 0.65, ease: 'power3.out' }, '-=0.3')
+      .to(rows,  { y: 0, opacity: 1, filter: 'blur(0px)', duration: 0.6,  stagger: 0.07, ease: 'power3.out' }, '-=0.3')
+      .to(tags,  { y: 0, opacity: 1, filter: 'blur(0px)', duration: 0.45, stagger: 0.04, ease: 'power3.out' }, '-=0.25')
+      .to(link,  { y: 0, opacity: 1, filter: 'blur(0px)', duration: 0.5,  ease: 'power3.out' }, '-=0.2');
+  });
 })();
 
 // ── Stats section entrance animation ──

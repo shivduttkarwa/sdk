@@ -1,0 +1,1060 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Recent Websites Built</title>
+
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --black: #030303;
+      --white: #ffffff;
+      --muted: rgba(255,255,255,0.64);
+      --line: rgba(255,255,255,0.15);
+      --red: #f23a35;
+      --orange: #ff4a1c;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    html,
+    body {
+      width: 100%;
+      background: var(--black);
+      color: var(--white);
+      font-family: "Inter", sans-serif;
+      overflow-x: hidden;
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 9999;
+      opacity: 0.14;
+      background-image: radial-gradient(circle, rgba(255,255,255,0.7) 0.6px, transparent 0.6px);
+      background-size: 4px 4px;
+      mix-blend-mode: overlay;
+    }
+
+    .dummy-section {
+      min-height: 80vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #080808;
+      color: rgba(255,255,255,0.16);
+      font-size: clamp(3rem, 8vw, 9rem);
+      font-weight: 300;
+      letter-spacing: -0.08em;
+      text-transform: uppercase;
+    }
+
+    .portfolio-showcase {
+      position: relative;
+      background: #020202;
+      padding: 0 clamp(1rem, 3vw, 3rem);
+      overflow: visible;
+    }
+
+    .showcase-grid {
+      position: relative;
+      max-width: 1920px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: minmax(280px, 34vw) minmax(0, 1fr);
+      gap: clamp(1.5rem, 3vw, 4rem);
+      align-items: start;
+      overflow: visible;
+    }
+
+    .sticky-left {
+      position: sticky;
+      position: -webkit-sticky;
+      top: 0;
+      align-self: start;
+      height: 100vh;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: 4rem 0;
+      z-index: 20;
+      overflow: visible;
+    }
+
+    .small-index {
+      display: flex;
+      align-items: center;
+      gap: 0.9rem;
+      margin-bottom: 1rem;
+      color: rgba(255,255,255,0.72);
+      font-size: clamp(0.9rem, 1vw, 1rem);
+      font-weight: 500;
+    }
+
+    .small-index::before {
+      content: "";
+      width: 2.7rem;
+      height: 1px;
+      background: var(--red);
+    }
+
+    .big-index {
+      font-size: clamp(8rem, 23vw, 28rem);
+      line-height: 0.78;
+      font-weight: 300;
+      letter-spacing: -0.13em;
+      color: var(--white);
+    }
+
+    .sticky-title {
+      max-width: 500px;
+      margin-top: 1.2rem;
+      font-size: clamp(2rem, 3.4vw, 4.8rem);
+      line-height: 0.94;
+      font-weight: 500;
+      letter-spacing: -0.085em;
+      text-transform: uppercase;
+    }
+
+    .sticky-copy {
+      max-width: 430px;
+      margin-top: 1.2rem;
+      color: var(--muted);
+      font-size: clamp(0.95rem, 1vw, 1.08rem);
+      line-height: 1.75;
+      font-weight: 400;
+    }
+
+    .right-projects {
+      position: relative;
+      min-width: 0;
+      overflow: visible;
+    }
+
+    .site-block {
+      position: relative;
+      min-height: 200vh;
+      border-bottom: 1px solid var(--line);
+      overflow: visible;
+    }
+
+    .site-hero {
+      position: relative;
+      min-height: 100vh;
+      width: 100%;
+      display: flex;
+      align-items: flex-end;
+      overflow: hidden;
+      background: linear-gradient(135deg, var(--red), var(--orange));
+      isolation: isolate;
+    }
+
+    .site-hero::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      z-index: 1;
+      background:
+        radial-gradient(circle at 68% 26%, rgba(255,255,255,0.18), transparent 24%),
+        linear-gradient(135deg, var(--red), var(--orange));
+    }
+
+    .site-hero::after {
+      content: attr(data-symbol);
+      position: absolute;
+      left: -7vw;
+      bottom: -8vw;
+      z-index: 2;
+      font-size: clamp(18rem, 42vw, 50rem);
+      line-height: 0.7;
+      font-weight: 900;
+      letter-spacing: -0.12em;
+      color: rgba(0,0,0,0.94);
+      transform: rotate(-8deg);
+      pointer-events: none;
+    }
+
+    .hero-shape {
+      position: absolute;
+      z-index: 3;
+      background: #000;
+      opacity: 0.96;
+      pointer-events: none;
+    }
+
+    .shape-1 {
+      width: 22vw;
+      height: 3.5vw;
+      right: 6vw;
+      top: 31%;
+      transform: rotate(1deg);
+    }
+
+    .shape-2 {
+      width: 10vw;
+      height: 5vw;
+      right: 1vw;
+      top: 16%;
+      transform: rotate(39deg);
+    }
+
+    .shape-3 {
+      width: 18vw;
+      height: 3vw;
+      left: 8vw;
+      top: 24%;
+      transform: rotate(-35deg);
+    }
+
+    .hero-image-wrap {
+      position: absolute;
+      right: -7%;
+      bottom: -3%;
+      width: min(70vw, 920px);
+      height: 105%;
+      z-index: 4;
+      display: flex;
+      align-items: flex-end;
+      justify-content: flex-end;
+      pointer-events: none;
+    }
+
+    .hero-image-wrap img {
+      width: 100%;
+      height: 92%;
+      object-fit: cover;
+      object-position: center;
+      filter: grayscale(1) contrast(1.12);
+      clip-path: polygon(8% 0, 100% 0, 100% 100%, 0 100%);
+      transform: scale(1.06);
+    }
+
+    .hero-content {
+      position: relative;
+      z-index: 6;
+      width: 100%;
+      padding: clamp(2rem, 4vw, 4.5rem);
+      padding-bottom: clamp(3rem, 6vw, 6rem);
+    }
+
+    .hero-mini {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      margin-bottom: 1.2rem;
+      font-size: clamp(0.95rem, 1.2vw, 1.15rem);
+      color: #fff;
+      font-weight: 500;
+    }
+
+    .hero-title {
+      max-width: 1050px;
+      color: #fff;
+      font-size: clamp(4rem, 8.2vw, 10rem);
+      line-height: 0.82;
+      font-weight: 700;
+      letter-spacing: -0.105em;
+      text-transform: uppercase;
+    }
+
+    .hero-title .thin {
+      font-weight: 300;
+    }
+
+    .hero-side-label {
+      position: absolute;
+      right: 0;
+      top: 50%;
+      z-index: 10;
+      transform: translateY(-50%);
+      width: 4.8rem;
+      height: 15rem;
+      background: #fff;
+      color: #000;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-direction: column;
+      padding: 1rem 0.6rem;
+    }
+
+    .hero-side-label strong {
+      font-size: 1.7rem;
+      line-height: 1;
+      font-weight: 800;
+      letter-spacing: -0.08em;
+    }
+
+    .hero-side-label span {
+      writing-mode: vertical-rl;
+      transform: rotate(180deg);
+      font-size: 0.9rem;
+      font-weight: 700;
+    }
+
+    .site-detail {
+      position: relative;
+      min-height: 100vh;
+      padding: clamp(4rem, 7vw, 8rem) clamp(1rem, 4vw, 4rem);
+      background: #030303;
+      display: flex;
+      align-items: center;
+    }
+
+    .detail-inner {
+      width: 100%;
+      max-width: 1180px;
+    }
+
+    .detail-heading {
+      max-width: 1050px;
+      margin-bottom: 2rem;
+      font-size: clamp(3.2rem, 6.2vw, 7.8rem);
+      line-height: 0.9;
+      font-weight: 500;
+      letter-spacing: -0.09em;
+      text-transform: uppercase;
+    }
+
+    .detail-copy {
+      max-width: 900px;
+      margin-bottom: clamp(3rem, 5vw, 5rem);
+      color: var(--muted);
+      font-size: clamp(1.05rem, 1.35vw, 1.45rem);
+      line-height: 1.75;
+      font-weight: 400;
+    }
+
+    .info-list {
+      width: 100%;
+    }
+
+    .info-row {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      align-items: center;
+      gap: 2rem;
+      min-height: 5.8rem;
+      padding: 1.25rem 0;
+      border-top: 1px solid var(--line);
+    }
+
+    .info-row:last-child {
+      border-bottom: 1px solid var(--line);
+    }
+
+    .info-row h4 {
+      font-size: clamp(1.15rem, 1.7vw, 2rem);
+      line-height: 1.1;
+      font-weight: 500;
+      letter-spacing: -0.045em;
+    }
+
+    .info-row p {
+      max-width: 520px;
+      color: var(--muted);
+      font-size: clamp(0.92rem, 1vw, 1.05rem);
+      line-height: 1.55;
+      text-align: right;
+    }
+
+    .tech-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.8rem;
+      margin-top: 3rem;
+    }
+
+    .tech-tags span {
+      border: 1px solid var(--line);
+      padding: 0.75rem 1rem;
+      color: rgba(255,255,255,0.76);
+      font-size: 0.82rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .view-link {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      margin-top: 3rem;
+      min-width: 220px;
+      height: 58px;
+      border: 1px solid rgba(255,255,255,0.25);
+      color: #fff;
+      text-decoration: none;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      font-size: 0.82rem;
+      font-weight: 600;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .view-link::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: #fff;
+      transform: translateY(100%);
+      transition: transform 0.45s cubic-bezier(.16,1,.3,1);
+    }
+
+    .view-link span {
+      position: relative;
+      z-index: 2;
+      transition: color 0.35s ease;
+    }
+
+    .view-link:hover::before {
+      transform: translateY(0);
+    }
+
+    .view-link:hover span {
+      color: #000;
+    }
+
+    .word-mask {
+      display: inline-block;
+      overflow: hidden;
+      vertical-align: top;
+      margin-right: 0.14em;
+    }
+
+    .word-mask span {
+      display: inline-block;
+    }
+
+    @media (max-width: 900px) {
+      .portfolio-showcase {
+        padding: 0 1rem;
+      }
+
+      .showcase-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .sticky-left {
+        position: relative;
+        top: auto;
+        height: auto;
+        min-height: 70vh;
+        padding: 5rem 0 3rem;
+      }
+
+      .site-block {
+        min-height: auto;
+      }
+
+      .site-hero {
+        min-height: 88vh;
+      }
+
+      .hero-title {
+        font-size: clamp(3.4rem, 12vw, 8rem);
+      }
+
+      .hero-image-wrap {
+        width: 95vw;
+        right: -22%;
+        opacity: 0.78;
+      }
+
+      .hero-side-label {
+        display: none;
+      }
+    }
+
+    @media (max-width: 700px) {
+      .site-hero {
+        min-height: 82vh;
+      }
+
+      .hero-content {
+        padding: 2rem 1.1rem 4rem;
+      }
+
+      .hero-title {
+        font-size: clamp(3rem, 16vw, 5rem);
+      }
+
+      .hero-image-wrap {
+        right: -45%;
+        width: 135vw;
+      }
+
+      .site-detail {
+        padding: 4rem 0;
+      }
+
+      .info-row {
+        grid-template-columns: 1fr;
+        gap: 0.8rem;
+      }
+
+      .info-row p {
+        text-align: left;
+      }
+
+      .big-index {
+        font-size: clamp(8rem, 46vw, 14rem);
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <section class="dummy-section">Previous</section>
+
+  <section class="portfolio-showcase" id="recentWork">
+    <div class="showcase-grid">
+
+      <aside class="sticky-left">
+        <div class="small-index" id="stickySmall">// 01</div>
+        <div class="big-index" id="stickyNumber">01</div>
+
+        <h2 class="sticky-title" id="stickyTitle">
+          Real Gold Properties
+        </h2>
+
+        <p class="sticky-copy" id="stickyText">
+          Premium real estate platform with cinematic visuals, smooth animation,
+          property-led storytelling, and high-conversion structure.
+        </p>
+      </aside>
+
+      <main class="right-projects">
+
+        <section class="site-block"
+          data-num="01"
+          data-title="Real Gold Properties"
+          data-text="Premium real estate platform with cinematic visuals, smooth animation, property-led storytelling, and high-conversion structure.">
+
+          <div class="site-hero" data-symbol="人">
+            <div class="hero-shape shape-1"></div>
+            <div class="hero-shape shape-2"></div>
+            <div class="hero-shape shape-3"></div>
+
+            <div class="hero-image-wrap">
+              <img src="https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?auto=format&fit=crop&w=1600&q=85" alt="Real Gold Properties">
+            </div>
+
+            <div class="hero-content">
+              <div class="hero-mini">// 01</div>
+              <h3 class="hero-title">
+                Real Gold <br>
+                <span class="thin">Properties</span>
+              </h3>
+            </div>
+
+            <div class="hero-side-label">
+              <strong>w.</strong>
+              <span>Website</span>
+            </div>
+          </div>
+
+          <div class="site-detail">
+            <div class="detail-inner">
+              <h3 class="detail-heading">Premium Real Estate Website Built For High Trust</h3>
+
+              <p class="detail-copy">
+                Real Gold Properties was designed as a premium property website for selling,
+                renting, and consulting services. The focus was to create a luxury visual tone,
+                strong property presentation, smooth animated movement, and a professional enquiry
+                experience that helps visitors trust the brand quickly.
+              </p>
+
+              <div class="info-list">
+                <div class="info-row">
+                  <h4>Full Bleed Hero Experience</h4>
+                  <p>Large image-led hero with bold typography, premium contrast, and strong first impression.</p>
+                </div>
+
+                <div class="info-row">
+                  <h4>Property Focused Layout</h4>
+                  <p>Sections for property cards, featured listings, testimonials, team, contact, and service details.</p>
+                </div>
+
+                <div class="info-row">
+                  <h4>Animation Direction</h4>
+                  <p>Smooth GSAP style movement, scroll reveal, sticky content, and elegant card transitions.</p>
+                </div>
+
+                <div class="info-row">
+                  <h4>Business Goal</h4>
+                  <p>Make the property brand look premium, reliable, and ready for serious client enquiries.</p>
+                </div>
+              </div>
+
+              <div class="tech-tags">
+                <span>HTML</span>
+                <span>CSS</span>
+                <span>JavaScript</span>
+                <span>GSAP</span>
+                <span>Responsive UI</span>
+              </div>
+
+              <a href="#" class="view-link"><span>View Project</span></a>
+            </div>
+          </div>
+        </section>
+
+        <section class="site-block"
+          data-num="02"
+          data-title="Kanchan’s Makeover"
+          data-text="Elegant bridal makeup studio website with soft visuals, gallery storytelling, service sections, and premium contact flow.">
+
+          <div class="site-hero" data-symbol="美">
+            <div class="hero-shape shape-1"></div>
+            <div class="hero-shape shape-2"></div>
+            <div class="hero-shape shape-3"></div>
+
+            <div class="hero-image-wrap">
+              <img src="https://images.unsplash.com/photo-1522335789203-aabd1fc54bc9?auto=format&fit=crop&w=1600&q=85" alt="Kanchan's Makeover">
+            </div>
+
+            <div class="hero-content">
+              <div class="hero-mini">// 02</div>
+              <h3 class="hero-title">
+                Kanchan’s <br>
+                <span class="thin">Makeover</span>
+              </h3>
+            </div>
+
+            <div class="hero-side-label">
+              <strong>w.</strong>
+              <span>Website</span>
+            </div>
+          </div>
+
+          <div class="site-detail">
+            <div class="detail-inner">
+              <h3 class="detail-heading">Elegant Beauty Website With Bridal Storytelling</h3>
+
+              <p class="detail-copy">
+                Kanchan’s Makeover was created for a bridal makeup and beauty studio. The website
+                uses a soft premium design language with service sections, gallery highlights,
+                reviews, studio story, and a clear contact path for bookings.
+              </p>
+
+              <div class="info-list">
+                <div class="info-row">
+                  <h4>Beauty Brand Identity</h4>
+                  <p>Soft, elegant, feminine, polished, and professional visual direction.</p>
+                </div>
+
+                <div class="info-row">
+                  <h4>Portfolio Gallery</h4>
+                  <p>Designed to showcase bridal looks, studio work, transformation images, and signature styles.</p>
+                </div>
+
+                <div class="info-row">
+                  <h4>Booking Focused Sections</h4>
+                  <p>Service blocks, testimonials, about section, and contact area built for easy enquiry.</p>
+                </div>
+
+                <div class="info-row">
+                  <h4>Business Goal</h4>
+                  <p>Build trust with brides and present the studio as experienced, premium, and reliable.</p>
+                </div>
+              </div>
+
+              <div class="tech-tags">
+                <span>HTML</span>
+                <span>CSS</span>
+                <span>JavaScript</span>
+                <span>Gallery UI</span>
+                <span>Mobile First</span>
+              </div>
+
+              <a href="#" class="view-link"><span>View Project</span></a>
+            </div>
+          </div>
+        </section>
+
+        <section class="site-block"
+          data-num="03"
+          data-title="Farmizo Organics"
+          data-text="Organic food website with fresh product sections, natural visual language, cart-style interactions, and farm-to-home storytelling.">
+
+          <div class="site-hero" data-symbol="食">
+            <div class="hero-shape shape-1"></div>
+            <div class="hero-shape shape-2"></div>
+            <div class="hero-shape shape-3"></div>
+
+            <div class="hero-image-wrap">
+              <img src="https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&w=1600&q=85" alt="Farmizo Organics">
+            </div>
+
+            <div class="hero-content">
+              <div class="hero-mini">// 03</div>
+              <h3 class="hero-title">
+                Farmizo <br>
+                <span class="thin">Organics</span>
+              </h3>
+            </div>
+
+            <div class="hero-side-label">
+              <strong>w.</strong>
+              <span>Website</span>
+            </div>
+          </div>
+
+          <div class="site-detail">
+            <div class="detail-inner">
+              <h3 class="detail-heading">Fresh Organic Website With Product First Layout</h3>
+
+              <p class="detail-copy">
+                Farmizo was designed as a fresh organic food website with a strong focus on
+                product browsing, farm trust, natural storytelling, testimonials, newsletter signup,
+                and simple shopping-style interaction for organic products.
+              </p>
+
+              <div class="info-list">
+                <div class="info-row">
+                  <h4>Fresh Visual System</h4>
+                  <p>Clean, natural, farm-inspired sections with product-focused spacing and readable content.</p>
+                </div>
+
+                <div class="info-row">
+                  <h4>Product Presentation</h4>
+                  <p>Product cards, category filters, stock labels, buy buttons, and cart-style structure.</p>
+                </div>
+
+                <div class="info-row">
+                  <h4>Trust Sections</h4>
+                  <p>About farm, testimonials, FAQ, contact details, newsletter, and location-based elements.</p>
+                </div>
+
+                <div class="info-row">
+                  <h4>Business Goal</h4>
+                  <p>Make organic products look fresh, trustworthy, easy to understand, and easy to buy.</p>
+                </div>
+              </div>
+
+              <div class="tech-tags">
+                <span>HTML</span>
+                <span>CSS</span>
+                <span>JavaScript</span>
+                <span>Product Cards</span>
+                <span>Filters</span>
+              </div>
+
+              <a href="#" class="view-link"><span>View Project</span></a>
+            </div>
+          </div>
+        </section>
+
+        <section class="site-block"
+          data-num="04"
+          data-title="CyberShades"
+          data-text="Dark futuristic IT company website with service blocks, technology visuals, agency-style sections, and modern animation flow.">
+
+          <div class="site-hero" data-symbol="技">
+            <div class="hero-shape shape-1"></div>
+            <div class="hero-shape shape-2"></div>
+            <div class="hero-shape shape-3"></div>
+
+            <div class="hero-image-wrap">
+              <img src="https://images.unsplash.com/photo-1518005020951-eccb494ad742?auto=format&fit=crop&w=1600&q=85" alt="CyberShades">
+            </div>
+
+            <div class="hero-content">
+              <div class="hero-mini">// 04</div>
+              <h3 class="hero-title">
+                Cyber <br>
+                <span class="thin">Shades</span>
+              </h3>
+            </div>
+
+            <div class="hero-side-label">
+              <strong>w.</strong>
+              <span>Website</span>
+            </div>
+          </div>
+
+          <div class="site-detail">
+            <div class="detail-inner">
+              <h3 class="detail-heading">Futuristic Technology Website For Digital Services</h3>
+
+              <p class="detail-copy">
+                CyberShades was built as a modern IT company website with a dark futuristic look,
+                strong service presentation, sharp sections, animated UI, and agency-style content
+                flow for digital and software service clients.
+              </p>
+
+              <div class="info-list">
+                <div class="info-row">
+                  <h4>Dark Tech Interface</h4>
+                  <p>Futuristic layout with strong contrast, clean spacing, and modern digital brand feeling.</p>
+                </div>
+
+                <div class="info-row">
+                  <h4>Service Architecture</h4>
+                  <p>Sections for web development, digital solutions, process, portfolio, technologies, and contact.</p>
+                </div>
+
+                <div class="info-row">
+                  <h4>Animation System</h4>
+                  <p>Scroll reveals, modern hero movement, smooth transitions, and lightweight visual effects.</p>
+                </div>
+
+                <div class="info-row">
+                  <h4>Business Goal</h4>
+                  <p>Position the IT company as modern, capable, technical, and ready for client projects.</p>
+                </div>
+              </div>
+
+              <div class="tech-tags">
+                <span>HTML</span>
+                <span>CSS</span>
+                <span>JavaScript</span>
+                <span>Dark UI</span>
+                <span>Animation</span>
+              </div>
+
+              <a href="#" class="view-link"><span>View Project</span></a>
+            </div>
+          </div>
+        </section>
+
+      </main>
+    </div>
+  </section>
+
+  <section class="dummy-section">Next</section>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+
+  <script>
+    gsap.registerPlugin(ScrollTrigger);
+
+    const stickySmall = document.getElementById("stickySmall");
+    const stickyNumber = document.getElementById("stickyNumber");
+    const stickyTitle = document.getElementById("stickyTitle");
+    const stickyText = document.getElementById("stickyText");
+
+    const blocks = document.querySelectorAll(".site-block");
+
+    function splitWords(el) {
+      const text = el.innerHTML;
+      const parts = text.split(/(<br\s*\/?>|\s+)/g);
+
+      el.innerHTML = parts.map(part => {
+        if (part.match(/<br\s*\/?>/)) return part;
+        if (part.trim() === "") return part;
+        return `<span class="word-mask"><span>${part}</span></span>`;
+      }).join("");
+    }
+
+    document.querySelectorAll(".hero-title, .detail-heading").forEach(splitWords);
+
+    function updateSticky(block) {
+      const num = block.dataset.num;
+      const title = block.dataset.title;
+      const text = block.dataset.text;
+
+      if (stickyNumber.textContent === num) return;
+
+      gsap.to([stickySmall, stickyNumber, stickyTitle, stickyText], {
+        y: -28,
+        opacity: 0,
+        filter: "blur(10px)",
+        duration: 0.22,
+        ease: "power2.in",
+        onComplete: () => {
+          stickySmall.textContent = `// ${num}`;
+          stickyNumber.textContent = num;
+          stickyTitle.textContent = title;
+          stickyText.textContent = text;
+
+          gsap.fromTo(
+            [stickySmall, stickyNumber, stickyTitle, stickyText],
+            {
+              y: 36,
+              opacity: 0,
+              filter: "blur(10px)"
+            },
+            {
+              y: 0,
+              opacity: 1,
+              filter: "blur(0px)",
+              duration: 0.55,
+              stagger: 0.04,
+              ease: "power4.out"
+            }
+          );
+        }
+      });
+    }
+
+    blocks.forEach(block => {
+      ScrollTrigger.create({
+        trigger: block,
+        start: "top center",
+        end: "bottom center",
+        onEnter: () => updateSticky(block),
+        onEnterBack: () => updateSticky(block)
+      });
+    });
+
+    document.querySelectorAll(".site-hero").forEach(hero => {
+      const words = hero.querySelectorAll(".word-mask span");
+      const img = hero.querySelector(".hero-image-wrap img");
+      const shapes = hero.querySelectorAll(".hero-shape");
+      const label = hero.querySelector(".hero-side-label");
+
+      gsap.set(words, {
+        y: "115%",
+        opacity: 0,
+        filter: "blur(14px)"
+      });
+
+      gsap.set(img, {
+        scale: 1.16,
+        y: 40,
+        opacity: 0
+      });
+
+      gsap.set(shapes, {
+        scaleX: 0,
+        transformOrigin: "left center"
+      });
+
+      gsap.set(label, {
+        x: 80,
+        opacity: 0
+      });
+
+      const tl = gsap.timeline({
+        scrollTrigger: {
+          trigger: hero,
+          start: "top 68%",
+          end: "bottom 35%",
+          toggleActions: "play none none reverse"
+        }
+      });
+
+      tl.to(shapes, {
+        scaleX: 1,
+        duration: 0.9,
+        stagger: 0.08,
+        ease: "power4.out"
+      })
+      .to(img, {
+        scale: 1.06,
+        y: 0,
+        opacity: 1,
+        duration: 1.15,
+        ease: "power4.out"
+      }, "-=0.8")
+      .to(words, {
+        y: "0%",
+        opacity: 1,
+        filter: "blur(0px)",
+        duration: 0.82,
+        stagger: 0.035,
+        ease: "power4.out"
+      }, "-=0.75")
+      .to(label, {
+        x: 0,
+        opacity: 1,
+        duration: 0.65,
+        ease: "power4.out"
+      }, "-=0.6");
+
+      gsap.to(img, {
+        yPercent: -8,
+        ease: "none",
+        scrollTrigger: {
+          trigger: hero,
+          start: "top bottom",
+          end: "bottom top",
+          scrub: true
+        }
+      });
+    });
+
+    document.querySelectorAll(".site-detail").forEach(detail => {
+      const headingWords = detail.querySelectorAll(".detail-heading .word-mask span");
+      const copy = detail.querySelector(".detail-copy");
+      const rows = detail.querySelectorAll(".info-row");
+      const tags = detail.querySelectorAll(".tech-tags span");
+      const link = detail.querySelector(".view-link");
+
+      gsap.set(headingWords, {
+        y: "115%",
+        opacity: 0,
+        filter: "blur(14px)"
+      });
+
+      gsap.set([copy, rows, tags, link], {
+        y: 50,
+        opacity: 0,
+        filter: "blur(10px)"
+      });
+
+      const tl = gsap.timeline({
+        scrollTrigger: {
+          trigger: detail,
+          start: "top 70%",
+          end: "bottom 45%",
+          toggleActions: "play none none reverse"
+        }
+      });
+
+      tl.to(headingWords, {
+        y: "0%",
+        opacity: 1,
+        filter: "blur(0px)",
+        duration: 0.75,
+        stagger: 0.025,
+        ease: "power4.out"
+      })
+      .to(copy, {
+        y: 0,
+        opacity: 1,
+        filter: "blur(0px)",
+        duration: 0.7,
+        ease: "power3.out"
+      }, "-=0.35")
+      .to(rows, {
+        y: 0,
+        opacity: 1,
+        filter: "blur(0px)",
+        duration: 0.65,
+        stagger: 0.07,
+        ease: "power3.out"
+      }, "-=0.3")
+      .to(tags, {
+        y: 0,
+        opacity: 1,
+        filter: "blur(0px)",
+        duration: 0.45,
+        stagger: 0.045,
+        ease: "power3.out"
+      }, "-=0.25")
+      .to(link, {
+        y: 0,
+        opacity: 1,
+        filter: "blur(0px)",
+        duration: 0.55,
+        ease: "power3.out"
+      }, "-=0.2");
+    });
+  </script>
+
+</body>
+</html>
