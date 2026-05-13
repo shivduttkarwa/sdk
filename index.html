@@ -166,224 +166,281 @@
 
     <!-- ── Recent Work ── -->
     <section class="rw-section" id="work">
-      <div class="rw-intro container">
-        <span class="eyebrow">Selected Work</span>
-        <h2 class="section-title">Recent<br><span class="thin">Work</span></h2>
+
+      <!-- Right floating HUD -->
+      <div class="proj-hud" id="projHud" aria-hidden="true">
+        <span class="proj-hud-label">HUD</span>
+        <button class="proj-hud-dot is-active" data-proj-idx="0" title="Real Gold Properties">01</button>
+        <button class="proj-hud-dot" data-proj-idx="1" title="St Edward's School">02</button>
+        <button class="proj-hud-dot" data-proj-idx="2" title="Farmizo Organics">03</button>
+        <button class="proj-hud-dot" data-proj-idx="3" title="Kanchan's Makeover">04</button>
       </div>
 
-      <div class="showcase-wrap">
-        <div class="showcase-grid">
+      <div class="proj-stack">
 
-          <aside class="showcase-left">
-            <div class="sl-index" id="slIndex">// 01</div>
-            <div class="sl-num" id="slNum">01</div>
-            <h3 class="sl-title" id="slTitle">Real Gold Properties</h3>
-            <p class="sl-copy" id="slCopy">Premium real estate platform with cinematic visuals, smooth animation, property-led storytelling, and high-conversion structure.</p>
-          </aside>
+        <article class="project-section" style="--idx:0" id="proj-0"
+          data-client="Real Gold Properties" data-year="2024" data-category="Real Estate"
+          data-overview="Designed as a luxury property website for selling, renting, and consulting services. The focus was a premium visual tone, strong property presentation, smooth animated movement, and a professional enquiry experience that helps visitors trust the brand quickly."
+          data-challenge="The client needed a website that felt premium and trustworthy to high-value property buyers, while being easy to maintain and update with new listings."
+          data-solution="Built with React for the frontend and GSAP for smooth scroll-driven animations, backed by a Django REST API for dynamic property data management and PostgreSQL for listings."
+          data-deliverables="Full Bleed Hero Experience,Property Listings System,Animated Enquiry Flow,Mobile Responsive Layout,Admin Dashboard"
+          data-tech="React,GSAP,Django,REST API,PostgreSQL">
+          <div class="proj-bg">
+            <img class="proj-bg-img" src="https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?auto=format&fit=crop&w=2000&q=80" alt="Real Gold Properties">
+            <div class="proj-overlay"></div>
+            <div class="proj-grid-lines"></div>
+          </div>
+          <div class="proj-body">
+            <div class="proj-top-row">
+              <div class="proj-serial-group">
+                <span class="proj-num">01</span>
+                <div class="proj-num-divider"></div>
+                <span class="proj-cat-badge">Real Estate</span>
+              </div>
+              <span class="proj-year-badge">2024</span>
+            </div>
+            <div class="proj-mid-row">
+              <div class="proj-main-col">
+                <div class="proj-tags">
+                  <span class="proj-tag">#React</span><span class="proj-tag">#GSAP</span><span class="proj-tag">#Django</span>
+                </div>
+                <h2 class="proj-title">Real Gold Properties</h2>
+                <p class="proj-subtitle">Premium Real Estate Platform With Cinematic Visuals</p>
+                <p class="proj-desc">Designed as a luxury property website for selling, renting, and consulting. Strong visual tone, smooth animated movement, and a professional enquiry experience that helps visitors trust the brand quickly.</p>
+                <div class="proj-actions">
+                  <button class="proj-btn-primary" data-open-proj="0">Explore Case Study <span>↗</span></button>
+                  <a href="#" class="proj-btn-secondary">View Live</a>
+                </div>
+              </div>
+              <div class="proj-side-col">
+                <span class="proj-side-label">// Key Metrics</span>
+                <div class="proj-metrics">
+                  <div class="proj-metric glass-panel"><div class="pm-info"><span class="pm-label">Load Time</span><span class="pm-val">1.2s</span></div><span class="pm-trend">Optimized</span></div>
+                  <div class="proj-metric glass-panel"><div class="pm-info"><span class="pm-label">Mobile Score</span><span class="pm-val">96/100</span></div><span class="pm-trend">Responsive</span></div>
+                  <div class="proj-metric glass-panel"><div class="pm-info"><span class="pm-label">Client Rating</span><span class="pm-val">5/5</span></div><span class="pm-trend">Verified ✓</span></div>
+                </div>
+                <div class="proj-stack-card glass-panel">
+                  <span class="proj-side-label">Stack Architecture</span>
+                  <div class="proj-stack-pills"><span>React</span><span>GSAP</span><span>Django</span><span>REST API</span></div>
+                </div>
+              </div>
+            </div>
+            <div class="proj-bottom-row">
+              <div class="proj-client-info"><span class="proj-client-label">CLIENT //</span><span class="proj-client-name">Real Gold Properties</span></div>
+              <div class="proj-nav"><span class="proj-slide-num">SLIDE 01 OF 04</span><button class="proj-next-btn" data-next-idx="1">NEXT WORK <span>›</span></button></div>
+            </div>
+          </div>
+        </article>
 
-          <div class="showcase-right">
+        <article class="project-section" style="--idx:1" id="proj-1"
+          data-client="St Patrick's College" data-year="2024" data-category="Wagtail CMS"
+          data-overview="A structured, accessible school website with custom Wagtail page models, event management, staff profiles, news sections, and a mobile-first layout maintained entirely through the CMS without developer involvement."
+          data-challenge="The school needed a website they could manage themselves without developer involvement for day-to-day content updates, events, and news."
+          data-solution="Built on Django and Wagtail CMS with custom StreamField blocks, rich text editors, and configurable page templates giving editors full control over all content."
+          data-deliverables="Custom Wagtail Page Types,Events Calendar System,Staff Directory,News & Blog Archive,Mobile Responsive Layout"
+          data-tech="Django,Wagtail,PostgreSQL,Python,HTML/CSS">
+          <div class="proj-bg">
+            <img class="proj-bg-img" src="https://images.unsplash.com/photo-1523050854058-8df90110c9f1?auto=format&fit=crop&w=2000&q=80" alt="St Edward's School">
+            <div class="proj-overlay"></div>
+            <div class="proj-grid-lines"></div>
+          </div>
+          <div class="proj-body">
+            <div class="proj-top-row">
+              <div class="proj-serial-group">
+                <span class="proj-num">02</span>
+                <div class="proj-num-divider"></div>
+                <span class="proj-cat-badge">Wagtail CMS</span>
+              </div>
+              <span class="proj-year-badge">2024</span>
+            </div>
+            <div class="proj-mid-row">
+              <div class="proj-main-col">
+                <div class="proj-tags">
+                  <span class="proj-tag">#Django</span><span class="proj-tag">#Wagtail</span><span class="proj-tag">#PostgreSQL</span>
+                </div>
+                <h2 class="proj-title">St Edward's School</h2>
+                <p class="proj-subtitle">Full CMS School Website Built On Wagtail + Django</p>
+                <p class="proj-desc">A structured, accessible school website with custom Wagtail page models, event management, staff profiles, news sections, and a mobile-first layout maintained entirely through the CMS.</p>
+                <div class="proj-actions">
+                  <button class="proj-btn-primary" data-open-proj="1">Explore Case Study <span>↗</span></button>
+                  <a href="#" class="proj-btn-secondary">View Live</a>
+                </div>
+              </div>
+              <div class="proj-side-col">
+                <span class="proj-side-label">// Key Metrics</span>
+                <div class="proj-metrics">
+                  <div class="proj-metric glass-panel"><div class="pm-info"><span class="pm-label">CMS Pages</span><span class="pm-val">40+</span></div><span class="pm-trend">Managed</span></div>
+                  <div class="proj-metric glass-panel"><div class="pm-info"><span class="pm-label">Accessibility</span><span class="pm-val">WCAG AA</span></div><span class="pm-trend">Compliant</span></div>
+                  <div class="proj-metric glass-panel"><div class="pm-info"><span class="pm-label">Editor Training</span><span class="pm-val">2hrs</span></div><span class="pm-trend">Ready</span></div>
+                </div>
+                <div class="proj-stack-card glass-panel">
+                  <span class="proj-side-label">Stack Architecture</span>
+                  <div class="proj-stack-pills"><span>Django</span><span>Wagtail</span><span>PostgreSQL</span><span>Python</span></div>
+                </div>
+              </div>
+            </div>
+            <div class="proj-bottom-row">
+              <div class="proj-client-info"><span class="proj-client-label">CLIENT //</span><span class="proj-client-name">St Patrick's College</span></div>
+              <div class="proj-nav"><span class="proj-slide-num">SLIDE 02 OF 04</span><button class="proj-next-btn" data-next-idx="2">NEXT WORK <span>›</span></button></div>
+            </div>
+          </div>
+        </article>
 
-            <article class="site-block"
-              data-num="01"
-              data-title="Real Gold Properties"
-              data-text="Premium real estate platform with cinematic visuals, smooth animation, property-led storytelling, and high-conversion structure.">
-              <div class="site-hero" data-symbol="人" style="--sh-a:#1a3a6e;--sh-b:#2f80ff">
-                <div class="hero-shape shape-1"></div>
-                <div class="hero-shape shape-2"></div>
-                <div class="hero-shape shape-3"></div>
-                <div class="hero-img-wrap">
-                  <img src="https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?auto=format&fit=crop&w=1600&q=85" alt="Real Gold Properties">
-                </div>
-                <div class="sh-content">
-                  <div class="sh-mini">// 01 — Real Estate</div>
-                  <h3 class="sh-title">Real Gold<br><span class="thin">Properties</span></h3>
-                </div>
-                <div class="sh-side-label"><strong>w.</strong><span>Website</span></div>
+        <article class="project-section" style="--idx:2" id="proj-2"
+          data-client="Farmizo Organics" data-year="2024" data-category="Organic Brand"
+          data-overview="Designed for a fresh organic food brand with a strong focus on product browsing, farm trust, natural storytelling, testimonials, newsletter signup, and simple shopping-style interaction for organic products."
+          data-challenge="Present a diverse organic product catalog in a visually appealing way while keeping the interface clean, fast, and easy to navigate for first-time visitors."
+          data-solution="Built with React and Tailwind CSS for rapid development, consuming a REST API for dynamic product data with category filters and smooth hover interactions."
+          data-deliverables="Product Catalog & Filters,Farm Story Section,Testimonials Block,Newsletter Signup,Mobile Responsive Layout"
+          data-tech="React,Tailwind CSS,REST API,JavaScript,Vite">
+          <div class="proj-bg">
+            <img class="proj-bg-img" src="https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&w=2000&q=80" alt="Farmizo Organics">
+            <div class="proj-overlay"></div>
+            <div class="proj-grid-lines"></div>
+          </div>
+          <div class="proj-body">
+            <div class="proj-top-row">
+              <div class="proj-serial-group">
+                <span class="proj-num">03</span>
+                <div class="proj-num-divider"></div>
+                <span class="proj-cat-badge">Organic Brand</span>
               </div>
-              <div class="site-detail">
-                <div class="sd-inner">
-                  <h3 class="sd-heading">Premium Real Estate Website Built For High Trust</h3>
-                  <p class="sd-copy">Designed as a luxury property website for selling, renting, and consulting. Strong visual tone, smooth animated movement, and a professional enquiry experience that helps visitors trust the brand quickly.</p>
-                  <div class="sd-rows">
-                    <div class="sd-row"><h4>Full Bleed Hero</h4><p>Large image-led hero with bold typography and strong first impression.</p></div>
-                    <div class="sd-row"><h4>Property Layout</h4><p>Cards, featured listings, testimonials, team, contact, and service sections.</p></div>
-                    <div class="sd-row"><h4>Animation Direction</h4><p>GSAP scroll reveal, sticky content, and elegant card transitions.</p></div>
-                    <div class="sd-row"><h4>Business Goal</h4><p>Make the brand look premium, reliable, and ready for serious enquiries.</p></div>
-                  </div>
-                  <div class="sd-tags"><span>React</span><span>GSAP</span><span>Django</span><span>Responsive UI</span></div>
-                  <a href="#" class="sd-link"><span>View Project ↗</span></a>
+              <span class="proj-year-badge">2024</span>
+            </div>
+            <div class="proj-mid-row">
+              <div class="proj-main-col">
+                <div class="proj-tags">
+                  <span class="proj-tag">#React</span><span class="proj-tag">#Tailwind</span><span class="proj-tag">#REST API</span>
+                </div>
+                <h2 class="proj-title">Farmizo Organics</h2>
+                <p class="proj-subtitle">Fresh Organic Food Website With Product First Layout</p>
+                <p class="proj-desc">Designed for a fresh organic food brand with a strong focus on product browsing, farm trust, natural storytelling, and simple shopping-style interaction for organic products.</p>
+                <div class="proj-actions">
+                  <button class="proj-btn-primary" data-open-proj="2">Explore Case Study <span>↗</span></button>
+                  <a href="#" class="proj-btn-secondary">View Live</a>
                 </div>
               </div>
-            </article>
+              <div class="proj-side-col">
+                <span class="proj-side-label">// Key Metrics</span>
+                <div class="proj-metrics">
+                  <div class="proj-metric glass-panel"><div class="pm-info"><span class="pm-label">Products</span><span class="pm-val">80+</span></div><span class="pm-trend">Dynamic</span></div>
+                  <div class="proj-metric glass-panel"><div class="pm-info"><span class="pm-label">Page Speed</span><span class="pm-val">94/100</span></div><span class="pm-trend">Optimized</span></div>
+                  <div class="proj-metric glass-panel"><div class="pm-info"><span class="pm-label">Conversion</span><span class="pm-val">+32%</span></div><span class="pm-trend">After Launch</span></div>
+                </div>
+                <div class="proj-stack-card glass-panel">
+                  <span class="proj-side-label">Stack Architecture</span>
+                  <div class="proj-stack-pills"><span>React</span><span>Tailwind</span><span>REST API</span><span>Vite</span></div>
+                </div>
+              </div>
+            </div>
+            <div class="proj-bottom-row">
+              <div class="proj-client-info"><span class="proj-client-label">CLIENT //</span><span class="proj-client-name">Farmizo Organics</span></div>
+              <div class="proj-nav"><span class="proj-slide-num">SLIDE 03 OF 04</span><button class="proj-next-btn" data-next-idx="3">NEXT WORK <span>›</span></button></div>
+            </div>
+          </div>
+        </article>
 
-            <article class="site-block"
-              data-num="02"
-              data-title="St Edward's School"
-              data-text="Full Wagtail CMS build for a school — structured content, event management, staff profiles, and an accessible, mobile-first layout.">
-              <div class="site-hero" data-symbol="学" style="--sh-a:#2d1a6e;--sh-b:#8f5cff">
-                <div class="hero-shape shape-1"></div>
-                <div class="hero-shape shape-2"></div>
-                <div class="hero-shape shape-3"></div>
-                <div class="hero-img-wrap">
-                  <img src="https://images.unsplash.com/photo-1523050854058-8df90110c9f1?auto=format&fit=crop&w=1600&q=85" alt="St Edward's School">
-                </div>
-                <div class="sh-content">
-                  <div class="sh-mini">// 02 — Wagtail CMS</div>
-                  <h3 class="sh-title">St Edward's<br><span class="thin">School</span></h3>
-                </div>
-                <div class="sh-side-label"><strong>w.</strong><span>Website</span></div>
+        <article class="project-section" style="--idx:3" id="proj-3"
+          data-client="Kanchan's Beauty Studio" data-year="2023" data-category="Beauty Studio"
+          data-overview="Built for a bridal makeup and beauty studio — soft premium design with service sections, gallery highlights, reviews, studio story, and a clear contact path for consultation bookings."
+          data-challenge="Showcase the studio's bridal work in a visually rich way that appeals to brides planning their wedding, while making it easy to contact for consultations."
+          data-solution="Created with pure HTML, CSS, and GSAP animations for a lightweight, fast-loading premium experience with an image gallery, smooth reveals, and an enquiry form."
+          data-deliverables="Bridal Gallery System,Service Detail Sections,Client Testimonials,Studio About Story,Booking Contact Form"
+          data-tech="HTML5,CSS3,GSAP,JavaScript">
+          <div class="proj-bg">
+            <img class="proj-bg-img" src="https://images.unsplash.com/photo-1522335789203-aabd1fc54bc9?auto=format&fit=crop&w=2000&q=80" alt="Kanchan's Makeover">
+            <div class="proj-overlay"></div>
+            <div class="proj-grid-lines"></div>
+          </div>
+          <div class="proj-body">
+            <div class="proj-top-row">
+              <div class="proj-serial-group">
+                <span class="proj-num">04</span>
+                <div class="proj-num-divider"></div>
+                <span class="proj-cat-badge">Beauty Studio</span>
               </div>
-              <div class="site-detail">
-                <div class="sd-inner">
-                  <h3 class="sd-heading">Full CMS School Website Built On Wagtail + Django</h3>
-                  <p class="sd-copy">A structured, accessible school website with custom Wagtail page models, event management, staff profiles, news sections, and a mobile-first layout maintained entirely through the CMS.</p>
-                  <div class="sd-rows">
-                    <div class="sd-row"><h4>Wagtail CMS</h4><p>Custom page types, StreamField blocks, and a fully editable content structure.</p></div>
-                    <div class="sd-row"><h4>Events & News</h4><p>Dynamic event calendar, news archive, and filterable listings.</p></div>
-                    <div class="sd-row"><h4>Accessibility</h4><p>WCAG-compliant markup, semantic HTML, and keyboard navigation throughout.</p></div>
-                    <div class="sd-row"><h4>Business Goal</h4><p>Give the school full editorial control without developer dependency.</p></div>
-                  </div>
-                  <div class="sd-tags"><span>Django</span><span>Wagtail</span><span>PostgreSQL</span><span>Accessible UI</span></div>
-                  <a href="#" class="sd-link"><span>View Project ↗</span></a>
+              <span class="proj-year-badge">2023</span>
+            </div>
+            <div class="proj-mid-row">
+              <div class="proj-main-col">
+                <div class="proj-tags">
+                  <span class="proj-tag">#HTML/CSS</span><span class="proj-tag">#GSAP</span><span class="proj-tag">#JavaScript</span>
+                </div>
+                <h2 class="proj-title">Kanchan's Makeover</h2>
+                <p class="proj-subtitle">Elegant Bridal Makeup Studio With Gallery Storytelling</p>
+                <p class="proj-desc">Built for a bridal makeup and beauty studio — soft premium design with service sections, gallery highlights, reviews, studio story, and a clear contact path for consultation bookings.</p>
+                <div class="proj-actions">
+                  <button class="proj-btn-primary" data-open-proj="3">Explore Case Study <span>↗</span></button>
+                  <a href="#" class="proj-btn-secondary">View Live</a>
                 </div>
               </div>
-            </article>
+              <div class="proj-side-col">
+                <span class="proj-side-label">// Key Metrics</span>
+                <div class="proj-metrics">
+                  <div class="proj-metric glass-panel"><div class="pm-info"><span class="pm-label">Gallery Items</span><span class="pm-val">60+</span></div><span class="pm-trend">Curated</span></div>
+                  <div class="proj-metric glass-panel"><div class="pm-info"><span class="pm-label">Enquiries</span><span class="pm-val">+240%</span></div><span class="pm-trend">After Launch</span></div>
+                  <div class="proj-metric glass-panel"><div class="pm-info"><span class="pm-label">Load Speed</span><span class="pm-val">1.8s</span></div><span class="pm-trend">Fast & Light</span></div>
+                </div>
+                <div class="proj-stack-card glass-panel">
+                  <span class="proj-side-label">Stack Architecture</span>
+                  <div class="proj-stack-pills"><span>HTML5</span><span>CSS3</span><span>GSAP</span><span>JavaScript</span></div>
+                </div>
+              </div>
+            </div>
+            <div class="proj-bottom-row">
+              <div class="proj-client-info"><span class="proj-client-label">CLIENT //</span><span class="proj-client-name">Kanchan's Beauty Studio</span></div>
+              <div class="proj-nav"><span class="proj-slide-num">SLIDE 04 OF 04</span><button class="proj-next-btn proj-back-top">↑ BACK TO TOP</button></div>
+            </div>
+          </div>
+        </article>
 
-            <article class="site-block"
-              data-num="03"
-              data-title="Farmizo Organics"
-              data-text="Organic food website with fresh product sections, natural visual language, cart-style interactions, and farm-to-home storytelling.">
-              <div class="site-hero" data-symbol="食" style="--sh-a:#1a3a0a;--sh-b:#c7ff3d">
-                <div class="hero-shape shape-1"></div>
-                <div class="hero-shape shape-2"></div>
-                <div class="hero-shape shape-3"></div>
-                <div class="hero-img-wrap">
-                  <img src="https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&w=1600&q=85" alt="Farmizo Organics">
-                </div>
-                <div class="sh-content">
-                  <div class="sh-mini">// 03 — Organic Brand</div>
-                  <h3 class="sh-title">Farmizo<br><span class="thin">Organics</span></h3>
-                </div>
-                <div class="sh-side-label"><strong>w.</strong><span>Website</span></div>
-              </div>
-              <div class="site-detail">
-                <div class="sd-inner">
-                  <h3 class="sd-heading">Fresh Organic Website With Product First Layout</h3>
-                  <p class="sd-copy">Designed for a fresh organic food brand with a strong focus on product browsing, farm trust, natural storytelling, and simple shopping-style interaction for organic products.</p>
-                  <div class="sd-rows">
-                    <div class="sd-row"><h4>Fresh Visual System</h4><p>Clean, natural, farm-inspired sections with product-focused spacing.</p></div>
-                    <div class="sd-row"><h4>Product Presentation</h4><p>Product cards, category filters, stock labels, and cart-style structure.</p></div>
-                    <div class="sd-row"><h4>Trust Sections</h4><p>About farm, testimonials, FAQ, contact, newsletter, and location elements.</p></div>
-                    <div class="sd-row"><h4>Business Goal</h4><p>Make organic products look fresh, trustworthy, and easy to buy.</p></div>
-                  </div>
-                  <div class="sd-tags"><span>React</span><span>Tailwind</span><span>REST API</span><span>Product Cards</span></div>
-                  <a href="#" class="sd-link"><span>View Project ↗</span></a>
-                </div>
-              </div>
-            </article>
+      </div>
+    </section>
 
-            <article class="site-block"
-              data-num="04"
-              data-title="Kanchan's Makeover"
-              data-text="Elegant bridal makeup studio website with soft visuals, gallery storytelling, service sections, and premium contact flow.">
-              <div class="site-hero" data-symbol="美" style="--sh-a:#3a2a0a;--sh-b:#f5d76e">
-                <div class="hero-shape shape-1"></div>
-                <div class="hero-shape shape-2"></div>
-                <div class="hero-shape shape-3"></div>
-                <div class="hero-img-wrap">
-                  <img src="https://images.unsplash.com/photo-1522335789203-aabd1fc54bc9?auto=format&fit=crop&w=1600&q=85" alt="Kanchan's Makeover">
-                </div>
-                <div class="sh-content">
-                  <div class="sh-mini">// 04 — Beauty Studio</div>
-                  <h3 class="sh-title">Kanchan's<br><span class="thin">Makeover</span></h3>
-                </div>
-                <div class="sh-side-label"><strong>w.</strong><span>Website</span></div>
-              </div>
-              <div class="site-detail">
-                <div class="sd-inner">
-                  <h3 class="sd-heading">Elegant Beauty Website With Bridal Storytelling</h3>
-                  <p class="sd-copy">Built for a bridal makeup and beauty studio — soft premium design with service sections, gallery highlights, reviews, studio story, and a clear contact path for bookings.</p>
-                  <div class="sd-rows">
-                    <div class="sd-row"><h4>Beauty Brand Identity</h4><p>Soft, elegant, feminine, polished visual direction throughout.</p></div>
-                    <div class="sd-row"><h4>Portfolio Gallery</h4><p>Showcases bridal looks, studio work, transformation images, and signature styles.</p></div>
-                    <div class="sd-row"><h4>Booking Focused</h4><p>Service blocks, testimonials, about section, and contact area for easy enquiry.</p></div>
-                    <div class="sd-row"><h4>Business Goal</h4><p>Build trust with brides and present the studio as premium and reliable.</p></div>
-                  </div>
-                  <div class="sd-tags"><span>HTML</span><span>CSS</span><span>GSAP</span><span>Gallery UI</span></div>
-                  <a href="#" class="sd-link"><span>View Project ↗</span></a>
-                </div>
-              </div>
-            </article>
-
-            <article class="site-block"
-              data-num="05"
-              data-title="MovieFlix"
-              data-text="React movie discovery app with live TMDB API data, smooth search, genre filters, and a dark cinematic interface.">
-              <div class="site-hero" data-symbol="映" style="--sh-a:#3a0a1a;--sh-b:#ff4d8d">
-                <div class="hero-shape shape-1"></div>
-                <div class="hero-shape shape-2"></div>
-                <div class="hero-shape shape-3"></div>
-                <div class="hero-img-wrap">
-                  <img src="https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?auto=format&fit=crop&w=1600&q=85" alt="MovieFlix">
-                </div>
-                <div class="sh-content">
-                  <div class="sh-mini">// 05 — React App</div>
-                  <h3 class="sh-title">Movie<br><span class="thin">Flix</span></h3>
-                </div>
-                <div class="sh-side-label"><strong>a.</strong><span>App</span></div>
-              </div>
-              <div class="site-detail">
-                <div class="sd-inner">
-                  <h3 class="sd-heading">Cinematic Movie Discovery App Powered By TMDB</h3>
-                  <p class="sd-copy">A React-based movie discovery application with live TMDB API integration, real-time search, genre filters, ratings display, and a dark cinematic design built for speed.</p>
-                  <div class="sd-rows">
-                    <div class="sd-row"><h4>Live API Data</h4><p>Real-time movie and series data from TMDB with pagination and search.</p></div>
-                    <div class="sd-row"><h4>Genre Filters</h4><p>Browse by genre, trending, top-rated, and now-playing categories.</p></div>
-                    <div class="sd-row"><h4>Dark Cinematic UI</h4><p>Poster-driven layout with hover details, ratings, and smooth transitions.</p></div>
-                    <div class="sd-row"><h4>Business Goal</h4><p>Demonstrate React skills with real-world API consumption and clean state management.</p></div>
-                  </div>
-                  <div class="sd-tags"><span>React</span><span>Tailwind</span><span>TMDB API</span><span>Hooks</span></div>
-                  <a href="#" class="sd-link"><span>View Project ↗</span></a>
-                </div>
-              </div>
-            </article>
-
-            <article class="site-block"
-              data-num="06"
-              data-title="CyberShades"
-              data-text="Dark futuristic IT company website with service blocks, technology visuals, agency-style sections, and modern animation flow.">
-              <div class="site-hero" data-symbol="技" style="--sh-a:#002a3a;--sh-b:#00d4ff">
-                <div class="hero-shape shape-1"></div>
-                <div class="hero-shape shape-2"></div>
-                <div class="hero-shape shape-3"></div>
-                <div class="hero-img-wrap">
-                  <img src="https://images.unsplash.com/photo-1551434678-e076c223a692?auto=format&fit=crop&w=1600&q=85" alt="CyberShades">
-                </div>
-                <div class="sh-content">
-                  <div class="sh-mini">// 06 — IT Company</div>
-                  <h3 class="sh-title">Cyber<br><span class="thin">Shades</span></h3>
-                </div>
-                <div class="sh-side-label"><strong>w.</strong><span>Website</span></div>
-              </div>
-              <div class="site-detail">
-                <div class="sd-inner">
-                  <h3 class="sd-heading">Futuristic Technology Website For Digital Services</h3>
-                  <p class="sd-copy">Built as a modern IT company website with a dark futuristic look, strong service presentation, sharp sections, animated UI, and agency-style content flow for digital and software clients.</p>
-                  <div class="sd-rows">
-                    <div class="sd-row"><h4>Dark Tech Interface</h4><p>Futuristic layout with strong contrast, clean spacing, and modern brand feel.</p></div>
-                    <div class="sd-row"><h4>Service Architecture</h4><p>Web dev, digital solutions, process, portfolio, technologies, and contact.</p></div>
-                    <div class="sd-row"><h4>Animation System</h4><p>Scroll reveals, hero movement, smooth transitions, and visual effects.</p></div>
-                    <div class="sd-row"><h4>Business Goal</h4><p>Position the company as modern, capable, and ready for client projects.</p></div>
-                  </div>
-                  <div class="sd-tags"><span>JavaScript</span><span>GSAP</span><span>CSS</span><span>Dark UI</span></div>
-                  <a href="#" class="sd-link"><span>View Project ↗</span></a>
-                </div>
-              </div>
-            </article>
-
+    <!-- Case Study Modal -->
+    <div class="proj-modal" id="projModal" aria-hidden="true">
+      <div class="proj-modal-bg" id="projModalBg"></div>
+      <div class="proj-modal-drawer" id="projModalDrawer">
+        <div class="proj-modal-header">
+          <div class="proj-modal-header-info">
+            <span class="proj-modal-num" id="pmNum">01</span>
+            <div>
+              <h3 class="proj-modal-title" id="pmTitle"></h3>
+              <p class="proj-modal-meta" id="pmMeta"></p>
+            </div>
+          </div>
+          <button class="proj-modal-close" id="projModalClose" aria-label="Close">✕</button>
+        </div>
+        <div class="proj-modal-body">
+          <div class="proj-modal-sect">
+            <span class="proj-modal-sect-label">// Executive Summary</span>
+            <p id="pmOverview"></p>
+          </div>
+          <div class="proj-modal-two-col">
+            <div class="proj-modal-card glass-panel proj-modal-card--red">
+              <span class="proj-modal-card-label">THE CHALLENGE</span>
+              <p id="pmChallenge"></p>
+            </div>
+            <div class="proj-modal-card glass-panel proj-modal-card--green">
+              <span class="proj-modal-card-label">THE SOLUTION</span>
+              <p id="pmSolution"></p>
+            </div>
+          </div>
+          <div class="proj-modal-sect">
+            <span class="proj-modal-sect-label">// Key Deliverables</span>
+            <div class="proj-modal-deliverables" id="pmDeliverables"></div>
+          </div>
+          <div class="proj-modal-sect">
+            <span class="proj-modal-sect-label">// Tech Stack</span>
+            <div class="proj-modal-tech" id="pmTech"></div>
           </div>
         </div>
+        <div class="proj-modal-footer">
+          <a href="#" class="proj-modal-cta">View Live Project ↗</a>
+        </div>
       </div>
+    </div>
+
     </section>
   </main>
 

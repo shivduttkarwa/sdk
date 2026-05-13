@@ -691,105 +691,135 @@ if (window.gsap && window.ScrollTrigger) {
   })(0);
 })();
 
-// ── Showcase work: sticky left + scroll-driven right ──
-(function initShowcase() {
-  if (!window.gsap || !window.ScrollTrigger) return;
-  const blocks = document.querySelectorAll('.site-block');
-  if (!blocks.length) return;
+// ── Stacked project showcase ──
+(function initStackedWork() {
+  const workSection  = document.getElementById('work');
+  const hud          = document.getElementById('projHud');
+  const hudDots      = document.querySelectorAll('.proj-hud-dot');
+  const projSections = document.querySelectorAll('.project-section');
+  const projStack    = document.querySelector('.proj-stack');
+  const modal        = document.getElementById('projModal');
+  const modalBg      = document.getElementById('projModalBg');
+  const modalDrawer  = document.getElementById('projModalDrawer');
+  const modalClose   = document.getElementById('projModalClose');
 
-  const slIndex = document.getElementById('slIndex');
-  const slNum   = document.getElementById('slNum');
-  const slTitle = document.getElementById('slTitle');
-  const slCopy  = document.getElementById('slCopy');
-  if (!slIndex) return;
+  if (!workSection || !projStack || !projSections.length) return;
 
-  function updateLeft(block) {
-    const num   = block.dataset.num;
-    const title = block.dataset.title;
-    const text  = block.dataset.text;
-    if (slNum.textContent === num) return;
+  // ── HUD visibility ──────────────────────────────────────────────
+  const hudObserver = new IntersectionObserver(([entry]) => {
+    hud && hud.classList.toggle('is-visible', entry.isIntersecting);
+  }, { threshold: 0.01 });
+  hudObserver.observe(workSection);
 
-    gsap.to([slIndex, slNum, slTitle, slCopy], {
-      y: -24, opacity: 0, filter: 'blur(8px)', duration: 0.2, ease: 'power2.in',
-      onComplete() {
-        slIndex.textContent = `// ${num}`;
-        slNum.textContent   = num;
-        slTitle.textContent = title;
-        slCopy.textContent  = text;
-        gsap.fromTo([slIndex, slNum, slTitle, slCopy],
-          { y: 32, opacity: 0, filter: 'blur(8px)' },
-          { y: 0, opacity: 1, filter: 'blur(0px)', duration: 0.5, stagger: 0.04, ease: 'power4.out' }
-        );
-      }
-    });
+  // ── Active slide tracking via scroll position ───────────────────
+  const count = projSections.length;
+
+  function getActiveIdx() {
+    const stackTop = projStack.getBoundingClientRect().top + window.scrollY;
+    const progress = window.scrollY - stackTop;
+    return Math.min(count - 1, Math.max(0, Math.floor(progress / window.innerHeight)));
   }
 
-  blocks.forEach(block => {
-    ScrollTrigger.create({
-      trigger: block,
-      start: 'top center',
-      end: 'bottom center',
-      onEnter:     () => updateLeft(block),
-      onEnterBack: () => updateLeft(block),
+  function setActiveDot(idx) {
+    hudDots.forEach((dot, i) => dot.classList.toggle('is-active', i === idx));
+  }
+
+  window.addEventListener('scroll', () => setActiveDot(getActiveIdx()), { passive: true });
+  setActiveDot(0);
+
+  // ── HUD dot navigation ──────────────────────────────────────────
+  hudDots.forEach(dot => {
+    dot.addEventListener('click', () => {
+      const idx       = parseInt(dot.dataset.projIdx, 10);
+      const stackTop  = projStack.getBoundingClientRect().top + window.scrollY;
+      window.scrollTo({ top: stackTop + idx * window.innerHeight, behavior: 'smooth' });
     });
   });
 
-  // hero panel animations
-  function splitWords(el) {
-    el.innerHTML = el.innerHTML
-      .split(/(<br\s*\/?>|\s+)/g)
-      .map(p => p.match(/<br/) ? p : p.trim() ? `<span class="wm"><span>${p}</span></span>` : p)
-      .join('');
-  }
-
-  document.querySelectorAll('.sh-title, .sd-heading').forEach(splitWords);
-
-  document.querySelectorAll('.site-hero').forEach(hero => {
-    const words  = hero.querySelectorAll('.wm span');
-    const img    = hero.querySelector('.hero-img-wrap img');
-    const shapes = hero.querySelectorAll('.hero-shape');
-    const label  = hero.querySelector('.sh-side-label');
-
-    gsap.set(words,  { y: '115%', opacity: 0, filter: 'blur(12px)' });
-    gsap.set(img,    { scale: 1.14, y: 36, opacity: 0 });
-    gsap.set(shapes, { scaleX: 0 });
-    if (label) gsap.set(label, { x: 70, opacity: 0 });
-
-    const tl = gsap.timeline({
-      scrollTrigger: { trigger: hero, start: 'top 70%', end: 'bottom 35%', toggleActions: 'play none none reverse' }
-    });
-
-    tl.to(shapes, { scaleX: 1, duration: 0.85, stagger: 0.08, ease: 'power4.out' })
-      .to(img,    { scale: 1.06, y: 0, opacity: 1, duration: 1.1, ease: 'power4.out' }, '-=0.75')
-      .to(words,  { y: '0%', opacity: 1, filter: 'blur(0px)', duration: 0.78, stagger: 0.032, ease: 'power4.out' }, '-=0.7')
-      .to(label,  { x: 0, opacity: 1, duration: 0.6, ease: 'power4.out' }, '-=0.55');
-
-    gsap.to(img, {
-      yPercent: -8, ease: 'none',
-      scrollTrigger: { trigger: hero, start: 'top bottom', end: 'bottom top', scrub: true }
-    });
+  // ── NEXT WORK / BACK TO TOP buttons ────────────────────────────
+  workSection.addEventListener('click', e => {
+    const nextBtn = e.target.closest('.proj-next-btn[data-next-idx]');
+    if (nextBtn) {
+      const idx      = parseInt(nextBtn.dataset.nextIdx, 10);
+      const stackTop = projStack.getBoundingClientRect().top + window.scrollY;
+      window.scrollTo({ top: stackTop + idx * window.innerHeight, behavior: 'smooth' });
+      return;
+    }
+    if (e.target.closest('.proj-back-top')) {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
   });
 
-  // detail panel animations
-  document.querySelectorAll('.site-detail').forEach(detail => {
-    const words = detail.querySelectorAll('.wm span');
-    const copy  = detail.querySelector('.sd-copy');
-    const rows  = detail.querySelectorAll('.sd-row');
-    const tags  = detail.querySelectorAll('.sd-tags span');
-    const link  = detail.querySelector('.sd-link');
-
-    gsap.set(words,           { y: '115%', opacity: 0, filter: 'blur(12px)' });
-    gsap.set([copy, rows, tags, link], { y: 44, opacity: 0, filter: 'blur(8px)' });
-
-    const tl = gsap.timeline({
-      scrollTrigger: { trigger: detail, start: 'top 72%', end: 'bottom 45%', toggleActions: 'play none none reverse' }
+  // ── Subtle parallax on bg images ───────────────────────────────
+  if (window.gsap && window.ScrollTrigger) {
+    projSections.forEach(section => {
+      const img = section.querySelector('.proj-bg-img');
+      if (!img) return;
+      gsap.to(img, {
+        yPercent: -8, ease: 'none',
+        scrollTrigger: { trigger: section, start: 'top bottom', end: 'bottom top', scrub: true }
+      });
     });
+  }
 
-    tl.to(words, { y: '0%', opacity: 1, filter: 'blur(0px)', duration: 0.72, stagger: 0.025, ease: 'power4.out' })
-      .to(copy,  { y: 0, opacity: 1, filter: 'blur(0px)', duration: 0.65, ease: 'power3.out' }, '-=0.3')
-      .to(rows,  { y: 0, opacity: 1, filter: 'blur(0px)', duration: 0.6,  stagger: 0.07, ease: 'power3.out' }, '-=0.3')
-      .to(tags,  { y: 0, opacity: 1, filter: 'blur(0px)', duration: 0.45, stagger: 0.04, ease: 'power3.out' }, '-=0.25')
-      .to(link,  { y: 0, opacity: 1, filter: 'blur(0px)', duration: 0.5,  ease: 'power3.out' }, '-=0.2');
+  // ── Modal ───────────────────────────────────────────────────────
+  if (!modal) return;
+
+  function openModal(idx) {
+    const article = document.getElementById(`proj-${idx}`);
+    if (!article) return;
+
+    const numEl = document.getElementById('pmNum');
+    if (numEl) numEl.textContent = `0${idx + 1}`;
+
+    const titleEl = document.getElementById('pmTitle');
+    if (titleEl) titleEl.textContent = article.dataset.client || '';
+
+    const metaEl = document.getElementById('pmMeta');
+    if (metaEl) metaEl.textContent = `${article.dataset.category || ''} · ${article.dataset.year || ''}`;
+
+    const overviewEl = document.getElementById('pmOverview');
+    if (overviewEl) overviewEl.textContent = article.dataset.overview || '';
+
+    const challengeEl = document.getElementById('pmChallenge');
+    if (challengeEl) challengeEl.textContent = article.dataset.challenge || '';
+
+    const solutionEl = document.getElementById('pmSolution');
+    if (solutionEl) solutionEl.textContent = article.dataset.solution || '';
+
+    const delEl = document.getElementById('pmDeliverables');
+    if (delEl) {
+      const items = (article.dataset.deliverables || '').split(',').map(s => s.trim()).filter(Boolean);
+      delEl.innerHTML = items.map(d => `<span class="pm-del-item">${d}</span>`).join('');
+    }
+
+    const techEl = document.getElementById('pmTech');
+    if (techEl) {
+      const items = (article.dataset.tech || '').split(',').map(s => s.trim()).filter(Boolean);
+      techEl.innerHTML = items.map(t => `<span class="pm-tech-item">${t}</span>`).join('');
+    }
+
+    modal.classList.add('is-open');
+    modal.removeAttribute('aria-hidden');
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closeModal() {
+    modal.classList.remove('is-open');
+    modal.setAttribute('aria-hidden', 'true');
+    document.body.style.overflow = '';
+  }
+
+  workSection.addEventListener('click', e => {
+    const openBtn = e.target.closest('.proj-btn-primary[data-open-proj]');
+    if (openBtn) openModal(parseInt(openBtn.dataset.openProj, 10));
+  });
+
+  if (modalClose) modalClose.addEventListener('click', closeModal);
+  if (modalBg)    modalBg.addEventListener('click', closeModal);
+
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape' && modal.classList.contains('is-open')) closeModal();
   });
 })();
 
