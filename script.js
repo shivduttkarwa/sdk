@@ -919,9 +919,9 @@ if (window.gsap && window.ScrollTrigger) {
       vec3 inner = mix(bg, port, inStrip * 0.78);
       vec3 col   = inner * mask;
 
-      float glow = exp(-edgeDist * 36.0) * 1.5;
-      col += vec3(0.18, 0.50, 1.00) * glow * 0.55;
-      col += vec3(0.56, 0.36, 1.00) * glow * 0.35;
+      float glow = exp(-edgeDist * 36.0) * 0.5;
+      col += vec3(0.88, 0.16, 0.22) * glow * 0.18;
+      col += vec3(0.55, 0.06, 0.14) * glow * 0.10;
 
       float grain = (rand(uv * 540.0 + fract(u_time * 0.07)) - 0.5) * 0.042;
       col += grain;
@@ -999,10 +999,7 @@ if (window.gsap && window.ScrollTrigger) {
       .catch(e => console.warn('[blob] texture load failed:', url, e));
   }
 
-  loadBitmap(
-    'https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?auto=format&fit=crop&w=1920&q=80',
-    0, texBg
-  );
+  loadBitmap('./assets/hero-main-bg.png', 0, texBg);
   loadBitmap('./assets/1111.png', 1, texPort);
 
   let mx = 0.15, my = 0.58;
