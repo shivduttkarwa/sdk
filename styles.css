@@ -15,9 +15,9 @@
 }
 
 :root {
-  --bg: #0b0506;
-  --bg-2: #110608;
-  --bg-3: #190709;
+  --bg: #080407;
+  --bg-2: #0d0508;
+  --bg-3: #14060a;
   --card: rgba(255,255,255,0.045);
   --card-2: rgba(255,255,255,0.075);
   --text: #f5f2ea;
@@ -45,7 +45,7 @@
 
 html {
   scroll-behavior: smooth;
-  background: var(--bg);
+  background: #080407;
   scrollbar-gutter: stable;
 }
 
@@ -53,11 +53,15 @@ body {
   min-height: 100vh;
   font-family: "Inter", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
   color: var(--text);
-  background:
-    radial-gradient(ellipse at 15% 50%, rgba(224,63,79,0.18), transparent 44%),
-    radial-gradient(ellipse at 82% 18%, rgba(224,63,79,0.12), transparent 38%),
-    radial-gradient(ellipse at 50% 95%, rgba(224,63,79,0.32), transparent 36%),
-    var(--bg);
+  background-color: #080407;
+  background-image:
+    linear-gradient(rgba(224,63,79,0.07) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(224,63,79,0.07) 1px, transparent 1px),
+    radial-gradient(ellipse at 66% 28%, rgba(224,63,79,0.28), transparent 52%),
+    radial-gradient(ellipse at 14% 72%, rgba(143,92,255,0.18), transparent 48%),
+    radial-gradient(ellipse at 90% 82%, rgba(47,128,255,0.13), transparent 42%);
+  background-size: 48px 48px, 48px 48px, 100% 100%, 100% 100%, 100% 100%;
+  background-attachment: fixed;
   overflow-x: hidden;
 }
 
@@ -236,7 +240,7 @@ img {
   z-index: 10000;
   display: grid;
   place-items: center;
-  background: #0b0506;
+  background: #080407;
   overflow: hidden;
 }
 
@@ -681,10 +685,7 @@ img {
 .hero {
   position: relative;
   height: 100svh;
-  background:
-    radial-gradient(ellipse at 12% 80%, rgba(224,63,79,0.22), transparent 42%),
-    radial-gradient(ellipse at 88% 82%, rgba(224,63,79,0.16), transparent 38%),
-    var(--bg);
+  background: transparent;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -884,10 +885,7 @@ img {
 /* Text intro */
 .text-intro {
   padding: clamp(100px, 14vw, 200px) 0;
-  background:
-    radial-gradient(ellipse at 30% 110%, rgba(224,63,79,0.28), transparent 50%),
-    radial-gradient(ellipse at 72% 105%, rgba(224,63,79,0.20), transparent 44%),
-    var(--bg);
+  background: transparent;
   overflow: hidden;
 }
 
@@ -958,11 +956,7 @@ img {
   width: 100%;
   overflow: hidden;
   position: relative;
-  background:
-    radial-gradient(ellipse at 50% 50%, rgba(224,63,79,0.38), transparent 70%),
-    radial-gradient(ellipse at 10% 30%, rgba(224,63,79,0.22), transparent 50%),
-    radial-gradient(ellipse at 90% 70%, rgba(224,63,79,0.22), transparent 50%),
-    var(--bg);
+  background: transparent;
 }
 
 .stats-rule {
@@ -1075,11 +1069,7 @@ img {
 
 /* ── Recent Work pinned section ── */
 .rw-section {
-  background:
-    radial-gradient(ellipse at 50% 0%, rgba(224,63,79,0.26), transparent 46%),
-    radial-gradient(ellipse at 20% 0%, rgba(224,63,79,0.14), transparent 36%),
-    radial-gradient(ellipse at 80% 0%, rgba(224,63,79,0.14), transparent 36%),
-    var(--bg);
+  background: transparent;
 }
 
 .rw-intro {
@@ -1273,9 +1263,7 @@ img {
 .footer {
   padding: 56px 32px;
   border-top: 1px solid rgba(255,255,255,.08);
-  background:
-    radial-gradient(ellipse at 50% 0%, rgba(224,63,79,0.22), transparent 54%),
-    var(--bg);
+  background: transparent;
 }
 
 .footer-grid {
