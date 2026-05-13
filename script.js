@@ -65,46 +65,6 @@ document.querySelectorAll('.tilt-card').forEach(card => {
   });
 });
 
-// Project filters
-const filterBtns  = document.querySelectorAll('.filter-btn');
-const projectCards = document.querySelectorAll('.project-card');
-
-filterBtns.forEach(btn => {
-  btn.addEventListener('click', () => {
-    filterBtns.forEach(b => b.classList.remove('active'));
-    btn.classList.add('active');
-
-    const filter = btn.dataset.filter;
-    projectCards.forEach(card => {
-      const categories = card.dataset.category;
-      if (filter === 'all' || categories.includes(filter)) {
-        card.classList.remove('is-hidden');
-      } else {
-        card.classList.add('is-hidden');
-      }
-    });
-  });
-});
-
-// Process active steps + mock code
-const processSteps = document.querySelectorAll('.process-step');
-const mockCode     = document.getElementById('mockCode');
-const codeSnippets = {
-  '01_DISCOVER': `<span class="green">01_DISCOVER</span>\n\n<span class="blue">brand</span>.goals()\n<span class="purple">audience</span>.map()\n<span class="gold">requirements</span>.define()\n\n// Build begins with clarity.`,
-  '02_DESIGN':   `<span class="green">02_DESIGN</span>\n\n<span class="blue">layout</span>.compose()\n<span class="purple">motion</span>.prototype()\n<span class="gold">system</span>.styleGuide()\n\n// Premium look before code.`,
-  '03_DEVELOP':  `<span class="green">03_DEVELOP</span>\n\n<span class="blue">frontend</span>.build()\n<span class="purple">backend</span>.connect()\n<span class="gold">cms</span>.publish()\n\n// Clean code. Smooth UI.`,
-  '04_LAUNCH':   `<span class="green">04_LAUNCH</span>\n\n<span class="blue">performance</span>.test()\n<span class="purple">responsive</span>.verify()\n<span class="gold">deploy</span>.ship()\n\n// Ready for the world.`
-};
-
-function setActiveProcess(step) {
-  processSteps.forEach(s => s.classList.remove('is-active'));
-  step.classList.add('is-active');
-  mockCode.innerHTML = codeSnippets[step.dataset.code];
-}
-
-processSteps.forEach(step => {
-  step.addEventListener('mouseenter', () => setActiveProcess(step));
-});
 
 // Reveal observer
 const revealObserver = new IntersectionObserver((entries) => {
@@ -118,27 +78,6 @@ const revealObserver = new IntersectionObserver((entries) => {
 
 document.querySelectorAll('.reveal').forEach(el => revealObserver.observe(el));
 
-// Count-up stats
-const countObserver = new IntersectionObserver((entries) => {
-  entries.forEach(entry => {
-    if (!entry.isIntersecting) return;
-    const el       = entry.target;
-    const target   = Number(el.dataset.count);
-    const suffix   = target === 100 ? '%' : '+';
-    const duration = 1200;
-    const start    = performance.now();
-
-    function update(now) {
-      const p     = Math.min((now - start) / duration, 1);
-      el.textContent = Math.floor(p * target) + suffix;
-      if (p < 1) requestAnimationFrame(update);
-    }
-    requestAnimationFrame(update);
-    countObserver.unobserve(el);
-  });
-}, { threshold: 0.4 });
-
-document.querySelectorAll('[data-count]').forEach(el => countObserver.observe(el));
 
 // Hero rotating words
 (function initRotatingWords() {
@@ -247,15 +186,6 @@ if (window.gsap && window.ScrollTrigger) {
   });
 
 
-  gsap.utils.toArray('.process-step').forEach((step) => {
-    ScrollTrigger.create({
-      trigger: step,
-      start: 'top center',
-      end: 'bottom center',
-      onEnter:     () => setActiveProcess(step),
-      onEnterBack: () => setActiveProcess(step)
-    });
-  });
 }
 
 // ── Stats row: single water-trail cursor reveal (3 bg images) ──
