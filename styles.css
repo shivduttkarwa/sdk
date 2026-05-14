@@ -1110,7 +1110,8 @@ img {
 .char-wrap {
   display: inline-block;
   overflow: hidden;
-  vertical-align: bottom;
+  vertical-align: top;
+  line-height: 1;
 }
 
 .jg-title .char,

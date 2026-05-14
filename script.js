@@ -1439,41 +1439,38 @@ if (window.gsap && window.ScrollTrigger) {
     }
   });
 
+  function initSectionTitleAnims() {
+    if (!window.gsap || !window.ScrollTrigger) return;
+    document.querySelectorAll('.ts-section').forEach(sec => {
+      sec.querySelectorAll('[data-split]').forEach(el => {
+        const text = el.textContent.trim();
+        el.innerHTML = text.split('').map(ch =>
+          ch === ' '
+            ? '<span style="display:inline-block;width:0.18em"></span>'
+            : `<span class="char-wrap"><span class="char">${ch}</span></span>`
+        ).join('');
+      });
+      const chars = [...sec.querySelectorAll('.ts-title .char')];
+      if (!chars.length) return;
+      gsap.timeline({
+        scrollTrigger: { trigger: sec, start: 'top 60%', once: true }
+      }).from(chars, { yPercent: 110, duration: 1, stagger: 0.04, ease: 'power4.out' });
+    });
+  }
+
   initWebGL().then(r=>{
     renderer=r;
     setupScroll();
     ScrollTrigger.refresh();
+    initSectionTitleAnims();
     requestAnimationFrame(animate);
   }).catch(err=>{
     console.warn('WebGL unavailable. Falling back to CSS background.',err);
     if(section) section.classList.add('no-webgl');
     setupScroll();
     ScrollTrigger.refresh();
+    initSectionTitleAnims();
     requestAnimationFrame(animate);
-  });
-})();
-
-// ── Section title char animations ──
-(function() {
-  if (!window.gsap || !window.ScrollTrigger) return;
-
-  document.querySelectorAll('.ts-section').forEach(section => {
-    section.querySelectorAll('[data-split]').forEach(el => {
-      const text = el.textContent.trim();
-      el.innerHTML = text.split('').map(ch =>
-        ch === ' '
-          ? '<span style="display:inline-block;width:0.18em"></span>'
-          : `<span class="char-wrap"><span class="char">${ch}</span></span>`
-      ).join('');
-    });
-
-    gsap.from(section.querySelectorAll('.char'), {
-      yPercent: 110,
-      duration: 1,
-      stagger: 0.04,
-      ease: 'power4.out',
-      scrollTrigger: { trigger: section, start: 'top 75%', once: true }
-    });
   });
 })();
 
