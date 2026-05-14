@@ -71,7 +71,7 @@ body {
   background-position: center top;
   background-repeat: no-repeat;
   background-attachment: fixed;
-  overflow-x: hidden;
+  overflow-x: clip;
 }
 
 body.no-scroll {

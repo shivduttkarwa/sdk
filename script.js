@@ -119,6 +119,20 @@ gsap.from('.hero-meta, .scroll-indicator', {
   });
 }
 
+// Lenis smooth scroll
+if (window.Lenis && !matchMedia('(prefers-reduced-motion: reduce)').matches) {
+  const lenis = new Lenis({
+    duration: 1.42,
+    smoothWheel: true,
+    wheelMultiplier: .88,
+    touchMultiplier: 1.15,
+    easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t))
+  });
+  function lenisRaf(t) { lenis.raf(t); requestAnimationFrame(lenisRaf); }
+  requestAnimationFrame(lenisRaf);
+  if (window.ScrollTrigger) { lenis.on('scroll', ScrollTrigger.update); }
+}
+
 // GSAP scroll animations
 if (window.gsap && window.ScrollTrigger) {
   gsap.registerPlugin(ScrollTrigger);
@@ -1411,11 +1425,13 @@ if (window.gsap && window.ScrollTrigger) {
   initWebGL().then(r=>{
     renderer=r;
     setupScroll();
+    ScrollTrigger.refresh();
     requestAnimationFrame(animate);
   }).catch(err=>{
     console.warn('WebGL unavailable. Falling back to CSS background.',err);
     if(section) section.classList.add('no-webgl');
     setupScroll();
+    ScrollTrigger.refresh();
     requestAnimationFrame(animate);
   });
 })();
