@@ -573,6 +573,26 @@ img {
   z-index: 4;
 }
 
+.hero-mobile-bg {
+  display: none;
+}
+
+@media (max-width: 768px) {
+  .hero-mobile-bg {
+    display: block;
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    background-image: url('assets/1111.png');
+    background-size: cover;
+    background-position: center top;
+    background-repeat: no-repeat;
+    opacity: 0.18;
+    mix-blend-mode: luminosity;
+    pointer-events: none;
+  }
+}
+
 .nav-reveal-canvas {
   position: absolute;
   left: 0;
@@ -901,7 +921,7 @@ img {
 .ti-inner {
   box-sizing: border-box;
   width: 100%;
-  padding: 0 5rem;
+  padding: 0 2rem;
 }
 
 .ti-header {
@@ -2226,17 +2246,79 @@ img {
 }
 
 @media (max-width: 900px) {
-  .ts-section { padding: 5rem 6vw 6rem; }
+  body {
+    background-image: none;
+    background-attachment: scroll;
+  }
+
+  .ts-section { padding: 5rem 2rem 6rem; }
   .ts-bento { grid-template-columns: 1fr; }
   .ts-card--wide { grid-column: span 1; }
-  .proc-layout { flex-direction: column; gap: 0; }
+
+  /* ── Process: mobile layout ── */
+  .proc-layout {
+    flex-direction: column;
+    gap: 0;
+  }
+
+  /* Hide sword column entirely */
   .proc-mid { display: none; }
-  .proc-img-rail { order: -1; padding-left: 0; }
-  .proc-frame-wrap { position: sticky; top: 1rem; max-height: 280px; aspect-ratio: 16/10; margin: 0 auto; max-width: 360px; z-index: 10; perspective: 1000px; }
-  .proc-rail { padding-right: 0; padding-left: 2.5rem; position: relative; }
-  .proc-track { display: block; position: absolute; left: 0; right: auto; transform: none; width: 1px; }
+
+  /* Image frame sits at the top, smaller */
+  .proc-img-rail {
+    order: -1;
+    padding-left: 0;
+    width: 100%;
+  }
+
+  .proc-frame-wrap {
+    position: relative;
+    top: auto;
+    margin: 0 auto 2rem;
+    width: min(320px, 88vw);
+    height: auto;
+    aspect-ratio: 3 / 4;
+    max-height: none;
+    perspective: 1000px;
+  }
+
+  /* Left content rail */
+  .proc-rail {
+    padding-right: 0;
+    padding-left: 0;
+    position: relative;
+  }
+
+  /* Thin left border as timeline indicator */
+  .proc-rail::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 1px;
+    background: rgba(185,23,41,0.25);
+  }
+
   .proc-dot { right: auto; left: -5.5px; }
-  .proc-panel { padding-right: 0; height: 80vh; }
+
+  .proc-panel {
+    height: auto;
+    min-height: 60vh;
+    padding: 3rem 2rem 3rem 3rem;
+  }
+
+  .proc-num {
+    font-size: clamp(4rem, 18vw, 7rem);
+  }
+
+  .proc-title {
+    font-size: clamp(2.4rem, 9vw, 4rem);
+  }
+
+  .proc-desc {
+    font-size: 1rem;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {

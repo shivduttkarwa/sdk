@@ -837,6 +837,7 @@ if (window.gsap && window.ScrollTrigger) {
 
 // ── Hero blob: WebGL cursor reveal ──
 (function initHeroBlob() {
+  if (window.matchMedia('(max-width: 768px)').matches) return;
   const hero   = document.getElementById('home');
   const canvas = document.getElementById('hero-blob-canvas');
   if (!hero || !canvas) return;
