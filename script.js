@@ -216,7 +216,7 @@ if (window.gsap && window.ScrollTrigger) {
   canvas.className = 'stats-blob-canvas';
   row.prepend(canvas);
 
-  const gl = canvas.getContext('webgl', { alpha: true, premultipliedAlpha: false, antialias: false });
+  const gl = canvas.getContext('webgl', { alpha: true, premultipliedAlpha: false, antialias: false, powerPreference: 'low-power' });
   if (!gl) { canvas.remove(); return; }
 
   // Float textures required for velocity/pressure fields
@@ -571,7 +571,7 @@ if (window.gsap && window.ScrollTrigger) {
 (function initNavReveal() {
   const canvas = document.getElementById('navRevealCanvas');
   if (!canvas) return;
-  const gl = canvas.getContext('webgl', { alpha: true, premultipliedAlpha: false });
+  const gl = canvas.getContext('webgl', { alpha: true, premultipliedAlpha: false, powerPreference: 'low-power' });
   if (!gl) return;
 
   const VS = `
@@ -840,7 +840,7 @@ if (window.gsap && window.ScrollTrigger) {
   const hero   = document.getElementById('home');
   const canvas = document.getElementById('hero-blob-canvas');
   if (!hero || !canvas) return;
-  const gl = canvas.getContext('webgl', { antialias: false, alpha: true, premultipliedAlpha: false });
+  const gl = canvas.getContext('webgl', { antialias: false, alpha: true, premultipliedAlpha: false, powerPreference: 'low-power' });
   if (!gl) return;
 
   const VS = `
@@ -1115,6 +1115,8 @@ if (window.gsap && window.ScrollTrigger) {
 
   const total = imageUrls.length;
   let targetProgress = 0;
+  let sectionVisible = true;
+  new IntersectionObserver(entries => { sectionVisible = entries[0].isIntersecting; }, { rootMargin: '200px' }).observe(section);
   let smoothProgress = 0;
   let mouse = {x:.5,y:.5,tx:.5,ty:.5};
   let renderer = null;
@@ -1264,7 +1266,7 @@ if (window.gsap && window.ScrollTrigger) {
   }
 
   async function initWebGL(){
-    const gl = canvas.getContext('webgl',{alpha:false,antialias:true,premultipliedAlpha:false,preserveDrawingBuffer:false});
+    const gl = canvas.getContext('webgl',{alpha:false,antialias:false,premultipliedAlpha:false,preserveDrawingBuffer:false,powerPreference:'low-power'});
     if(!gl) throw new Error('WebGL unavailable');
 
     const imgs = await Promise.all(imageUrls.map(loadImage));
@@ -1418,9 +1420,25 @@ if (window.gsap && window.ScrollTrigger) {
     mouse.x=lerp(mouse.x,mouse.tx,.065);
     mouse.y=lerp(mouse.y,mouse.ty,.065);
     updateDom(smoothProgress);
-    if(renderer) renderer.render(time,smoothProgress);
+    if(renderer && sectionVisible) renderer.render(time,smoothProgress);
     requestAnimationFrame(animate);
   }
+
+  canvas.addEventListener('webglcontextlost', e => {
+    e.preventDefault();
+    renderer = null;
+  }, false);
+
+  canvas.addEventListener('webglcontextrestored', () => {
+    initWebGL().then(r => { renderer = r; }).catch(() => {});
+  }, false);
+
+  // Tab hidden → context lost but webglcontextrestored never fires; reinit on return
+  document.addEventListener('visibilitychange', () => {
+    if (!document.hidden && !renderer) {
+      initWebGL().then(r => { renderer = r; }).catch(() => {});
+    }
+  });
 
   initWebGL().then(r=>{
     renderer=r;
