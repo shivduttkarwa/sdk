@@ -1436,3 +1436,13 @@ if (window.gsap && window.ScrollTrigger) {
   });
 })();
 
+// ── Tech Stack spotlight ──
+(function() {
+  document.querySelectorAll('.ts-card').forEach(card => {
+    card.addEventListener('mousemove', e => {
+      const r = card.getBoundingClientRect();
+      card.style.setProperty('--mouse-x', `${e.clientX - r.left}px`);
+      card.style.setProperty('--mouse-y', `${e.clientY - r.top}px`);
+    });
+  });
+})();
