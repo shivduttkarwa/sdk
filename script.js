@@ -1343,14 +1343,32 @@ if (window.gsap && window.ScrollTrigger) {
     if(progressBar) progressBar.style.transform=`scaleY(${p})`;
     if(bgFallback)  bgFallback.style.setProperty('--fallback-bg',`url('${imageUrls[s.active]}')`);
 
+    // burn edge enters text at ~6%, exits at ~55%; bell curve between those points
+    const tL=6, tR=55;
+    const melt=(wipe>=tL&&wipe<=tR)?Math.sin(((wipe-tL)/(tR-tL))*Math.PI):0;
+
     panels.forEach((panel,i)=>{
       panel.classList.remove('is-from','is-to','is-single');
       panel.style.opacity='0';
+      const copy=panel.querySelector('.project-copy');
+      if(copy){copy.style.filter='';copy.style.transform='';}
       if(s.from===s.to||s.mix<.001){
         if(i===s.from){panel.classList.add('is-single');panel.style.opacity='1';}
       }else{
-        if(i===s.from){panel.classList.add('is-from');panel.style.opacity='1';}
-        if(i===s.to)  {panel.classList.add('is-to');  panel.style.opacity='1';}
+        if(i===s.from){
+          panel.classList.add('is-from');panel.style.opacity='1';
+          if(copy&&melt>0){
+            copy.style.filter=`blur(${melt*7}px) saturate(${1+melt*1.2})`;
+            copy.style.transform='';
+          }
+        }
+        if(i===s.to){
+          panel.classList.add('is-to');panel.style.opacity='1';
+          if(copy&&melt>0){
+            copy.style.filter=`blur(${melt*7}px) saturate(${1+melt*1.2})`;
+            copy.style.transform='';
+          }
+        }
       }
     });
 
