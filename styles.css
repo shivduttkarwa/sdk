@@ -2376,23 +2376,6 @@ img {
   opacity: 0.72;
 }
 
-.sc-title {
-  font-family: "Space Grotesk", sans-serif;
-  margin-top: 28px;
-  font-size: clamp(40px, 5.5vw, 72px);
-  font-weight: 700;
-  line-height: 0.95;
-  letter-spacing: -0.04em;
-  text-transform: uppercase;
-  color: var(--text);
-}
-
-.sc-title span {
-  display: block;
-  color: transparent;
-  -webkit-text-stroke: 1px rgba(245,242,234,0.5);
-}
-
 .sc-copy {
   max-width: 440px;
   margin-top: 22px;
@@ -2401,34 +2384,6 @@ img {
   line-height: 1.8;
 }
 
-.sc-honour-row {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 12px;
-  margin-top: 36px;
-}
-
-.sc-honour-card {
-  padding: 16px 14px;
-  border-radius: 18px;
-  border: 1px solid rgba(245,242,234,0.08);
-  background: rgba(255,255,255,0.03);
-}
-
-.sc-honour-card strong {
-  display: block;
-  font-family: "Space Grotesk", sans-serif;
-  color: var(--text);
-  font-size: 17px;
-  font-weight: 700;
-  margin-bottom: 5px;
-}
-
-.sc-honour-card small {
-  color: rgba(245,242,234,0.48);
-  font-size: 12px;
-  line-height: 1.5;
-}
 
 .sc-seal {
   position: absolute;

@@ -1636,20 +1636,12 @@ if (window.gsap && window.ScrollTrigger) {
       section.style.setProperty('--my', `${((e.clientY - r.top)  / r.height) * 100}%`);
     });
 
-    // 3-D tilt on hover
+    // Mouse-tracking spotlight per card
     tiltCards.forEach((card) => {
       card.addEventListener('pointermove', (e) => {
-        const r  = card.getBoundingClientRect();
-        const x  = e.clientX - r.left;
-        const y  = e.clientY - r.top;
-        const ry = ((x / r.width)  - 0.5) * 7;
-        const rx = ((y / r.height) - 0.5) * -7;
-        card.style.transform = `rotateX(${rx}deg) rotateY(${ry}deg)`;
-        card.style.setProperty('--mx', `${(x / r.width)  * 100}%`);
-        card.style.setProperty('--my', `${(y / r.height) * 100}%`);
-      });
-      card.addEventListener('pointerleave', () => {
-        card.style.transform = 'rotateX(0deg) rotateY(0deg)';
+        const r = card.getBoundingClientRect();
+        card.style.setProperty('--mx', `${((e.clientX - r.left) / r.width)  * 100}%`);
+        card.style.setProperty('--my', `${((e.clientY - r.top)  / r.height) * 100}%`);
       });
     });
 
