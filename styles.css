@@ -2319,6 +2319,38 @@ img {
   .proc-desc {
     font-size: 1rem;
   }
+
+  /* ── Stats: mobile compact ── */
+  .stats-row {
+    min-height: unset;
+  }
+
+  .si {
+    padding: 2rem 1rem;
+  }
+
+  .si-num {
+    font-size: clamp(40px, 10vw, 72px);
+  }
+
+  .si-sup {
+    font-size: clamp(18px, 4vw, 30px);
+  }
+
+  .si-foot {
+    margin-top: 1rem;
+    gap: 10px;
+  }
+
+  .si-name {
+    font-size: 11px;
+  }
+
+  .si-idx {
+    font-size: 10px;
+  }
+
+ 
 }
 
 @media (prefers-reduced-motion: reduce) {
