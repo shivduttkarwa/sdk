@@ -1055,15 +1055,14 @@ if (window.gsap && window.ScrollTrigger) {
   const section = document.querySelector('.jg-featured');
   if (!section || !window.gsap || !window.ScrollTrigger) return;
 
-  const title = section.querySelector('[data-split]');
-  if (title) {
-    const text = title.textContent.trim();
-    title.innerHTML = text.split('').map(ch =>
+  section.querySelectorAll('[data-split]').forEach(el => {
+    const text = el.textContent.trim();
+    el.innerHTML = text.split('').map(ch =>
       ch === ' '
         ? '<span style="display:inline-block;width:0.18em"></span>'
         : `<span class="char-wrap"><span class="char">${ch}</span></span>`
     ).join('');
-  }
+  });
 
   gsap.timeline({
     scrollTrigger: { trigger: section, start: 'top 72%', once: true }

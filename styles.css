@@ -1105,6 +1105,8 @@ img {
   margin-top: 16px;
 }
 
+.jg-title-dim { color: rgba(245,242,234,.35); font-weight: 300; }
+
 .jg-title .char {
   display: inline-block;
   will-change: transform;
