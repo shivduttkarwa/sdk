@@ -1622,6 +1622,59 @@ if (window.gsap && window.ScrollTrigger) {
     setTrackBounds(); // recalculate after triggers are registered
   }
 
+  function initContact() {
+    const section   = document.querySelector('.sc-section');
+    const tiltCards = document.querySelectorAll('.sc-tilt');
+    const form      = document.getElementById('scContactForm');
+    const toast     = document.getElementById('scToast');
+    if (!section) return;
+
+    // Mouse-tracking spotlight on panels
+    section.addEventListener('pointermove', (e) => {
+      const r = section.getBoundingClientRect();
+      section.style.setProperty('--mx', `${((e.clientX - r.left) / r.width) * 100}%`);
+      section.style.setProperty('--my', `${((e.clientY - r.top)  / r.height) * 100}%`);
+    });
+
+    // 3-D tilt on hover
+    tiltCards.forEach((card) => {
+      card.addEventListener('pointermove', (e) => {
+        const r  = card.getBoundingClientRect();
+        const x  = e.clientX - r.left;
+        const y  = e.clientY - r.top;
+        const ry = ((x / r.width)  - 0.5) * 7;
+        const rx = ((y / r.height) - 0.5) * -7;
+        card.style.transform = `rotateX(${rx}deg) rotateY(${ry}deg)`;
+        card.style.setProperty('--mx', `${(x / r.width)  * 100}%`);
+        card.style.setProperty('--my', `${(y / r.height) * 100}%`);
+      });
+      card.addEventListener('pointerleave', () => {
+        card.style.transform = 'rotateX(0deg) rotateY(0deg)';
+      });
+    });
+
+    // Floating petals
+    for (let i = 0; i < 24; i++) {
+      const p = document.createElement('span');
+      p.className = 'sc-petal';
+      p.style.left = `${Math.random() * 100}%`;
+      p.style.top  = `${Math.random() * -100}%`;
+      p.style.setProperty('--drift', `${(Math.random() * 240) - 120}px`);
+      p.style.animationDuration = `${9 + Math.random() * 12}s`;
+      p.style.animationDelay   = `${Math.random() * -14}s`;
+      p.style.opacity = `${0.2 + Math.random() * 0.5}`;
+      section.appendChild(p);
+    }
+
+    // Form submit
+    form?.addEventListener('submit', (e) => {
+      e.preventDefault();
+      toast.classList.add('show');
+      form.reset();
+      setTimeout(() => toast.classList.remove('show'), 4200);
+    });
+  }
+
   initWebGL().then(r=>{
     renderer=r;
     setupScroll();
@@ -1629,6 +1682,7 @@ if (window.gsap && window.ScrollTrigger) {
     initSectionTitleAnims();
     initTechStackCards();
     initProcessTimeline();
+    initContact();
     requestAnimationFrame(animate);
   }).catch(err=>{
     console.warn('WebGL unavailable. Falling back to CSS background.',err);

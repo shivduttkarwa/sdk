@@ -446,7 +446,97 @@
       </div><!-- /proc-layout -->
     </section>
 
+    <!-- ── Contact ── -->
+    <section class="sc-section" id="contact">
+      <div class="sc-red-moon"></div>
+      <div class="sc-ink-brush"></div>
+      <div class="sc-katana-line"></div>
+
+      <div class="sc-shell">
+        <aside class="sc-intro sc-tilt">
+          <div>
+            <div class="eyebrow">Contact the studio</div>
+            <h2 class="sc-title">Start your<br><span>digital quest</span></h2>
+            <p class="sc-copy">Share your idea, vision, or challenge. Every website begins with clarity, discipline, and a precise understanding of the mission.</p>
+            <div class="sc-honour-row">
+              <div class="sc-honour-card"><strong>01</strong><small>Strategy before execution</small></div>
+              <div class="sc-honour-card"><strong>02</strong><small>Premium visual direction</small></div>
+              <div class="sc-honour-card"><strong>03</strong><small>Clean delivery process</small></div>
+            </div>
+          </div>
+          <div class="sc-seal" aria-hidden="true"></div>
+        </aside>
+
+        <main class="sc-form-panel sc-tilt">
+          <div class="sc-form-inner">
+            <div class="sc-form-top">
+              <div class="sc-form-heading">
+                <h2>Send a brief</h2>
+                <p>Tell us what needs to be forged. We will shape the idea into a polished, high-performing web experience.</p>
+              </div>
+              <div class="sc-status">Available</div>
+            </div>
+
+            <form class="sc-form" id="scContactForm">
+              <div class="sc-field-grid">
+                <div class="sc-field">
+                  <label for="scName">Name</label>
+                  <input id="scName" name="name" type="text" placeholder="Your name" required>
+                </div>
+                <div class="sc-field">
+                  <label for="scEmail">Email</label>
+                  <input id="scEmail" name="email" type="email" placeholder="you@example.com" required>
+                </div>
+              </div>
+
+              <div class="sc-field-grid">
+                <div class="sc-field">
+                  <label for="scService">Project Type</label>
+                  <select id="scService" name="service" required>
+                    <option value="" selected disabled>Choose one</option>
+                    <option>Portfolio Website</option>
+                    <option>Business Website</option>
+                    <option>Landing Page</option>
+                    <option>UI Animation</option>
+                    <option>Website Redesign</option>
+                  </select>
+                </div>
+                <div class="sc-field">
+                  <label for="scBudget">Budget Range</label>
+                  <select id="scBudget" name="budget" required>
+                    <option value="" selected disabled>Select range</option>
+                    <option>Starter</option>
+                    <option>Professional</option>
+                    <option>Premium</option>
+                    <option>Custom Build</option>
+                  </select>
+                </div>
+              </div>
+
+              <div class="sc-field">
+                <label for="scMessage">Project Message</label>
+                <textarea id="scMessage" name="message" placeholder="Tell us about your website, pages, style, deadline, and features..." required></textarea>
+              </div>
+
+              <div class="sc-submit-row">
+                <button class="sc-btn" type="submit">
+                  <span>Send Message</span>
+                  <i class="sc-btn-slash" aria-hidden="true"></i>
+                </button>
+                <p class="sc-note">Response within 24 hours. Every brief treated with full attention.</p>
+              </div>
+            </form>
+          </div>
+        </main>
+      </div>
+    </section>
+
   </main>
+
+  <div class="sc-toast" id="scToast">
+    <strong>Message prepared</strong>
+    <p>Your brief has been received. Expect a response within 24 hours.</p>
+  </div>
 
 
   <script src="https://unpkg.com/lenis@1.1.20/dist/lenis.min.js"></script>
