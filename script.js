@@ -1442,6 +1442,8 @@ if (window.gsap && window.ScrollTrigger) {
   function initSectionTitleAnims() {
     if (!window.gsap || !window.ScrollTrigger) return;
     document.querySelectorAll('.ts-section').forEach(sec => {
+
+      // split chars
       sec.querySelectorAll('[data-split]').forEach(el => {
         const text = el.textContent.trim();
         el.innerHTML = text.split('').map(ch =>
@@ -1450,11 +1452,24 @@ if (window.gsap && window.ScrollTrigger) {
             : `<span class="char-wrap"><span class="char">${ch}</span></span>`
         ).join('');
       });
-      const chars = [...sec.querySelectorAll('.ts-title .char')];
-      if (!chars.length) return;
-      gsap.timeline({
-        scrollTrigger: { trigger: sec, start: 'top 60%', once: true }
-      }).from(chars, { yPercent: 110, duration: 1, stagger: 0.04, ease: 'power4.out' });
+
+      const chars    = [...sec.querySelectorAll('.ts-title .char')];
+      const eyebrow  = sec.querySelector('.eyebrow');
+      const subtitle = sec.querySelector('.ts-subtitle');
+
+      const tl = gsap.timeline({
+        scrollTrigger: { trigger: sec, start: 'top 65%', once: true }
+      });
+
+      if (eyebrow) tl.from(eyebrow, { y: 18, opacity: 0, duration: 0.6, ease: 'power3.out' });
+
+      if (chars.length) {
+        tl.from(chars, { yPercent: 110, duration: 1, stagger: 0.04, ease: 'power4.out' }, '-=0.2');
+      }
+
+      if (subtitle) {
+        tl.from(subtitle, { y: 22, opacity: 0, duration: 0.75, ease: 'power3.out' }, '-=0.55');
+      }
     });
   }
 
