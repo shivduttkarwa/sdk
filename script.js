@@ -1453,6 +1453,30 @@ if (window.gsap && window.ScrollTrigger) {
   });
 })();
 
+// ── Section title char animations ──
+(function() {
+  if (!window.gsap || !window.ScrollTrigger) return;
+
+  document.querySelectorAll('.ts-section').forEach(section => {
+    section.querySelectorAll('[data-split]').forEach(el => {
+      const text = el.textContent.trim();
+      el.innerHTML = text.split('').map(ch =>
+        ch === ' '
+          ? '<span style="display:inline-block;width:0.18em"></span>'
+          : `<span class="char-wrap"><span class="char">${ch}</span></span>`
+      ).join('');
+    });
+
+    gsap.from(section.querySelectorAll('.char'), {
+      yPercent: 110,
+      duration: 1,
+      stagger: 0.04,
+      ease: 'power4.out',
+      scrollTrigger: { trigger: section, start: 'top 75%', once: true }
+    });
+  });
+})();
+
 // ── Tech Stack spotlight ──
 (function() {
   document.querySelectorAll('.ts-card').forEach(card => {

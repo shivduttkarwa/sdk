@@ -1107,7 +1107,14 @@ img {
 
 .jg-title-dim { color: rgba(245,242,234,.35); font-weight: 300; }
 
-.jg-title .char {
+.char-wrap {
+  display: inline-block;
+  overflow: hidden;
+  vertical-align: bottom;
+}
+
+.jg-title .char,
+.ts-title .char {
   display: inline-block;
   will-change: transform;
 }
@@ -1811,6 +1818,10 @@ img {
   text-transform: uppercase;
   color: var(--text);
   margin: 1.5rem 0 1.4rem;
+}
+
+.ts-title-line {
+  display: block;
 }
 
 .ts-title-dim {
