@@ -1622,6 +1622,19 @@ if (window.gsap && window.ScrollTrigger) {
     setTrackBounds(); // recalculate after triggers are registered
   }
 
+  function initFooterName() {
+    const el = document.getElementById('ftName');
+    if (!el) return;
+    function fit() {
+      el.style.fontSize = '10px';
+      const available = document.documentElement.clientWidth;
+      const ratio = available / el.scrollWidth;
+      el.style.fontSize = Math.floor(10 * ratio) + 'px';
+    }
+    fit();
+    window.addEventListener('resize', fit, { passive: true });
+  }
+
   function initContact() {
     const section   = document.querySelector('.sc-section');
     const tiltCards = document.querySelectorAll('.sc-tilt');
@@ -1675,6 +1688,7 @@ if (window.gsap && window.ScrollTrigger) {
     initTechStackCards();
     initProcessTimeline();
     initContact();
+    initFooterName();
     requestAnimationFrame(animate);
   }).catch(err=>{
     console.warn('WebGL unavailable. Falling back to CSS background.',err);

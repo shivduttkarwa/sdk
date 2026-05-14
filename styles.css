@@ -2633,6 +2633,142 @@ img {
 
 .sc-toast p { color: rgba(245,242,234,0.55); font-size: 13px; line-height: 1.5; }
 
+/* ── Footer ─────────────────────────────────────────────────────── */
+.site-footer {
+  position: relative;
+  border-top: 1px solid rgba(245,242,234,0.07);
+  overflow: hidden;
+}
+
+.ft-body {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 4rem;
+  padding: clamp(3rem, 5vw, 5.5rem) clamp(1.5rem, 5vw, 6rem) clamp(2.5rem, 4vw, 4rem);
+}
+
+/* CTA block */
+.ft-cta { flex: 1; }
+
+.ft-cta-label {
+  font-size: 0.8rem;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: rgba(245,242,234,0.35);
+  margin-bottom: 1rem;
+}
+
+.ft-cta-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  font-family: "Bricolage Grotesque", "Space Grotesk", sans-serif;
+  font-size: clamp(2rem, 3.5vw, 3.8rem);
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  color: var(--text);
+  text-decoration: none;
+  line-height: 1;
+  transition: color 0.3s var(--ease), gap 0.3s var(--ease);
+}
+
+.ft-cta-link svg {
+  transition: transform 0.35s var(--ease);
+  flex-shrink: 0;
+}
+
+.ft-cta-link:hover { color: var(--green); gap: 18px; }
+.ft-cta-link:hover svg { transform: translate(4px, -4px); }
+
+/* Link columns */
+.ft-links {
+  display: flex;
+  gap: 4rem;
+  flex-shrink: 0;
+}
+
+.ft-col-label {
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: rgba(245,242,234,0.25);
+  margin-bottom: 1.2rem;
+}
+
+.ft-col nav {
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+}
+
+.ft-col nav a {
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: rgba(245,242,234,0.5);
+  text-decoration: none;
+  transition: color 0.25s var(--ease);
+}
+
+.ft-col nav a:hover { color: var(--text); }
+
+/* Divider */
+.ft-rule {
+  height: 1px;
+  background: linear-gradient(90deg,
+    transparent,
+    rgba(245,242,234,0.06) 15%,
+    rgba(185,23,41,0.35) 50%,
+    rgba(245,242,234,0.06) 85%,
+    transparent
+  );
+}
+
+/* Big name — JS sets font-size to fill exact width */
+.ft-name-wrap {
+  line-height: 0.85;
+  overflow: hidden;
+}
+
+.ft-name {
+  display: block;
+  font-family: "Bricolage Grotesque", "Space Grotesk", sans-serif;
+  font-weight: 800;
+  letter-spacing: -0.04em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  color: rgba(245,242,234,0.07);
+  user-select: none;
+}
+
+/* Meta bar */
+.ft-meta {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1.2rem clamp(1.5rem, 5vw, 6rem) 1.8rem;
+  font-size: 0.75rem;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: rgba(245,242,234,0.2);
+}
+
+.ft-meta-dot {
+  width: 3px; height: 3px;
+  border-radius: 50%;
+  background: var(--green);
+  opacity: 0.6;
+  flex-shrink: 0;
+}
+
+@media (max-width: 768px) {
+  .ft-body { flex-direction: column; gap: 2.5rem; }
+  .ft-meta { flex-direction: column; gap: 0.4rem; text-align: center; }
+}
+
 @media (max-width: 940px) {
   .sc-shell { grid-template-columns: 1fr; }
   .sc-intro, .sc-form-inner { min-height: auto; }
