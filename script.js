@@ -1473,11 +1473,29 @@ if (window.gsap && window.ScrollTrigger) {
     });
   }
 
+  function initTechStackCards() {
+    const cards = document.querySelectorAll('#tsBento .ts-card');
+    if (!cards.length || !window.gsap || !window.ScrollTrigger) return;
+    gsap.from(cards, {
+      opacity: 0,
+      y: 40,
+      duration: 0.7,
+      ease: 'power3.out',
+      stagger: 0.12,
+      scrollTrigger: {
+        trigger: '#tsBento',
+        start: 'top 70%',
+        once: true,
+      },
+    });
+  }
+
   initWebGL().then(r=>{
     renderer=r;
     setupScroll();
     ScrollTrigger.refresh();
     initSectionTitleAnims();
+    initTechStackCards();
     requestAnimationFrame(animate);
   }).catch(err=>{
     console.warn('WebGL unavailable. Falling back to CSS background.',err);
@@ -1485,6 +1503,7 @@ if (window.gsap && window.ScrollTrigger) {
     setupScroll();
     ScrollTrigger.refresh();
     initSectionTitleAnims();
+    initTechStackCards();
     requestAnimationFrame(animate);
   });
 })();
