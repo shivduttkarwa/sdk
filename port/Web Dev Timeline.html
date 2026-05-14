@@ -1,0 +1,130 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Web Dev Process — Forged in Code</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Archivo+Black&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="timeline.css" />
+</head>
+<body>
+
+<!-- top bar -->
+<header class="topbar">
+  <div class="brand">FORGE&nbsp;/&nbsp;the web dev process</div>
+  <div class="sword-picker">
+    <label for="swordUpload">＋ Custom sword</label>
+    <input id="swordUpload" type="file" accept="image/*" />
+    <span class="reset" id="swordReset" title="Reset to default">✕</span>
+  </div>
+  <div class="menu">menu&nbsp;<span class="bars"><i></i><i></i></span></div>
+</header>
+
+<!-- hero -->
+<section class="hero">
+  <div class="hero-eyebrow">A six-act ritual</div>
+  <h1 class="hero-title">BUILDING<br/>THE WEB,<br/><span class="hero-italic">one strike</span><br/>at a time.</h1>
+  <div class="hero-foot">
+    <span>Scroll to forge ↓</span>
+    <span>Est. read · 4 min</span>
+  </div>
+</section>
+
+<!-- timeline -->
+<section class="timeline" id="timeline">
+
+  <!-- the sword rides this spine -->
+  <div class="spine" aria-hidden="true">
+    <div class="spine-line"></div>
+    <div class="sword-wrap" id="swordWrap">
+
+      <img class="sword-img" id="swordImg" alt="" src="sword-red.png" />
+    </div>
+  </div>
+
+  <!-- STEPS -->
+  <article class="step" data-side="left" data-idx="01">
+    <div class="step-num">01</div>
+    <h2 class="step-title">DISCOVER<br/>&amp; SCOPE</h2>
+    <p class="step-lede">Every project begins in the dark — listening, asking, mapping the unknown.</p>
+    <p>We sit with the client until the problem stops being vague. Goals, audiences, constraints, the budget that nobody wants to say out loud — all of it gets pulled into the light.</p>
+    <p>By the end of this act we know what we're building, who it's for, and what would make it fail. No code yet. Just clarity, sharpened.</p>
+    <ul class="step-tags">
+      <li>kick-off</li><li>research</li><li>scope doc</li>
+    </ul>
+  </article>
+
+  <article class="step" data-side="right" data-idx="02">
+    <div class="step-num">02</div>
+    <h2 class="step-title">ARCHITECT<br/>THE SHAPE</h2>
+    <p class="step-lede">Information architecture, flows, the bones beneath the skin.</p>
+    <p>Sitemaps, user journeys, wireframes at low fidelity. We argue about navigation. We delete pages. We promise ourselves we will not build a mega-menu, then we discuss building a mega-menu.</p>
+    <p>The output is a blueprint the whole team can read — designers, devs, and the stakeholder who only opens PDFs.</p>
+    <ul class="step-tags">
+      <li>IA</li><li>wireframes</li><li>flows</li>
+    </ul>
+  </article>
+
+  <article class="step" data-side="left" data-idx="03">
+    <div class="step-num">03</div>
+    <h2 class="step-title">DESIGN<br/>THE BLADE</h2>
+    <p class="step-lede">Type, colour, motion, voice — the part you can finally show people.</p>
+    <p>Visual direction is set, components are forged in Figma, the design system gets a name. We pressure-test edge cases: empty states, error states, the long German word in the heading.</p>
+    <p>Nothing ships from this stage until a real human can navigate the prototype without us hovering behind them.</p>
+    <ul class="step-tags">
+      <li>UI</li><li>system</li><li>prototype</li>
+    </ul>
+  </article>
+
+  <article class="step" data-side="right" data-idx="04">
+    <div class="step-num">04</div>
+    <h2 class="step-title">BUILD<br/>IN CODE</h2>
+    <p class="step-lede">Components, routes, data, the slow click of pieces locking together.</p>
+    <p>Front-end and back-end meet at the API. We write tests we'll later thank ourselves for. Performance budgets get set early so they can be quietly broken later.</p>
+    <p>Every PR is a small ceremony — reviewed, merged, deployed to staging where it can be poked at safely.</p>
+    <ul class="step-tags">
+      <li>frontend</li><li>backend</li><li>ci/cd</li>
+    </ul>
+  </article>
+
+  <article class="step" data-side="left" data-idx="05">
+    <div class="step-num">05</div>
+    <h2 class="step-title">TEST<br/>&amp; TEMPER</h2>
+    <p class="step-lede">Heat, water, repeat. Every blade earns its edge.</p>
+    <p>QA across browsers and devices. Accessibility audits with real assistive tech. Load testing the parts we secretly suspect won't survive a Tuesday.</p>
+    <p>Bugs are caught, sorted, ranked, killed. The ones we keep are the ones we chose to keep.</p>
+    <ul class="step-tags">
+      <li>QA</li><li>a11y</li><li>perf</li>
+    </ul>
+  </article>
+
+  <article class="step" data-side="right" data-idx="06">
+    <div class="step-num">06</div>
+    <h2 class="step-title">LAUNCH<br/>&amp; LIVE</h2>
+    <p class="step-lede">The site goes live — and the real work begins.</p>
+    <p>DNS flips. Analytics fires. Someone in a different timezone finds the one bug we missed. We patch, we measure, we feed what we learn back into the next version.</p>
+    <p>A site is never really finished. It is only ever paused at a version you can be proud of.</p>
+    <ul class="step-tags">
+      <li>deploy</li><li>monitor</li><li>iterate</li>
+    </ul>
+  </article>
+
+</section>
+
+<!-- outro -->
+<section class="outro">
+  <h2>THE BLADE<br/>IS YOURS NOW.</h2>
+  <p>Six acts. One process. Endless variations. Let's forge something.</p>
+  <button class="cta">Start a project →</button>
+</section>
+
+<footer class="foot">
+  <span>© 2026 FORGE STUDIO</span>
+  <span>Inspired by lightinthedarkness.it</span>
+</footer>
+
+<script src="timeline.js" defer></script>
+</body>
+</html>

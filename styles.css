@@ -1961,11 +1961,29 @@ img {
   position: relative;
 }
 
-/* Centre column — progress track lives here */
+/* Centre column — sword travels here */
 .proc-mid {
-  width: 48px;
+  width: 160px;
   flex-shrink: 0;
   position: relative;
+  overflow: visible;
+  perspective: 1200px;
+}
+
+.proc-sword-wrap {
+  position: absolute;
+  left: 50%;
+  width: 120px;
+  pointer-events: none;
+  will-change: transform;
+}
+
+.proc-sword-img {
+  width: 100%;
+  height: auto;
+  display: block;
+  object-fit: contain;
+  filter: drop-shadow(0 8px 24px rgba(185, 23, 41, 0.6));
 }
 
 .proc-track {
@@ -1993,10 +2011,10 @@ img {
   position: relative;
 }
 
-/* Progress dot — sits at centre of proc-mid (48px → 24px from rail edge; dot is 11px wide so -29.5px) */
+/* Progress dot — sits at centre of proc-mid (160px → 80px from rail edge; dot is 11px wide so -85.5px) */
 .proc-dot {
   position: absolute;
-  right: -29.5px;
+  right: -85.5px;
   top: 50%;
   transform: translateY(-50%);
   width: 11px;

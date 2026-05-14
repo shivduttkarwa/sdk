@@ -1494,10 +1494,9 @@ if (window.gsap && window.ScrollTrigger) {
     const panels    = [...document.querySelectorAll('.proc-panel')];
     const imgSlides = [...document.querySelectorAll('.proc-img-slide')];
     const frame     = document.getElementById('procFrame');
-    const fill      = document.getElementById('procFill');
-    const track     = document.getElementById('procTrack');
+    const sword     = document.getElementById('procSword');
     const rail      = document.getElementById('procRail');
-    if (!panels.length || !frame || !fill || !rail || !window.gsap || !window.ScrollTrigger) return;
+    if (!panels.length || !frame || !rail || !window.gsap || !window.ScrollTrigger) return;
 
     let currentActive = -1;
     let trackStart = 0, trackEnd = 0;
@@ -1510,11 +1509,9 @@ if (window.gsap && window.ScrollTrigger) {
     function setTrackBounds() {
       if (!panels.length) return;
       const first = panels[0], last = panels[panels.length - 1];
-      const total = rail.scrollHeight;
       trackStart = first.offsetTop + first.offsetHeight / 2;
       trackEnd   = last.offsetTop  + last.offsetHeight  / 2;
-      track.style.top    = `${trackStart}px`;
-      track.style.bottom = `${Math.max(total - trackEnd, 0)}px`;
+      if (sword) gsap.set(sword, { xPercent: -50, yPercent: -50, y: trackStart, transformPerspective: 800 });
     }
 
     function activateStep(i) {
@@ -1600,14 +1597,20 @@ if (window.gsap && window.ScrollTrigger) {
       }
     });
 
-    // Scrub the progress fill as panels pass through
-    ScrollTrigger.create({
-      trigger: rail,
-      start:   () => `top+=${trackStart}px center`,
-      end:     () => `top+=${trackEnd}px center`,
-      scrub: 0.3,
-      onUpdate(self) { fill.style.height = `${Math.min(self.progress, 1) * 100}%`; },
-    });
+    // Sword travels from first panel centre to last, spinning as it goes
+    if (sword) {
+      gsap.to(sword, {
+        y: trackEnd,
+        rotationY: 720,
+        ease: 'none',
+        scrollTrigger: {
+          trigger: rail,
+          start: () => `top+=${trackStart}px center`,
+          end:   () => `top+=${trackEnd}px center`,
+          scrub: 0.5,
+        },
+      });
+    }
 
     setTrackBounds(); // recalculate after triggers are registered
   }
