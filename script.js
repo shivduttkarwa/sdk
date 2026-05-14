@@ -1202,10 +1202,10 @@ if (window.gsap && window.ScrollTrigger) {
       float n2 = fbm(vec2(uv.x*9.0 + u_time*.16, uv.y*16.0));
       float flame = (n1*.75+n2*.45)-.54;
       float sweep = -0.12+1.24*m;
-      float warpedX = uv.x+flame*.15*active+sin(uv.y*28.0+u_time*2.0)*.010*active;
-      float mask = 1.0-smoothstep(sweep-.095,sweep+.095,warpedX);
+      float warpedX = uv.x+flame*.09*active+sin(uv.y*28.0+u_time*2.0)*.006*active;
+      float mask = 1.0-smoothstep(sweep-.048,sweep+.048,warpedX);
 
-      float edge = 1.0-smoothstep(0.0,.105,abs(warpedX-sweep));
+      float edge = 1.0-smoothstep(0.0,.055,abs(warpedX-sweep));
       edge *= active;
       edge *= .65+.75*fbm(vec2(uv.x*22.0+u_time*.8,uv.y*12.0-u_time*.52));
 
@@ -1340,7 +1340,8 @@ if (window.gsap && window.ScrollTrigger) {
     const wipe=clamp((-0.16+1.32*s.smoothMix)*100,0,100);
 
     stick.style.setProperty('--wipe',`${wipe}%`);
-    if(progressBar) progressBar.style.transform=`scaleY(${p})`;
+    const barP=s.from===total-1?1:clamp((s.from+s.smoothMix)/(total-1),0,1);
+    if(progressBar) progressBar.style.transform=`scaleY(${barP})`;
     if(bgFallback)  bgFallback.style.setProperty('--fallback-bg',`url('${imageUrls[s.active]}')`);
 
     // burn edge enters text at ~6%, exits at ~55%; bell curve between those points
