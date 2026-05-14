@@ -1601,7 +1601,7 @@ if (window.gsap && window.ScrollTrigger) {
     if (sword) {
       gsap.to(sword, {
         y: trackEnd,
-        rotationY: 720,
+        rotationY: 180,
         ease: 'none',
         scrollTrigger: {
           trigger: rail,

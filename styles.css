@@ -1973,7 +1973,7 @@ img {
 .proc-sword-wrap {
   position: absolute;
   left: 50%;
-  width: 120px;
+  width: 480px;
   pointer-events: none;
   will-change: transform;
 }
