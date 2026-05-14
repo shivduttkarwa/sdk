@@ -1789,7 +1789,7 @@ img {
 
 /* ── Tech Stack Section ─────────────────────────────────────────────── */
 .ts-section {
-  padding: 9rem 6vw 10rem;
+  padding: clamp(3rem, 6vw, 6rem) clamp(1.5rem, 5vw, 6rem) clamp(4rem, 8vw, 10rem);
 }
 
 .ts-inner {
