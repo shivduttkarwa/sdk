@@ -1594,9 +1594,43 @@ img {
   will-change: clip-path, opacity;
   clip-path: inset(0 100% 0 0);
 }
-.project-panel.is-from { clip-path: inset(0 0 0 var(--wipe, 0%)); opacity: 1; }
-.project-panel.is-to   { clip-path: inset(0 calc(100% - var(--wipe, 0%)) 0 0); opacity: 1; }
-.project-panel.is-single { clip-path: inset(0 0 0 0); opacity: 1; }
+.project-panel.is-from {
+  opacity: 1;
+  clip-path: none;
+  -webkit-mask-image: linear-gradient(90deg,
+    transparent 0%,
+    transparent var(--wipe, 0%),
+    rgba(0,0,0,.18) calc(var(--wipe, 0%) + 2%),
+    black calc(var(--wipe, 0%) + 10%),
+    black 100%
+  );
+  mask-image: linear-gradient(90deg,
+    transparent 0%,
+    transparent var(--wipe, 0%),
+    rgba(0,0,0,.18) calc(var(--wipe, 0%) + 2%),
+    black calc(var(--wipe, 0%) + 10%),
+    black 100%
+  );
+}
+.project-panel.is-to {
+  opacity: 1;
+  clip-path: none;
+  -webkit-mask-image: linear-gradient(90deg,
+    black 0%,
+    black calc(var(--wipe, 0%) - 10%),
+    rgba(0,0,0,.18) calc(var(--wipe, 0%) - 2%),
+    transparent var(--wipe, 0%),
+    transparent 100%
+  );
+  mask-image: linear-gradient(90deg,
+    black 0%,
+    black calc(var(--wipe, 0%) - 10%),
+    rgba(0,0,0,.18) calc(var(--wipe, 0%) - 2%),
+    transparent var(--wipe, 0%),
+    transparent 100%
+  );
+}
+.project-panel.is-single { opacity: 1; clip-path: none; -webkit-mask-image: none; mask-image: none; }
 
 .project-copy {
   position: absolute;
