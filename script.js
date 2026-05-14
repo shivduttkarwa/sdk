@@ -1490,12 +1490,135 @@ if (window.gsap && window.ScrollTrigger) {
     });
   }
 
+  function initProcessTimeline() {
+    const panels    = [...document.querySelectorAll('.proc-panel')];
+    const imgSlides = [...document.querySelectorAll('.proc-img-slide')];
+    const frame     = document.getElementById('procFrame');
+    const fill      = document.getElementById('procFill');
+    const track     = document.getElementById('procTrack');
+    const rail      = document.getElementById('procRail');
+    if (!panels.length || !frame || !fill || !rail || !window.gsap || !window.ScrollTrigger) return;
+
+    let currentActive = -1;
+    let trackStart = 0, trackEnd = 0;
+
+    // Initialise image visibility
+    imgSlides.forEach((s, i) => gsap.set(s, { opacity: i === 0 ? 1 : 0 }));
+    panels[0].classList.add('is-active');
+    currentActive = 0;
+
+    function setTrackBounds() {
+      if (!panels.length) return;
+      const first = panels[0], last = panels[panels.length - 1];
+      const total = rail.scrollHeight;
+      trackStart = first.offsetTop + first.offsetHeight / 2;
+      trackEnd   = last.offsetTop  + last.offsetHeight  / 2;
+      track.style.top    = `${trackStart}px`;
+      track.style.bottom = `${Math.max(total - trackEnd, 0)}px`;
+    }
+
+    function activateStep(i) {
+      if (currentActive === i) return;
+      currentActive = i;
+      panels.forEach((p, idx) => p.classList.toggle('is-active', idx === i));
+    }
+
+    setTrackBounds();
+    window.addEventListener('resize', setTrackBounds, { passive: true });
+
+    panels.forEach((panel, i) => {
+      // Activate dot / panel colours when panel hits centre
+      ScrollTrigger.create({
+        trigger: panel,
+        start: 'top center',
+        end:   'bottom center',
+        onEnter:     () => activateStep(i),
+        onEnterBack: () => activateStep(i),
+      });
+
+      // Content slides in from left (scrubbed)
+      const els = [...panel.querySelectorAll('.proc-num,.proc-title,.proc-sep,.proc-desc,.proc-tags')];
+      const tl  = gsap.timeline({ paused: true });
+      tl.fromTo(els,
+        { x: -150, opacity: 0 },
+        { x: 0, opacity: 1, stagger: .1, ease: 'power2.out', duration: .4 }
+      );
+      ScrollTrigger.create({
+        trigger: panel, start: 'top 45%', end: 'top 1%',
+        scrub: 1.2, animation: tl,
+      });
+
+      // 3-D flip frame between this panel and the next
+      if (i < panels.length - 1) {
+        const DROP = 0.35, DROP_PX = 80;
+        ScrollTrigger.create({
+          trigger: panels[i + 1],
+          start: 'top bottom', end: 'top top',
+          scrub: 1.5,
+          onUpdate(self) {
+            const p = self.progress;
+            let y, rotateY, tiltT;
+            if (p <= DROP) {
+              tiltT   = 0;
+              y       = (p / DROP) * DROP_PX;
+              rotateY = i * 180;
+            } else {
+              tiltT   = (p - DROP) / (1 - DROP);
+              y       = (1 - tiltT) * DROP_PX;
+              rotateY = i * 180 + tiltT * 180;
+            }
+            gsap.set(frame, { y, rotateY, scale: 1 - Math.sin(tiltT * Math.PI) * 0.04 });
+            const norm = rotateY % 360, front = norm < 90 || norm >= 270;
+            if (tiltT < 0.5) {
+              gsap.set(imgSlides[i],     { opacity: 1, scaleX: front ? 1 : -1 });
+              gsap.set(imgSlides[i + 1], { opacity: 0, scaleX: 1 });
+            } else {
+              gsap.set(imgSlides[i],     { opacity: 0 });
+              gsap.set(imgSlides[i + 1], { opacity: 1, scaleX: front ? 1 : -1 });
+            }
+            frame.classList.toggle('is-flipping', tiltT > 0.05 && tiltT < 0.95);
+          },
+          onLeave() {
+            const ang = (i + 1) * 180, norm = ang % 360, front = norm < 90 || norm >= 270;
+            gsap.set(frame, { rotateY: ang, y: 0, scale: 1 });
+            frame.classList.remove('is-flipping');
+            imgSlides.forEach((s, idx) => {
+              const active = idx === i + 1;
+              gsap.set(s, { opacity: active ? 1 : 0, scaleX: active && !front ? -1 : 1 });
+            });
+          },
+          onLeaveBack() {
+            const ang = i * 180, norm = ang % 360, front = norm < 90 || norm >= 270;
+            gsap.set(frame, { rotateY: ang, y: 0, scale: 1 });
+            frame.classList.remove('is-flipping');
+            imgSlides.forEach((s, idx) => {
+              const active = idx === i;
+              gsap.set(s, { opacity: active ? 1 : 0, scaleX: active && !front ? -1 : 1 });
+            });
+          },
+        });
+      }
+    });
+
+    // Scrub the progress fill as panels pass through
+    ScrollTrigger.create({
+      trigger: rail,
+      start:   () => `top+=${trackStart}px center`,
+      end:     () => `top+=${trackEnd}px center`,
+      scrub: 0.3,
+      onUpdate(self) { fill.style.height = `${Math.min(self.progress, 1) * 100}%`; },
+    });
+
+    setTrackBounds(); // recalculate after triggers are registered
+  }
+
   initWebGL().then(r=>{
     renderer=r;
     setupScroll();
     ScrollTrigger.refresh();
     initSectionTitleAnims();
     initTechStackCards();
+    initProcessTimeline();
     requestAnimationFrame(animate);
   }).catch(err=>{
     console.warn('WebGL unavailable. Falling back to CSS background.',err);
@@ -1504,6 +1627,7 @@ if (window.gsap && window.ScrollTrigger) {
     ScrollTrigger.refresh();
     initSectionTitleAnims();
     initTechStackCards();
+    initProcessTimeline();
     requestAnimationFrame(animate);
   });
 })();
