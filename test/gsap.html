@@ -1,0 +1,981 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Pinned Countries Scroll Section</title>
+
+  <!-- Premium editorial fonts. Remove these imports if your project already has fonts loaded. -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700;800;900&family=Inter:wght@400;500;600;700;800&family=Noto+Serif+JP:wght@500;700&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --bg: #080808;
+      --panel: #0b0b0b;
+      --paper: #f4efe7;
+      --muted: rgba(244, 239, 231, .56);
+      --muted-2: rgba(244, 239, 231, .32);
+      --red: #ff263d;
+      --red-dark: #7b0712;
+      --red-soft: rgba(255, 38, 61, .38);
+      --gold: #d8b471;
+      --line: rgba(255, 38, 61, .17);
+      --ease: cubic-bezier(.16, 1, .3, 1);
+      --serif: "Cinzel", Georgia, serif;
+      --sans: "Inter", system-ui, sans-serif;
+      --jp: "Noto Serif JP", serif;
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: auto; }
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--paper);
+      font-family: var(--sans);
+      overflow-x: hidden;
+    }
+
+    .dummy-section {
+      min-height: 100vh;
+      display: grid;
+      place-items: center;
+      background:
+        radial-gradient(circle at 35% 20%, rgba(255, 38, 61, .14), transparent 32rem),
+        linear-gradient(135deg, #0b0b0d, #111, #070707);
+      border-block: 1px solid rgba(255,255,255,.06);
+      padding: 5rem 1.5rem;
+      text-align: center;
+    }
+
+    .dummy-section h1,
+    .dummy-section h2 {
+      margin: 0;
+      font: 900 clamp(3rem, 12vw, 10rem)/.85 var(--serif);
+      letter-spacing: -.08em;
+      text-transform: uppercase;
+    }
+
+    .dummy-section p {
+      max-width: 42rem;
+      margin: 1.4rem auto 0;
+      color: var(--muted);
+      font-size: clamp(1rem, 1.35vw, 1.35rem);
+      line-height: 1.7;
+    }
+
+    /* Section wrapper. Height controls how long the pinned animation lasts. */
+    .countries-scroll {
+      position: relative;
+      height: 360vh;
+      background: #070707;
+    }
+
+    .countries-pin {
+      height: 100vh;
+      position: sticky;
+      top: 0;
+      overflow: hidden;
+      background:
+        radial-gradient(circle at 52% 44%, rgba(255, 38, 61, .16), transparent 24rem),
+        radial-gradient(circle at 90% 10%, rgba(255, 38, 61, .09), transparent 28rem),
+        linear-gradient(180deg, #0b0b0d 0%, #050505 100%);
+      isolation: isolate;
+    }
+
+    .countries-pin::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      z-index: 1;
+      background:
+        linear-gradient(90deg, rgba(0,0,0,.82), transparent 21%, transparent 79%, rgba(0,0,0,.84)),
+        linear-gradient(180deg, rgba(0,0,0,.18), transparent 44%, rgba(0,0,0,.9));
+      pointer-events: none;
+    }
+
+    .countries-pin::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      z-index: 20;
+      pointer-events: none;
+      background-image:
+        linear-gradient(rgba(255,255,255,.018) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,.014) 1px, transparent 1px),
+        radial-gradient(circle at center, transparent 0 62%, rgba(0,0,0,.74));
+      background-size: 100% 6px, 6px 100%, 100% 100%;
+      mix-blend-mode: soft-light;
+      opacity: .62;
+    }
+
+    .sr-only {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+      border: 0;
+    }
+
+    /* Left mini nav, copied as an editorial feeling, not functional. */
+    .rail {
+      position: absolute;
+      z-index: 30;
+      left: 0;
+      top: 0;
+      width: clamp(3.4rem, 4.5vw, 4.8rem);
+      height: 100%;
+      border-right: 1px solid rgba(255,255,255,.06);
+      background: rgba(0,0,0,.54);
+      backdrop-filter: blur(10px);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      color: rgba(255,255,255,.82);
+    }
+
+    .rail__brand {
+      margin-top: 31vh;
+      font-weight: 900;
+      font-size: 1.45rem;
+      letter-spacing: -.08em;
+    }
+
+    .rail__name {
+      writing-mode: vertical-rl;
+      transform: rotate(180deg);
+      margin-top: 3.8rem;
+      font-size: .95rem;
+      font-weight: 700;
+    }
+
+    .rail__marks {
+      margin-top: auto;
+      margin-bottom: 2.6rem;
+      display: grid;
+      gap: 1.05rem;
+      color: rgba(255,255,255,.32);
+      font-family: var(--jp);
+      font-size: 1.2rem;
+    }
+
+    .rail__marks span:first-child,
+    .rail__marks span:last-child { color: var(--red); }
+
+    /* SVG map/topographic lines. */
+    .topo {
+      position: absolute;
+      inset: -5% -6%;
+      z-index: 2;
+      opacity: .42;
+      pointer-events: none;
+    }
+
+    .topo svg { width: 100%; height: 100%; }
+
+    .seam {
+      position: absolute;
+      z-index: 9;
+      top: 0;
+      bottom: 0;
+      left: 50%;
+      width: 1px;
+      background: linear-gradient(180deg, transparent, rgba(255,38,61,.6), transparent);
+      opacity: .52;
+      box-shadow: 0 0 38px rgba(255,38,61,.28);
+      pointer-events: none;
+    }
+
+    .country-cultural-bg {
+      position: absolute;
+      inset: 0;
+      z-index: 3;
+      pointer-events: none;
+      opacity: .9;
+    }
+
+    .cultural-layer {
+      position: absolute;
+      inset: 0;
+      opacity: 0;
+      background-size: 11rem 11rem;
+      transition: opacity .2s linear;
+      mix-blend-mode: screen;
+      filter: saturate(1.2);
+    }
+
+    .cultural-layer[data-layer="0"] {
+      background-image:
+        url("data:image/svg+xml,%3Csvg width='220' height='220' viewBox='0 0 220 220' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' stroke='%238b0f1d' stroke-width='2' stroke-linecap='round' stroke-linejoin='round' opacity='.8'%3E%3Ccircle cx='48' cy='34' r='14'/%3E%3Cpath d='M48 49v50M30 66h36M120 36q34-20 72 4q-38 24-72-4z'/%3E%3Ccircle cx='154' cy='38' r='5' fill='%238b0f1d'/%3E%3Cpath d='M180 50l18 16M152 56l-12 28M30 138l20-16 20 16 20-16 20 16 20-16M30 168l20-16 20 16 20-16 20 16 20-16'/%3E%3Ccircle cx='170' cy='150' r='16'/%3E%3Cpath d='M150 188h40M170 166v38'/%3E%3C/g%3E%3C/svg%3E");
+    }
+
+    .cultural-layer[data-layer="1"] {
+      background-size: 9.8rem 9.8rem;
+      background-image:
+        url("data:image/svg+xml,%3Csvg width='160' height='160' viewBox='0 0 160 160' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%238b0f1d' opacity='.63'%3E%3Cpath d='M80 20l8 27h28L93 64l9 28-22-17-22 17 9-28-23-17h28z'/%3E%3Cpath d='M24 102l4 13h14l-12 8 5 14-11-8-11 8 5-14-12-8h14zM138 92l3 11h12l-10 7 4 12-9-7-10 7 4-12-10-7h12z'/%3E%3C/g%3E%3C/svg%3E");
+    }
+
+    .cultural-layer[data-layer="2"] {
+      background-size: 10rem 10rem;
+      background-image:
+        url("data:image/svg+xml,%3Csvg width='180' height='180' viewBox='0 0 180 180' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%238b0f1d' opacity='.58'%3E%3Cpath d='M118 28c8 2 16 10 19 21c2 8 0 16-6 20c9 7 14 18 12 31c-2 18-15 30-35 36c8 5 18 10 33 10c7 0 17-1 27-4c-8 9-22 15-39 15c-17 0-34-7-48-19c-18 16-40 18-62 11c24-2 42-10 54-27c-8-13-12-31-10-52c-12 13-31 20-50 16c26-7 41-22 51-45c4-10 10-16 18-17c8-1 18 4 21 13c7-8 11-12 15-9z'/%3E%3Ccircle cx='119' cy='48' r='3' fill='%23ff263d'/%3E%3C/g%3E%3C/svg%3E");
+    }
+
+    .grain {
+      position: absolute;
+      inset: -50%;
+      z-index: 50;
+      pointer-events: none;
+      opacity: .06;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.86' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.9'/%3E%3C/svg%3E");
+      animation: grainMove 1.1s steps(2) infinite;
+    }
+
+    @keyframes grainMove {
+      0% { transform: translate(0,0); }
+      20% { transform: translate(-6%,4%); }
+      40% { transform: translate(-3%,-8%); }
+      60% { transform: translate(7%,3%); }
+      80% { transform: translate(4%,-6%); }
+      100% { transform: translate(0,0); }
+    }
+
+    /* Flame transition canvas. */
+    #flame-canvas {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 12;
+      pointer-events: none;
+      mix-blend-mode: screen;
+      opacity: .95;
+    }
+
+    .countries-head {
+      position: absolute;
+      z-index: 25;
+      top: clamp(2rem, 8vh, 5.2rem);
+      left: clamp(6rem, 8vw, 9rem);
+      right: clamp(2rem, 6vw, 6rem);
+      display: flex;
+      justify-content: space-between;
+      gap: 2rem;
+      align-items: center;
+      pointer-events: none;
+    }
+
+    .countries-head::after {
+      content: "";
+      position: absolute;
+      left: 0;
+      right: 0;
+      top: calc(100% + 1.3rem);
+      height: 1px;
+      background: linear-gradient(90deg, var(--line), var(--line), transparent);
+    }
+
+    .kicker,
+    .head-meta {
+      font-family: var(--serif);
+      text-transform: uppercase;
+      letter-spacing: .24em;
+      font-weight: 900;
+      color: rgba(244,239,231,.86);
+      font-size: clamp(.78rem, 1vw, 1rem);
+    }
+
+    .kicker .jp,
+    .head-meta .jp { color: var(--red); font-family: var(--jp); font-size: 1.2em; }
+
+    .head-meta { color: rgba(244,239,231,.35); }
+
+    .stage {
+      position: absolute;
+      z-index: 13;
+      inset: 0;
+      display: grid;
+      place-items: center;
+      perspective: 900px;
+      pointer-events: none;
+    }
+
+    .portrait-wrap {
+      width: min(45vw, 45rem);
+      height: min(77vh, 48rem);
+      position: relative;
+      transform-style: preserve-3d;
+      transform: translateY(2vh) rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg));
+      filter: drop-shadow(0 0 40px rgba(255,38,61,.22));
+    }
+
+    .portrait {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      opacity: 0;
+      transform-origin: 50% 65%;
+      filter: contrast(1.08) saturate(1.35);
+      transition: none;
+    }
+
+    .portrait .bone { fill: rgba(244,239,231,.84); }
+    .portrait .redFill { fill: rgba(255,38,61,.88); }
+    .portrait .darkFill { fill: rgba(10,10,10,.88); }
+    .portrait .line { fill: none; stroke: rgba(255,38,61,.68); stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; }
+    .portrait .thin { fill: none; stroke: rgba(244,239,231,.42); stroke-width: 1.4; stroke-linecap: round; stroke-linejoin: round; }
+
+    .portrait-shine {
+      position: absolute;
+      inset: 13% 14% 12%;
+      z-index: 4;
+      background:
+        linear-gradient(105deg, transparent 0 37%, rgba(255,255,255,.24) 42%, transparent 48% 100%),
+        linear-gradient(180deg, rgba(255,38,61,.2), transparent 55%);
+      mix-blend-mode: screen;
+      opacity: .62;
+      animation: shine 4.8s var(--ease) infinite;
+      mask-image: radial-gradient(ellipse at center, black 0 54%, transparent 72%);
+    }
+
+    @keyframes shine {
+      0%, 100% { transform: translateX(-20%) skewX(-12deg); opacity: .18; }
+      47% { transform: translateX(18%) skewX(-12deg); opacity: .7; }
+    }
+
+    /* Typography layers. */
+    .big-titles {
+      position: absolute;
+      inset: 0;
+      z-index: 10;
+      pointer-events: none;
+      font-family: var(--serif);
+      text-transform: uppercase;
+      letter-spacing: -.09em;
+      font-weight: 900;
+      line-height: .78;
+      color: var(--paper);
+      text-shadow: 0 1rem 4rem rgba(0,0,0,.7);
+    }
+
+    .big-title {
+      position: absolute;
+      top: 31vh;
+      width: min-content;
+      min-width: 52vw;
+      font-size: clamp(4.4rem, 12vw, 15rem);
+      will-change: transform, opacity, filter;
+    }
+
+    .big-title--out { left: clamp(5.8rem, 7.5vw, 9rem); }
+    .big-title--in  { right: clamp(2rem, 6vw, 8rem); text-align: left; }
+
+    .big-title .split-line { display: block; }
+
+    .story-layer {
+      position: absolute;
+      z-index: 26;
+      inset: 0;
+      pointer-events: none;
+    }
+
+    .story-card {
+      position: absolute;
+      top: 22vh;
+      max-width: min(34vw, 29rem);
+      will-change: opacity, transform, filter;
+      color: var(--paper);
+      text-wrap: balance;
+    }
+
+    .story-card[data-side="left"] {
+      left: clamp(6rem, 8vw, 9rem);
+      text-align: left;
+    }
+
+    .story-card[data-side="right"] {
+      right: clamp(2rem, 7vw, 8.5rem);
+      top: 18vh;
+      text-align: right;
+    }
+
+    .story-meta {
+      display: flex;
+      align-items: center;
+      gap: 1.4rem;
+      color: rgba(244,239,231,.38);
+      font: 900 clamp(.8rem, 1vw, 1.04rem)/1 var(--serif);
+      letter-spacing: .26em;
+      text-transform: uppercase;
+      margin-bottom: 1.2rem;
+    }
+
+    .story-card[data-side="right"] .story-meta { justify-content: flex-end; }
+    .story-meta .jp {
+      font-family: var(--jp);
+      color: var(--red);
+      font-size: clamp(1.9rem, 3vw, 3.1rem);
+      letter-spacing: .08em;
+      font-weight: 500;
+    }
+
+    .story-title {
+      position: relative;
+      margin: 0;
+      color: transparent;
+      height: clamp(6rem, 10vw, 9rem);
+    }
+
+    .story-year {
+      display: block;
+      color: var(--red);
+      font: 900 clamp(.86rem, 1.18vw, 1.2rem)/1.15 var(--serif);
+      letter-spacing: .28em;
+      text-transform: uppercase;
+      margin-top: .7rem;
+    }
+
+    .story-body {
+      position: relative;
+      margin: clamp(1.2rem, 2vh, 1.8rem) 0 0;
+      padding-top: 1.15rem;
+      color: rgba(244,239,231,.58);
+      font-size: clamp(1rem, 1.45vw, 1.42rem);
+      line-height: 1.44;
+      font-weight: 700;
+      letter-spacing: -.04em;
+    }
+
+    .story-body::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 2.1rem;
+      height: 2px;
+      background: rgba(244,239,231,.25);
+    }
+
+    .story-card[data-side="right"] .story-body::before {
+      left: auto;
+      right: 0;
+    }
+
+    .country-index {
+      position: absolute;
+      z-index: 28;
+      left: clamp(6rem, 8vw, 9rem);
+      right: clamp(2rem, 7vw, 8rem);
+      bottom: clamp(1.8rem, 5vh, 3.6rem);
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1rem;
+      pointer-events: none;
+    }
+
+    .index-item {
+      position: relative;
+      padding-top: .9rem;
+      border-top: 1px solid rgba(244,239,231,.15);
+      opacity: .35;
+      transform: translateY(.6rem);
+      transition: opacity .35s var(--ease), transform .35s var(--ease), border-color .35s var(--ease);
+    }
+
+    .index-item.is-hot {
+      opacity: 1;
+      transform: translateY(0);
+      border-color: rgba(255,38,61,.85);
+    }
+
+    .index-item b {
+      display: block;
+      font-family: var(--serif);
+      letter-spacing: .22em;
+      font-size: .8rem;
+      text-transform: uppercase;
+      color: var(--red);
+      margin-bottom: .35rem;
+    }
+
+    .index-item span {
+      color: rgba(244,239,231,.62);
+      font-size: .85rem;
+      font-weight: 700;
+    }
+
+    .glitch-red,
+    .glitch-cyan {
+      position: absolute;
+      inset: 0;
+      z-index: -1;
+      opacity: .18;
+      color: var(--red);
+      mix-blend-mode: screen;
+    }
+
+    .glitch-cyan { color: #3dd6ff; transform: translate(6px, 1px); opacity: .09; }
+    .glitch-red { transform: translate(-5px, -1px); }
+
+    .scroll-hint {
+      position: absolute;
+      z-index: 31;
+      right: clamp(1rem, 2vw, 2rem);
+      bottom: 1.2rem;
+      color: rgba(255,255,255,.4);
+      writing-mode: vertical-rl;
+      font: 700 .74rem/1 var(--sans);
+      letter-spacing: .2em;
+      text-transform: uppercase;
+    }
+
+    .scroll-hint::after {
+      content: "";
+      display: inline-block;
+      width: 1px;
+      height: 4.2rem;
+      margin-top: .8rem;
+      background: linear-gradient(var(--red), transparent);
+      animation: hint 1.4s infinite;
+    }
+
+    @keyframes hint {
+      0% { transform: scaleY(0); transform-origin: top; opacity: 0; }
+      45% { transform: scaleY(1); opacity: 1; }
+      100% { transform: scaleY(0); transform-origin: bottom; opacity: 0; }
+    }
+
+    @media (max-width: 900px) {
+      .rail { display: none; }
+      .countries-head { left: 1.25rem; right: 1.25rem; top: 1.4rem; }
+      .head-meta { display: none; }
+      .portrait-wrap { width: min(74vw, 25rem); height: 55vh; transform: translateY(4vh); opacity: .86; }
+      .big-title { font-size: clamp(4rem, 18vw, 8rem); top: 30vh; min-width: 80vw; }
+      .big-title--out { left: 1rem; }
+      .big-title--in { right: 1rem; }
+      .story-card,
+      .story-card[data-side="left"],
+      .story-card[data-side="right"] {
+        max-width: calc(100vw - 2.5rem);
+        left: 1.25rem;
+        right: 1.25rem;
+        top: auto;
+        bottom: 17vh;
+        text-align: left;
+      }
+      .story-card[data-side="right"] .story-meta { justify-content: flex-start; }
+      .story-card[data-side="right"] .story-body::before { left: 0; right: auto; }
+      .story-title { height: 2.8rem; }
+      .story-body { font-size: 1.05rem; max-width: 31rem; }
+      .country-index { left: 1.25rem; right: 1.25rem; bottom: 1.5rem; grid-template-columns: 1fr; gap: .45rem; }
+      .index-item { display: none; }
+      .index-item.is-hot { display: block; }
+    }
+  </style>
+</head>
+<body>
+  <section class="dummy-section">
+    <div>
+      <h1>Before</h1>
+      <p>Dummy section. Scroll down to enter the pinned countries chapter.</p>
+    </div>
+  </section>
+
+  <section class="countries-scroll" id="countries-scroll" aria-labelledby="countries-title">
+    <div class="countries-pin" id="countries-pin">
+      <h2 id="countries-title" class="sr-only">Countries changing on pinned scroll</h2>
+
+      <aside class="rail" aria-hidden="true">
+        <div class="rail__brand">W.</div>
+        <div class="rail__name">Nominee</div>
+        <div class="rail__marks"><span>一</span><span>二</span><span>三</span><span>四</span><span>六</span><span>七</span><span>八</span></div>
+      </aside>
+
+      <div class="country-cultural-bg" aria-hidden="true">
+        <div class="cultural-layer" data-layer="0"></div>
+        <div class="cultural-layer" data-layer="1"></div>
+        <div class="cultural-layer" data-layer="2"></div>
+      </div>
+
+      <div class="topo" aria-hidden="true">
+        <svg viewBox="0 0 1920 1080" preserveAspectRatio="xMidYMid slice">
+          <g fill="none" stroke="#5a0711" stroke-width="1.25" stroke-linecap="round">
+            <path d="M-120 164C280 105 605 282 946 232c332-49 498-165 872 18 258 126 412 84 525 4" opacity=".7"/>
+            <path d="M-150 304C275 245 635 430 980 382c333-47 508-163 880 20 260 128 404 90 522 14" opacity=".56"/>
+            <path d="M-180 451C300 392 682 575 1032 523c330-49 518-163 894 19 258 125 386 87 500 10" opacity=".46"/>
+            <path d="M-220 610C340 540 740 705 1092 660c334-42 520-155 894 28 250 123 384 76 500 2" opacity=".54"/>
+            <path d="M-260 762C370 680 804 858 1160 805c332-49 538-154 902 34 244 126 376 74 496 0" opacity=".39"/>
+            <path d="M-300 920C410 832 850 996 1210 946c334-47 556-144 902 38 220 116 350 76 466 8" opacity=".32"/>
+          </g>
+        </svg>
+      </div>
+
+      <div class="seam" aria-hidden="true"></div>
+      <canvas id="flame-canvas" aria-hidden="true"></canvas>
+      <div class="grain" aria-hidden="true"></div>
+
+      <header class="countries-head" aria-hidden="true">
+        <span class="kicker"><span class="jp">国</span> · THE COUNTRIES</span>
+        <span class="head-meta">THREE LANDS · THREE MASKS</span>
+      </header>
+
+      <div class="big-titles" aria-hidden="true">
+        <div class="big-title big-title--out" id="title-out"></div>
+        <div class="big-title big-title--in" id="title-in"></div>
+      </div>
+
+      <div class="stage" aria-hidden="true">
+        <div class="portrait-wrap" id="portrait-wrap">
+          <!-- Egypt / Anubis-inspired editorial mask -->
+          <svg class="portrait" data-portrait="0" viewBox="0 0 700 920" preserveAspectRatio="xMidYMid meet">
+            <defs>
+              <radialGradient id="anGlow" cx="50%" cy="42%" r="50%"><stop offset="0" stop-color="#ff5263"/><stop offset=".42" stop-color="#b20d1c"/><stop offset="1" stop-color="#120407"/></radialGradient>
+              <linearGradient id="anBone" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#fff4e8"/><stop offset=".55" stop-color="#d88"/><stop offset="1" stop-color="#4b060c"/></linearGradient>
+              <filter id="anNoise"><feTurbulence baseFrequency=".85" numOctaves="3"/><feColorMatrix type="saturate" values="0"/><feBlend in="SourceGraphic" mode="multiply"/></filter>
+            </defs>
+            <path d="M210 872c16-110 50-184 103-219h74c61 42 96 116 112 219z" fill="#050505" opacity=".86"/>
+            <path d="M179 689c50-72 90-137 106-244h130c16 107 55 171 106 244-103 55-233 55-342 0z" fill="url(#anGlow)" opacity=".88"/>
+            <path class="darkFill" d="M350 117c-61 0-115 54-134 130-14 57-8 155 30 212 30 44 62 84 104 84s75-39 104-84c39-60 45-153 30-212-19-76-72-130-134-130z"/>
+            <path d="M244 115L92 20l80 318 75-26c-18-70-17-137-3-197z" fill="url(#anGlow)" opacity=".95"/>
+            <path d="M456 115L608 20l-80 318-75-26c18-70 17-137 3-197z" fill="url(#anGlow)" opacity=".95"/>
+            <path d="M350 106c-55 3-101 61-117 139-12 61-4 151 30 205 28 44 55 72 87 72s60-28 87-72c34-55 42-144 30-205-16-78-62-136-117-139z" fill="url(#anBone)" opacity=".82"/>
+            <path class="darkFill" d="M282 330c29-15 58-16 83-2-32 18-57 21-83 2zm136 0c-29-15-58-16-83-2 32 18 57 21 83 2z" opacity=".64"/>
+            <path class="redFill" d="M350 362l-26 75 26 41 26-41z" opacity=".78"/>
+            <path class="line" d="M350 132v360M305 165c-22 56-27 119-16 189M395 165c22 56 27 119 16 189M248 248c50-35 154-35 204 0M276 502c34 38 112 38 148 0"/>
+            <path class="thin" d="M186 72c34 72 44 152 36 238M514 72c-34 72-44 152-36 238M301 662h98M286 706h128M276 752h148"/>
+            <circle cx="350" cy="612" r="34" fill="none" stroke="#ff263d" stroke-width="8" opacity=".8"/>
+            <path d="M350 584l22 38h-44z" fill="#ff263d" opacity=".72"/>
+          </svg>
+
+          <!-- USA / Liberty-inspired editorial mask -->
+          <svg class="portrait" data-portrait="1" viewBox="0 0 700 920" preserveAspectRatio="xMidYMid meet">
+            <defs>
+              <radialGradient id="liGlow" cx="48%" cy="38%" r="56%"><stop offset="0" stop-color="#fff7eb"/><stop offset=".34" stop-color="#ff3146"/><stop offset="1" stop-color="#130304"/></radialGradient>
+              <linearGradient id="liBone" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#fff8ef"/><stop offset=".5" stop-color="#c33"/><stop offset="1" stop-color="#110507"/></linearGradient>
+            </defs>
+            <path d="M198 880c24-135 83-213 152-213s128 78 152 213z" fill="#050505" opacity=".88"/>
+            <path class="redFill" d="M350 40l31 178h-62zM238 92l89 157-64 21zM462 92l-25 178-64-21zM137 188l156 98-51 47zM563 188l-105 145-51-47z" opacity=".85"/>
+            <path d="M350 172c-71 0-128 65-128 174 0 112 58 209 128 209s128-97 128-209c0-109-57-174-128-174z" fill="url(#liBone)" opacity=".86"/>
+            <path class="darkFill" d="M222 343c36-26 83-41 128-41s92 15 128 41c-2-115-55-171-128-171s-126 56-128 171z" opacity=".6"/>
+            <path class="line" d="M350 162v392M273 349c40-24 79-24 116 0M414 349c-35-24-72-24-108 0M300 470c37 24 67 24 100 0M248 584h204M258 628h184M276 672h148"/>
+            <path class="thin" d="M285 236c38-18 92-18 130 0M242 332c52-21 164-21 216 0M296 396l54 34 54-34"/>
+            <path class="redFill" d="M350 570l-58 90h116z" opacity=".55"/>
+            <circle cx="350" cy="620" r="42" fill="none" stroke="#ff263d" stroke-width="7" opacity=".7"/>
+          </svg>
+
+          <!-- Australia / Kangaroo-inspired editorial mask -->
+          <svg class="portrait" data-portrait="2" viewBox="0 0 700 920" preserveAspectRatio="xMidYMid meet">
+            <defs>
+              <radialGradient id="kaGlow" cx="47%" cy="45%" r="56%"><stop offset="0" stop-color="#ff6752"/><stop offset=".38" stop-color="#a00913"/><stop offset="1" stop-color="#080202"/></radialGradient>
+              <linearGradient id="kaBone" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#ffe8d0"/><stop offset=".48" stop-color="#e63836"/><stop offset="1" stop-color="#120405"/></linearGradient>
+            </defs>
+            <path d="M172 875c42-150 122-223 238-228 72-3 115 42 135 108-89-24-130-10-166 47-18 29-45 56-90 73z" fill="#050505" opacity=".88"/>
+            <path d="M348 158c-52 6-103 59-119 135-18 86 5 181 61 232 29 27 65 42 104 34 66-14 104-91 96-187-7-90-65-221-142-214z" fill="url(#kaBone)" opacity=".86"/>
+            <path class="redFill" d="M300 168L245 34l133 107c-34 1-59 10-78 27zM392 164l78-137 4 177c-23-24-50-38-82-40z" opacity=".85"/>
+            <path class="darkFill" d="M264 337c38-17 79-15 117 7-48 14-84 12-117-7zM406 368c30-15 59-15 89 2-37 14-65 12-89-2z" opacity=".58"/>
+            <path class="redFill" d="M392 414l-52 51 68 26z" opacity=".74"/>
+            <path class="line" d="M346 172c-58 73-70 170-39 274M400 170c48 78 68 178 35 290M253 294c60-31 147-23 207 22M290 545c34 37 95 44 141 0M250 646c40 25 98 37 168 31M232 705c34 25 96 45 184 43"/>
+            <path class="thin" d="M265 66c24 52 45 103 55 153M453 67c-17 50-35 102-47 156M205 766c72 35 169 45 290 22"/>
+            <circle cx="360" cy="615" r="36" fill="none" stroke="#ff263d" stroke-width="7" opacity=".7"/>
+          </svg>
+
+          <div class="portrait-shine"></div>
+        </div>
+      </div>
+
+      <div class="story-layer" aria-live="polite">
+        <article class="story-card" id="story-out"></article>
+        <article class="story-card" id="story-in"></article>
+      </div>
+
+      <div class="country-index" aria-hidden="true">
+        <div class="index-item" data-index="0"><b>01 · Egypt</b><span>Discipline / beginning</span></div>
+        <div class="index-item" data-index="1"><b>02 · United States</b><span>Exposure / sharper standards</span></div>
+        <div class="index-item" data-index="2"><b>03 · Australia</b><span>Wild feedback / resilience</span></div>
+      </div>
+
+      <div class="scroll-hint">Scroll</div>
+    </div>
+  </section>
+
+  <section class="dummy-section">
+    <div>
+      <h2>After</h2>
+      <p>Dummy section. The pinned chapter releases after the final country.</p>
+    </div>
+  </section>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+
+  <script>
+    const slides = [
+      {
+        country: "Egypt",
+        big: "EGYPT",
+        side: "left",
+        kanji: "埃及",
+        meta: "CHAPTER · ONE",
+        year: "M.22 · WHERE IT BEGAN",
+        body: "Cairo taught me discipline. Long nights, small screens, a craft forged under pressure. The first lines of code I wrote looked like prayers."
+      },
+      {
+        country: "United States",
+        big: "UNITED<br>STATES",
+        side: "right",
+        kanji: "米国",
+        meta: "CHAPTER · TWO",
+        year: "M.24 · THE EXPOSURE",
+        body: "The U.S. opened the room. New standards, sharper mentors, a culture that ships. I didn't just learn the stack — I learned the tempo."
+      },
+      {
+        country: "Australia",
+        big: "AUSTRALIA",
+        side: "left",
+        kanji: "豪州",
+        meta: "CHAPTER · THREE",
+        year: "M.25 · THE WILD YEAR",
+        body: "Australia was the wild one — rough edges, blunt feedback, ideas that bite. I came back leaner, louder, harder to knock off course."
+      }
+    ];
+
+    const titleOut = document.querySelector('#title-out');
+    const titleIn = document.querySelector('#title-in');
+    const storyOut = document.querySelector('#story-out');
+    const storyIn = document.querySelector('#story-in');
+    const portraits = [...document.querySelectorAll('.portrait')];
+    const layers = [...document.querySelectorAll('.cultural-layer')];
+    const indexItems = [...document.querySelectorAll('.index-item')];
+    const portraitWrap = document.querySelector('#portrait-wrap');
+    const canvas = document.querySelector('#flame-canvas');
+    const ctx = canvas.getContext('2d');
+
+    let dpr = Math.min(window.devicePixelRatio || 1, 2);
+    let W = 0;
+    let H = 0;
+    let state = { progress: 0, hot: 0, mix: 0 };
+
+    function clamp(v, min = 0, max = 1) { return Math.max(min, Math.min(max, v)); }
+    function smoothstep(t) { t = clamp(t); return t * t * (3 - 2 * t); }
+    function lerp(a, b, t) { return a + (b - a) * t; }
+
+    function resizeCanvas() {
+      dpr = Math.min(window.devicePixelRatio || 1, 2);
+      W = canvas.offsetWidth;
+      H = canvas.offsetHeight;
+      canvas.width = Math.floor(W * dpr);
+      canvas.height = Math.floor(H * dpr);
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    }
+
+    function storyHTML(slide) {
+      const meta = slide.side === 'right'
+        ? `<span>${slide.meta}</span><span class="jp">${slide.kanji}</span>`
+        : `<span class="jp">${slide.kanji}</span><span>${slide.meta}</span>`;
+
+      return `
+        <div class="story-meta">${meta}</div>
+        <h3 class="story-title">${slide.country}<span class="story-year">${slide.year}</span></h3>
+        <p class="story-body">${slide.body}</p>
+      `;
+    }
+
+    function setTitle(el, html) {
+      const withLines = html.split('<br>').map(line => `<span class="split-line">${line}<span class="glitch-red">${line}</span><span class="glitch-cyan">${line}</span></span>`).join('');
+      if (el.dataset.html !== html) {
+        el.innerHTML = withLines;
+        el.dataset.html = html;
+      }
+    }
+
+    function render(progress) {
+      progress = clamp(progress);
+      state.progress = progress;
+
+      const segmentCount = slides.length - 1;
+      let pos = progress * segmentCount;
+      let idx = Math.floor(pos);
+      let local = pos - idx;
+
+      if (idx >= slides.length - 1) {
+        idx = slides.length - 2;
+        local = 1;
+      }
+
+      // Transition is held slightly, then crossfades like a scanner/flame wipe.
+      const mix = smoothstep((local - .18) / .64);
+      state.mix = mix;
+      const out = slides[idx];
+      const incoming = slides[idx + 1];
+      const visualHot = mix > .55 ? idx + 1 : idx;
+      state.hot = visualHot;
+
+      setTitle(titleOut, out.big);
+      setTitle(titleIn, incoming.big);
+      storyOut.innerHTML = storyHTML(out);
+      storyIn.innerHTML = storyHTML(incoming);
+      storyOut.dataset.side = out.side;
+      storyIn.dataset.side = incoming.side;
+
+      titleOut.style.opacity = 1 - mix * .92;
+      titleIn.style.opacity = mix;
+      titleOut.style.filter = `blur(${mix * 3}px)`;
+      titleIn.style.filter = `blur(${(1 - mix) * 3}px)`;
+      titleOut.style.transform = `translate3d(${-mix * 9}vw, ${mix * 1.8}vh, 0) skewX(${-mix * 4}deg)`;
+      titleIn.style.transform = `translate3d(${(1 - mix) * 12}vw, ${(1 - mix) * -1.8}vh, 0) skewX(${(1 - mix) * 4}deg)`;
+
+      storyOut.style.opacity = 1 - mix;
+      storyIn.style.opacity = mix;
+      storyOut.style.filter = `blur(${mix * 6}px)`;
+      storyIn.style.filter = `blur(${(1 - mix) * 6}px)`;
+      storyOut.style.transform = `translate3d(${out.side === 'left' ? -mix * 38 : mix * 38}px, ${mix * -18}px, 0)`;
+      storyIn.style.transform = `translate3d(${incoming.side === 'left' ? (1 - mix) * -42 : (1 - mix) * 42}px, ${(1 - mix) * 22}px, 0)`;
+
+      portraits.forEach((p, i) => {
+        let opacity = 0;
+        if (i === idx) opacity = 1 - mix;
+        if (i === idx + 1) opacity = mix;
+        p.style.opacity = opacity;
+        const direction = i === idx ? -1 : 1;
+        const amt = i === idx ? mix : 1 - mix;
+        p.style.transform = `translate3d(${direction * amt * 24}px, ${amt * 16}px, ${opacity * 40}px) scale(${lerp(.94, 1.04, opacity)})`;
+        p.style.filter = `blur(${(1 - opacity) * 9}px) contrast(1.1) saturate(1.5)`;
+      });
+
+      layers.forEach((layer, i) => {
+        let opacity = 0;
+        if (i === idx) opacity = .16 * (1 - mix);
+        if (i === idx + 1) opacity = .16 * mix;
+        layer.style.opacity = opacity;
+        layer.style.transform = `translate3d(${progress * -40}px, ${progress * -20}px, 0)`;
+      });
+
+      indexItems.forEach((item, i) => item.classList.toggle('is-hot', i === visualHot));
+    }
+
+    function drawFlame(time = 0) {
+      if (!W || !H) resizeCanvas();
+      ctx.clearRect(0, 0, W, H);
+
+      const p = state.progress;
+      const x = lerp(W * .09, W * .91, p);
+      const band = W * .14;
+      const centerY = H * .48;
+      const intensity = .55 + Math.sin(time * .0018) * .12;
+
+      ctx.save();
+      ctx.globalCompositeOperation = 'lighter';
+
+      // Main horizontal flame wave.
+      for (let i = 0; i < 9; i++) {
+        const y = centerY + Math.sin(time * .0012 + i * 1.7) * 58 + (i - 4) * 10;
+        const amp = 60 + i * 9;
+        const alpha = (0.11 - i * .006) * intensity;
+        const grad = ctx.createLinearGradient(x - band, y, x + band, y);
+        grad.addColorStop(0, 'rgba(255, 20, 40, 0)');
+        grad.addColorStop(.22, `rgba(255, 35, 54, ${alpha})`);
+        grad.addColorStop(.52, `rgba(255, 150, 58, ${alpha * 1.9})`);
+        grad.addColorStop(.76, `rgba(255, 35, 54, ${alpha})`);
+        grad.addColorStop(1, 'rgba(255, 20, 40, 0)');
+
+        ctx.beginPath();
+        ctx.strokeStyle = grad;
+        ctx.lineWidth = 2.5 + i * .7;
+        ctx.moveTo(x - band, y);
+        for (let k = 0; k < 6; k++) {
+          const cp1x = x - band + k * (band * 2 / 6) + 40;
+          const cp2x = x - band + (k + .5) * (band * 2 / 6);
+          const endX = x - band + (k + 1) * (band * 2 / 6);
+          const wave = Math.sin(time * .002 + k * 1.25 + i) * amp;
+          ctx.bezierCurveTo(cp1x, y - wave, cp2x, y + wave, endX, y + Math.sin(k + time * .002) * 25);
+        }
+        ctx.stroke();
+      }
+
+      // Vertical hot scanner line.
+      const lineGrad = ctx.createLinearGradient(0, 0, 0, H);
+      lineGrad.addColorStop(0, 'rgba(255, 38, 61, 0)');
+      lineGrad.addColorStop(.38, 'rgba(255, 38, 61, .32)');
+      lineGrad.addColorStop(.52, 'rgba(255, 214, 140, .55)');
+      lineGrad.addColorStop(.72, 'rgba(255, 38, 61, .22)');
+      lineGrad.addColorStop(1, 'rgba(255, 38, 61, 0)');
+      ctx.strokeStyle = lineGrad;
+      ctx.lineWidth = 1.5;
+      ctx.shadowColor = 'rgba(255, 38, 61, .8)';
+      ctx.shadowBlur = 30;
+      ctx.beginPath();
+      ctx.moveTo(x, 0);
+      ctx.lineTo(x + Math.sin(time * .002) * 8, H);
+      ctx.stroke();
+      ctx.shadowBlur = 0;
+
+      // Sparks.
+      for (let i = 0; i < 58; i++) {
+        const seed = i * 997.12;
+        const px = x + Math.sin(seed + time * .0012) * band * (0.45 + (i % 7) * .08);
+        const py = centerY + Math.cos(seed * .7 + time * .0018) * H * .22 + Math.sin(time * .002 + i) * 42;
+        const r = 0.7 + (i % 4) * .45;
+        const a = .08 + (i % 5) * .025;
+        ctx.fillStyle = `rgba(255, ${80 + (i % 4) * 35}, ${40 + (i % 3) * 20}, ${a})`;
+        ctx.beginPath();
+        ctx.arc(px, py, r, 0, Math.PI * 2);
+        ctx.fill();
+      }
+
+      ctx.restore();
+      requestAnimationFrame(drawFlame);
+    }
+
+    function bindTilt() {
+      const pin = document.querySelector('#countries-pin');
+      pin.addEventListener('pointermove', (e) => {
+        const rect = pin.getBoundingClientRect();
+        const nx = (e.clientX - rect.left) / rect.width - .5;
+        const ny = (e.clientY - rect.top) / rect.height - .5;
+        portraitWrap.style.setProperty('--ry', `${nx * 4}deg`);
+        portraitWrap.style.setProperty('--rx', `${-ny * 3}deg`);
+      });
+      pin.addEventListener('pointerleave', () => {
+        portraitWrap.style.setProperty('--ry', '0deg');
+        portraitWrap.style.setProperty('--rx', '0deg');
+      });
+    }
+
+    function initScroll() {
+      render(0);
+      if (window.gsap && window.ScrollTrigger) {
+        gsap.registerPlugin(ScrollTrigger);
+        ScrollTrigger.create({
+          trigger: '#countries-scroll',
+          start: 'top top',
+          end: 'bottom bottom',
+          scrub: 0.85,
+          onUpdate: self => render(self.progress)
+        });
+      } else {
+        const section = document.querySelector('#countries-scroll');
+        const onScroll = () => {
+          const rect = section.getBoundingClientRect();
+          const total = section.offsetHeight - window.innerHeight;
+          render(clamp(-rect.top / total));
+        };
+        addEventListener('scroll', onScroll, { passive: true });
+        onScroll();
+      }
+    }
+
+    addEventListener('resize', resizeCanvas);
+    resizeCanvas();
+    drawFlame();
+    bindTilt();
+    initScroll();
+  </script>
+</body>
+</html>
