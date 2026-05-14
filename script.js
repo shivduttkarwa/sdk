@@ -3,9 +3,6 @@ const navRoot       = document.getElementById('twostepNav');
 const menuBtn       = document.getElementById('menuBtn');
 const menuPanel     = document.getElementById('menuPanel');
 const navClosers    = document.querySelectorAll('[data-nav-toggle="close"]');
-const year          = document.getElementById('year');
-
-year.textContent = new Date().getFullYear();
 
 // Hero starts immediately (preloader removed)
 startHeroAnimation();
