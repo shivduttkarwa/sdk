@@ -1511,7 +1511,10 @@ if (window.gsap && window.ScrollTrigger) {
       const first = panels[0], last = panels[panels.length - 1];
       trackStart = first.offsetTop + first.offsetHeight / 2;
       trackEnd   = last.offsetTop  + last.offsetHeight  / 2;
-      if (sword) gsap.set(sword, { xPercent: -50, yPercent: -50, y: trackStart, transformPerspective: 800 });
+      if (sword && !sword._swordInit) {
+        gsap.set(sword, { xPercent: -50, yPercent: -50, transformPerspective: 800 });
+        sword._swordInit = true;
+      }
     }
 
     function activateStep(i) {
@@ -1599,17 +1602,21 @@ if (window.gsap && window.ScrollTrigger) {
 
     // Sword travels from first panel centre to last, spinning as it goes
     if (sword) {
-      gsap.to(sword, {
-        y: trackEnd,
-        rotationY: 180,
-        ease: 'none',
-        scrollTrigger: {
-          trigger: rail,
-          start: () => `top+=${trackStart}px center`,
-          end:   () => `top+=${trackEnd}px center`,
-          scrub: 0.5,
-        },
-      });
+      gsap.fromTo(sword,
+        { y: () => trackStart, rotationY: 0 },
+        {
+          y: () => trackEnd,
+          rotationY: 180,
+          ease: 'none',
+          scrollTrigger: {
+            trigger: rail,
+            start: () => `top+=${trackStart}px center`,
+            end:   () => `top+=${trackEnd}px center`,
+            scrub: true,
+            invalidateOnRefresh: true,
+          },
+        }
+      );
     }
 
     setTrackBounds(); // recalculate after triggers are registered
