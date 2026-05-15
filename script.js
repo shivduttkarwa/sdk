@@ -190,9 +190,9 @@ if (window.gsap && window.ScrollTrigger) {
   if (!row) return;
 
   const IMAGES = [
-    'https://images.unsplash.com/photo-1487014679447-9f8336841d58?auto=format&fit=crop&w=900&q=80',
-    'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?auto=format&fit=crop&w=900&q=80',
-    'https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&w=900&q=80',
+    'assets/stats-1.png',
+    'assets/stats-2.png',
+    'assets/stats-3.png',
   ];
 
   const SIM_W = 256, SIM_H = 96;
