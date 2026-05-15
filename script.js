@@ -1552,6 +1552,23 @@ if (window.gsap && window.ScrollTrigger) {
       });
     }
 
+    // First image fades in on entrance
+    const frameWrap = document.querySelector('.proc-frame-wrap');
+    if (frameWrap) {
+      gsap.fromTo(frameWrap,
+        { opacity: 0 },
+        {
+          opacity: 1, ease: 'none',
+          scrollTrigger: {
+            trigger: rail,
+            start: 'top 40%',
+            end:   'top top',
+            scrub: true,
+          },
+        }
+      );
+    }
+
     panels.forEach((panel, i) => {
       // Activate dot / panel colours when panel hits centre
       ScrollTrigger.create({
