@@ -1676,62 +1676,21 @@ if (window.gsap && window.ScrollTrigger) {
   }
 
   function initFooterName() {
-    const el = document.getElementById('ftName');
+    const el = document.getElementById('cfName');
     if (!el) return;
     function fit() {
       el.style.fontSize = '10px';
-      const available = document.documentElement.clientWidth;
-      const ratio = available / el.scrollWidth;
-      el.style.fontSize = Math.floor(10 * ratio) + 'px';
+      el.style.width = 'max-content';
+      const textW = el.offsetWidth;
+      el.style.width = '';
+      const vw = document.documentElement.clientWidth;
+      el.style.fontSize = Math.floor(10 * vw / textW * 0.7) + 'px';
     }
     fit();
     window.addEventListener('resize', fit, { passive: true });
   }
 
-  function initContact() {
-    const section   = document.querySelector('.sc-section');
-    const tiltCards = document.querySelectorAll('.sc-tilt');
-    const form      = document.getElementById('scContactForm');
-    const toast     = document.getElementById('scToast');
-    if (!section) return;
-
-    // Mouse-tracking spotlight on panels
-    section.addEventListener('pointermove', (e) => {
-      const r = section.getBoundingClientRect();
-      section.style.setProperty('--mx', `${((e.clientX - r.left) / r.width) * 100}%`);
-      section.style.setProperty('--my', `${((e.clientY - r.top)  / r.height) * 100}%`);
-    });
-
-    // Mouse-tracking spotlight per card
-    tiltCards.forEach((card) => {
-      card.addEventListener('pointermove', (e) => {
-        const r = card.getBoundingClientRect();
-        card.style.setProperty('--mx', `${((e.clientX - r.left) / r.width)  * 100}%`);
-        card.style.setProperty('--my', `${((e.clientY - r.top)  / r.height) * 100}%`);
-      });
-    });
-
-    // Floating petals
-    for (let i = 0; i < 24; i++) {
-      const p = document.createElement('span');
-      p.className = 'sc-petal';
-      p.style.left = `${Math.random() * 100}%`;
-      p.style.top  = `${Math.random() * -100}%`;
-      p.style.setProperty('--drift', `${(Math.random() * 240) - 120}px`);
-      p.style.animationDuration = `${9 + Math.random() * 12}s`;
-      p.style.animationDelay   = `${Math.random() * -14}s`;
-      p.style.opacity = `${0.2 + Math.random() * 0.5}`;
-      section.appendChild(p);
-    }
-
-    // Form submit
-    form?.addEventListener('submit', (e) => {
-      e.preventDefault();
-      toast.classList.add('show');
-      form.reset();
-      setTimeout(() => toast.classList.remove('show'), 4200);
-    });
-  }
+  function initContact() {}
 
   initWebGL().then(r=>{
     renderer=r;
@@ -1751,6 +1710,7 @@ if (window.gsap && window.ScrollTrigger) {
     initSectionTitleAnims();
     initTechStackCards();
     initProcessTimeline();
+    initFooterName();
     requestAnimationFrame(animate);
   });
 })();
