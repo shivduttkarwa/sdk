@@ -890,8 +890,8 @@ if (window.gsap && window.ScrollTrigger) {
       port.b = texture2D(u_portrait, pUV - vec2( ca, 0.0)).b;
 
       float inStrip = 1.0 - smoothstep(pw * 0.82, pw * 1.08, uv.x);
-      vec3 bg    = texture2D(u_bg, uv).rgb * 0.88;
-      vec3 inner = mix(bg, port, inStrip * 0.78);
+      vec3 bgBase = texture2D(u_bg, uv).rgb * 0.88;
+      vec3 inner = mix(bgBase, port, inStrip * 0.78);
       vec3 col   = inner * mask;
 
       float glow = exp(-edgeDist * 36.0) * 0.5;
@@ -915,8 +915,9 @@ if (window.gsap && window.ScrollTrigger) {
       grad = mix(grad, c2, smoothstep(0.40, 0.70, g));
       grad = mix(grad, c3, smoothstep(0.70, 1.00, g));
 
-      vec3 bgBase = texture2D(u_bg, uv).rgb * 0.88;
-      vec3 shadedBase = mix(bgBase, grad, u_baseAlpha);
+      const float portraitAmbient = 0.62;
+      vec3 baseWithPortrait = mix(bgBase, port, inStrip * portraitAmbient);
+      vec3 shadedBase = mix(baseWithPortrait, grad, u_baseAlpha);
       float revealAlpha = clamp(mask + glow * 0.55, 0.0, 1.0) * u_opacity;
       vec3 revealColor = clamp(col, 0.0, 1.0);
       vec3 finalColor = mix(shadedBase, revealColor, revealAlpha);
@@ -956,7 +957,7 @@ if (window.gsap && window.ScrollTrigger) {
   const uSmoke   = gl.getUniformLocation(prog, 'u_smoke');
   const uOpacity = gl.getUniformLocation(prog, 'u_opacity');
   const uBaseAlpha = gl.getUniformLocation(prog, 'u_baseAlpha');
-  const baseAlpha = 0.58;
+  const baseAlpha = 0.84;
   const anim     = { smoke: 1, opacity: 0 };
 
   function allocTex(unit) {
