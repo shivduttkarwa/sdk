@@ -1684,7 +1684,7 @@ if (window.gsap && window.ScrollTrigger) {
       const textW = el.offsetWidth;
       el.style.width = '';
       const vw = document.documentElement.clientWidth;
-      el.style.fontSize = Math.floor(10 * vw / textW * 0.7) + 'px';
+      el.style.fontSize = Math.floor(10 * vw / textW * 0.84) + 'px';
     }
     fit();
     window.addEventListener('resize', fit, { passive: true });
