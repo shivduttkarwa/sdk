@@ -16,6 +16,105 @@
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
+
+  <!-- ── Preloader ── -->
+  <div class="preloader" id="preloader" aria-hidden="true">
+    <canvas class="pl-canvas" id="plCanvas"></canvas>
+    <svg class="pl-svg" viewBox="0 0 200 200" aria-hidden="true">
+      <circle class="pl-arc" cx="100" cy="100" r="88" id="plArc"/>
+    </svg>
+    <div class="pl-num" id="plNum">0</div>
+    <span class="pl-mark">Shivdutt Karwa</span>
+  </div>
+
+  <script>
+  (function () {
+    /* ── matrix rain ── */
+    var canvas = document.getElementById('plCanvas');
+    var ctx    = canvas.getContext('2d');
+    var kanji  = '武士道侍剣魂刃忍鬼龍神将軍忠義';
+    var kana   = 'アイウエオカキクケコサシスセソタチツ';
+    var binary = '010110010100110101010011001010';
+    var sym    = '{}()<>[];=>/\\&|!?#@*^~%+-_:';
+    var hex    = '0123456789ABCDEF';
+    var jpPool   = kanji.split('').concat(kana.split(''));
+    var codePool = binary.split('').concat(sym.split('')).concat(hex.split(''));
+    var cols, drops, rainRaf;
+
+    function resize() {
+      canvas.width  = window.innerWidth;
+      canvas.height = window.innerHeight;
+      cols  = Math.floor(canvas.width / 26);
+      drops = Array.from({ length: cols }, function () { return (Math.random() * -80) | 0; });
+    }
+
+    var rainInterval;
+    function rain() {
+      ctx.fillStyle = 'rgba(8,8,8,0.035)';
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      for (var i = 0; i < cols; i++) {
+        var useJp = Math.random() > 0.48;
+        var ch    = useJp
+          ? jpPool[(Math.random() * jpPool.length) | 0]
+          : codePool[(Math.random() * codePool.length) | 0];
+        var rnd = Math.random();
+        if (rnd > 0.72) {
+          ctx.fillStyle = 'rgba(255,50,50,0.95)';
+          ctx.font = useJp ? 'bold 18px serif' : 'bold 16px monospace';
+        } else if (rnd > 0.38) {
+          ctx.fillStyle = 'rgba(185,18,18,0.80)';
+          ctx.font = useJp ? '17px serif' : '15px monospace';
+        } else {
+          ctx.fillStyle = 'rgba(110,10,10,0.58)';
+          ctx.font = useJp ? '15px serif' : '13px monospace';
+        }
+        ctx.fillText(ch, i * 26, drops[i] * 26);
+        if (drops[i] * 26 > canvas.height && Math.random() > 0.97) drops[i] = 0;
+        drops[i]++;
+      }
+    }
+
+    resize();
+    window.addEventListener('resize', resize);
+    rainInterval = setInterval(rain, 90);
+
+    /* ── counter + arc ── */
+    var arc = document.getElementById('plArc');
+    var num = document.getElementById('plNum');
+    var C   = 552.92;
+    var dur = 6500;
+    var t0;
+
+    function ease(t) {
+      return t < 0.5 ? 4*t*t*t : 1 - Math.pow(-2*t + 2, 3) / 2;
+    }
+
+    function tick(now) {
+      var raw = Math.min((now - t0) / dur, 1);
+      var e   = ease(raw);
+      num.textContent            = Math.round(e * 100);
+      arc.style.strokeDashoffset = C * (1 - e);
+      if (raw < 1) {
+        requestAnimationFrame(tick);
+      } else {
+        num.textContent            = 100;
+        arc.style.strokeDashoffset = 0;
+        arc.classList.add('done');
+        num.classList.add('done');
+        clearInterval(rainInterval);
+        setTimeout(function () {
+          var pl = document.getElementById('preloader');
+          pl.classList.add('exit');
+          setTimeout(function () { pl.style.display = 'none'; }, 1000);
+        }, 520);
+      }
+    }
+
+    t0 = performance.now();
+    requestAnimationFrame(tick);
+  })();
+  </script>
+
   <div class="grain"></div>
 
   <header class="nav-main" data-nav-status="inactive" id="twostepNav">
