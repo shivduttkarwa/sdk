@@ -1527,6 +1527,26 @@ if (window.gsap && window.ScrollTrigger) {
     setTrackBounds();
     window.addEventListener('resize', setTrackBounds, { passive: true });
 
+    const procSection = document.getElementById('about');
+
+    // Sword entrance: scrubbed, fully reversible
+    if (sword) {
+      gsap.fromTo(sword,
+        { x: 1000, y: -400, rotation: 180 },
+        {
+          x: 0, y: () => trackStart, rotation: 0,
+          ease: 'power2.inOut',
+          scrollTrigger: {
+            trigger: rail,
+            start: 'top bottom',
+            end:   'top top',
+            scrub: true,
+            invalidateOnRefresh: true,
+          },
+        }
+      );
+    }
+
     panels.forEach((panel, i) => {
       // Activate dot / panel colours when panel hits centre
       ScrollTrigger.create({
