@@ -999,7 +999,7 @@ if (window.gsap && window.ScrollTrigger) {
   }
 
   loadBitmap('./assets/hero-samurai.png', 0, texBg);
-  loadBitmap('./assets/hero-samurai-blend.png', 1, texPort);
+  loadBitmap('./assets/1111.png', 1, texPort);
 
   let mx = 0.15, my = 0.58;
   let smx = 0.15, smy = 0.58;
