@@ -752,7 +752,7 @@ img {
 .hero-line {
   position: relative;
   z-index: 3;
-  font-family: "Space Grotesk", sans-serif;
+  font-family: "Bricolage Grotesque", sans-serif;
   font-size: clamp(80px, 14vw, 230px);
   font-weight: 300;
   letter-spacing: -.09em;
@@ -816,13 +816,13 @@ img {
 }
 
 .hero-rotating-word {
-  font-family: "Space Grotesk", sans-serif;
-  font-size: clamp(64px, 11vw, 190px);
+  font-family: "FighterAttack", sans-serif;
+  font-size: clamp(32px, 5.5vw, 95px);
   font-weight: 900;
   font-style: italic;
   letter-spacing: -.08em;
   text-transform: uppercase;
-  color: #f5ed3c;
+  color: #E03F4F;
   text-shadow: 0 4px 0 rgba(0,0,0,.4), 0 14px 44px rgba(0,0,0,.55);
   position: absolute;
   white-space: nowrap;
