@@ -848,6 +848,7 @@ if (window.gsap && window.ScrollTrigger) {
     uniform float     u_portW;
     uniform float     u_smoke;
     uniform float     u_opacity;
+    uniform float     u_baseAlpha;
     varying vec2      v_uv;
 
     float rand(vec2 n) {
@@ -903,8 +904,23 @@ if (window.gsap && window.ScrollTrigger) {
       vec2 vc  = uv * 2.0 - 1.0;
       col *= 1.0 - dot(vc, vc) * 0.32;
 
-      float alpha = clamp(mask + glow * 0.55, 0.0, 1.0) * u_opacity;
-      gl_FragColor = vec4(clamp(col, 0.0, 1.0), alpha);
+      vec2 gradDir = normalize(vec2(-0.94, 0.342)); // ~160deg
+      float g = clamp(dot(uv - vec2(0.5), gradDir) + 0.5, 0.0, 1.0);
+      vec3 c0 = vec3(80.0, 8.0, 18.0) / 255.0;
+      vec3 c1 = vec3(20.0, 4.0, 10.0) / 255.0;
+      vec3 c2 = vec3(8.0, 4.0, 22.0) / 255.0;
+      vec3 c3 = vec3(15.0, 5.0, 30.0) / 255.0;
+      vec3 grad = c0;
+      grad = mix(grad, c1, smoothstep(0.0, 0.40, g));
+      grad = mix(grad, c2, smoothstep(0.40, 0.70, g));
+      grad = mix(grad, c3, smoothstep(0.70, 1.00, g));
+
+      vec3 bgBase = texture2D(u_bg, uv).rgb * 0.88;
+      vec3 shadedBase = mix(bgBase, grad, u_baseAlpha);
+      float revealAlpha = clamp(mask + glow * 0.55, 0.0, 1.0) * u_opacity;
+      vec3 revealColor = clamp(col, 0.0, 1.0);
+      vec3 finalColor = mix(shadedBase, revealColor, revealAlpha);
+      gl_FragColor = vec4(finalColor, 1.0);
     }`;
 
   function mkShader(type, src) {
@@ -939,6 +955,8 @@ if (window.gsap && window.ScrollTrigger) {
   const uPortW   = gl.getUniformLocation(prog, 'u_portW');
   const uSmoke   = gl.getUniformLocation(prog, 'u_smoke');
   const uOpacity = gl.getUniformLocation(prog, 'u_opacity');
+  const uBaseAlpha = gl.getUniformLocation(prog, 'u_baseAlpha');
+  const baseAlpha = 0.58;
   const anim     = { smoke: 1, opacity: 0 };
 
   function allocTex(unit) {
@@ -1008,6 +1026,7 @@ if (window.gsap && window.ScrollTrigger) {
     gl.uniform2f(uRes,    canvas.width, canvas.height);
     gl.uniform1f(uSmoke,   anim.smoke);
     gl.uniform1f(uOpacity, anim.opacity);
+    gl.uniform1f(uBaseAlpha, baseAlpha);
     gl.drawArrays(gl.TRIANGLES, 0, 6);
     requestAnimationFrame(render);
   }
