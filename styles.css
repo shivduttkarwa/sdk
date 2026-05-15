@@ -63,7 +63,12 @@ body {
   min-height: 100vh;
   font-family: "Inter", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
   color: var(--text);
-  background-color: #05030a;
+ 
+  overflow-x: clip;
+}
+
+.site-bg-scope,
+.site-footer {
   background-image:
     linear-gradient(160deg, rgba(80,8,18,0.82) 0%, rgba(20,4,10,0.88) 40%, rgba(8,4,22,0.90) 70%, rgba(15,5,30,0.85) 100%),
     url('assets/hero-main-bg.png');
@@ -71,7 +76,6 @@ body {
   background-position: center top;
   background-repeat: no-repeat;
   background-attachment: fixed;
-  overflow-x: clip;
 }
 
 body.no-scroll {
