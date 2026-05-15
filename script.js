@@ -895,8 +895,8 @@ if (window.gsap && window.ScrollTrigger) {
       vec3 col   = inner * mask;
 
       float glow = exp(-edgeDist * 36.0) * 0.5;
-      col += vec3(0.88, 0.16, 0.22) * glow * 0.18;
-      col += vec3(0.55, 0.06, 0.14) * glow * 0.10;
+      col += vec3(0.62, 0.14, 0.28) * glow * 0.12;
+      col += vec3(0.36, 0.06, 0.18) * glow * 0.07;
 
       float grain = (rand(uv * 540.0 + fract(u_time * 0.07)) - 0.5) * 0.042;
       col += grain;
@@ -904,16 +904,22 @@ if (window.gsap && window.ScrollTrigger) {
       vec2 vc  = uv * 2.0 - 1.0;
       col *= 1.0 - dot(vc, vc) * 0.32;
 
-      vec2 gradDir = normalize(vec2(-0.94, 0.342)); // ~160deg
+      vec2 gradDir = normalize(vec2(0.94, -0.342)); // top-left to bottom-right flow
       float g = clamp(dot(uv - vec2(0.5), gradDir) + 0.5, 0.0, 1.0);
-      vec3 c0 = vec3(80.0, 8.0, 18.0) / 255.0;
-      vec3 c1 = vec3(20.0, 4.0, 10.0) / 255.0;
-      vec3 c2 = vec3(8.0, 4.0, 22.0) / 255.0;
-      vec3 c3 = vec3(15.0, 5.0, 30.0) / 255.0;
-      vec3 grad = c0;
-      grad = mix(grad, c1, smoothstep(0.0, 0.40, g));
-      grad = mix(grad, c2, smoothstep(0.40, 0.70, g));
-      grad = mix(grad, c3, smoothstep(0.70, 1.00, g));
+      float gs = smoothstep(0.0, 1.0, g);
+      float redFocus = smoothstep(0.62, 0.0, distance(uv, vec2(0.16, 0.12)));
+      float coolRim = smoothstep(0.35, 1.10, distance(uv, vec2(0.88, 0.82)));
+
+      vec3 ink     = vec3(6.0, 4.0, 14.0) / 255.0;
+      vec3 violet  = vec3(17.0, 8.0, 28.0) / 255.0;
+      vec3 steel   = vec3(10.0, 12.0, 26.0) / 255.0;
+      vec3 crimson = vec3(68.0, 14.0, 24.0) / 255.0;
+      vec3 coolInk = vec3(14.0, 14.0, 34.0) / 255.0;
+
+      vec3 grad = mix(ink, violet, smoothstep(0.05, 0.72, gs));
+      grad = mix(grad, steel, smoothstep(0.58, 1.00, gs));
+      grad = mix(grad, crimson, redFocus * 0.52);
+      grad = mix(grad, coolInk, coolRim * 0.28);
 
       const float portraitAmbient = 0.62;
       vec3 baseWithPortrait = mix(bgBase, port, inStrip * portraitAmbient);
@@ -957,7 +963,7 @@ if (window.gsap && window.ScrollTrigger) {
   const uSmoke   = gl.getUniformLocation(prog, 'u_smoke');
   const uOpacity = gl.getUniformLocation(prog, 'u_opacity');
   const uBaseAlpha = gl.getUniformLocation(prog, 'u_baseAlpha');
-  const baseAlpha = 0.84;
+  const baseAlpha = 0.80;
   const anim     = { smoke: 1, opacity: 0 };
 
   function allocTex(unit) {
