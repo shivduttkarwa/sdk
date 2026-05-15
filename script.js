@@ -1604,10 +1604,9 @@ if (window.gsap && window.ScrollTrigger) {
     // Sword travels from first panel centre to last, spinning as it goes
     if (sword) {
       gsap.fromTo(sword,
-        { y: () => trackStart, rotationY: 0 },
+        { y: () => trackStart },
         {
           y: () => trackEnd,
-          rotationY: 180,
           ease: 'none',
           scrollTrigger: {
             trigger: rail,
