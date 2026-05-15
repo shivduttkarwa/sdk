@@ -2355,12 +2355,10 @@ img {
 }
 
 .cf-inner {
-  max-width: var(--max);
-  margin: 0 auto;
   padding: 0 clamp(1.5rem, 5vw, 6rem) clamp(5rem, 7vw, 8rem);
   display: grid;
-  grid-template-columns: 1fr auto;
-  gap: clamp(3rem, 6vw, 10rem);
+  grid-template-columns: 1fr 380px;
+  gap: clamp(3rem, 6vw, 8rem);
   align-items: start;
 }
 
@@ -2440,42 +2438,111 @@ img {
   50%       { opacity: 0.55; transform: scale(0.78); }
 }
 
-.cf-links-row {
+.cf-panel {
   display: flex;
-  gap: clamp(2rem, 4vw, 5rem);
-  padding-top: 0.5rem;
+  flex-direction: column;
+  gap: 0;
+  border: 1px solid rgba(245,242,234,0.08);
+  border-radius: 20px;
+  overflow: hidden;
+  background: rgba(255,255,255,0.02);
+  backdrop-filter: blur(12px);
+  margin-top: 0.5rem;
+}
+
+.cf-panel-nav {
+  display: flex;
+  flex-direction: column;
+}
+
+.cf-panel-item {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1.1rem 1.5rem;
+  border-bottom: 1px solid rgba(245,242,234,0.06);
+  text-decoration: none;
+  transition: background 0.22s var(--ease), padding-left 0.22s var(--ease);
+}
+
+.cf-panel-item:hover {
+  background: rgba(224,63,79,0.06);
+  padding-left: 2rem;
+}
+
+.cf-panel-item:hover .cf-panel-arrow {
+  color: var(--red);
+  transform: translateX(3px);
+}
+
+.cf-panel-num {
+  font-family: "Space Grotesk", sans-serif;
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  color: rgba(245,242,234,0.2);
+  width: 1.6rem;
   flex-shrink: 0;
 }
 
-.cf-col-label {
-  font-size: 0.7rem;
-  font-weight: 700;
-  letter-spacing: 0.16em;
-  text-transform: uppercase;
-  color: rgba(245,242,234,0.22);
-  margin-bottom: 1.2rem;
-}
-
-.cf-col nav {
-  display: flex;
-  flex-direction: column;
-  gap: 0.65rem;
-}
-
-.cf-col nav a {
-  font-size: 0.92rem;
-  font-weight: 500;
-  color: rgba(245,242,234,0.42);
-  text-decoration: none;
+.cf-panel-name {
+  font-family: "Space Grotesk", sans-serif;
+  font-size: 1.35rem;
+  font-weight: 600;
+  color: rgba(245,242,234,0.7);
+  flex: 1;
   transition: color 0.22s var(--ease);
 }
 
-.cf-col nav a:hover { color: var(--text); }
+.cf-panel-item:hover .cf-panel-name { color: var(--text); }
 
-.cf-location {
-  font-size: 0.92rem;
-  color: rgba(245,242,234,0.42);
-  line-height: 1.9;
+.cf-panel-arrow {
+  font-size: 1rem;
+  color: rgba(245,242,234,0.2);
+  transition: color 0.22s var(--ease), transform 0.22s var(--ease);
+}
+
+.cf-panel-footer {
+  padding: 1.4rem 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.2rem;
+}
+
+.cf-panel-socials {
+  display: flex;
+  gap: 0.55rem;
+  flex-wrap: wrap;
+}
+
+.cf-social-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.45rem 0.85rem;
+  border-radius: 999px;
+  border: 1px solid rgba(245,242,234,0.1);
+  background: rgba(255,255,255,0.03);
+  font-family: "Space Grotesk", sans-serif;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: rgba(245,242,234,0.45);
+  text-decoration: none;
+  transition: border-color 0.22s var(--ease), color 0.22s var(--ease), background 0.22s var(--ease);
+}
+
+.cf-social-pill:hover {
+  border-color: rgba(224,63,79,0.4);
+  color: var(--text);
+  background: rgba(224,63,79,0.08);
+}
+
+.cf-panel-location {
+  font-size: 0.72rem;
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: rgba(245,242,234,0.2);
 }
 
 .cf-rule {
@@ -2538,7 +2605,6 @@ img {
 
 @media (max-width: 900px) {
   .cf-inner { grid-template-columns: 1fr; gap: 3rem; }
-  .cf-links-row { flex-wrap: wrap; gap: 2.5rem; }
 }
 
 @media (max-width: 600px) {
