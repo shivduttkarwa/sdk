@@ -1535,11 +1535,11 @@ if (window.gsap && window.ScrollTrigger) {
         // leg 1: top-right → arc waypoint (a bit down and left, not all the way)
         .fromTo(sword,
           { x: 1000, y: -500, rotation: 180 },
-          { x: 100,  y: -80,  rotation: 60, ease: 'power2.in', duration: 0.55 }
+          { x: 100,  y: -80,  rotation: 60, ease: 'none', duration: 0.55 }
         )
         // leg 2: arc waypoint → resting position
         .to(sword,
-          { x: 0, y: () => trackStart, rotation: 0, ease: 'power2.out', duration: 0.45 }
+          { x: 0, y: () => trackStart, rotation: 0, ease: 'none', duration: 0.45 }
         );
 
       ScrollTrigger.create({
