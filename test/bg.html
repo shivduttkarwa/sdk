@@ -3,1098 +3,325 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Animated Futuristic Coding Background</title>
+  <title>Premium Border Follow Button</title>
+
   <style>
     * {
-      margin: 0;
-      padding: 0;
       box-sizing: border-box;
-    }
-
-    :root {
-      --bg-0: #020411;
-      --bg-1: #05082a;
-      --blue: #00a7ff;
-      --cyan: #31d7ff;
-      --violet: #7a2cff;
-      --purple: #b02cff;
-      --text: rgba(210, 235, 255, 0.92);
-      --soft: rgba(104, 196, 255, 0.18);
-      --glass: rgba(2, 9, 32, 0.42);
-      --border: rgba(52, 190, 255, 0.44);
     }
 
     body {
       min-height: 100vh;
-      overflow: hidden;
-      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      margin: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
       background:
-        radial-gradient(circle at 72% 36%, rgba(103, 32, 255, 0.30), transparent 18%),
-        radial-gradient(circle at 36% 96%, rgba(0, 132, 255, 0.28), transparent 26%),
-        radial-gradient(circle at 20% 14%, rgba(0, 175, 255, 0.20), transparent 22%),
-        linear-gradient(135deg, var(--bg-0), var(--bg-1) 52%, #030414);
-      color: var(--text);
+        radial-gradient(circle at center, rgba(130, 19, 19, 0.28), transparent 34%),
+        linear-gradient(135deg, #0b0808, #17100f 45%, #080606);
+      font-family: "Inter", "Segoe UI", Arial, sans-serif;
     }
 
-    .hero-bg {
+    .btn-wrap {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 32px;
+      justify-content: center;
+      padding: 60px 24px;
+    }
+
+    .mystic-border-btn {
       position: relative;
-      width: 100vw;
-      height: 100vh;
-      overflow: hidden;
+      width: 300px;
+      height: 78px;
+      border: 0;
+      background: transparent;
+      cursor: pointer;
+      color: #f8e2b8;
+      font-size: 13px;
+      font-weight: 900;
+      letter-spacing: 4px;
+      text-transform: uppercase;
       isolation: isolate;
-      background:
-        linear-gradient(115deg, rgba(0, 0, 0, 0.28), transparent 45%, rgba(0, 0, 0, 0.44)),
-        radial-gradient(circle at center, rgba(43, 0, 100, 0.08), transparent 55%);
+      overflow: visible;
+      transition: transform 0.55s cubic-bezier(.19, 1, .22, 1);
     }
 
-    #matrixCanvas,
-    #particlesCanvas {
+    .mystic-border-btn .surface {
       position: absolute;
-      inset: 0;
-      width: 100%;
-      height: 100%;
-      z-index: 1;
-    }
-
-    #particlesCanvas {
-      z-index: 3;
-      mix-blend-mode: screen;
-    }
-
-    .scanlines {
-      position: absolute;
-      inset: 0;
-      z-index: 20;
-      pointer-events: none;
-      background:
-        repeating-linear-gradient(
-          to bottom,
-          rgba(255,255,255,0.035) 0px,
-          rgba(255,255,255,0.035) 1px,
-          transparent 2px,
-          transparent 6px
-        );
-      opacity: 0.14;
-      mix-blend-mode: screen;
-    }
-
-    .vignette {
-      position: absolute;
-      inset: 0;
-      z-index: 21;
-      pointer-events: none;
-      background: radial-gradient(circle at center, transparent 34%, rgba(0,0,0,0.42) 74%, rgba(0,0,0,0.86) 100%);
-    }
-
-    .circuit-grid {
-      position: absolute;
-      inset: -12% -4%;
+      inset: 6px;
       z-index: 2;
-      opacity: 0.82;
-      filter: drop-shadow(0 0 10px rgba(0, 133, 255, 0.58));
+      border-radius: 15px;
+      background:
+        radial-gradient(circle at 42% 45%, rgba(255,255,255,0.1), transparent 22%),
+        radial-gradient(circle at 70% 52%, rgba(142, 18, 18, 0.32), transparent 38%),
+        linear-gradient(135deg, #252322, #11100f 48%, #070707);
+      box-shadow:
+        inset 0 1px 0 rgba(255,255,255,0.08),
+        inset 0 -24px 45px rgba(0,0,0,0.6),
+        0 22px 60px rgba(0,0,0,0.5);
+      overflow: hidden;
     }
 
-    .circuit-grid svg {
-      width: 100%;
+    .mystic-border-btn .surface::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(
+        120deg,
+        transparent 20%,
+        rgba(255, 231, 181, 0.16),
+        transparent 80%
+      );
+      transform: translateX(-120%) skewX(-18deg);
+      transition: 0.85s cubic-bezier(.19, 1, .22, 1);
+    }
+
+    .mystic-border-btn .label {
+      position: relative;
+      z-index: 5;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
       height: 100%;
+      text-shadow:
+        0 0 14px rgba(248, 226, 184, 0.35),
+        0 0 28px rgba(150, 30, 20, 0.25);
+      transition: color 0.45s ease, letter-spacing 0.45s ease;
     }
 
-    .circuit-path {
-      fill: none;
-      stroke-width: 1.15;
-      stroke: rgba(17, 137, 255, 0.5);
-      stroke-dasharray: 220 28;
-      animation: dashMove 9s linear infinite;
+    .mystic-border-btn .aura {
+      position: absolute;
+      inset: -26px;
+      z-index: 0;
+      border-radius: 26px;
+      background:
+        radial-gradient(circle at center, rgba(174, 37, 22, 0.42), transparent 58%),
+        radial-gradient(circle at 60% 40%, rgba(248, 210, 143, 0.18), transparent 44%);
+      filter: blur(24px);
+      opacity: 0;
+      transform: scale(0.8);
+      transition: 0.65s cubic-bezier(.19, 1, .22, 1);
     }
 
-    .circuit-path.purple {
-      stroke: rgba(143, 49, 255, 0.56);
-      animation-duration: 7s;
-      animation-direction: reverse;
-    }
-
-    .circuit-path.thin {
-      stroke-width: 0.72;
-      opacity: 0.58;
-      animation-duration: 13s;
-    }
-
-    @keyframes dashMove {
-      from { stroke-dashoffset: 0; }
-      to { stroke-dashoffset: -620; }
-    }
-
-    .hud-layer {
+    .mystic-border-btn svg {
       position: absolute;
       inset: 0;
       z-index: 4;
-      pointer-events: none;
-    }
-
-    .hud-card {
-      position: absolute;
-      border: 1px solid var(--border);
-      background: linear-gradient(145deg, rgba(2, 11, 41, 0.44), rgba(2, 3, 20, 0.12));
-      box-shadow:
-        inset 0 0 24px rgba(0, 166, 255, 0.06),
-        0 0 30px rgba(0, 116, 255, 0.12);
-      clip-path: polygon(0 0, calc(100% - 18px) 0, 100% 18px, 100% 100%, 14px 100%, 0 calc(100% - 14px));
-      backdrop-filter: blur(6px);
-      animation: panelFloat 7s ease-in-out infinite;
-    }
-
-    .hud-card::before,
-    .hud-card::after {
-      content: "";
-      position: absolute;
-      width: 6px;
-      height: 6px;
-      border-radius: 50%;
-      background: var(--cyan);
-      box-shadow: 0 0 12px var(--cyan), 0 0 28px var(--blue);
-    }
-
-    .hud-card::before { left: -3px; top: 24px; }
-    .hud-card::after { right: -3px; bottom: 22px; background: var(--violet); box-shadow: 0 0 18px var(--violet); }
-
-    @keyframes panelFloat {
-      0%, 100% { transform: translate3d(0,0,0); opacity: 0.92; }
-      50% { transform: translate3d(0,-8px,0); opacity: 1; }
-    }
-
-    .card-title {
-      font-size: clamp(8px, 0.72vw, 13px);
-      color: var(--cyan);
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
-      margin-bottom: 12px;
-      text-shadow: 0 0 12px rgba(0, 184, 255, 0.9);
-    }
-
-    .system-overview {
-      left: 2.5vw;
-      top: 26vh;
-      width: 20vw;
-      height: 18vh;
-      min-width: 230px;
-      min-height: 142px;
-      padding: 16px;
-    }
-
-    .data-stream {
-      left: 2.5vw;
-      top: 50vh;
-      width: 22vw;
-      height: 13vh;
-      min-width: 250px;
-      min-height: 108px;
-      padding: 14px;
-      animation-delay: -1.3s;
-    }
-
-    .core-module {
-      left: 2.7vw;
-      bottom: 8vh;
-      width: 20vw;
-      height: 18vh;
-      min-width: 230px;
-      min-height: 138px;
-      padding: 14px;
-      animation-delay: -2.5s;
-    }
-
-    .activity-feed {
-      left: 32vw;
-      top: 28vh;
-      width: 15.5vw;
-      height: 17vh;
-      min-width: 190px;
-      min-height: 140px;
-      padding: 14px;
-      animation-delay: -0.7s;
-    }
-
-    .system-status {
-      left: 33vw;
-      top: 51vh;
-      width: 14vw;
-      height: 15vh;
-      min-width: 175px;
-      min-height: 122px;
-      padding: 14px;
-      animation-delay: -1.7s;
-    }
-
-    .floating-code-1 {
-      right: 18vw;
-      top: 11vh;
-      width: 13vw;
-      height: 8.5vh;
-      min-width: 155px;
-      min-height: 72px;
-      padding: 10px;
-      animation-delay: -3.1s;
-    }
-
-    .floating-code-2 {
-      right: 5.5vw;
-      top: 52vh;
-      width: 12vw;
-      height: 10vh;
-      min-width: 145px;
-      min-height: 75px;
-      padding: 10px;
-      animation-delay: -2.1s;
-    }
-
-    .bars {
-      height: 78px;
-      display: flex;
-      align-items: flex-end;
-      gap: 5px;
-      padding: 8px 2px 0;
-      border-bottom: 1px solid rgba(41, 204, 255, 0.22);
-    }
-
-    .bar {
-      flex: 1;
-      min-width: 4px;
-      height: var(--h);
-      background: linear-gradient(to top, rgba(42, 92, 255, 0.08), rgba(34, 208, 255, 0.90));
-      box-shadow: 0 0 10px rgba(0, 174, 255, 0.55);
-      animation: barPulse 1.8s ease-in-out infinite;
-      animation-delay: var(--d);
-    }
-
-    @keyframes barPulse {
-      0%, 100% { transform: scaleY(0.72); opacity: 0.6; }
-      50% { transform: scaleY(1.05); opacity: 1; }
-    }
-
-    .stream-line {
-      position: absolute;
-      left: 8%;
-      width: 82%;
-      height: 1px;
-      background: linear-gradient(90deg, transparent, rgba(0, 190, 255, 0.8), rgba(155, 50, 255, 0.9), transparent);
-      box-shadow: 0 0 12px rgba(124, 58, 255, 0.8);
-      animation: streamRun 2.8s linear infinite;
-    }
-
-    .stream-line:nth-child(2) { top: 45%; animation-delay: -0.8s; }
-    .stream-line:nth-child(3) { top: 62%; animation-delay: -1.4s; }
-    .stream-line:nth-child(4) { top: 78%; animation-delay: -2s; }
-
-    @keyframes streamRun {
-      0% { transform: scaleX(0.08) translateX(-48%); opacity: 0; }
-      18% { opacity: 1; }
-      100% { transform: scaleX(1.15) translateX(40%); opacity: 0; }
-    }
-
-    .feed-row {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 8px;
-      padding: 5px 0;
-      color: rgba(220, 242, 255, 0.78);
-      font-size: clamp(7px, 0.58vw, 10px);
-      border-bottom: 1px solid rgba(62, 176, 255, 0.10);
-    }
-
-    .feed-icon {
-      width: 15px;
-      height: 15px;
-      border: 1px solid rgba(72, 194, 255, 0.48);
-      border-radius: 4px;
-      box-shadow: 0 0 10px rgba(52, 173, 255, 0.28);
-      display: grid;
-      place-items: center;
-      color: var(--cyan);
-      font-size: 9px;
-    }
-
-    .feed-time {
-      color: rgba(113, 191, 255, 0.6);
-      white-space: nowrap;
-    }
-
-    .status-row {
-      margin: 8px 0;
-      font-size: clamp(7px, 0.58vw, 10px);
-      color: rgba(223, 244, 255, 0.78);
-    }
-
-    .status-meta {
-      display: flex;
-      justify-content: space-between;
-      margin-bottom: 4px;
-    }
-
-    .status-track {
-      height: 5px;
-      background: rgba(44, 120, 255, 0.18);
-      border: 1px solid rgba(64, 188, 255, 0.16);
-      overflow: hidden;
-    }
-
-    .status-fill {
+      width: 100%;
       height: 100%;
-      width: var(--w);
-      background: linear-gradient(90deg, var(--blue), var(--violet), var(--cyan));
-      box-shadow: 0 0 12px rgba(106, 60, 255, 0.78);
-      animation: statusPulse 2.4s ease-in-out infinite;
-    }
-
-    @keyframes statusPulse {
-      0%, 100% { filter: brightness(0.85); }
-      50% { filter: brightness(1.5); }
-    }
-
-    .cube-svg {
-      position: absolute;
-      inset: 34px 28px 18px 28px;
-      opacity: 0.9;
-      animation: cubeSpin 10s linear infinite;
-      filter: drop-shadow(0 0 10px rgba(120, 57, 255, 0.75));
-    }
-
-    @keyframes cubeSpin {
-      from { transform: rotate(0deg); }
-      to { transform: rotate(360deg); }
-    }
-
-    .code-lines {
-      font-family: "SFMono-Regular", Consolas, monospace;
-      font-size: clamp(6px, 0.52vw, 9px);
-      line-height: 1.55;
-      color: rgba(111, 210, 255, 0.78);
-      overflow: hidden;
-      white-space: nowrap;
-    }
-
-    .code-lines span {
-      display: block;
-      animation: flickerText 1.8s ease-in-out infinite;
-    }
-
-    .code-lines span:nth-child(2n) { color: rgba(175, 82, 255, 0.82); animation-delay: -0.6s; }
-    .code-lines span:nth-child(3n) { color: rgba(215, 237, 255, 0.70); animation-delay: -1.1s; }
-
-    @keyframes flickerText {
-      0%,100% { opacity: 0.58; transform: translateX(0); }
-      50% { opacity: 1; transform: translateX(6px); }
-    }
-
-    .globe-wrap {
-      position: absolute;
-      right: 7.4vw;
-      top: 8.2vh;
-      width: min(27vw, 390px);
-      aspect-ratio: 1;
-      z-index: 5;
-      opacity: 0.92;
-      filter: drop-shadow(0 0 24px rgba(92, 70, 255, 0.6));
-    }
-
-    .globe {
-      position: absolute;
-      inset: 14%;
-      border-radius: 50%;
-      border: 1px solid rgba(96, 195, 255, 0.5);
-      background:
-        radial-gradient(circle at 35% 28%, rgba(111, 220, 255, 0.18), transparent 18%),
-        radial-gradient(circle at 50% 50%, rgba(103, 40, 255, 0.22), transparent 53%),
-        radial-gradient(circle at 65% 55%, rgba(2, 10, 40, 0.88), rgba(0, 0, 0, 0.24));
-      overflow: hidden;
-      box-shadow:
-        inset 0 0 44px rgba(0, 190, 255, 0.18),
-        0 0 44px rgba(90, 52, 255, 0.38);
-    }
-
-    .globe::before {
-      content: "";
-      position: absolute;
-      inset: 6%;
-      border-radius: 50%;
-      background-image:
-        linear-gradient(rgba(67, 210, 255, 0.22) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(143, 66, 255, 0.20) 1px, transparent 1px),
-        radial-gradient(circle, rgba(52, 223, 255, 0.8) 0 1px, transparent 1.7px);
-      background-size: 100% 18%, 18% 100%, 13px 13px;
-      transform: perspective(300px) rotateX(14deg) rotateY(0deg);
-      animation: globeMove 10s linear infinite;
-      opacity: 0.8;
-    }
-
-    .globe::after {
-      content: "";
-      position: absolute;
-      inset: 0;
-      border-radius: 50%;
-      background:
-        linear-gradient(80deg, transparent 0 44%, rgba(255,255,255,0.14) 48%, transparent 52% 100%),
-        radial-gradient(circle at 30% 30%, transparent 0 35%, rgba(0,0,0,0.28) 70%);
-      animation: shine 4.5s ease-in-out infinite;
-    }
-
-    @keyframes globeMove {
-      from { background-position: 0 0, 0 0, 0 0; }
-      to { background-position: 0 0, 0 0, -160px 0; }
-    }
-
-    @keyframes shine {
-      0%, 100% { opacity: 0.45; }
-      50% { opacity: 0.88; }
-    }
-
-    .orbit {
-      position: absolute;
-      inset: 2%;
-      border-radius: 50%;
-      border: 1px solid rgba(68, 147, 255, 0.32);
-      animation: orbitSpin 14s linear infinite;
-    }
-
-    .orbit:nth-child(2) {
-      inset: 9%;
-      border-color: rgba(180, 66, 255, 0.36);
-      animation-duration: 10s;
-      animation-direction: reverse;
-      transform: rotate(22deg);
-    }
-
-    .orbit:nth-child(3) {
-      inset: 18%;
-      border-color: rgba(0, 205, 255, 0.26);
-      animation-duration: 18s;
-      transform: rotate(-18deg);
-    }
-
-    .orbit::before {
-      content: "";
-      position: absolute;
-      top: 16%;
-      left: 13%;
-      width: 5px;
-      height: 5px;
-      border-radius: 50%;
-      background: var(--cyan);
-      box-shadow: 0 0 14px var(--cyan), 0 0 24px var(--violet);
-    }
-
-    @keyframes orbitSpin {
-      to { transform: rotate(360deg); }
-    }
-
-    .desk {
-      position: absolute;
-      right: 8vw;
-      bottom: 6.5vh;
-      width: min(48vw, 780px);
-      height: min(36vh, 350px);
-      z-index: 8;
-      transform: perspective(1200px) rotateX(2deg) rotateY(-2deg);
-    }
-
-    .platform {
-      position: absolute;
-      left: 4%;
-      right: 6%;
-      bottom: 0;
-      height: 34%;
-      transform: skewX(-13deg);
-      border: 1px solid rgba(84, 190, 255, 0.24);
-      background:
-        linear-gradient(180deg, rgba(18, 27, 70, 0.94), rgba(3, 6, 26, 0.95)),
-        repeating-linear-gradient(90deg, transparent 0 40px, rgba(47, 145, 255, 0.08) 42px 44px);
-      box-shadow:
-        inset 0 0 28px rgba(0, 140, 255, 0.18),
-        0 -3px 0 rgba(89, 60, 255, 0.98),
-        0 -8px 26px rgba(93, 61, 255, 0.8),
-        0 24px 70px rgba(0, 0, 0, 0.75);
-    }
-
-    .platform::after {
-      content: "";
-      position: absolute;
-      left: 2%;
-      right: 2%;
-      top: 10px;
-      height: 2px;
-      background: linear-gradient(90deg, transparent, var(--cyan), var(--violet), transparent);
-      box-shadow: 0 0 18px rgba(91, 70, 255, 1);
-      animation: neonSweep 3s linear infinite;
-    }
-
-    @keyframes neonSweep {
-      0% { transform: translateX(-15%) scaleX(0.5); opacity: 0.2; }
-      50% { opacity: 1; }
-      100% { transform: translateX(14%) scaleX(1); opacity: 0.2; }
-    }
-
-    .laptop {
-      position: absolute;
-      left: 17%;
-      right: 17%;
-      bottom: 26%;
-      height: 72%;
-      transform: perspective(900px) rotateX(0deg);
-    }
-
-    .screen {
-      position: absolute;
-      left: 7%;
-      right: 6%;
-      top: 0;
-      height: 74%;
-      border: 3px solid rgba(61, 83, 140, 0.95);
-      border-radius: 14px 14px 7px 7px;
-      background: linear-gradient(140deg, rgba(7, 17, 50, 0.98), rgba(2, 3, 13, 0.98));
-      overflow: hidden;
-      box-shadow:
-        inset 0 0 35px rgba(0, 144, 255, 0.08),
-        0 0 28px rgba(0, 157, 255, 0.30);
-      transform: skewX(-4deg);
-    }
-
-    .screen::before {
-      content: "";
-      position: absolute;
-      inset: 0;
-      background:
-        linear-gradient(90deg, rgba(44, 168, 255, 0.09) 0 1px, transparent 1px 100%),
-        linear-gradient(rgba(255,255,255,0.03) 0 1px, transparent 1px 100%);
-      background-size: 38px 100%, 100% 20px;
-      opacity: 0.34;
-    }
-
-    .window-bar {
-      position: absolute;
-      left: 0;
-      right: 0;
-      top: 0;
-      height: 16px;
-      background: rgba(12, 29, 70, 0.88);
-      border-bottom: 1px solid rgba(84, 183, 255, 0.18);
-    }
-
-    .dots {
-      position: absolute;
-      left: 10px;
-      top: 5px;
-      display: flex;
-      gap: 4px;
-    }
-
-    .dots i {
-      width: 4px;
-      height: 4px;
-      border-radius: 50%;
-      background: var(--cyan);
-      box-shadow: 0 0 7px var(--cyan);
-    }
-
-    .code-editor {
-      position: absolute;
-      inset: 22px 18px 15px 18px;
-      font-family: Consolas, Monaco, monospace;
-      font-size: clamp(8px, 0.68vw, 12px);
-      line-height: 1.55;
-      color: rgba(198, 230, 255, 0.88);
-      overflow: hidden;
-      text-shadow: 0 0 9px rgba(0, 161, 255, 0.38);
-    }
-
-    .code-editor pre {
-      animation: codeScroll 12s linear infinite;
-    }
-
-    @keyframes codeScroll {
-      from { transform: translateY(0); }
-      to { transform: translateY(-46%); }
-    }
-
-    .keyword { color: #af66ff; }
-    .fn { color: #27d7ff; }
-    .str { color: #62ffdf; }
-    .num { color: #fff17b; }
-    .comment { color: rgba(117, 158, 197, 0.65); }
-
-    .base {
-      position: absolute;
-      left: 0;
-      right: 0;
-      bottom: 12%;
-      height: 16%;
-      border-radius: 0 0 18px 18px;
-      background:
-        linear-gradient(110deg, rgba(40, 57, 112, 0.98), rgba(13, 20, 54, 0.98) 55%, rgba(4, 8, 24, 0.98));
-      transform: perspective(900px) rotateX(72deg) skewX(-10deg);
-      box-shadow:
-        inset 0 2px 18px rgba(127, 196, 255, 0.16),
-        0 5px 20px rgba(0, 0, 0, 0.7),
-        0 0 30px rgba(56, 85, 255, 0.45);
-    }
-
-    .base::before {
-      content: "";
-      position: absolute;
-      left: 24%;
-      right: 24%;
-      top: 18%;
-      height: 25%;
-      border-radius: 20px;
-      background: rgba(1, 5, 22, 0.72);
-      border: 1px solid rgba(91, 153, 255, 0.16);
-    }
-
-    .keyboard {
-      position: absolute;
-      left: 12%;
-      right: 12%;
-      bottom: 15%;
-      height: 8%;
-      display: grid;
-      grid-template-columns: repeat(13, 1fr);
-      gap: 3px;
-      transform: perspective(900px) rotateX(72deg) skewX(-10deg);
-      opacity: 0.8;
-    }
-
-    .key {
-      border-radius: 2px;
-      border: 1px solid rgba(84, 146, 255, 0.13);
-      background: rgba(1, 5, 20, 0.68);
-      box-shadow: 0 0 6px rgba(0, 152, 255, 0.14);
-      animation: keyBlink 3.8s infinite;
-      animation-delay: calc(var(--i) * -0.17s);
-    }
-
-    @keyframes keyBlink {
-      0%, 90%, 100% { opacity: 0.52; }
-      94% { opacity: 1; box-shadow: 0 0 12px rgba(123, 63, 255, 0.95); }
-    }
-
-    .mug {
-      position: absolute;
-      right: 0;
-      bottom: 20%;
-      width: 13%;
-      aspect-ratio: 0.85;
-      border-radius: 9px 9px 18px 18px;
-      background: linear-gradient(90deg, #040819, #111a45 50%, #040614);
-      border: 1px solid rgba(92, 199, 255, 0.22);
-      box-shadow:
-        inset 0 0 18px rgba(0, 137, 255, 0.11),
-        0 0 22px rgba(78, 46, 255, 0.45);
-    }
-
-    .mug::before {
-      content: "</>";
-      position: absolute;
-      inset: 0;
-      display: grid;
-      place-items: center;
-      color: rgba(70, 177, 255, 0.78);
-      font-weight: 800;
-      font-size: clamp(13px, 1.3vw, 25px);
-      text-shadow: 0 0 12px var(--blue);
-    }
-
-    .mug::after {
-      content: "";
-      position: absolute;
-      right: -28%;
-      top: 26%;
-      width: 40%;
-      height: 35%;
-      border: 4px solid rgba(52, 150, 255, 0.30);
-      border-left: 0;
-      border-radius: 0 40px 40px 0;
-    }
-
-    .mug-pad {
-      position: absolute;
-      right: -2%;
-      bottom: 12%;
-      width: 18%;
-      height: 12%;
-      border-radius: 12px;
-      background: rgba(7, 15, 46, 0.9);
-      box-shadow:
-        inset 0 0 10px rgba(0, 169, 255, 0.12),
-        0 0 0 2px rgba(96, 67, 255, 0.72),
-        0 0 24px rgba(88, 61, 255, 0.78);
-    }
-
-    .binary-ribbon {
-      position: absolute;
-      z-index: 6;
-      color: rgba(0, 183, 255, 0.52);
-      font-family: Consolas, monospace;
-      font-size: clamp(8px, 0.58vw, 11px);
-      letter-spacing: 0.25em;
-      white-space: nowrap;
-      text-shadow: 0 0 8px rgba(0, 170, 255, 0.85);
-      opacity: 0.72;
-      animation: ribbonMove 14s linear infinite;
-    }
-
-    .r1 { left: 2vw; top: 10vh; }
-    .r2 { left: 44vw; top: 35vh; animation-delay: -5s; color: rgba(153, 66, 255, 0.58); }
-    .r3 { right: 2vw; top: 43vh; animation-delay: -9s; }
-    .r4 { left: 22vw; bottom: 10vh; animation-delay: -3s; color: rgba(153, 66, 255, 0.58); }
-
-    @keyframes ribbonMove {
-      0% { transform: translateX(-16px); opacity: 0.18; }
-      10%, 78% { opacity: 0.74; }
-      100% { transform: translateX(130px); opacity: 0.12; }
-    }
-
-    .hero-copy {
-      position: absolute;
-      left: 7vw;
-      top: 6vh;
-      z-index: 12;
-      max-width: 580px;
-      opacity: 0.04;
+      overflow: visible;
       pointer-events: none;
-      user-select: none;
     }
 
-    .hero-copy h1 {
-      font-size: clamp(60px, 9vw, 150px);
-      line-height: 0.8;
-      font-weight: 900;
-      letter-spacing: -0.08em;
-      color: white;
-      text-shadow: 0 0 28px rgba(84, 76, 255, 0.6);
+    .base-border {
+      fill: none;
+      stroke: rgba(255, 230, 188, 0.13);
+      stroke-width: 1.1;
     }
 
-    .glow-dot {
-      position: absolute;
-      width: 5px;
-      height: 5px;
-      border-radius: 50%;
-      z-index: 7;
-      background: var(--cyan);
-      box-shadow: 0 0 10px var(--cyan), 0 0 26px var(--violet);
-      animation: dotPulse 2.2s ease-in-out infinite;
+    .soft-border {
+      fill: none;
+      stroke: rgba(255, 213, 141, 0.32);
+      stroke-width: 1;
+      opacity: 0;
+      filter: drop-shadow(0 0 12px rgba(255, 213, 141, 0.3));
+      transition: opacity 0.45s ease;
     }
 
-    .d1 { left: 15vw; top: 82vh; }
-    .d2 { left: 47vw; top: 16vh; animation-delay: -0.7s; }
-    .d3 { left: 75vw; top: 37vh; animation-delay: -1.2s; }
-    .d4 { left: 63vw; top: 78vh; animation-delay: -1.8s; }
-    .d5 { left: 4vw; top: 2.5vh; animation-delay: -1.3s; }
+    .moving-border {
+      fill: none;
+      stroke: url(#mysticGradient);
+      stroke-width: 2.4;
+      stroke-linecap: round;
 
-    @keyframes dotPulse {
-      0%,100% { transform: scale(0.75); opacity: 0.55; }
-      50% { transform: scale(1.7); opacity: 1; }
+      /*
+        pathLength is 100.
+        18 visible + 82 hidden = one single glow segment.
+        This prevents multiple broken lines.
+      */
+      stroke-dasharray: 18 82;
+      stroke-dashoffset: 0;
+
+      opacity: 0;
+      filter:
+        drop-shadow(0 0 8px rgba(255, 216, 148, 0.9))
+        drop-shadow(0 0 18px rgba(171, 39, 21, 0.65));
+      transition: opacity 0.45s ease;
     }
 
-    @media (max-width: 900px) {
-      .system-overview, .data-stream, .core-module, .activity-feed, .system-status, .floating-code-1, .floating-code-2 {
-        opacity: 0.55;
-        transform: scale(0.85);
+    .mystic-border-btn:hover {
+      transform: translateY(-7px);
+    }
+
+    .mystic-border-btn:hover .surface::before {
+      transform: translateX(120%) skewX(-18deg);
+    }
+
+    .mystic-border-btn:hover .aura {
+      opacity: 1;
+      transform: scale(1);
+    }
+
+    .mystic-border-btn:hover .soft-border {
+      opacity: 1;
+    }
+
+    .mystic-border-btn:hover .moving-border {
+      opacity: 1;
+      animation: borderTravel 2.6s linear infinite;
+    }
+
+    .mystic-border-btn:hover .label {
+      color: #fff1c9;
+      letter-spacing: 4.8px;
+    }
+
+    @keyframes borderTravel {
+      to {
+        stroke-dashoffset: -100;
+      }
+    }
+
+    /* Variants */
+
+    .btn-red .surface {
+      background:
+        radial-gradient(circle at 70% 52%, rgba(160, 16, 16, 0.36), transparent 38%),
+        linear-gradient(135deg, #260909, #100606 52%, #050505);
+    }
+
+    .btn-gold .surface {
+      background:
+        radial-gradient(circle at 72% 50%, rgba(206, 158, 78, 0.28), transparent 38%),
+        linear-gradient(135deg, #231c12, #100e0a 52%, #050505);
+    }
+
+    .btn-ink .surface {
+      background:
+        radial-gradient(circle at 35% 45%, rgba(255,255,255,0.11), transparent 24%),
+        radial-gradient(circle at 70% 54%, rgba(90, 90, 90, 0.18), transparent 38%),
+        linear-gradient(135deg, #202020, #0e0e0e 52%, #050505);
+    }
+
+    .btn-hanko .surface {
+      border-radius: 6px;
+      background:
+        radial-gradient(circle at 72% 52%, rgba(255, 220, 174, 0.14), transparent 32%),
+        linear-gradient(135deg, #7e1111, #2a0404 54%, #080202);
+    }
+
+    .btn-hanko svg path {
+      d: path("M 14 3 H 286 Q 297 3 297 14 V 64 Q 297 75 286 75 H 14 Q 3 75 3 64 V 14 Q 3 3 14 3 Z");
+    }
+
+    @media (max-width: 520px) {
+      .mystic-border-btn {
+        width: 100%;
+        max-width: 320px;
       }
 
-      .activity-feed, .system-status {
-        left: 5vw;
+      .btn-wrap {
+        width: 100%;
       }
-
-      .activity-feed { top: 19vh; }
-      .system-status { top: 38vh; }
-      .system-overview, .data-stream, .core-module { display: none; }
-
-      .globe-wrap {
-        right: -4vw;
-        top: 5vh;
-        width: 46vw;
-      }
-
-      .desk {
-        width: 92vw;
-        right: 1vw;
-        bottom: 7vh;
-      }
-
-      .floating-code-1, .floating-code-2 { display: none; }
     }
   </style>
 </head>
+
 <body>
-  <main class="hero-bg">
-    <canvas id="matrixCanvas"></canvas>
-    <div class="circuit-grid" aria-hidden="true">
-      <svg viewBox="0 0 1600 900" preserveAspectRatio="none">
-        <path class="circuit-path" d="M40 95 H220 L270 145 H430 L500 84 H760 L830 130 H980 L1060 88 H1250 L1290 120 H1510" />
-        <path class="circuit-path purple" d="M80 220 H250 L315 185 H470 L520 245 H720 L770 205 H930 L990 260 H1210 L1270 230 H1510" />
-        <path class="circuit-path thin" d="M0 410 H155 L210 360 H360 L405 405 H600 L650 370 H770 L840 430 H1090 L1160 395 H1600" />
-        <path class="circuit-path purple thin" d="M30 560 H180 L250 610 H390 L455 545 H650 L705 585 H910 L980 535 H1180 L1225 595 H1520" />
-        <path class="circuit-path" d="M60 790 H270 L330 745 H540 L595 800 H780 L850 750 H1030 L1110 810 H1360 L1440 770 H1580" />
-        <path class="circuit-path thin" d="M340 0 V120 L390 160 V300 L350 360 V520 L420 575 V780 L380 900" />
-        <path class="circuit-path purple thin" d="M740 0 V95 L690 152 V290 L765 360 V520 L720 590 V740 L790 900" />
-        <path class="circuit-path thin" d="M1230 0 V120 L1160 185 V300 L1215 360 V530 L1140 610 V760 L1190 900" />
+
+  <svg width="0" height="0" style="position:absolute">
+    <defs>
+      <linearGradient id="mysticGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+        <stop offset="0%" stop-color="#8e1b12" />
+        <stop offset="34%" stop-color="#d77732" />
+        <stop offset="58%" stop-color="#fff2c6" />
+        <stop offset="78%" stop-color="#d8a24d" />
+        <stop offset="100%" stop-color="#8e1b12" />
+      </linearGradient>
+    </defs>
+  </svg>
+
+  <div class="btn-wrap">
+
+    <button class="mystic-border-btn">
+      <span class="aura"></span>
+      <span class="surface"></span>
+
+      <svg viewBox="0 0 300 78" preserveAspectRatio="none">
+        <path
+          class="base-border"
+          pathLength="100"
+          d="M 22 3 H 278 Q 297 3 297 22 V 56 Q 297 75 278 75 H 22 Q 3 75 3 56 V 22 Q 3 3 22 3 Z"
+        />
+        <path
+          class="soft-border"
+          pathLength="100"
+          d="M 22 3 H 278 Q 297 3 297 22 V 56 Q 297 75 278 75 H 22 Q 3 75 3 56 V 22 Q 3 3 22 3 Z"
+        />
+        <path
+          class="moving-border"
+          pathLength="100"
+          d="M 22 3 H 278 Q 297 3 297 22 V 56 Q 297 75 278 75 H 22 Q 3 75 3 56 V 22 Q 3 3 22 3 Z"
+        />
       </svg>
-    </div>
 
-    <canvas id="particlesCanvas"></canvas>
+      <span class="label">Explore Craft</span>
+    </button>
 
-    <div class="hero-copy"><h1>CODE<br />SYSTEM</h1></div>
+    <button class="mystic-border-btn btn-red">
+      <span class="aura"></span>
+      <span class="surface"></span>
 
-    <div class="binary-ribbon r1">01001010 00110101 11001001 01101000 10010110</div>
-    <div class="binary-ribbon r2">API REQUEST / BUILD COMPLETE / DATA SYNC / CORE ONLINE</div>
-    <div class="binary-ribbon r3">00110100 10101001 01110001 00011101 10100101</div>
-    <div class="binary-ribbon r4">SYSTEM.STATUS.RUNNING // DEPLOY.PIPELINE.ACTIVE</div>
+      <svg viewBox="0 0 300 78" preserveAspectRatio="none">
+        <path class="base-border" pathLength="100" d="M 22 3 H 278 Q 297 3 297 22 V 56 Q 297 75 278 75 H 22 Q 3 75 3 56 V 22 Q 3 3 22 3 Z" />
+        <path class="soft-border" pathLength="100" d="M 22 3 H 278 Q 297 3 297 22 V 56 Q 297 75 278 75 H 22 Q 3 75 3 56 V 22 Q 3 3 22 3 Z" />
+        <path class="moving-border" pathLength="100" d="M 22 3 H 278 Q 297 3 297 22 V 56 Q 297 75 278 75 H 22 Q 3 75 3 56 V 22 Q 3 3 22 3 Z" />
+      </svg>
 
-    <section class="hud-layer" aria-hidden="true">
-      <article class="hud-card system-overview">
-        <div class="card-title">System Overview</div>
-        <div class="bars">
-          <i class="bar" style="--h:42%;--d:-.1s"></i><i class="bar" style="--h:70%;--d:-.8s"></i><i class="bar" style="--h:54%;--d:-1.2s"></i><i class="bar" style="--h:84%;--d:-.5s"></i><i class="bar" style="--h:38%;--d:-1.8s"></i><i class="bar" style="--h:63%;--d:-.4s"></i><i class="bar" style="--h:76%;--d:-1.1s"></i><i class="bar" style="--h:48%;--d:-1.5s"></i><i class="bar" style="--h:90%;--d:-.2s"></i><i class="bar" style="--h:58%;--d:-.9s"></i>
-        </div>
-      </article>
+      <span class="label">Enter Dojo</span>
+    </button>
 
-      <article class="hud-card data-stream">
-        <div class="card-title">Data Stream</div>
-        <div class="stream-line" style="top:30%"></div>
-        <div class="stream-line"></div>
-        <div class="stream-line"></div>
-        <div class="stream-line"></div>
-      </article>
+    <button class="mystic-border-btn btn-gold">
+      <span class="aura"></span>
+      <span class="surface"></span>
 
-      <article class="hud-card core-module">
-        <div class="card-title">Core Module</div>
-        <svg class="cube-svg" viewBox="0 0 100 100">
-          <path d="M50 8 L86 29 L86 71 L50 92 L14 71 L14 29 Z" fill="none" stroke="rgba(72,205,255,.75)" stroke-width="1.2"/>
-          <path d="M50 25 L72 38 L72 62 L50 75 L28 62 L28 38 Z" fill="none" stroke="rgba(170,72,255,.75)" stroke-width="1"/>
-          <path d="M50 8 V92 M14 29 L86 71 M86 29 L14 71" stroke="rgba(72,205,255,.45)" stroke-width=".8"/>
-        </svg>
-      </article>
+      <svg viewBox="0 0 300 78" preserveAspectRatio="none">
+        <path class="base-border" pathLength="100" d="M 22 3 H 278 Q 297 3 297 22 V 56 Q 297 75 278 75 H 22 Q 3 75 3 56 V 22 Q 3 3 22 3 Z" />
+        <path class="soft-border" pathLength="100" d="M 22 3 H 278 Q 297 3 297 22 V 56 Q 297 75 278 75 H 22 Q 3 75 3 56 V 22 Q 3 3 22 3 Z" />
+        <path class="moving-border" pathLength="100" d="M 22 3 H 278 Q 297 3 297 22 V 56 Q 297 75 278 75 H 22 Q 3 75 3 56 V 22 Q 3 3 22 3 Z" />
+      </svg>
 
-      <article class="hud-card activity-feed">
-        <div class="card-title">Activity Feed</div>
-        <div class="feed-row"><span class="feed-icon">A</span><span>User Login</span><span class="feed-time">2m ago</span></div>
-        <div class="feed-row"><span class="feed-icon">D</span><span>Data Sync</span><span class="feed-time">5m ago</span></div>
-        <div class="feed-row"><span class="feed-icon">R</span><span>API Request</span><span class="feed-time">10m</span></div>
-        <div class="feed-row"><span class="feed-icon">S</span><span>Server Update</span><span class="feed-time">15m</span></div>
-        <div class="feed-row"><span class="feed-icon">B</span><span>Build Complete</span><span class="feed-time">20m</span></div>
-      </article>
+      <span class="label">View Work</span>
+    </button>
 
-      <article class="hud-card system-status">
-        <div class="card-title">System Status</div>
-        <div class="status-row"><div class="status-meta"><span>CPU Usage</span><span>72%</span></div><div class="status-track"><div class="status-fill" style="--w:72%"></div></div></div>
-        <div class="status-row"><div class="status-meta"><span>Memory</span><span>68%</span></div><div class="status-track"><div class="status-fill" style="--w:68%"></div></div></div>
-        <div class="status-row"><div class="status-meta"><span>Network</span><span>42%</span></div><div class="status-track"><div class="status-fill" style="--w:42%"></div></div></div>
-        <div class="status-row"><div class="status-meta"><span>Disk</span><span>81%</span></div><div class="status-track"><div class="status-fill" style="--w:81%"></div></div></div>
-      </article>
+    <button class="mystic-border-btn btn-ink">
+      <span class="aura"></span>
+      <span class="surface"></span>
 
-      <article class="hud-card floating-code-1">
-        <div class="code-lines">
-          <span>DB: 001101001</span>
-          <span>GET /api/status</span>
-          <span>core.sync(true)</span>
-          <span>0110 1001 0011</span>
-        </div>
-      </article>
+      <svg viewBox="0 0 300 78" preserveAspectRatio="none">
+        <path class="base-border" pathLength="100" d="M 22 3 H 278 Q 297 3 297 22 V 56 Q 297 75 278 75 H 22 Q 3 75 3 56 V 22 Q 3 3 22 3 Z" />
+        <path class="soft-border" pathLength="100" d="M 22 3 H 278 Q 297 3 297 22 V 56 Q 297 75 278 75 H 22 Q 3 75 3 56 V 22 Q 3 3 22 3 Z" />
+        <path class="moving-border" pathLength="100" d="M 22 3 H 278 Q 297 3 297 22 V 56 Q 297 75 278 75 H 22 Q 3 75 3 56 V 22 Q 3 3 22 3 Z" />
+      </svg>
 
-      <article class="hud-card floating-code-2">
-        <div class="code-lines">
-          <span>CD pipeline</span>
-          <span>push origin main</span>
-          <span>deploy: success</span>
-          <span>0101 1010 1100</span>
-        </div>
-      </article>
-    </section>
+      <span class="label">Contact</span>
+    </button>
 
-    <div class="globe-wrap" aria-hidden="true">
-      <div class="orbit"></div>
-      <div class="orbit"></div>
-      <div class="orbit"></div>
-      <div class="globe"></div>
-    </div>
+    <button class="mystic-border-btn btn-hanko">
+      <span class="aura"></span>
+      <span class="surface"></span>
 
-    <div class="desk" aria-hidden="true">
-      <div class="platform"></div>
-      <div class="mug-pad"></div>
-      <div class="mug"></div>
-      <div class="laptop">
-        <div class="screen">
-          <div class="window-bar"><span class="dots"><i></i><i></i><i></i></span></div>
-          <div class="code-editor">
-            <pre><span class="keyword">import</span> React, { useState, useEffect } <span class="keyword">from</span> <span class="str">'react'</span>;
-<span class="keyword">const</span> Dashboard = () =&gt; {
-  <span class="keyword">const</span> [data, setData] = useState([]);
-  <span class="keyword">const</span> [loading, setLoading] = useState(<span class="num">true</span>);
+      <svg viewBox="0 0 300 78" preserveAspectRatio="none">
+        <path class="base-border" pathLength="100" d="M 14 3 H 286 Q 297 3 297 14 V 64 Q 297 75 286 75 H 14 Q 3 75 3 64 V 14 Q 3 3 14 3 Z" />
+        <path class="soft-border" pathLength="100" d="M 14 3 H 286 Q 297 3 297 14 V 64 Q 297 75 286 75 H 14 Q 3 75 3 64 V 14 Q 3 3 14 3 Z" />
+        <path class="moving-border" pathLength="100" d="M 14 3 H 286 Q 297 3 297 14 V 64 Q 297 75 286 75 H 14 Q 3 75 3 64 V 14 Q 3 3 14 3 Z" />
+      </svg>
 
-  useEffect(() =&gt; {
-    <span class="keyword">async function</span> <span class="fn">fetchData</span>() {
-      <span class="keyword">const</span> response = <span class="keyword">await</span> fetch(<span class="str">'/api/data'</span>);
-      <span class="keyword">const</span> json = <span class="keyword">await</span> response.json();
-      setData(json);
-      setLoading(<span class="num">false</span>);
-    }
-    fetchData();
-  }, []);
+      <span class="label">Hire Me</span>
+    </button>
 
-  <span class="keyword">return</span> (
-    &lt;main className=<span class="str">"dashboard"</span>&gt;
-      &lt;StatusPanel data={data} /&gt;
-      &lt;ActivityFeed live={true} /&gt;
-    &lt;/main&gt;
-  );
-};
+  </div>
 
-<span class="comment">// streaming live UI packets...</span>
-<span class="fn">render</span>(&lt;Dashboard /&gt;);
-
-<span class="keyword">import</span> React, { useState, useEffect } <span class="keyword">from</span> <span class="str">'react'</span>;
-<span class="keyword">const</span> Dashboard = () =&gt; {
-  <span class="keyword">const</span> [data, setData] = useState([]);
-  <span class="keyword">const</span> [loading, setLoading] = useState(<span class="num">true</span>);
-
-  useEffect(() =&gt; {
-    <span class="keyword">async function</span> <span class="fn">fetchData</span>() {
-      <span class="keyword">const</span> response = <span class="keyword">await</span> fetch(<span class="str">'/api/data'</span>);
-      <span class="keyword">const</span> json = <span class="keyword">await</span> response.json();
-      setData(json);
-      setLoading(<span class="num">false</span>);
-    }
-    fetchData();
-  }, []);
-};</pre>
-          </div>
-        </div>
-        <div class="base"></div>
-        <div class="keyboard" id="keyboard"></div>
-      </div>
-    </div>
-
-    <i class="glow-dot d1"></i>
-    <i class="glow-dot d2"></i>
-    <i class="glow-dot d3"></i>
-    <i class="glow-dot d4"></i>
-    <i class="glow-dot d5"></i>
-
-    <div class="scanlines"></div>
-    <div class="vignette"></div>
-  </main>
-
-  <script>
-    const keyboard = document.getElementById('keyboard');
-    for (let i = 0; i < 78; i++) {
-      const key = document.createElement('i');
-      key.className = 'key';
-      key.style.setProperty('--i', i);
-      keyboard.appendChild(key);
-    }
-
-    function setupCanvas(canvas) {
-      const ctx = canvas.getContext('2d');
-      const dpr = Math.min(window.devicePixelRatio || 1, 2);
-      function resize() {
-        canvas.width = innerWidth * dpr;
-        canvas.height = innerHeight * dpr;
-        canvas.style.width = innerWidth + 'px';
-        canvas.style.height = innerHeight + 'px';
-        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-      }
-      resize();
-      window.addEventListener('resize', resize);
-      return ctx;
-    }
-
-    const matrixCanvas = document.getElementById('matrixCanvas');
-    const mtx = setupCanvas(matrixCanvas);
-    let streams = [];
-
-    function makeStreams() {
-      streams = Array.from({ length: Math.floor(innerWidth / 34) }, (_, i) => ({
-        x: i * 34 + Math.random() * 16,
-        y: Math.random() * innerHeight,
-        speed: 0.25 + Math.random() * 0.75,
-        text: Math.random() > 0.5 ? '010101001101' : 'API_SYNC_RUN'
-      }));
-    }
-    makeStreams();
-    window.addEventListener('resize', makeStreams);
-
-    function drawMatrix() {
-      mtx.clearRect(0, 0, innerWidth, innerHeight);
-      mtx.font = '10px Consolas, monospace';
-      streams.forEach((s) => {
-        s.y += s.speed;
-        if (s.y > innerHeight + 60) s.y = -60;
-        const grad = mtx.createLinearGradient(s.x, s.y - 80, s.x, s.y + 80);
-        grad.addColorStop(0, 'rgba(0, 174, 255, 0)');
-        grad.addColorStop(0.5, 'rgba(0, 174, 255, 0.28)');
-        grad.addColorStop(1, 'rgba(142, 55, 255, 0)');
-        mtx.fillStyle = grad;
-        mtx.save();
-        mtx.translate(s.x, s.y);
-        mtx.rotate(-0.025);
-        mtx.fillText(s.text, 0, 0);
-        mtx.restore();
-      });
-      requestAnimationFrame(drawMatrix);
-    }
-    drawMatrix();
-
-    const particlesCanvas = document.getElementById('particlesCanvas');
-    const ptx = setupCanvas(particlesCanvas);
-    let particles = [];
-
-    function createParticles() {
-      particles = Array.from({ length: Math.floor((innerWidth * innerHeight) / 16000) }, () => ({
-        x: Math.random() * innerWidth,
-        y: Math.random() * innerHeight,
-        vx: (Math.random() - 0.5) * 0.35,
-        vy: (Math.random() - 0.5) * 0.35,
-        r: Math.random() * 1.8 + 0.7,
-        hue: Math.random() > 0.55 ? '0, 187, 255' : '139, 70, 255'
-      }));
-    }
-    createParticles();
-    window.addEventListener('resize', createParticles);
-
-    function drawParticles() {
-      ptx.clearRect(0, 0, innerWidth, innerHeight);
-      for (let i = 0; i < particles.length; i++) {
-        const a = particles[i];
-        a.x += a.vx;
-        a.y += a.vy;
-        if (a.x < 0 || a.x > innerWidth) a.vx *= -1;
-        if (a.y < 0 || a.y > innerHeight) a.vy *= -1;
-
-        ptx.beginPath();
-        ptx.arc(a.x, a.y, a.r, 0, Math.PI * 2);
-        ptx.fillStyle = `rgba(${a.hue}, .85)`;
-        ptx.shadowBlur = 14;
-        ptx.shadowColor = `rgba(${a.hue}, .9)`;
-        ptx.fill();
-        ptx.shadowBlur = 0;
-
-        for (let j = i + 1; j < particles.length; j++) {
-          const b = particles[j];
-          const dx = a.x - b.x;
-          const dy = a.y - b.y;
-          const distance = Math.sqrt(dx * dx + dy * dy);
-          if (distance < 120) {
-            ptx.beginPath();
-            ptx.moveTo(a.x, a.y);
-            ptx.lineTo(b.x, b.y);
-            ptx.strokeStyle = `rgba(54, 158, 255, ${0.16 * (1 - distance / 120)})`;
-            ptx.lineWidth = 1;
-            ptx.stroke();
-          }
-        }
-      }
-      requestAnimationFrame(drawParticles);
-    }
-    drawParticles();
-  </script>
 </body>
 </html>

@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Hire Me Button</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      min-height: 100vh;
+      margin: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background:
+        radial-gradient(circle at center, rgba(130, 19, 19, 0.28), transparent 34%),
+        linear-gradient(135deg, #0b0808, #17100f 45%, #080606);
+      font-family: "Inter", "Segoe UI", Arial, sans-serif;
+    }
+
+    .hire-btn {
+      position: relative;
+      width: 300px;
+      height: 78px;
+      border: 0;
+      background: transparent;
+      cursor: pointer;
+      color: #f8e2b8;
+      font-size: 13px;
+      font-weight: 900;
+      letter-spacing: 4px;
+      text-transform: uppercase;
+      isolation: isolate;
+      overflow: visible;
+      transition: transform 0.55s cubic-bezier(.19, 1, .22, 1);
+    }
+
+    .hire-btn .surface {
+      position: absolute;
+      inset: 6px;
+      z-index: 2;
+      border-radius: 6px;
+      background:
+        radial-gradient(circle at 72% 52%, rgba(255, 220, 174, 0.14), transparent 32%),
+        linear-gradient(135deg, #7e1111, #2a0404 54%, #080202);
+      box-shadow:
+        inset 0 1px 0 rgba(255,255,255,0.08),
+        inset 0 -24px 45px rgba(0,0,0,0.6),
+        0 22px 60px rgba(0,0,0,0.5);
+      overflow: hidden;
+    }
+
+    .hire-btn .surface::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(
+        120deg,
+        transparent 20%,
+        rgba(255, 231, 181, 0.16),
+        transparent 80%
+      );
+      transform: translateX(-120%) skewX(-18deg);
+      transition: 0.85s cubic-bezier(.19, 1, .22, 1);
+    }
+
+    .hire-btn .label {
+      position: relative;
+      z-index: 5;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+      height: 100%;
+      color: inherit;
+      text-shadow:
+        0 0 14px rgba(248, 226, 184, 0.35),
+        0 0 28px rgba(150, 30, 20, 0.25);
+      transition: color 0.45s ease, letter-spacing 0.45s ease;
+    }
+
+    .hire-btn .aura {
+      position: absolute;
+      inset: -26px;
+      z-index: 0;
+      border-radius: 18px;
+      background:
+        radial-gradient(circle at center, rgba(174, 37, 22, 0.42), transparent 58%),
+        radial-gradient(circle at 60% 40%, rgba(248, 210, 143, 0.18), transparent 44%);
+      filter: blur(24px);
+      opacity: 0;
+      transform: scale(0.8);
+      transition: 0.65s cubic-bezier(.19, 1, .22, 1);
+    }
+
+    .hire-btn svg {
+      position: absolute;
+      inset: 0;
+      z-index: 4;
+      width: 100%;
+      height: 100%;
+      overflow: visible;
+      pointer-events: none;
+    }
+
+    .base-border {
+      fill: none;
+      stroke: rgba(255, 230, 188, 0.13);
+      stroke-width: 1.1;
+    }
+
+    .soft-border {
+      fill: none;
+      stroke: rgba(255, 213, 141, 0.32);
+      stroke-width: 1;
+      opacity: 0;
+      filter: drop-shadow(0 0 12px rgba(255, 213, 141, 0.3));
+      transition: opacity 0.45s ease;
+    }
+
+    .moving-border {
+      fill: none;
+      stroke: url(#mysticGradient);
+      stroke-width: 2.4;
+      stroke-linecap: round;
+      stroke-dasharray: 18 82;
+      stroke-dashoffset: 0;
+      opacity: 0;
+      filter:
+        drop-shadow(0 0 8px rgba(255, 216, 148, 0.9))
+        drop-shadow(0 0 18px rgba(171, 39, 21, 0.65));
+      transition: opacity 0.45s ease;
+    }
+
+    .hire-btn:hover {
+      transform: translateY(-7px);
+    }
+
+    .hire-btn:hover .surface::before {
+      transform: translateX(120%) skewX(-18deg);
+    }
+
+    .hire-btn:hover .aura {
+      opacity: 1;
+      transform: scale(1);
+    }
+
+    .hire-btn:hover .soft-border {
+      opacity: 1;
+    }
+
+    .hire-btn:hover .moving-border {
+      opacity: 1;
+      animation: borderTravel 2.6s linear infinite;
+    }
+
+    .hire-btn:hover .label {
+      color: #fff1c9;
+      letter-spacing: 4.8px;
+    }
+
+    @keyframes borderTravel {
+      to {
+        stroke-dashoffset: -100;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <svg width="0" height="0" style="position:absolute">
+    <defs>
+      <linearGradient id="mysticGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+        <stop offset="0%" stop-color="#8e1b12" />
+        <stop offset="34%" stop-color="#d77732" />
+        <stop offset="58%" stop-color="#fff2c6" />
+        <stop offset="78%" stop-color="#d8a24d" />
+        <stop offset="100%" stop-color="#8e1b12" />
+      </linearGradient>
+    </defs>
+  </svg>
+
+  <button class="hire-btn">
+    <span class="aura"></span>
+    <span class="surface"></span>
+
+    <svg viewBox="0 0 300 78" preserveAspectRatio="none">
+      <path
+        class="base-border"
+        pathLength="100"
+        d="M 14 3 H 286 Q 297 3 297 14 V 64 Q 297 75 286 75 H 14 Q 3 75 3 64 V 14 Q 3 3 14 3 Z"
+      />
+      <path
+        class="soft-border"
+        pathLength="100"
+        d="M 14 3 H 286 Q 297 3 297 14 V 64 Q 297 75 286 75 H 14 Q 3 75 3 64 V 14 Q 3 3 14 3 Z"
+      />
+      <path
+        class="moving-border"
+        pathLength="100"
+        d="M 14 3 H 286 Q 297 3 297 14 V 64 Q 297 75 286 75 H 14 Q 3 75 3 64 V 14 Q 3 3 14 3 Z"
+      />
+    </svg>
+
+    <span class="label">Hire Me</span>
+  </button>
+
+</body>
+</html>
