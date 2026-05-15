@@ -723,32 +723,6 @@ img {
   overflow: hidden;
 }
 
-.hero-particles {
-  position: absolute;
-  inset: 0;
-  z-index: 1;
-  opacity: .85;
-  pointer-events: none;
-}
-
-.hero-particles-canvas {
-  width: 100%;
-  height: 100%;
-  display: block;
-  filter: saturate(1.08) contrast(1.05);
-}
-
-.hero-particles::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background:
-    radial-gradient(circle at 20% 20%, rgba(245,237,96,.10), transparent 34%),
-    radial-gradient(circle at 80% 72%, rgba(51,109,255,.11), transparent 44%),
-    radial-gradient(ellipse at 50% 100%, rgba(224,63,79,.14), transparent 40%),
-    linear-gradient(180deg, rgba(0,0,0,.18), rgba(0,0,0,.46));
-}
-
 .hero-line {
   position: relative;
   z-index: 3;
@@ -921,7 +895,7 @@ img {
 .ti-inner {
   box-sizing: border-box;
   width: 100%;
-  padding: 0 2rem;
+  padding: 0 4rem;
 }
 
 .ti-header {

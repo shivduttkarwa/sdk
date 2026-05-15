@@ -139,13 +139,8 @@ if (window.gsap && window.ScrollTrigger) {
 
   // Pill expands to fullscreen on scroll
   const heroWrap    = document.getElementById('heroVideoWrap');
-  const heroParticlesWrap = document.getElementById('heroParticles');
   const heroSection = document.querySelector('.hero');
-  const particlesMaxOpacity = 0.85;
-  const setParticlesOpacity = heroParticlesWrap ? gsap.quickSetter(heroParticlesWrap, 'opacity') : null;
   if (heroWrap && heroSection) {
-    if (setParticlesOpacity) setParticlesOpacity(particlesMaxOpacity);
-
     const tl = gsap.timeline({
       scrollTrigger: {
         trigger: heroSection,
@@ -153,17 +148,7 @@ if (window.gsap && window.ScrollTrigger) {
         end: '+=100%',
         scrub: 1.2,
         pin: true,
-        pinSpacing: true,
-        onUpdate: (self) => {
-          if (setParticlesOpacity) {
-            setParticlesOpacity((1 - self.progress) * particlesMaxOpacity);
-          }
-        },
-        onLeaveBack: () => {
-          if (setParticlesOpacity) {
-            setParticlesOpacity(particlesMaxOpacity);
-          }
-        }
+        pinSpacing: true
       }
     });
 
