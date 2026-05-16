@@ -1058,10 +1058,18 @@ if (window.gsap && window.ScrollTrigger) {
     gl.drawArrays(gl.TRIANGLES, 0, 6);
 
     if (heroNameRevealed) {
-      const cx = smx * canvas.width;
-      const cy = (1.0 - smy) * canvas.height;
-      const rPx = (0.306 + anim.smoke * 0.177) * canvas.height;
-      heroNameRevealed.style.clipPath = `circle(${rPx}px at ${cx}px ${cy}px)`;
+      const cx     = smx * canvas.width;
+      const cy     = (1.0 - smy) * canvas.height;
+      const rPx    = (0.281 + anim.smoke * 0.117) * canvas.height;
+      const edgePx = (0.025 + anim.smoke * 0.06)  * canvas.height;
+      const rOuter = rPx + edgePx;
+      const rInner = Math.max(0, rPx - edgePx);
+      const pct    = rOuter > 0 ? (rInner / rOuter * 100).toFixed(1) : '0';
+      const grad   = rOuter < 1
+        ? 'radial-gradient(circle 0px at 50% 50%, black 0%, transparent 100%)'
+        : `radial-gradient(circle ${rOuter}px at ${cx}px ${cy}px, black ${pct}%, transparent 100%)`;
+      heroNameRevealed.style.webkitMaskImage = grad;
+      heroNameRevealed.style.maskImage       = grad;
     }
 
     requestAnimationFrame(render);

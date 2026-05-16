@@ -179,11 +179,13 @@
         <span class="hero-tagline">Full Stack Developer &middot; 2025</span>
       </div>
 
-      <!-- Layer B: blob-revealed state -->
-      <div class="hero-name hero-name--b" id="heroNameRevealed" aria-hidden="true">
-        <span class="hero-name-line">SHIVDUTT</span>
-        <span class="hero-name-line">KARWA</span>
-        <span class="hero-tagline">Full Stack Developer &middot; 2025</span>
+      <!-- Layer B: blob-revealed state — wrapper carries the smoke displacement filter -->
+      <div class="hero-smoke-wrap" id="heroSmokeWrap" aria-hidden="true">
+        <div class="hero-name hero-name--b" id="heroNameRevealed">
+          <span class="hero-name-line">SHIVDUTT</span>
+          <span class="hero-name-line">KARWA</span>
+          <span class="hero-tagline">Full Stack Developer &middot; 2025</span>
+        </div>
       </div>
 
       <!-- Marquee strip -->
@@ -222,6 +224,13 @@
             <stop offset="78%"  stop-color="#d8a24d"/>
             <stop offset="100%" stop-color="#8e1b12"/>
           </linearGradient>
+          <!-- Turbulence displacement — makes the mask boundary smoky/irregular -->
+          <filter id="hero-smoke-filter" x="-8%" y="-8%" width="116%" height="116%" color-interpolation-filters="sRGB">
+            <feTurbulence type="fractalNoise" baseFrequency="0.016 0.022" numOctaves="4" result="noise">
+              <animate attributeName="baseFrequency" values="0.014 0.020;0.018 0.024;0.014 0.020" dur="5s" repeatCount="indefinite"/>
+            </feTurbulence>
+            <feDisplacementMap in="SourceGraphic" in2="noise" scale="22" xChannelSelector="R" yChannelSelector="G"/>
+          </filter>
         </defs>
       </svg>
       <a href="#contact" class="hero-fixed-cta">

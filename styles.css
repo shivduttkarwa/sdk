@@ -766,9 +766,18 @@ img {
   color: #e03f4f;
 }
 
-/* Layer B — white, Marcellus, revealed by blob */
+/* Layer B wrapper */
+.hero-smoke-wrap {
+  position: absolute;
+  inset: 0;
+  z-index: 5;
+  pointer-events: none;
+}
+
+/* Layer B — white, Marcellus, revealed by blob via soft mask-image */
 .hero-name--b {
-  clip-path: circle(0px at 50% 50%);
+  -webkit-mask-image: radial-gradient(circle 0px at 50% 50%, black 80%, transparent 100%);
+  mask-image: radial-gradient(circle 0px at 50% 50%, black 80%, transparent 100%);
 }
 
 .hero-name--b .hero-name-line {
