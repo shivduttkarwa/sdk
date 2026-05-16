@@ -841,6 +841,8 @@ if (window.gsap && window.ScrollTrigger) {
     precision highp float;
     uniform sampler2D u_bg;
     uniform sampler2D u_portrait;
+    uniform sampler2D u_portrait2;
+    uniform float     u_portAR2;
     uniform vec2      u_mouse;
     uniform float     u_time;
     uniform float     u_radius;
@@ -895,6 +897,14 @@ if (window.gsap && window.ScrollTrigger) {
       port.r = texture2D(u_portrait, pUV + vec2( ca, 0.0)).r;
       port.g = texture2D(u_portrait, pUV                 ).g;
       port.b = texture2D(u_portrait, pUV - vec2( ca, 0.0)).b;
+
+      float ratio2  = max(u_portAR2, 0.001) / sAR;
+      float xScale2 = min(1.0, 1.0 / ratio2);
+      float yScale2 = min(1.0, ratio2);
+      vec2  pUV2 = vec2(su * xScale2 + 0.5 * (1.0 - xScale2),
+                        uv.y * yScale2 + 0.5 * (1.0 - yScale2));
+      vec3 port2 = texture2D(u_portrait2, pUV2).rgb;
+      port = mix(port, port2, mask);
 
       float inStrip = 1.0 - smoothstep(pw * 0.82, pw * 1.08, uv.x);
       vec3 bgBase = texture2D(u_bg, uv).rgb * 0.88;
@@ -970,6 +980,10 @@ if (window.gsap && window.ScrollTrigger) {
   const uPortW   = gl.getUniformLocation(prog, 'u_portW');
   const uPortAR  = gl.getUniformLocation(prog, 'u_portAR');
   gl.uniform1f(uPortAR, 1.0);
+  const uPort2   = gl.getUniformLocation(prog, 'u_portrait2');
+  gl.uniform1i(uPort2, 2);
+  const uPortAR2 = gl.getUniformLocation(prog, 'u_portAR2');
+  gl.uniform1f(uPortAR2, 1.0);
   const uSmoke   = gl.getUniformLocation(prog, 'u_smoke');
   const uOpacity = gl.getUniformLocation(prog, 'u_opacity');
   const uBaseAlpha = gl.getUniformLocation(prog, 'u_baseAlpha');
@@ -988,10 +1002,11 @@ if (window.gsap && window.ScrollTrigger) {
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
     return t;
   }
-  const texBg   = allocTex(0);
-  const texPort = allocTex(1);
-  gl.uniform1i(uBg,   0);
-  gl.uniform1i(uPort, 1);
+  const texBg    = allocTex(0);
+  const texPort  = allocTex(1);
+  const texPort2 = allocTex(2);
+  gl.uniform1i(uBg,    0);
+  gl.uniform1i(uPort,  1);
   gl.pixelStorei(gl.UNPACK_PREMULTIPLY_ALPHA_WEBGL, false);
   gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, false);
 
@@ -1010,7 +1025,8 @@ if (window.gsap && window.ScrollTrigger) {
   }
 
   loadBitmap('./assets/hero-samurai.png', 0, texBg);
-  loadBitmap('./assets/shiv-2.png', 1, texPort, (w, h) => gl.uniform1f(uPortAR, w / h));
+  loadBitmap('./assets/shiv-3.png', 1, texPort,  (w, h) => gl.uniform1f(uPortAR,  w / h));
+  loadBitmap('./assets/shiv-1.png', 2, texPort2, (w, h) => gl.uniform1f(uPortAR2, w / h));
 
   let mx = 0.15, my = 0.58;
   let smx = 0.15, smy = 0.58;
