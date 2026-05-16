@@ -793,9 +793,15 @@ img {
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: space-between;
-  padding: clamp(32px, 4vw, 64px) 0;
+  justify-content: center;
+  gap: clamp(18px, 2.6vw, 38px);
+  padding: clamp(22px, 3vw, 44px) 0;
   overflow: hidden;
+}
+
+.hero-showcase .hero-line-top,
+.hero-showcase .hero-line-bottom {
+  margin: 0;
 }
 
 /* Horizontal pill video */

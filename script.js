@@ -142,6 +142,8 @@ if (window.gsap && window.ScrollTrigger) {
   const heroWrap     = document.getElementById('heroVideoWrap');
   const showcaseSection = document.querySelector('.hero-showcase');
   if (heroWrap && showcaseSection) {
+    const topInner = showcaseSection.querySelector('.hero-line-top .inner');
+    const bottomInner = showcaseSection.querySelector('.hero-line-bottom .inner');
     const tl = gsap.timeline({
       scrollTrigger: {
         trigger: showcaseSection,
@@ -159,6 +161,19 @@ if (window.gsap && window.ScrollTrigger) {
       borderRadius: 0,
       ease: 'none'
     }, 0);
+
+    if (topInner && bottomInner) {
+      tl.to(topInner, {
+        yPercent: -115,
+        opacity: 0,
+        ease: 'none'
+      }, 0);
+      tl.to(bottomInner, {
+        yPercent: 115,
+        opacity: 0,
+        ease: 'none'
+      }, 0);
+    }
   }
 
   gsap.utils.toArray('.reveal').forEach((el) => {
