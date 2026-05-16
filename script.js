@@ -846,6 +846,7 @@ if (window.gsap && window.ScrollTrigger) {
     uniform float     u_radius;
     uniform vec2      u_res;
     uniform float     u_portW;
+    uniform float     u_portAR;
     uniform float     u_smoke;
     uniform float     u_opacity;
     uniform float     u_baseAlpha;
@@ -879,8 +880,14 @@ if (window.gsap && window.ScrollTrigger) {
       float edgeSz  = 0.025 + u_smoke * 0.06;
       float mask    = 1.0 - smoothstep(r - edgeSz, r + edgeSz, bDist);
 
-      float pw   = max(u_portW, 0.001);
-      vec2  pUV  = vec2(uv.x / pw, uv.y);
+      float pw    = max(u_portW, 0.001);
+      float sAR   = pw * u_res.x / u_res.y;
+      float ratio = max(u_portAR, 0.001) / sAR;
+      float su    = uv.x / pw;
+      float xScale = min(1.0, 1.0 / ratio);
+      float yScale = min(1.0, ratio);
+      vec2  pUV  = vec2(su * xScale + 0.5 * (1.0 - xScale),
+                        uv.y * yScale + 0.5 * (1.0 - yScale));
 
       float edgeDist = abs(bDist - r);
       float ca = smoothstep(0.06, 0.0, edgeDist) * 0.010;
@@ -960,6 +967,8 @@ if (window.gsap && window.ScrollTrigger) {
   const uRadius  = gl.getUniformLocation(prog, 'u_radius');
   const uRes     = gl.getUniformLocation(prog, 'u_res');
   const uPortW   = gl.getUniformLocation(prog, 'u_portW');
+  const uPortAR  = gl.getUniformLocation(prog, 'u_portAR');
+  gl.uniform1f(uPortAR, 1.0);
   const uSmoke   = gl.getUniformLocation(prog, 'u_smoke');
   const uOpacity = gl.getUniformLocation(prog, 'u_opacity');
   const uBaseAlpha = gl.getUniformLocation(prog, 'u_baseAlpha');
@@ -985,21 +994,22 @@ if (window.gsap && window.ScrollTrigger) {
   gl.pixelStorei(gl.UNPACK_PREMULTIPLY_ALPHA_WEBGL, false);
   gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, false);
 
-  function loadBitmap(url, unit, tex) {
+  function loadBitmap(url, unit, tex, onLoad) {
     fetch(url, { mode: 'cors' })
       .then(r => { if (!r.ok) throw new Error(r.status); return r.blob(); })
-      .then(b  => createImageBitmap(b, { imageOrientation: 'flipY', premultiplyAlpha: 'none' }))
+      .then(b  => createImageBitmap(b, { imageOrientation: 'flipY', premultiplyAlpha: 'none', colorSpaceConversion: 'none' }))
       .then(bmp => {
         gl.activeTexture(gl.TEXTURE0 + unit);
         gl.bindTexture(gl.TEXTURE_2D, tex);
         gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, bmp);
+        if (onLoad) onLoad(bmp.width, bmp.height);
         bmp.close();
       })
       .catch(e => console.warn('[blob] texture load failed:', url, e));
   }
 
   loadBitmap('./assets/hero-samurai.png', 0, texBg);
-  loadBitmap('./assets/1111.png', 1, texPort);
+  loadBitmap('./assets/shiv-1.png', 1, texPort, (w, h) => gl.uniform1f(uPortAR, w / h));
 
   let mx = 0.15, my = 0.58;
   let smx = 0.15, smy = 0.58;
