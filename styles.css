@@ -787,7 +787,6 @@ img {
   justify-content: space-between;
   padding: clamp(32px, 4vw, 64px) 0;
   overflow: hidden;
-  background: #05030a;
 }
 
 /* Horizontal pill video */
