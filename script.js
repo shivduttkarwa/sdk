@@ -1050,7 +1050,7 @@ if (window.gsap && window.ScrollTrigger) {
     gl.clear(gl.COLOR_BUFFER_BIT);
     gl.uniform2f(uMouse,  smx, smy);
     gl.uniform1f(uTime,   t);
-    gl.uniform1f(uRadius, 0.38);
+    gl.uniform1f(uRadius, 0.306);
     gl.uniform2f(uRes,    canvas.width, canvas.height);
     gl.uniform1f(uSmoke,   anim.smoke);
     gl.uniform1f(uOpacity, anim.opacity);
@@ -1060,7 +1060,7 @@ if (window.gsap && window.ScrollTrigger) {
     if (heroNameRevealed) {
       const cx = smx * canvas.width;
       const cy = (1.0 - smy) * canvas.height;
-      const rPx = (0.38 + anim.smoke * 0.22) * canvas.height;
+      const rPx = (0.306 + anim.smoke * 0.177) * canvas.height;
       heroNameRevealed.style.clipPath = `circle(${rPx}px at ${cx}px ${cy}px)`;
     }
 
