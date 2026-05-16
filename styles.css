@@ -841,12 +841,12 @@ img {
 }
 
 .hero-rotating-word {
-  font-family: "FighterAttack", sans-serif;
-  font-size: clamp(32px, 5.5vw, 95px);
-  font-weight: 900;
+  font-family: "Handlee", cursive;
+  font-size: clamp(63px, 10.8vw, 186px);
+  font-weight: 400;
   font-style: italic;
   letter-spacing: -.08em;
-  text-transform: uppercase;
+  text-transform: none;
   color: #E03F4F;
   text-shadow: 0 4px 0 rgba(0,0,0,.4), 0 14px 44px rgba(0,0,0,.55);
   position: absolute;
@@ -989,7 +989,7 @@ img {
   align-items: center;
   justify-content: center;
   color: inherit;
-  font-family: "FighterAttack", sans-serif;
+  font-family: "Handlee", cursive;
   text-shadow:
     0 0 14px rgba(248,226,184,0.35),
     0 0 28px rgba(150,30,20,0.25);
