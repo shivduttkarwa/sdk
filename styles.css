@@ -834,8 +834,6 @@ img {
   position: absolute;
   inset: 0;
   z-index: 10;
-  display: grid;
-  place-items: center;
   overflow: hidden;
   pointer-events: none;
 }
@@ -850,20 +848,22 @@ img {
   color: #E03F4F;
   text-shadow: 0 4px 0 rgba(0,0,0,.4), 0 14px 44px rgba(0,0,0,.55);
   position: absolute;
+  top: 52%;
+  left: 49%;
   white-space: nowrap;
-  transform: translateY(110%);
+  transform: translate(-50%, 110%);
   opacity: 0;
   transition: none;
 }
 
 .hero-rotating-word.is-active {
-  transform: translateY(0);
+  transform: translate(-50%, -50%);
   opacity: 1;
   transition: transform .7s cubic-bezier(.16,1,.3,1), opacity .5s ease;
 }
 
 .hero-rotating-word.is-exit {
-  transform: translateY(-110%);
+  transform: translate(-50%, -210%);
   opacity: 0;
   transition: transform .5s cubic-bezier(.7,0,.9,.6), opacity .35s ease;
 }
