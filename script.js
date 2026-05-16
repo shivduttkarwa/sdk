@@ -898,7 +898,7 @@ if (window.gsap && window.ScrollTrigger) {
 
       float inStrip = 1.0 - smoothstep(pw * 0.82, pw * 1.08, uv.x);
       vec3 bgBase = texture2D(u_bg, uv).rgb * 0.88;
-      vec3 inner = mix(bgBase, port, inStrip * 0.78);
+      vec3 inner = mix(bgBase, port, inStrip * 1.0);
       vec3 col   = inner * mask;
 
       float glow = exp(-edgeDist * 36.0) * 0.5;
@@ -930,7 +930,8 @@ if (window.gsap && window.ScrollTrigger) {
 
       const float portraitAmbient = 0.62;
       vec3 baseWithPortrait = mix(bgBase, port, inStrip * portraitAmbient);
-      vec3 shadedBase = mix(baseWithPortrait, grad, u_baseAlpha);
+      float gradOverlay = mix(u_baseAlpha, u_baseAlpha * 0.25, inStrip);
+      vec3 shadedBase = mix(baseWithPortrait, grad, gradOverlay);
       float revealAlpha = clamp(mask + glow * 0.55, 0.0, 1.0) * u_opacity;
       vec3 revealColor = clamp(col, 0.0, 1.0);
       vec3 finalColor = mix(shadedBase, revealColor, revealAlpha);
@@ -1009,7 +1010,7 @@ if (window.gsap && window.ScrollTrigger) {
   }
 
   loadBitmap('./assets/hero-samurai.png', 0, texBg);
-  loadBitmap('./assets/shiv-1.png', 1, texPort, (w, h) => gl.uniform1f(uPortAR, w / h));
+  loadBitmap('./assets/shiv-2.png', 1, texPort, (w, h) => gl.uniform1f(uPortAR, w / h));
 
   let mx = 0.15, my = 0.58;
   let smx = 0.15, smy = 0.58;
