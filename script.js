@@ -103,7 +103,7 @@ function startHeroAnimation() {
     ease: 'power4.out',
     delay: 0.1
   });
-  gsap.from('.hero-meta, .scroll-indicator', {
+  gsap.from('.scroll-indicator, .hero-avail, .hero-tagline', {
     opacity: 0,
     y: 14,
     duration: 1,

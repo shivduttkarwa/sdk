@@ -645,6 +645,97 @@ img {
 .hero-line-top    { margin-bottom: clamp(16px, 2.5vw, 36px); }
 .hero-line-bottom { margin-top: clamp(16px, 2.5vw, 36px); }
 
+/* ── Hero availability badge ── */
+.hero-avail {
+  position: absolute;
+  top: 28px;
+  right: 32px;
+  z-index: 6;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-family: "Space Grotesk", sans-serif;
+  font-size: 15px;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.7);
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.12);
+  border-radius: 999px;
+  padding: 10px 20px 10px 14px;
+  backdrop-filter: blur(8px);
+  pointer-events: none;
+}
+
+.hero-avail-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #22c55e;
+  box-shadow: 0 0 8px #22c55e;
+  flex-shrink: 0;
+  animation: avail-pulse 2s ease-in-out infinite;
+}
+
+@keyframes avail-pulse {
+  0%, 100% { opacity: 1; box-shadow: 0 0 8px #22c55e; }
+  50%       { opacity: 0.5; box-shadow: 0 0 18px #22c55e; }
+}
+
+/* ── Hero marquee ── */
+.hero-marquee {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 6;
+  overflow: hidden;
+  padding: 14px 0;
+  border-top: 1px solid rgba(255,255,255,0.07);
+  mask-image: linear-gradient(to right, transparent 0%, black 8%, black 92%, transparent 100%);
+  -webkit-mask-image: linear-gradient(to right, transparent 0%, black 8%, black 92%, transparent 100%);
+}
+
+.hero-marquee-track {
+  display: flex;
+  align-items: center;
+  gap: 36px;
+  width: max-content;
+  animation: marquee-scroll 22s linear infinite;
+  font-family: "Space Grotesk", sans-serif;
+  font-size: 21px;
+  font-weight: 500;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.45);
+}
+
+.hero-marquee-dot {
+  color: #e03f4f;
+  opacity: 0.7;
+}
+
+@keyframes marquee-scroll {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-50%); }
+}
+
+/* ── Hero tagline ── */
+.hero-tagline {
+  display: block;
+  font-family: "Space Grotesk", sans-serif;
+  font-size: clamp(15px, 1.4vw, 20px);
+  font-weight: 400;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  margin-top: 22px;
+  opacity: 0.55;
+}
+
+.hero-name--a .hero-tagline { color: #fff; }
+.hero-name--b .hero-tagline { color: #fff; }
+
 /* ── Hero name text (two-layer reveal) ── */
 .hero-name {
   position: absolute;
@@ -785,7 +876,7 @@ img {
 
 .hero-fixed-cta {
   position: absolute;
-  bottom: 36px;
+  bottom: 80px;
   right: 36px;
   z-index: 200;
   width: 260px;
@@ -794,7 +885,7 @@ img {
   background: transparent;
   cursor: pointer;
   color: #f8e2b8;
-  font-size: 17px;
+  font-size: 22px;
   font-weight: 900;
   letter-spacing: 2px;
   text-transform: none;
