@@ -95,27 +95,28 @@ document.querySelectorAll('.reveal').forEach(el => revealObserver.observe(el));
 
 function startHeroAnimation() {
   if (!window.gsap) return;
-  gsap.from('.hero-line .inner', {
-    yPercent: 105,
+  gsap.from('.hero-name-line', {
+    opacity: 0,
+    y: 60,
     duration: 1.2,
-    stagger: 0.14,
+    stagger: 0.12,
     ease: 'power4.out',
     delay: 0.1
   });
-  gsap.from('#heroVideoWrap', {
-    opacity: 0,
-    scale: 0.88,
-    duration: 1.4,
-    ease: 'power3.out',
-    delay: 0.2
-  });
-gsap.from('.hero-meta, .scroll-indicator', {
+  gsap.from('.hero-meta, .scroll-indicator', {
     opacity: 0,
     y: 14,
     duration: 1,
     stagger: 0.07,
     ease: 'power2.out',
-    delay: 0.5
+    delay: 0.6
+  });
+  gsap.from('.hero-line .inner', {
+    yPercent: 105,
+    duration: 1.2,
+    stagger: 0.14,
+    ease: 'power4.out',
+    delay: 0.3
   });
 }
 
@@ -138,15 +139,15 @@ if (window.gsap && window.ScrollTrigger) {
   gsap.registerPlugin(ScrollTrigger);
 
   // Pill expands to fullscreen on scroll
-  const heroWrap    = document.getElementById('heroVideoWrap');
-  const heroSection = document.querySelector('.hero');
-  if (heroWrap && heroSection) {
+  const heroWrap     = document.getElementById('heroVideoWrap');
+  const showcaseSection = document.querySelector('.hero-showcase');
+  if (heroWrap && showcaseSection) {
     const tl = gsap.timeline({
       scrollTrigger: {
-        trigger: heroSection,
+        trigger: showcaseSection,
         start: 'top top',
         end: '+=100%',
-        scrub: 1.2,
+        scrub: true,
         pin: true,
         pinSpacing: true
       }
@@ -157,14 +158,6 @@ if (window.gsap && window.ScrollTrigger) {
       height: '100vh',
       borderRadius: 0,
       ease: 'none'
-    }, 0);
-
-    tl.to('.hero-line-top', { y: -60, opacity: 0, ease: 'none' }, 0);
-    tl.to('.hero-line-bottom', { y: 60, opacity: 0, ease: 'none' }, 0);
-    tl.to('.hero-meta, .scroll-indicator', {
-      opacity: 0,
-      ease: 'none',
-      duration: 0.3
     }, 0);
   }
 
@@ -1049,6 +1042,7 @@ if (window.gsap && window.ScrollTrigger) {
   window.addEventListener('resize', resize);
 
   const t0 = performance.now();
+  const heroNameRevealed = document.getElementById('heroNameRevealed');
   function render() {
     smx += (mx - smx) * 0.08;
     smy += (my - smy) * 0.08;
@@ -1062,6 +1056,14 @@ if (window.gsap && window.ScrollTrigger) {
     gl.uniform1f(uOpacity, anim.opacity);
     gl.uniform1f(uBaseAlpha, baseAlpha);
     gl.drawArrays(gl.TRIANGLES, 0, 6);
+
+    if (heroNameRevealed) {
+      const cx = smx * canvas.width;
+      const cy = (1.0 - smy) * canvas.height;
+      const rPx = (0.38 + anim.smoke * 0.22) * canvas.height;
+      heroNameRevealed.style.clipPath = `circle(${rPx}px at ${cx}px ${cy}px)`;
+    }
+
     requestAnimationFrame(render);
   }
   render();

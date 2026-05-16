@@ -547,7 +547,7 @@ img {
   height: 100%;
   display: block;
   pointer-events: none;
-  z-index: 4;
+  z-index: 1;
 }
 
 .hero-mobile-bg {
@@ -644,6 +644,60 @@ img {
 
 .hero-line-top    { margin-bottom: clamp(16px, 2.5vw, 36px); }
 .hero-line-bottom { margin-top: clamp(16px, 2.5vw, 36px); }
+
+/* ── Hero name text (two-layer reveal) ── */
+.hero-name {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-end;
+  padding: 0 5vw;
+  z-index: 5;
+  pointer-events: none;
+  margin: 0;
+  text-align: right;
+}
+
+.hero-name-line {
+  display: block;
+  font-size: clamp(68px, 12.5vw, 200px);
+  font-weight: 400;
+  letter-spacing: -0.04em;
+  line-height: 0.88;
+  text-transform: uppercase;
+}
+
+/* Layer A — red, Marcellus */
+.hero-name--a .hero-name-line {
+  font-family: "Marcellus", serif;
+  color: #e03f4f;
+}
+
+/* Layer B — white, Marcellus, revealed by blob */
+.hero-name--b {
+  clip-path: circle(0px at 50% 50%);
+}
+
+.hero-name--b .hero-name-line {
+  font-family: "Marcellus", serif;
+  color: #fff;
+  font-weight: 300;
+}
+
+/* ── Showcase section (pill video + expand on scroll) ── */
+.hero-showcase {
+  position: relative;
+  height: 100svh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  padding: clamp(32px, 4vw, 64px) 0;
+  overflow: hidden;
+  background: #05030a;
+}
 
 /* Horizontal pill video */
 .hero-video-wrap {

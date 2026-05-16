@@ -165,36 +165,25 @@
       <canvas id="hero-blob-canvas" aria-hidden="true"></canvas>
       <!-- Mobile fallback image -->
       <div class="hero-mobile-bg" aria-hidden="true"></div>
-      <h2 class="hero-line hero-line-top">
-        <span class="inner">BUILD</span>
-      </h2>
 
-      <div class="hero-video-wrap" id="heroVideoWrap">
-        <div class="hero-video-inner">
-          <video class="hero-video" autoplay loop muted playsinline>
-            <source src="assets/hero-vid.mp4" type="video/mp4" />
-          </video>
-        </div>
+      <!-- Layer A: default visible state (shiv-2 shows through letters) -->
+      <div class="hero-name hero-name--a" aria-label="Shivdutt Karwa">
+        <span class="hero-name-line">SHIVDUTT</span>
+        <span class="hero-name-line">KARWA</span>
       </div>
 
-      <!-- Rotating word lives outside the video-wrap stacking context -->
-      <div class="hero-rotating-wrap" aria-hidden="true">
-        <span class="hero-rotating-word is-active">Fast</span>
-        <span class="hero-rotating-word">Bold</span>
-        <span class="hero-rotating-word">Clean</span>
-        <span class="hero-rotating-word">Alive</span>
+      <!-- Layer B: blob-revealed state (shiv-1 shows through letters) -->
+      <div class="hero-name hero-name--b" id="heroNameRevealed" aria-hidden="true">
+        <span class="hero-name-line">SHIVDUTT</span>
+        <span class="hero-name-line">KARWA</span>
       </div>
-
-      <h1 class="hero-line hero-line-bottom">
-        <span class="inner">DIFFERENT</span>
-      </h1>
 
       <div class="hero-meta">
         <span>Suratgarh</span>
         <span>|</span>
         <span>Jaipur</span>
       </div>
-      <a href="#intro" class="scroll-indicator" aria-label="Scroll down">⌄</a>
+      <a href="#showcase" class="scroll-indicator" aria-label="Scroll down">⌄</a>
       <svg width="0" height="0" style="position:absolute" aria-hidden="true">
         <defs>
           <linearGradient id="heroMysticGradient" x1="0%" y1="0%" x2="100%" y2="0%">
@@ -221,6 +210,32 @@
           </svg>
         </span>
       </a>
+    </section>
+
+    <!-- Pill video showcase — pill expands to fullscreen on scroll -->
+    <section class="hero-showcase" id="showcase">
+      <h2 class="hero-line hero-line-top">
+        <span class="inner">BUILD</span>
+      </h2>
+
+      <div class="hero-video-wrap" id="heroVideoWrap">
+        <div class="hero-video-inner">
+          <video class="hero-video" autoplay loop muted playsinline>
+            <source src="assets/hero-vid.mp4" type="video/mp4" />
+          </video>
+        </div>
+      </div>
+
+      <div class="hero-rotating-wrap" aria-hidden="true">
+        <span class="hero-rotating-word is-active">Fast</span>
+        <span class="hero-rotating-word">Bold</span>
+        <span class="hero-rotating-word">Clean</span>
+        <span class="hero-rotating-word">Alive</span>
+      </div>
+
+      <h1 class="hero-line hero-line-bottom">
+        <span class="inner">DIFFERENT</span>
+      </h1>
     </section>
 
     <div class="site-bg-scope">
