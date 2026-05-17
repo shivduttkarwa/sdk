@@ -625,8 +625,8 @@ img {
   position: relative;
   z-index: 3;
   font-family: "Marcellus", serif;
-  font-size: clamp(80px, 14vw, 230px);
-  font-weight: 300;
+  font-size: clamp(56px, 9.8vw, 161px);
+  font-weight: 200;
   letter-spacing: -.09em;
   line-height: .85;
   text-transform: uppercase;
@@ -803,6 +803,9 @@ img {
 .hero-showcase .hero-line-bottom {
   margin: 0;
 }
+
+.hero-showcase .hero-line-top    { text-align: left;  padding-left: 5rem; }
+.hero-showcase .hero-line-bottom { text-align: right; padding-right: 5rem; }
 
 /* Horizontal pill video */
 .hero-video-wrap {
