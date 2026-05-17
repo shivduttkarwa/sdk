@@ -1,0 +1,660 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Device Showcase</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Playfair+Display:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #07070b;
+      --gold: #CA8A04;
+      --text-muted: rgba(255,255,255,0.38);
+      --border: rgba(255,255,255,0.08);
+    }
+
+    html, body {
+      height: 100%;
+      background: var(--bg);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Inter', sans-serif;
+      overflow: hidden;
+    }
+
+    /* ── Ambient background ── */
+    .bg { position: fixed; inset: 0; pointer-events: none; z-index: 0; overflow: hidden; }
+    .blob { position: absolute; border-radius: 50%; filter: blur(110px); }
+    .blob-1 { width: 700px; height: 700px; background: #5b21b6; opacity: 0.13; top: -180px; left: -140px; }
+    .blob-2 { width: 560px; height: 560px; background: #1e40af; opacity: 0.10; bottom: -120px; right: 5%; }
+    .blob-3 { width: 440px; height: 300px; background: var(--gold); opacity: 0.055; bottom: -60px; left: 35%; }
+
+    /* ── Scene ── */
+    .scene {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      align-items: flex-end;
+      gap: 52px;
+      padding: 0 60px 90px;
+    }
+
+    /* ── Entrance & float (separate elements — no transform conflict) ── */
+    .enter { animation: enter 1s cubic-bezier(0.16, 1, 0.3, 1) var(--d, 0s) both; }
+    @keyframes enter {
+      from { opacity: 0; transform: translateY(48px) scale(0.96); }
+      to   { opacity: 1; transform: translateY(0) scale(1); }
+    }
+    .float-mac   { animation: floatMac   8s ease-in-out infinite; }
+    .float-phone { animation: floatPhone 6s ease-in-out infinite 1.4s; }
+    @keyframes floatMac   { 0%,100% { transform: translateY(0); }  50% { transform: translateY(-12px); } }
+    @keyframes floatPhone { 0%,100% { transform: translateY(0); }  50% { transform: translateY(-20px); } }
+    @media (prefers-reduced-motion: reduce) { .float-mac, .float-phone { animation: none; } }
+
+    /* ════════════════════════════════
+       MACBOOK
+    ════════════════════════════════ */
+    .macbook { display: flex; flex-direction: column; align-items: center; }
+
+    .mac-lid {
+      width: 560px;
+      background: linear-gradient(155deg, #2e2e30 0%, #1e1e21 35%, #111114 100%);
+      border-radius: 14px 14px 0 0;
+      padding: 10px 10px 0;
+      box-shadow: 0 0 0 1px rgba(255,255,255,0.085), inset 0 1px 0 rgba(255,255,255,0.07);
+    }
+    .mac-camera {
+      width: 5px; height: 5px;
+      border-radius: 50%;
+      background: #161618;
+      box-shadow: inset 0 0 0 1px rgba(255,255,255,0.06);
+      margin: 0 auto 6px;
+    }
+    .mac-display {
+      width: 100%;
+      aspect-ratio: 16/10;
+      background: #000;
+      border-radius: 3px 3px 0 0;
+      overflow: hidden;
+      position: relative;
+      cursor: default;
+    }
+    .mac-display::after {
+      content: '';
+      position: absolute; inset: 0;
+      background: linear-gradient(130deg, rgba(255,255,255,0.045) 0%, transparent 45%);
+      pointer-events: none;
+      z-index: 2;
+    }
+    .mac-display video, .mac-display img {
+      width: 100%; height: 100%;
+      object-fit: cover; display: block;
+    }
+    .mac-chin {
+      width: 560px; height: 14px;
+      background: linear-gradient(to bottom, #181819, #0f0f11);
+      border-top: 1px solid rgba(255,255,255,0.035);
+    }
+    .mac-hinge {
+      width: 604px; height: 4px;
+      background: linear-gradient(to right, #040406 0%, #1c1c1f 8%, #303033 25%, #3e3e42 50%, #303033 75%, #1c1c1f 92%, #040406 100%);
+    }
+    .mac-base {
+      width: 604px; height: 24px;
+      background: linear-gradient(155deg, #28282b 0%, #1c1c1f 45%, #141417 100%);
+      border-radius: 0 0 12px 12px;
+      position: relative;
+      box-shadow:
+        0 0 0 1px rgba(255,255,255,0.055),
+        inset 0 1px 0 rgba(255,255,255,0.04),
+        0 28px 72px rgba(0,0,0,0.75),
+        0 72px 140px rgba(0,0,0,0.45);
+    }
+    .mac-base::after {
+      content: '';
+      position: absolute;
+      bottom: 5px; left: 50%; transform: translateX(-50%);
+      width: 96px; height: 8px;
+      background: rgba(255,255,255,0.022);
+      border: 1px solid rgba(255,255,255,0.04);
+      border-radius: 3px;
+    }
+    .mac-glow {
+      width: 380px; height: 36px;
+      background: radial-gradient(ellipse, rgba(100,55,220,0.28) 0%, transparent 70%);
+      filter: blur(18px);
+      margin-top: -6px;
+      pointer-events: none;
+    }
+
+    /* ════════════════════════════════
+       IPHONE 17
+    ════════════════════════════════ */
+    .iphone-wrap { margin-bottom: 42px; }
+
+    .iphone {
+      width: 194px;
+      height: 422px;
+      /* Titanium-finish body */
+      background:
+        linear-gradient(180deg,
+          rgba(255,255,255,0.04) 0%,
+          rgba(255,255,255,0) 15%,
+          rgba(0,0,0,0.06) 85%,
+          rgba(0,0,0,0.12) 100%),
+        linear-gradient(155deg, #323236 0%, #1e1e22 40%, #0f0f13 100%);
+      border-radius: 44px;
+      padding: 10px 8px 14px;
+      position: relative;
+      box-shadow:
+        /* titanium outer highlight */
+        0 0 0 1px rgba(255,255,255,0.16),
+        /* titanium band */
+        0 0 0 2.5px rgba(95,95,108,0.14),
+        /* dark edge ring */
+        0 0 0 4px rgba(0,0,0,0.9),
+        /* inner top light */
+        inset 0 1px 0 rgba(255,255,255,0.11),
+        inset 0 -1px 0 rgba(0,0,0,0.28),
+        /* ambient drop shadow */
+        0 50px 100px rgba(0,0,0,0.85),
+        0 0 80px rgba(29,78,216,0.09);
+    }
+
+    /* ── Shared button base ── */
+    .action-btn, .vol-up, .vol-down {
+      position: absolute;
+      left: -4px;
+      width: 4px;
+      border-radius: 2px 0 0 2px;
+      background: linear-gradient(to right, #3a3a3e 0%, #2a2a2e 100%);
+      box-shadow:
+        inset 0 1px 0 rgba(255,255,255,0.12),
+        inset 0 -1px 0 rgba(0,0,0,0.3),
+        -1px 0 3px rgba(0,0,0,0.45);
+    }
+
+    /* ── Action Button (left top) ── */
+    .action-btn { top: 66px; height: 32px; }
+
+    /* ── Volume Up ── */
+    .vol-up { top: 110px; height: 26px; }
+
+    /* ── Volume Down ── */
+    .vol-down { top: 145px; height: 26px; }
+
+    /* ── Power Button (right) ── */
+    .pwr-btn {
+      position: absolute;
+      right: -4px; top: 128px;
+      width: 4px; height: 52px;
+      border-radius: 0 2px 2px 0;
+      background: linear-gradient(to left, #3a3a3e 0%, #2a2a2e 100%);
+      box-shadow:
+        inset 0 1px 0 rgba(255,255,255,0.12),
+        inset 0 -1px 0 rgba(0,0,0,0.3),
+        1px 0 3px rgba(0,0,0,0.45);
+    }
+
+    /* ── USB-C port ── */
+    .iphone::after {
+      content: '';
+      position: absolute;
+      bottom: 7px; left: 50%; transform: translateX(-50%);
+      width: 22px; height: 5px;
+      background: #040407;
+      border-radius: 3px;
+      box-shadow:
+        0 0 0 1px rgba(255,255,255,0.07),
+        inset 0 1px 2px rgba(0,0,0,0.9);
+    }
+
+    /* ── Speaker dots ── */
+    .speaker {
+      position: absolute;
+      bottom: 9px; left: 50%; transform: translateX(-50%);
+      display: flex;
+      gap: 3px;
+      pointer-events: none;
+    }
+    .speaker span {
+      display: block; width: 2px; height: 4px;
+      background: rgba(255,255,255,0.07);
+      border-radius: 1px;
+    }
+
+    /* ── iPhone screen ── */
+    .iphone-screen {
+      width: 100%; height: 100%;
+      background: #000;
+      border-radius: 34px 34px 30px 30px;
+      overflow: hidden;
+      position: relative;
+    }
+    .iphone-screen::after {
+      content: '';
+      position: absolute; inset: 0;
+      background: linear-gradient(130deg, rgba(255,255,255,0.05) 0%, transparent 40%);
+      pointer-events: none;
+      z-index: 2;
+      border-radius: inherit;
+    }
+    .iphone-screen video, .iphone-screen img {
+      width: 100%; height: 100%;
+      object-fit: cover; display: block;
+    }
+
+    /* ── Dynamic Island ── */
+    .dynamic-island {
+      position: absolute;
+      top: 12px; left: 50%; transform: translateX(-50%);
+      width: 78px; height: 25px;
+      background: #000;
+      border-radius: 14px;
+      z-index: 20;
+      cursor: pointer;
+      transition: all 0.42s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+    .dynamic-island:hover { width: 116px; height: 33px; border-radius: 16px; }
+
+    /* Glow beneath iPhone */
+    .phone-glow {
+      width: 110px; height: 28px;
+      background: radial-gradient(ellipse, rgba(29,78,216,0.32) 0%, transparent 70%);
+      filter: blur(14px);
+      margin-top: -6px;
+      pointer-events: none;
+    }
+
+    /* ════════════════════════════════
+       VIDEO CONTROLS OVERLAY
+    ════════════════════════════════ */
+    .vc {
+      position: absolute; inset: 0;
+      z-index: 5;
+      visibility: hidden;
+      opacity: 0;
+      transition: opacity 0.25s ease, visibility 0.25s ease;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+    /* Gradient overlay darkens bottom for legibility */
+    .vc::before {
+      content: '';
+      position: absolute; inset: 0;
+      background: linear-gradient(
+        to top,
+        rgba(0,0,0,0.78) 0%,
+        rgba(0,0,0,0.18) 38%,
+        rgba(0,0,0,0) 58%
+      );
+      pointer-events: none;
+      border-radius: inherit;
+    }
+    /* Show on hover */
+    .mac-display:hover .vc,
+    .iphone-screen:hover .vc {
+      visibility: visible;
+      opacity: 1;
+    }
+
+    /* Center play/pause button */
+    .vc-play {
+      position: relative; z-index: 1;
+      width: 54px; height: 54px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.14);
+      border: 1.5px solid rgba(255,255,255,0.22);
+      cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      transition: background 0.2s, transform 0.15s;
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+    }
+    .vc-play:hover { background: rgba(255,255,255,0.26); transform: scale(1.08); }
+    .vc-play svg  { width: 22px; height: 22px; fill: #fff; display: block; }
+
+    /* Bottom bar */
+    .vc-bar {
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+      z-index: 1;
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      padding: 10px 14px 12px;
+    }
+    .vc-time {
+      font-size: 10px;
+      font-weight: 500;
+      color: rgba(255,255,255,0.88);
+      white-space: nowrap;
+      font-variant-numeric: tabular-nums;
+      min-width: 30px;
+      line-height: 1;
+    }
+    .vc-track {
+      flex: 1;
+      height: 3px;
+      background: rgba(255,255,255,0.22);
+      border-radius: 2px;
+      position: relative;
+      cursor: pointer;
+    }
+    .vc-fill {
+      position: absolute; left: 0; top: 0;
+      height: 100%;
+      background: rgba(255,255,255,0.9);
+      border-radius: 2px;
+      width: 0%;
+      pointer-events: none;
+    }
+    .vc-seek {
+      position: absolute;
+      inset: -9px 0;
+      width: 100%; height: auto;
+      opacity: 0;
+      cursor: pointer;
+      -webkit-appearance: none;
+      appearance: none;
+      z-index: 1;
+    }
+    .vc-mute {
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 2px;
+      display: flex; align-items: center; justify-content: center;
+      opacity: 0.75;
+      transition: opacity 0.2s;
+      flex-shrink: 0;
+    }
+    .vc-mute:hover { opacity: 1; }
+    .vc-mute svg  { width: 14px; height: 14px; fill: #fff; display: block; }
+
+    /* iPhone-specific: smaller controls, extra bottom padding (rounded corners) */
+    .iphone-screen .vc-play { width: 44px; height: 44px; }
+    .iphone-screen .vc-play svg { width: 18px; height: 18px; }
+    .iphone-screen .vc-bar { padding: 8px 16px 18px; gap: 6px; }
+    .iphone-screen .vc-time { font-size: 9px; min-width: 26px; }
+    .iphone-screen .vc-mute svg { width: 12px; height: 12px; }
+
+    /* ════════════════════════════════
+       BOTTOM CONTROLS BAR
+    ════════════════════════════════ */
+    .controls {
+      position: fixed;
+      bottom: 22px; left: 50%; transform: translateX(-50%);
+      z-index: 30;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 14px;
+      background: rgba(12,12,18,0.72);
+      backdrop-filter: blur(28px) saturate(1.6);
+      -webkit-backdrop-filter: blur(28px) saturate(1.6);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      box-shadow: 0 8px 40px rgba(0,0,0,0.5);
+      animation: enter 1s cubic-bezier(0.16, 1, 0.3, 1) 0.6s both;
+    }
+    .ctrl-group { display: flex; flex-direction: column; align-items: center; gap: 5px; }
+    .ctrl-label { font-size: 9px; text-transform: uppercase; letter-spacing: 0.13em; color: var(--text-muted); }
+    .ctrl-btn {
+      display: inline-flex; align-items: center; gap: 5px;
+      padding: 6px 13px;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 9px;
+      color: rgba(255,255,255,0.72);
+      font-family: 'Inter', sans-serif;
+      font-size: 11px;
+      cursor: pointer;
+      transition: background 0.2s, border-color 0.2s, color 0.2s;
+      white-space: nowrap;
+    }
+    .ctrl-btn:hover { background: rgba(255,255,255,0.1); border-color: rgba(255,255,255,0.2); color: #fff; }
+    .ctrl-btn svg { width: 12px; height: 12px; flex-shrink: 0; stroke: currentColor; }
+    .ctrl-divider { width: 1px; height: 34px; background: rgba(255,255,255,0.07); }
+    input[type="file"] { display: none; }
+
+    /* Drag-over highlight */
+    .mac-display.drag-over,
+    .iphone-screen.drag-over {
+      outline: 2px solid rgba(202,138,4,0.75);
+      outline-offset: -2px;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Ambient blobs -->
+  <div class="bg">
+    <div class="blob blob-1"></div>
+    <div class="blob blob-2"></div>
+    <div class="blob blob-3"></div>
+  </div>
+
+  <!-- Scene -->
+  <div class="scene">
+
+    <!-- MacBook -->
+    <div class="enter" style="--d: 0s">
+      <div class="float-mac">
+        <div class="macbook">
+          <div class="mac-lid">
+            <div class="mac-camera"></div>
+            <div class="mac-display" id="mac-display"
+                 ondragover="onDragOver(event,this)"
+                 ondragleave="onDragLeave(this)"
+                 ondrop="onDrop(event,'mac-display',false)">
+              <video autoplay muted loop playsinline>
+                <source src="assets/hero-vid.mp4" type="video/mp4">
+              </video>
+              <!-- controls injected by JS -->
+            </div>
+          </div>
+          <div class="mac-chin"></div>
+          <div class="mac-hinge"></div>
+          <div class="mac-base"></div>
+          <div class="mac-glow"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- iPhone 17 -->
+    <div class="enter iphone-wrap" style="--d: 0.18s">
+      <div class="float-phone">
+        <div class="iphone">
+          <!-- Left buttons -->
+          <div class="action-btn"></div>
+          <div class="vol-up"></div>
+          <div class="vol-down"></div>
+          <!-- Right button -->
+          <div class="pwr-btn"></div>
+          <!-- Screen -->
+          <div class="iphone-screen" id="phone-display"
+               ondragover="onDragOver(event,this)"
+               ondragleave="onDragLeave(this)"
+               ondrop="onDrop(event,'phone-display',true)">
+            <video autoplay muted loop playsinline>
+              <source src="assets/hero-vid.mp4" type="video/mp4">
+            </video>
+            <div class="dynamic-island"></div>
+            <!-- controls injected by JS -->
+          </div>
+          <!-- Speaker grille (visual only, sits above ::after USB-C) -->
+          <div class="speaker">
+            <span></span><span></span><span></span><span></span>
+            <span></span><span></span><span></span>
+          </div>
+        </div>
+        <div class="phone-glow"></div>
+      </div>
+    </div>
+
+  </div><!-- /scene -->
+
+  <!-- Bottom control bar -->
+  <div class="controls">
+    <div class="ctrl-group">
+      <span class="ctrl-label">MacBook</span>
+      <label class="ctrl-btn" for="mac-file">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+          <polyline points="17 8 12 3 7 8"/>
+          <line x1="12" y1="3" x2="12" y2="15"/>
+        </svg>
+        Swap Media
+      </label>
+      <input type="file" id="mac-file" accept="video/*,image/*">
+    </div>
+
+    <div class="ctrl-divider"></div>
+
+    <div class="ctrl-group">
+      <span class="ctrl-label">iPhone 17</span>
+      <label class="ctrl-btn" for="phone-file">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+          <polyline points="17 8 12 3 7 8"/>
+          <line x1="12" y1="3" x2="12" y2="15"/>
+        </svg>
+        Swap Media
+      </label>
+      <input type="file" id="phone-file" accept="video/*,image/*">
+    </div>
+  </div>
+
+  <script>
+    /* ── SVG icon strings ── */
+    const ICONS = {
+      play:  `<svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>`,
+      pause: `<svg viewBox="0 0 24 24"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>`,
+      vol:   `<svg viewBox="0 0 24 24"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/></svg>`,
+      mute:  `<svg viewBox="0 0 24 24"><path d="M16.5 12A4.5 4.5 0 0014 7.97v2.21l2.45 2.45c.03-.2.05-.41.05-.63zm2.5 0c0 .94-.2 1.82-.54 2.64l1.51 1.51C20.63 14.91 21 13.5 21 12c0-4.28-2.99-7.86-7-8.77v2.06c2.89.86 5 3.54 5 6.71zM4.27 3L3 4.27 7.73 9H3v6h4l5 5v-6.73l4.25 4.25c-.67.52-1.42.93-2.25 1.18v2.06c1.38-.31 2.63-.95 3.69-1.81L19.73 21 21 19.73l-9-9L4.27 3z"/></svg>`,
+    };
+
+    function fmt(s) {
+      if (!isFinite(s) || isNaN(s)) return '--:--';
+      const m = Math.floor(s / 60);
+      return m + ':' + String(Math.floor(s % 60)).padStart(2, '0');
+    }
+
+    /* Inject controls overlay; wires up to the video inside display */
+    function initControls(display) {
+      const oldVc = display.querySelector('.vc');
+      if (oldVc) oldVc.remove();
+
+      const video = display.querySelector('video');
+      if (!video) return; // image — no controls needed
+
+      const vc = document.createElement('div');
+      vc.className = 'vc';
+      vc.innerHTML = `
+        <button class="vc-play" aria-label="Play / Pause">${ICONS.pause}</button>
+        <div class="vc-bar">
+          <span class="vc-time vc-cur">0:00</span>
+          <div class="vc-track">
+            <div class="vc-fill"></div>
+            <input class="vc-seek" type="range" min="0" max="100" step="0.01" value="0" aria-label="Seek">
+          </div>
+          <span class="vc-time vc-dur">--:--</span>
+          <button class="vc-mute" aria-label="Mute">${ICONS.vol}</button>
+        </div>`;
+      display.appendChild(vc);
+
+      const playBtn  = vc.querySelector('.vc-play');
+      const muteBtn  = vc.querySelector('.vc-mute');
+      const curEl    = vc.querySelector('.vc-cur');
+      const durEl    = vc.querySelector('.vc-dur');
+      const fillEl   = vc.querySelector('.vc-fill');
+      const seekEl   = vc.querySelector('.vc-seek');
+
+      const syncPlay = () => playBtn.innerHTML = video.paused ? ICONS.play : ICONS.pause;
+      const syncMute = () => muteBtn.innerHTML = video.muted  ? ICONS.mute : ICONS.vol;
+
+      playBtn.addEventListener('click', () => { video.paused ? video.play() : video.pause(); });
+      muteBtn.addEventListener('click', () => { video.muted = !video.muted; syncMute(); });
+
+      video.addEventListener('play',  syncPlay);
+      video.addEventListener('pause', syncPlay);
+      video.addEventListener('loadedmetadata', () => { durEl.textContent = fmt(video.duration); });
+
+      video.addEventListener('timeupdate', () => {
+        if (!video.duration) return;
+        const pct = (video.currentTime / video.duration) * 100;
+        fillEl.style.width = pct + '%';
+        seekEl.value       = pct;
+        curEl.textContent  = fmt(video.currentTime);
+      });
+
+      seekEl.addEventListener('input', () => {
+        if (video.duration) video.currentTime = (seekEl.value / 100) * video.duration;
+      });
+
+      syncPlay();
+      syncMute();
+    }
+
+    /* ── Load media into a display container ── */
+    function loadMedia(url, mimeType, displayId, keepIsland) {
+      const display = document.getElementById(displayId);
+      const isVideo = mimeType ? mimeType.startsWith('video/') : /\.(mp4|webm|ogg|mov)$/i.test(url);
+
+      display.style.transition = 'opacity 0.3s';
+      display.style.opacity = '0';
+
+      setTimeout(() => {
+        display.innerHTML = '';
+
+        if (isVideo) {
+          const v = Object.assign(document.createElement('video'), {
+            src: url, autoplay: true, muted: true, loop: true, playsInline: true,
+          });
+          display.appendChild(v);
+        } else {
+          const img = Object.assign(document.createElement('img'), { src: url, alt: '' });
+          display.appendChild(img);
+        }
+
+        if (keepIsland) {
+          display.appendChild(Object.assign(document.createElement('div'), { className: 'dynamic-island' }));
+        }
+
+        initControls(display);
+        display.style.opacity = '1';
+      }, 300);
+    }
+
+    /* ── File input wiring ── */
+    document.getElementById('mac-file').addEventListener('change', function () {
+      if (this.files[0]) loadMedia(URL.createObjectURL(this.files[0]), this.files[0].type, 'mac-display', false);
+    });
+    document.getElementById('phone-file').addEventListener('change', function () {
+      if (this.files[0]) loadMedia(URL.createObjectURL(this.files[0]), this.files[0].type, 'phone-display', true);
+    });
+
+    /* ── Drag & drop ── */
+    function onDragOver(e, el)         { e.preventDefault(); el.classList.add('drag-over'); }
+    function onDragLeave(el)           { el.classList.remove('drag-over'); }
+    function onDrop(e, displayId, ki)  {
+      e.preventDefault();
+      document.getElementById(displayId).classList.remove('drag-over');
+      const f = e.dataTransfer.files[0];
+      if (f) loadMedia(URL.createObjectURL(f), f.type, displayId, ki);
+    }
+
+    /* ── Boot: initialise controls on page videos ── */
+    initControls(document.getElementById('mac-display'));
+    initControls(document.getElementById('phone-display'));
+  </script>
+</body>
+</html>
