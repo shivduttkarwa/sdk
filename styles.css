@@ -887,6 +887,8 @@ img {
   gap: 0.6rem;
   pointer-events: none;
   min-width: 154px;
+  transform: scale(1.2);
+  transform-origin: top right;
 }
 
 .sc-hud-status {
