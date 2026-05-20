@@ -90,26 +90,24 @@ document.querySelectorAll('.reveal').forEach(el => revealObserver.observe(el));
   });
 })();
 
-// ── Kinetic variable-font word ──
-(function initKineticWord() {
-  const word = document.querySelector('.sc-kinetic-word');
-  if (!word) return;
+// ── Live clock (IST) ──
+(function initClock() {
+  const elH = document.getElementById('scH');
+  const elM = document.getElementById('scM');
+  const elS = document.getElementById('scS');
+  if (!elH) return;
 
-  const MIN = 200, MAX = 800, PERIOD = 2600;
-  let start = null;
+  const pad = n => String(n).padStart(2, '0');
 
-  function tick(ts) {
-    if (!start) start = ts;
-    const t    = ((ts - start) % PERIOD) / PERIOD;
-    const sine = (Math.sin(t * Math.PI * 2 - Math.PI / 2) + 1) / 2;
-    const wght = MIN + sine * (MAX - MIN);
-    const opacity = 0.12 + sine * 0.28;
-    word.style.fontVariationSettings = `'wght' ${wght.toFixed(0)}`;
-    word.style.color = `rgba(255,255,255,${opacity.toFixed(3)})`;
-    requestAnimationFrame(tick);
+  function tick() {
+    const now = new Date(new Date().toLocaleString('en-US', { timeZone: 'Asia/Kolkata' }));
+    elH.textContent = pad(now.getHours());
+    elM.textContent = pad(now.getMinutes());
+    elS.textContent = pad(now.getSeconds());
   }
 
-  requestAnimationFrame(tick);
+  tick();
+  setInterval(tick, 1000);
 })();
 
 

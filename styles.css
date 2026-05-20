@@ -977,42 +977,93 @@ img {
   to   { transform: scaleY(1);   opacity: 1; }
 }
 
-/* ── Kinetic variable-font word (bottom-left) ── */
-.sc-kinetic {
+/* ── Live clock card (bottom-left) ── */
+.sc-clock {
   position: absolute;
   bottom: clamp(1.4rem, 3vw, 2.8rem);
   left: clamp(2rem, 5vw, 5rem);
   z-index: 20;
+  background: rgba(5, 3, 10, 0.72);
+  backdrop-filter: blur(16px) saturate(1.5);
+  -webkit-backdrop-filter: blur(16px) saturate(1.5);
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  border-radius: 16px;
+  padding: 0.9rem 1.15rem;
   display: flex;
   flex-direction: column;
-  gap: 0.3rem;
+  gap: 0.45rem;
   pointer-events: none;
   user-select: none;
+  transform: scale(1.2);
+  transform-origin: bottom left;
 }
 
-.sc-kinetic-tag {
+.sc-clock-header {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+}
+
+.sc-clock-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #4ade80;
+  box-shadow: 0 0 7px rgba(74, 222, 128, 0.85);
+  flex-shrink: 0;
+  animation: clockPulse 2.2s ease-in-out infinite;
+}
+
+@keyframes clockPulse {
+  0%, 100% { opacity: 1; box-shadow: 0 0 7px rgba(74,222,128,.85); }
+  50%       { opacity: 0.3; box-shadow: none; }
+}
+
+.sc-clock-zone {
   font-family: 'Space Grotesk', monospace;
   font-size: 9px;
   font-weight: 700;
-  letter-spacing: 0.18em;
-  color: rgba(224, 63, 79, 0.5);
+  letter-spacing: 0.16em;
+  color: rgba(255, 255, 255, 0.35);
   text-transform: uppercase;
 }
 
-.sc-kinetic-word {
-  font-family: 'Bricolage Grotesque', sans-serif;
-  font-size: clamp(2.4rem, 5vw, 5rem);
-  font-variation-settings: 'wght' 200;
-  color: rgba(255, 255, 255, 0.15);
-  letter-spacing: -0.04em;
-  text-transform: uppercase;
+.sc-clock-time {
+  font-family: 'Space Grotesk', monospace;
+  font-size: clamp(1.5rem, 2.8vw, 2.2rem);
+  font-weight: 300;
+  letter-spacing: -0.01em;
+  color: rgba(255, 255, 255, 0.92);
+  font-variant-numeric: tabular-nums;
   line-height: 1;
-  display: block;
-  will-change: font-variation-settings, color;
+  display: flex;
+  align-items: baseline;
+  gap: 1px;
+}
+
+.sc-colon {
+  color: rgba(255, 255, 255, 0.3);
+  animation: colonBlink 1s step-end infinite;
+}
+
+@keyframes colonBlink {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0.15; }
+}
+
+.sc-clock-loc {
+  font-family: 'Space Grotesk', monospace;
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  color: rgba(255, 255, 255, 0.28);
+  text-transform: uppercase;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+  padding-top: 0.4rem;
 }
 
 @media (max-width: 768px) {
-  .sc-hud, .sc-kinetic { display: none; }
+  .sc-hud, .sc-clock { display: none; }
 }
 
 /* ── end showcase extras ── */
