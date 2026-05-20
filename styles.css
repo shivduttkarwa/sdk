@@ -986,7 +986,7 @@ img {
   background: rgba(5, 3, 10, 0.72);
   backdrop-filter: blur(16px) saturate(1.5);
   -webkit-backdrop-filter: blur(16px) saturate(1.5);
-  border: 1px solid rgba(255, 255, 255, 0.07);
+  border: 1px solid rgba(224, 63, 79, 0.16);
   border-radius: 16px;
   padding: 0.9rem 1.15rem;
   display: flex;
@@ -1008,15 +1008,15 @@ img {
   width: 6px;
   height: 6px;
   border-radius: 50%;
-  background: #4ade80;
-  box-shadow: 0 0 7px rgba(74, 222, 128, 0.85);
+  background: #E03F4F;
+  box-shadow: 0 0 8px rgba(224, 63, 79, 0.9);
   flex-shrink: 0;
   animation: clockPulse 2.2s ease-in-out infinite;
 }
 
 @keyframes clockPulse {
-  0%, 100% { opacity: 1; box-shadow: 0 0 7px rgba(74,222,128,.85); }
-  50%       { opacity: 0.3; box-shadow: none; }
+  0%, 100% { opacity: 1; box-shadow: 0 0 8px rgba(224,63,79,.9); }
+  50%       { opacity: 0.2; box-shadow: none; }
 }
 
 .sc-clock-zone {
@@ -1024,7 +1024,7 @@ img {
   font-size: 9px;
   font-weight: 700;
   letter-spacing: 0.16em;
-  color: rgba(255, 255, 255, 0.35);
+  color: rgba(224, 63, 79, 0.85);
   text-transform: uppercase;
 }
 
@@ -1042,7 +1042,7 @@ img {
 }
 
 .sc-colon {
-  color: rgba(255, 255, 255, 0.3);
+  color: rgba(224, 63, 79, 0.6);
   animation: colonBlink 1s step-end infinite;
 }
 
@@ -1056,9 +1056,9 @@ img {
   font-size: 9px;
   font-weight: 600;
   letter-spacing: 0.14em;
-  color: rgba(255, 255, 255, 0.28);
+  color: rgba(224, 63, 79, 0.5);
   text-transform: uppercase;
-  border-top: 1px solid rgba(255, 255, 255, 0.06);
+  border-top: 1px solid rgba(224, 63, 79, 0.1);
   padding-top: 0.4rem;
 }
 
