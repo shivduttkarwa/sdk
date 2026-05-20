@@ -118,18 +118,13 @@ document.querySelectorAll('.reveal').forEach(el => revealObserver.observe(el));
       }
     },
 
-    // 1 · "Bold" — heavy stamp drop, squash on landing, crush-down exit
+    // 1 · "Bold" — stamp drop with back.out overshoot, crush-down exit
     {
       in(el) {
         gsap.set(el, { opacity: 1, y: 0, scaleY: 1, transformOrigin: '50% 50%' });
         gsap.fromTo(el,
-          { y: -90, scaleY: 1.4, opacity: 0 },
-          {
-            y: 0, scaleY: 1, opacity: 1, duration: 0.48, ease: 'back.out(2.8)',
-            onComplete() {
-              gsap.to(el, { scaleY: 0.86, duration: 0.07, yoyo: true, repeat: 1, ease: 'power2.inOut' });
-            }
-          }
+          { y: -90, opacity: 0 },
+          { y: 0, opacity: 1, duration: 0.55, ease: 'back.out(3)' }
         );
       },
       out(el, done) {
