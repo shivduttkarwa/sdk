@@ -76,20 +76,129 @@ const revealObserver = new IntersectionObserver((entries) => {
 document.querySelectorAll('.reveal').forEach(el => revealObserver.observe(el));
 
 
-// Hero rotating words
+// Hero rotating words — each word has a distinct animation personality
 (function initRotatingWords() {
   const words = document.querySelectorAll('.hero-rotating-word');
-  if (!words.length) return;
+  if (!words.length || !window.gsap) return;
+
+  const DISPLAY_MS = 2700;
+
+  // Split text into char spans for per-letter animations
+  words.forEach(el => {
+    const text = el.textContent.trim();
+    el.dataset.text = text;
+    el.innerHTML = [...text].map(ch =>
+      `<span class="rw-char" data-ch="${ch}">${ch}</span>`
+    ).join('');
+  });
+
+  // GSAP owns all transforms — set xPercent/yPercent for centering
+  gsap.set(words, { opacity: 0, xPercent: -50, yPercent: -50 });
+
+  const recipes = [
+    // 0 · "Fast" — chars whip in from left (blur streak), exit right
+    {
+      in(el) {
+        const chars = el.querySelectorAll('.rw-char');
+        gsap.set(el, { opacity: 1, x: 0 });
+        gsap.fromTo(chars,
+          { x: -80, opacity: 0, filter: 'blur(12px)' },
+          { x: 0, opacity: 1, filter: 'blur(0px)', duration: 0.42, stagger: 0.048, ease: 'power4.out' }
+        );
+      },
+      out(el, done) {
+        gsap.to(el, {
+          x: 120, opacity: 0, filter: 'blur(8px)',
+          duration: 0.3, ease: 'power3.in',
+          onComplete() {
+            gsap.set(el, { x: 0, opacity: 0, filter: 'blur(0px)' });
+            done();
+          }
+        });
+      }
+    },
+
+    // 1 · "Bold" — heavy stamp drop, squash on landing, crush-down exit
+    {
+      in(el) {
+        gsap.set(el, { opacity: 1, y: 0, scaleY: 1, transformOrigin: '50% 50%' });
+        gsap.fromTo(el,
+          { y: -90, scaleY: 1.4, opacity: 0 },
+          {
+            y: 0, scaleY: 1, opacity: 1, duration: 0.48, ease: 'back.out(2.8)',
+            onComplete() {
+              gsap.to(el, { scaleY: 0.86, duration: 0.07, yoyo: true, repeat: 1, ease: 'power2.inOut' });
+            }
+          }
+        );
+      },
+      out(el, done) {
+        gsap.set(el, { transformOrigin: '50% 100%' });
+        gsap.to(el, {
+          scaleY: 0, opacity: 0, duration: 0.28, ease: 'power3.in',
+          onComplete() {
+            gsap.set(el, { scaleY: 1, opacity: 0, transformOrigin: '50% 50%' });
+            done();
+          }
+        });
+      }
+    },
+
+    // 2 · "Clean" — surgical clip-path wipe left → right, reverse on exit
+    {
+      in(el) {
+        gsap.set(el, { opacity: 1, clipPath: 'inset(0 100% 0 0)' });
+        gsap.to(el, { clipPath: 'inset(0 0% 0 0)', duration: 0.72, ease: 'power3.inOut' });
+      },
+      out(el, done) {
+        gsap.to(el, {
+          clipPath: 'inset(0 0 0 100%)', duration: 0.42, ease: 'power3.in',
+          onComplete() {
+            gsap.set(el, { opacity: 0, clipPath: 'inset(0 100% 0 0)' });
+            done();
+          }
+        });
+      }
+    },
+
+    // 3 · "Alive" — each letter springs up with elastic bounce, falls away on exit
+    {
+      in(el) {
+        const chars = el.querySelectorAll('.rw-char');
+        gsap.set(el, { opacity: 1 });
+        gsap.fromTo(chars,
+          { y: 75, opacity: 0, rotation: 12 },
+          { y: 0, opacity: 1, rotation: 0, duration: 0.85, stagger: 0.085, ease: 'elastic.out(1, 0.42)' }
+        );
+      },
+      out(el, done) {
+        const chars = el.querySelectorAll('.rw-char');
+        gsap.to(chars, {
+          y: 60, opacity: 0, rotation: -10,
+          duration: 0.26, stagger: 0.04, ease: 'power2.in',
+          onComplete() {
+            gsap.set(el, { opacity: 0 });
+            gsap.set(chars, { y: 0, rotation: 0 });
+            done();
+          }
+        });
+      }
+    }
+  ];
+
   let current = 0;
 
-  setInterval(() => {
+  function cycle() {
     const prev = current;
     current = (current + 1) % words.length;
-    words[prev].classList.remove('is-active');
-    words[prev].classList.add('is-exit');
-    setTimeout(() => words[prev].classList.remove('is-exit'), 600);
-    words[current].classList.add('is-active');
-  }, 2200);
+    recipes[prev].out(words[prev], () => {
+      recipes[current].in(words[current]);
+      setTimeout(cycle, DISPLAY_MS);
+    });
+  }
+
+  recipes[0].in(words[0]);
+  setTimeout(cycle, DISPLAY_MS);
 })();
 
 
