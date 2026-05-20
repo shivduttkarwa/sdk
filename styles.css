@@ -625,7 +625,7 @@ img {
   position: relative;
   z-index: 3;
   font-family: "Marcellus", serif;
-  font-size: clamp(56px, 9.8vw, 161px);
+  font-size: max(3.5rem, 9.8vw);
   font-weight: 200;
   letter-spacing: -.09em;
   line-height: .85;
@@ -642,8 +642,8 @@ img {
 
 .hero-line .inner { display: inline-block; }
 
-.hero-line-top    { margin-bottom: clamp(16px, 2.5vw, 36px); }
-.hero-line-bottom { margin-top: clamp(16px, 2.5vw, 36px); }
+.hero-line-top    { margin-bottom: max(1rem, 2.5vw); }
+.hero-line-bottom { margin-top: max(1rem, 2.5vw); }
 
 /* ── Hero availability badge ── */
 .hero-avail {
@@ -794,18 +794,19 @@ img {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: clamp(18px, 2.6vw, 38px);
-  padding: clamp(22px, 3vw, 44px) 0;
+  gap: max(1.125rem, 2.6vw);
+  padding: max(1.375rem, 3vw) 0;
   overflow: hidden;
 }
 
 .hero-showcase .hero-line-top,
 .hero-showcase .hero-line-bottom {
   margin: 0;
+  overflow: visible;
 }
 
-.hero-showcase .hero-line-top    { text-align: left;  padding-left: 5rem; }
-.hero-showcase .hero-line-bottom { text-align: right; padding-right: 5rem; }
+.hero-showcase .hero-line-top    { text-align: left;  padding-inline: 5rem; }
+.hero-showcase .hero-line-bottom { text-align: right; padding-inline: 5rem; }
 
 /* Horizontal pill video */
 .hero-video-wrap {
