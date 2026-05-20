@@ -144,19 +144,36 @@ document.querySelectorAll('.reveal').forEach(el => revealObserver.observe(el));
       }
     },
 
-    // 2 · "Clean" — surgical clip-path wipe left → right, reverse on exit
+    // 2 · "Clean" — all chars converge from spread positions simultaneously, lock in at once
     {
       in(el) {
-        gsap.set(el, { opacity: 1, clipPath: 'inset(0 100% 0 0)' });
-        gsap.to(el, { clipPath: 'inset(0 0% 0 0)', duration: 0.72, ease: 'power3.inOut' });
+        const chars = [...el.querySelectorAll('.rw-char')];
+        const mid   = (chars.length - 1) / 2;
+        gsap.set(el, { opacity: 1 });
+        const tl = gsap.timeline();
+        chars.forEach((ch, i) => {
+          tl.fromTo(ch,
+            { x: (i - mid) * 95, opacity: 0, filter: 'blur(8px)' },
+            { x: 0, opacity: 1, filter: 'blur(0px)', duration: 0.65, ease: 'expo.out' },
+            0
+          );
+        });
       },
       out(el, done) {
-        gsap.to(el, {
-          clipPath: 'inset(0 0 0 100%)', duration: 0.42, ease: 'power3.in',
+        const chars = [...el.querySelectorAll('.rw-char')];
+        const mid   = (chars.length - 1) / 2;
+        const tl = gsap.timeline({
           onComplete() {
-            gsap.set(el, { opacity: 0, clipPath: 'inset(0 100% 0 0)' });
+            gsap.set(el, { opacity: 0 });
+            gsap.set(chars, { x: 0, filter: 'blur(0px)' });
             done();
           }
+        });
+        chars.forEach((ch, i) => {
+          tl.to(ch,
+            { x: (i - mid) * 95, opacity: 0, filter: 'blur(8px)', duration: 0.38, ease: 'expo.in' },
+            0
+          );
         });
       }
     },
