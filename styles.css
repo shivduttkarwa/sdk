@@ -870,6 +870,151 @@ img {
   will-change: transform, opacity, filter;
 }
 
+/* ── Showcase HUD (top-right) ── */
+.sc-hud {
+  position: absolute;
+  top: clamp(1.4rem, 3vw, 2.8rem);
+  right: clamp(2rem, 5vw, 5rem);
+  z-index: 20;
+  background: rgba(5, 3, 10, 0.72);
+  backdrop-filter: blur(16px) saturate(1.5);
+  -webkit-backdrop-filter: blur(16px) saturate(1.5);
+  border: 1px solid rgba(224, 63, 79, 0.16);
+  border-radius: 12px;
+  padding: 0.9rem 1.15rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  pointer-events: none;
+  min-width: 154px;
+}
+
+.sc-hud-status {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.sc-hud-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #E03F4F;
+  box-shadow: 0 0 8px rgba(224, 63, 79, 0.9);
+  flex-shrink: 0;
+  animation: hudBlink 1.5s ease-in-out infinite;
+}
+
+@keyframes hudBlink {
+  0%, 100% { opacity: 1; box-shadow: 0 0 8px rgba(224,63,79,.9); }
+  50%       { opacity: 0.2; box-shadow: none; }
+}
+
+.sc-hud-label {
+  font-family: 'Space Grotesk', monospace;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  color: rgba(224, 63, 79, 0.85);
+  text-transform: uppercase;
+}
+
+.sc-hud-coords {
+  display: flex;
+  flex-direction: column;
+  gap: 0.22rem;
+}
+
+.sc-hud-axis {
+  font-family: 'Space Grotesk', monospace;
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  color: rgba(255, 255, 255, 0.4);
+  text-transform: uppercase;
+  display: flex;
+  gap: 0.5em;
+}
+
+.sc-hud-axis span {
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.88);
+  font-variant-numeric: tabular-nums;
+  min-width: 3ch;
+  display: inline-block;
+}
+
+.sc-hud-wave {
+  display: flex;
+  align-items: flex-end;
+  gap: 3px;
+  height: 18px;
+  padding-top: 0.4rem;
+  border-top: 1px solid rgba(224, 63, 79, 0.1);
+}
+
+.sc-hud-wave span {
+  flex: 1;
+  background: rgba(224, 63, 79, 0.55);
+  border-radius: 2px 2px 0 0;
+  transform-origin: bottom center;
+  animation: hudBar var(--bd, 0.8s) ease-in-out infinite alternate;
+}
+
+.sc-hud-wave span:nth-child(1) { --bd: 0.55s; height: 35%; }
+.sc-hud-wave span:nth-child(2) { --bd: 0.90s; height: 75%; }
+.sc-hud-wave span:nth-child(3) { --bd: 0.65s; height: 50%; }
+.sc-hud-wave span:nth-child(4) { --bd: 1.10s; height: 95%; }
+.sc-hud-wave span:nth-child(5) { --bd: 0.72s; height: 40%; }
+.sc-hud-wave span:nth-child(6) { --bd: 0.85s; height: 80%; }
+.sc-hud-wave span:nth-child(7) { --bd: 0.60s; height: 60%; }
+.sc-hud-wave span:nth-child(8) { --bd: 1.00s; height: 30%; }
+
+@keyframes hudBar {
+  from { transform: scaleY(0.2); opacity: 0.45; }
+  to   { transform: scaleY(1);   opacity: 1; }
+}
+
+/* ── Kinetic variable-font word (bottom-left) ── */
+.sc-kinetic {
+  position: absolute;
+  bottom: clamp(1.4rem, 3vw, 2.8rem);
+  left: clamp(2rem, 5vw, 5rem);
+  z-index: 20;
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  pointer-events: none;
+  user-select: none;
+}
+
+.sc-kinetic-tag {
+  font-family: 'Space Grotesk', monospace;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  color: rgba(224, 63, 79, 0.5);
+  text-transform: uppercase;
+}
+
+.sc-kinetic-word {
+  font-family: 'Bricolage Grotesque', sans-serif;
+  font-size: clamp(2.4rem, 5vw, 5rem);
+  font-variation-settings: 'wght' 200;
+  color: rgba(255, 255, 255, 0.15);
+  letter-spacing: -0.04em;
+  text-transform: uppercase;
+  line-height: 1;
+  display: block;
+  will-change: font-variation-settings, color;
+}
+
+@media (max-width: 768px) {
+  .sc-hud, .sc-kinetic { display: none; }
+}
+
+/* ── end showcase extras ── */
+
 .hero-meta {
   position: absolute;
   left: 32px;

@@ -76,6 +76,43 @@ const revealObserver = new IntersectionObserver((entries) => {
 document.querySelectorAll('.reveal').forEach(el => revealObserver.observe(el));
 
 
+// ── Showcase HUD: live cursor coords ──
+(function initShowcaseHUD() {
+  const elX  = document.getElementById('hudX');
+  const elY  = document.getElementById('hudY');
+  if (!elX || !elY) return;
+
+  const pad = n => String(Math.max(0, n)).padStart(3, '0');
+
+  document.addEventListener('mousemove', e => {
+    elX.textContent = pad(Math.round(e.clientX));
+    elY.textContent = pad(Math.round(e.clientY));
+  });
+})();
+
+// ── Kinetic variable-font word ──
+(function initKineticWord() {
+  const word = document.querySelector('.sc-kinetic-word');
+  if (!word) return;
+
+  const MIN = 200, MAX = 800, PERIOD = 2600;
+  let start = null;
+
+  function tick(ts) {
+    if (!start) start = ts;
+    const t    = ((ts - start) % PERIOD) / PERIOD;
+    const sine = (Math.sin(t * Math.PI * 2 - Math.PI / 2) + 1) / 2;
+    const wght = MIN + sine * (MAX - MIN);
+    const opacity = 0.12 + sine * 0.28;
+    word.style.fontVariationSettings = `'wght' ${wght.toFixed(0)}`;
+    word.style.color = `rgba(255,255,255,${opacity.toFixed(3)})`;
+    requestAnimationFrame(tick);
+  }
+
+  requestAnimationFrame(tick);
+})();
+
+
 // Hero rotating words — each word has a distinct animation personality
 (function initRotatingWords() {
   const words = document.querySelectorAll('.hero-rotating-word');
