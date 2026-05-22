@@ -1933,3 +1933,129 @@ if (window.gsap && window.ScrollTrigger) {
     });
   });
 })();
+
+// ── Tag physics — flee mouse, bounce off card walls, spring back ──
+(function () {
+  const REPEL_R  = 135;   // mouse influence radius (px)
+  const REPEL_F  = 1.6;   // repulsion acceleration magnitude
+  const SPRING   = 0.042; // spring stiffness pulling back to home
+  const DAMP     = 0.78;  // velocity damping per frame
+  const RESTIT   = 0.38;  // energy kept on wall collision
+  const MAX_VEL  = 20;    // velocity cap (px / frame)
+  const WALL_PAD = 20;    // inner clearance from card edge
+
+  document.querySelectorAll('.ts-card').forEach(card => {
+    let pts   = [];
+    let raf   = null;
+    let mx    = -9999;
+    let my    = -9999;
+    let over  = false;
+
+    /* snapshot home positions from live layout */
+    function init() {
+      const cr = card.getBoundingClientRect();
+      pts = Array.from(card.querySelectorAll('.ts-tag')).map(el => {
+        const tr = el.getBoundingClientRect();
+        return {
+          el,
+          hx : tr.left - cr.left + tr.width  * 0.5,  // home centre x in card
+          hy : tr.top  - cr.top  + tr.height * 0.5,  // home centre y in card
+          tw : tr.width,
+          th : tr.height,
+          x  : 0, y  : 0,   // offset from home
+          vx : 0, vy : 0,   // velocity
+        };
+      });
+    }
+
+    function smashTag(p) {
+      p.el.classList.add('ts-tag--smash');
+      setTimeout(() => p.el.classList.remove('ts-tag--smash'), 210);
+    }
+
+    function step() {
+      const cw   = card.offsetWidth;
+      const ch   = card.offsetHeight;
+      let   live = false;
+
+      for (const p of pts) {
+        /* repulsion from mouse */
+        if (over) {
+          const dx = p.hx + p.x - mx;
+          const dy = p.hy + p.y - my;
+          const d  = Math.hypot(dx, dy) || 0.01;
+          if (d < REPEL_R) {
+            const t = 1 - d / REPEL_R;
+            const f = REPEL_F * t * t / d;   // quadratic falloff, normalised
+            p.vx += dx * f;
+            p.vy += dy * f;
+          }
+        }
+
+        /* spring + damping */
+        p.vx = (p.vx - SPRING * p.x) * DAMP;
+        p.vy = (p.vy - SPRING * p.y) * DAMP;
+
+        /* velocity cap */
+        const spd = Math.hypot(p.vx, p.vy);
+        if (spd > MAX_VEL) { p.vx *= MAX_VEL / spd; p.vy *= MAX_VEL / spd; }
+
+        /* integrate */
+        p.x += p.vx;
+        p.y += p.vy;
+
+        /* boundary collision — keep tag centre within card */
+        const hw = p.tw * 0.5, hh = p.th * 0.5;
+        const x0 = WALL_PAD + hw - p.hx,  x1 = cw - WALL_PAD - hw - p.hx;
+        const y0 = WALL_PAD + hh - p.hy,  y1 = ch - WALL_PAD - hh - p.hy;
+
+        if (x0 < x1) {
+          if (p.x < x0) { p.x = x0; if (p.vx < -0.8) smashTag(p); p.vx =  Math.abs(p.vx) * RESTIT; }
+          if (p.x > x1) { p.x = x1; if (p.vx >  0.8) smashTag(p); p.vx = -Math.abs(p.vx) * RESTIT; }
+        }
+        if (y0 < y1) {
+          if (p.y < y0) { p.y = y0; if (p.vy < -0.8) smashTag(p); p.vy =  Math.abs(p.vy) * RESTIT; }
+          if (p.y > y1) { p.y = y1; if (p.vy >  0.8) smashTag(p); p.vy = -Math.abs(p.vy) * RESTIT; }
+        }
+
+        p.el.style.transform = `translate(${p.x.toFixed(1)}px,${p.y.toFixed(1)}px)`;
+
+        if (Math.abs(p.vx) > 0.08 || Math.abs(p.vy) > 0.08 ||
+            Math.abs(p.x)  > 0.15 || Math.abs(p.y)  > 0.15) live = true;
+      }
+
+      if (over || live) {
+        raf = requestAnimationFrame(step);
+      } else {
+        /* fully settled — clean up */
+        pts.forEach(p => {
+          p.el.style.transform = '';
+          p.el.classList.remove('ts-tag--phys');
+        });
+        pts = [];
+        raf = null;
+      }
+    }
+
+    card.addEventListener('mouseenter', () => {
+      over = true;
+      if (pts.length === 0) {
+        init();
+        pts.forEach(p => p.el.classList.add('ts-tag--phys'));
+      }
+      if (!raf) raf = requestAnimationFrame(step);
+    });
+
+    card.addEventListener('mousemove', e => {
+      const r = card.getBoundingClientRect();
+      mx = e.clientX - r.left;
+      my = e.clientY - r.top;
+    });
+
+    card.addEventListener('mouseleave', () => {
+      over = false;
+      mx = -9999; my = -9999;
+      if (!raf) raf = requestAnimationFrame(step);
+    });
+  });
+})();

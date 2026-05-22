@@ -2271,6 +2271,20 @@ img {
   transform: translateY(-1px);
 }
 
+/* physics active — strip transform from transition so JS drives it */
+.ts-tag--phys {
+  transition: background 0.3s var(--ease), border-color 0.3s var(--ease), color 0.3s var(--ease);
+  will-change: transform;
+}
+.ts-tag--phys:hover { transform: none; }
+
+/* wall-smash flash */
+.ts-tag--smash {
+  background: rgba(224,63,79,.25) !important;
+  border-color: rgba(255,80,96,.65) !important;
+  color: #fff !important;
+}
+
 .ts-dot {
   width: 5px;
   height: 5px;
