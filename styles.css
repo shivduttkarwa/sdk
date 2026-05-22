@@ -1934,6 +1934,8 @@ img {
   opacity: 0;
   will-change: clip-path, opacity;
   clip-path: inset(0 100% 0 0);
+  display: flex;
+  align-items: center;
 }
 .project-panel.is-from {
   opacity: 1;
@@ -1974,13 +1976,12 @@ img {
 .project-panel.is-single { opacity: 1; clip-path: none; -webkit-mask-image: none; mask-image: none; }
 
 .project-copy {
-  position: absolute;
-  left: 6vw;
-  bottom: 12.8vh;
+  position: relative;
+  margin-left: 6vw;
   width: min(46rem, 45vw);
   text-shadow: 0 1.4rem 3.6rem rgba(0,0,0,.82);
 }
-.project-panel[data-side="right"] .project-copy { left: auto; right: 6vw; text-align: right; }
+.project-panel[data-side="right"] .project-copy { margin-left: auto; margin-right: 6vw; text-align: right; }
 
 .project-kicker {
   display: flex;
@@ -2068,6 +2069,41 @@ img {
   text-transform: uppercase;
 }
 
+.project-link {
+  display: inline-flex;
+  align-items: center;
+  gap: .65rem;
+  margin-top: 1.8rem;
+  padding: .6rem 1.25rem .6rem 1rem;
+  border: 1px solid rgba(244,239,231,.18);
+  border-radius: 999px;
+  background: rgba(255,255,255,.04);
+  backdrop-filter: blur(10px);
+  color: rgba(244,239,231,.6);
+  font-family: "Space Grotesk", sans-serif;
+  font-size: .68rem;
+  font-weight: 700;
+  letter-spacing: .2em;
+  text-transform: uppercase;
+  text-decoration: none;
+  position: absolute;
+  bottom: 2.8rem;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 20;
+  pointer-events: auto;
+  transition: color .15s ease-out, border-color .15s ease-out, background .15s ease-out, gap .2s ease-out;
+}
+.project-link svg { flex-shrink: 0; transition: transform .3s ease; }
+.project-link:hover {
+  color: #fff;
+  border-color: rgba(255,80,96,.55);
+  background: rgba(224,63,79,.12);
+  gap: .9rem;
+}
+.project-link:hover svg { transform: translate(2px,-2px); }
+.project-panel[data-side="right"] .project-link { margin-left: 0; margin-right: 1rem; flex-direction: row-reverse; }
+
 .projects-progress {
   z-index: 11;
   pointer-events: none;
@@ -2116,7 +2152,7 @@ img {
   .projects-stick { min-height: 760px; }
   .project-copy,
   .project-panel[data-side="right"] .project-copy {
-    left: 6vw; right: 6vw; bottom: 8vh; width: auto; text-align: left;
+    margin-left: 6vw; margin-right: 6vw; width: auto; text-align: left;
   }
   .project-panel[data-side="right"] .project-kicker { justify-content: flex-start; }
   .project-title { font-size: clamp(2.4rem, 13vw, 5rem); letter-spacing: -.02em; margin-left: -.02em; margin-right: 0 !important; }
