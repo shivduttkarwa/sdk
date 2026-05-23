@@ -2173,7 +2173,7 @@ if (window.gsap && window.ScrollTrigger) {
 
         // Particle — exact original colors
         ctx.beginPath();
-        ctx.arc(p.x, p.y, (35 / 100) * (arm.length - i), 0, 2 * Math.PI);
+        ctx.arc(p.x, p.y, (18 / 100) * (arm.length - i), 0, 2 * Math.PI);
         ctx.strokeStyle = `hsla(${354 + i * 2}, 90%, 50%, 0.7)`;
         ctx.stroke();
 
