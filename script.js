@@ -2216,4 +2216,48 @@ if (window.gsap && window.ScrollTrigger) {
     blit(null,renderProg,p=>{ tex(0,dye0.tex);u1i(p,'u_dye',0);tex(5,bgTex);u1i(p,'u_bg',5); });
   })(0);
 })();
+
+// ── "Get in touch" double-hover animation ──
+document.querySelectorAll('.git-double-hover').forEach(link => {
+  const text = link.dataset.text || link.textContent.trim();
+  const baseLine  = link.querySelector('.git-base');
+  const hoverLine = link.querySelector('.git-hover');
+
+  function buildChars(target) {
+    target.innerHTML = '';
+    [...text].forEach(letter => {
+      const span = document.createElement('span');
+      if (letter === ' ') { span.className = 'git-char git-space'; span.innerHTML = '&nbsp;'; }
+      else                { span.className = 'git-char'; span.textContent = letter; }
+      target.appendChild(span);
+    });
+  }
+
+  buildChars(baseLine);
+  buildChars(hoverLine);
+
+  const baseChars  = baseLine.querySelectorAll('.git-char');
+  const hoverChars = hoverLine.querySelectorAll('.git-char');
+
+  gsap.set(baseChars,  { yPercent: 0,  scaleY: 1,    rotateX: 0,   z: 0,   transformOrigin: '50% 0%' });
+  gsap.set(hoverChars, { yPercent: 26, scaleY: 0.08, rotateX: -82, z: -40, transformOrigin: '50% 100%' });
+
+  function onEnter() {
+    gsap.killTweensOf([baseChars, hoverChars]);
+    gsap.to(baseChars,  { yPercent: -28, scaleY: 0.08, rotateX:  82, z: -40, duration: 0.78, ease: 'expo.out', stagger: { each: 0.018, from: 'start' }, transformOrigin: '50% 0%' });
+    gsap.to(hoverChars, { yPercent: 0,   scaleY: 1,    rotateX:  0,  z: 0,   duration: 0.78, ease: 'expo.out', stagger: { each: 0.018, from: 'start' }, transformOrigin: '50% 100%' });
+  }
+
+  function onLeave() {
+    gsap.killTweensOf([baseChars, hoverChars]);
+    gsap.to(baseChars,  { yPercent: 0,  scaleY: 1,    rotateX: 0,   z: 0,   duration: 0.78, ease: 'expo.out', stagger: { each: 0.014, from: 'end' }, transformOrigin: '50% 0%' });
+    gsap.to(hoverChars, { yPercent: 26, scaleY: 0.08, rotateX: -82, z: -40, duration: 0.78, ease: 'expo.out', stagger: { each: 0.014, from: 'end' }, transformOrigin: '50% 100%' });
+  }
+
+  link.addEventListener('mouseenter', onEnter);
+  link.addEventListener('mouseleave', onLeave);
+  link.addEventListener('focus',      onEnter);
+  link.addEventListener('blur',       onLeave);
+});
+
 })();
