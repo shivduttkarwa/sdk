@@ -1,0 +1,674 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Samurai Red Galaxy Dive</title>
+
+  <style>
+    * { box-sizing: border-box; }
+
+    html,
+    body {
+      margin: 0;
+      min-height: 100%;
+      overflow-x: hidden;
+      background: #050003;
+      color: #fff3f0;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    body { cursor: none; }
+
+    .dummy-section {
+      min-height: 100vh;
+      display: grid;
+      place-items: center;
+      padding: 7vw;
+      background:
+        radial-gradient(circle at 50% 50%, rgba(130, 0, 18, 0.22), transparent 42%),
+        linear-gradient(180deg, #050003, #120006 55%, #050003);
+      color: rgba(255, 226, 220, 0.82);
+      text-align: center;
+    }
+
+    .dummy-section h2 {
+      margin: 0;
+      max-width: 13ch;
+      font-size: clamp(3rem, 8vw, 9rem);
+      line-height: 0.88;
+      letter-spacing: -0.07em;
+      font-weight: 300;
+      text-transform: uppercase;
+    }
+
+    .dummy-section p {
+      margin: 1.5rem 0 0;
+      font-size: clamp(0.72rem, 1vw, 1rem);
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      font-weight: 800;
+      opacity: 0.72;
+    }
+
+    .samurai-scroll {
+      position: relative;
+      height: 900vh;
+      background: #050003;
+    }
+
+    .samurai-stage {
+      position: relative;
+      height: 100vh;
+      width: 100%;
+      overflow: hidden;
+      isolation: isolate;
+      background:
+        radial-gradient(circle at 50% 50%, rgba(255, 20, 34, 0.24), transparent 22%),
+        radial-gradient(circle at 50% 114%, rgba(255, 72, 42, 0.34), transparent 36%),
+        radial-gradient(circle at 12% 20%, rgba(95, 0, 14, 0.45), transparent 38%),
+        radial-gradient(circle at 88% 30%, rgba(80, 0, 10, 0.34), transparent 34%),
+        linear-gradient(180deg, #120005 0%, #050003 48%, #100005 78%, #3b0908 145%);
+    }
+
+    .samurai-stage::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      z-index: 4;
+      pointer-events: none;
+      background:
+        radial-gradient(circle at 50% 50%, transparent 0 36%, rgba(0, 0, 0, 0.16) 74%, rgba(0, 0, 0, 0.7) 100%),
+        linear-gradient(90deg, rgba(0,0,0,0.2), transparent 30%, transparent 70%, rgba(0,0,0,0.2));
+    }
+
+    .samurai-stage::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      z-index: 5;
+      pointer-events: none;
+      opacity: 0.28;
+      background:
+        repeating-linear-gradient(0deg, rgba(255,255,255,0.018) 0 1px, transparent 1px 4px),
+        radial-gradient(circle at 50% 50%, transparent 0 54%, rgba(0,0,0,0.18) 100%);
+      mix-blend-mode: soft-light;
+    }
+
+    #samuraiCanvas {
+      position: absolute;
+      inset: 0;
+      z-index: 1;
+      display: block;
+      width: 100%;
+      height: 100%;
+    }
+
+    .samurai-interface {
+      position: absolute;
+      inset: 0;
+      z-index: 10;
+      pointer-events: none;
+      color: rgba(255, 244, 244, 0.96);
+      text-transform: uppercase;
+      font-weight: 800;
+      letter-spacing: 0.32em;
+      font-size: clamp(0.62rem, 0.74vw, 0.92rem);
+    }
+
+    .samurai-brand {
+      position: absolute;
+      top: clamp(1.7rem, 2.7vw, 3.2rem);
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: clamp(0.95rem, 1.15vw, 1.4rem);
+      letter-spacing: 0.42em;
+      text-shadow: 0 0 24px rgba(255, 80, 60, 0.72);
+    }
+
+    .samurai-nav {
+      position: absolute;
+      top: clamp(1.7rem, 2.85vw, 3.45rem);
+      right: clamp(1.6rem, 2.8vw, 3.6rem);
+      width: min(22rem, 23vw);
+      min-width: 15rem;
+      display: grid;
+      grid-template-columns: 1fr auto;
+      grid-template-rows: auto auto;
+      align-items: center;
+      gap: 1.35rem clamp(1.8rem, 3vw, 4.2rem);
+    }
+
+    .samurai-nav::before {
+      content: "";
+      grid-column: 1 / -1;
+      height: 1px;
+      background: linear-gradient(90deg, rgba(255,223,220,0.72), rgba(255,73,55,0.08));
+      transform-origin: left center;
+      animation: navLine 4.8s ease-in-out infinite;
+    }
+
+    .nine-dots {
+      display: grid;
+      grid-template-columns: repeat(3, 4px);
+      grid-auto-rows: 4px;
+      gap: 7px;
+      justify-content: end;
+    }
+
+    .nine-dots span {
+      width: 4px;
+      height: 4px;
+      border-radius: 999px;
+      background: rgba(255,235,232,0.92);
+      box-shadow: 0 0 10px rgba(255,63,44,0.58);
+    }
+
+    .samurai-center-text {
+      position: absolute;
+      left: 50%;
+      top: 51%;
+      z-index: 12;
+      width: min(42rem, 70vw);
+      transform: translate(-50%, -50%);
+      text-align: center;
+      pointer-events: none;
+      color: rgba(255, 248, 244, 0.98);
+      font-size: clamp(0.9rem, 1.22vw, 1.45rem);
+      line-height: 1.45;
+      font-weight: 900;
+      letter-spacing: 0.12em;
+      text-shadow:
+        0 0 8px rgba(255, 255, 255, 0.76),
+        0 0 22px rgba(255, 72, 50, 0.92),
+        0 0 55px rgba(255, 20, 20, 0.45),
+        0 2px 18px rgba(0, 0, 0, 0.9);
+      filter: none;
+      opacity: 0.98;
+    }
+
+    .samurai-scroll-note {
+      position: absolute;
+      left: clamp(1.4rem, 2.5vw, 3.4rem);
+      bottom: clamp(1.5rem, 2.6vw, 3.6rem);
+      z-index: 12;
+      display: flex;
+      align-items: center;
+      gap: 0.85rem;
+      color: rgba(255,226,220,0.72);
+      letter-spacing: 0.2em;
+      font-size: clamp(0.58rem, 0.7vw, 0.82rem);
+      font-weight: 800;
+      text-transform: uppercase;
+      pointer-events: none;
+    }
+
+    .samurai-scroll-note::before {
+      content: "";
+      width: 3.4rem;
+      height: 1px;
+      background: currentColor;
+      opacity: 0.62;
+    }
+
+    .samurai-sound {
+      position: absolute;
+      right: clamp(1.3rem, 2.7vw, 3.5rem);
+      bottom: clamp(1.4rem, 2.8vw, 3.6rem);
+      z-index: 12;
+      width: clamp(3.2rem, 4vw, 5rem);
+      aspect-ratio: 1;
+      display: grid;
+      place-items: center;
+      border-radius: 50%;
+      border: 1px solid rgba(255,225,220,0.22);
+      box-shadow: inset 0 0 28px rgba(255,255,255,0.04), 0 0 34px rgba(255, 47, 36, 0.16);
+      color: rgba(255,240,238,0.82);
+      pointer-events: none;
+    }
+
+    .samurai-sound svg { width: 29%; height: 29%; overflow: visible; }
+
+    .cursor {
+      position: fixed;
+      left: 0;
+      top: 0;
+      z-index: 90;
+      width: 58px;
+      height: 58px;
+      margin: -29px 0 0 -29px;
+      border-radius: 50%;
+      border: 1px solid rgba(255, 223, 217, 0.44);
+      pointer-events: none;
+      opacity: 0;
+      transform: translate3d(-100px, -100px, 0);
+      mix-blend-mode: screen;
+      transition: opacity 0.25s ease;
+    }
+
+    .cursor::before {
+      content: "";
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      width: 5px;
+      height: 5px;
+      margin: -2.5px 0 0 -2.5px;
+      border-radius: 50%;
+      background: #fff4f0;
+      box-shadow: 0 0 16px rgba(255,70,45,0.86);
+    }
+
+    body.cursor-ready .cursor { opacity: 1; }
+
+    @keyframes navLine {
+      0%, 100% { transform: scaleX(0.5); opacity: 0.42; }
+      50% { transform: scaleX(1); opacity: 0.84; }
+    }
+
+    @media (max-width: 760px) {
+      .dummy-section h2 { font-size: clamp(2.8rem, 16vw, 6rem); }
+      .samurai-scroll { height: 650vh; }
+      .samurai-center-text { width: 82vw; top: 56%; font-size: clamp(0.8rem, 3.4vw, 1.05rem); }
+      .samurai-nav { min-width: 11rem; width: 11rem; gap: 1rem 1.4rem; }
+      .samurai-scroll-note { display: none; }
+    }
+  </style>
+</head>
+<body>
+  <section class="dummy-section">
+    <div>
+      <h2>Before the Gate</h2>
+      <p>Scroll down to enter the red galaxy</p>
+    </div>
+  </section>
+
+  <section class="samurai-scroll" id="samuraiScroll">
+    <div class="samurai-stage">
+      <canvas id="samuraiCanvas"></canvas>
+
+      <div class="samurai-interface" aria-hidden="true">
+        <div class="samurai-brand">SAMURAI</div>
+        <div class="samurai-nav">
+          <span>RONIN</span>
+          <span class="nine-dots">
+            <span></span><span></span><span></span>
+            <span></span><span></span><span></span>
+            <span></span><span></span><span></span>
+          </span>
+        </div>
+        <div class="samurai-center-text" id="centerText">The red shield galaxy waits at the gate.</div>
+        <div class="samurai-scroll-note">Scroll to dive</div>
+        <div class="samurai-sound">
+          <svg viewBox="0 0 40 24" fill="none">
+            <path d="M8 15 C12 7, 15 7, 18 15 S25 22, 31 10" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          </svg>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="dummy-section">
+    <div>
+      <h2>After the Void</h2>
+      <p>The page continues normally</p>
+    </div>
+  </section>
+
+  <div class="cursor" id="cursor"></div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/0.160.0/three.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+
+  <script>
+    gsap.registerPlugin(ScrollTrigger);
+
+    const scrollSection = document.querySelector("#samuraiScroll");
+    const canvas = document.querySelector("#samuraiCanvas");
+    const centerText = document.querySelector("#centerText");
+    const cursor = document.querySelector("#cursor");
+
+    const renderer = new THREE.WebGLRenderer({
+      canvas,
+      antialias: true,
+      alpha: true,
+      powerPreference: "high-performance"
+    });
+
+    renderer.setClearColor(0x000000, 0);
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+
+    const scene = new THREE.Scene();
+    scene.fog = new THREE.FogExp2(0x110006, 0.018);
+
+    const camera = new THREE.PerspectiveCamera(42, window.innerWidth / window.innerHeight, 0.025, 260);
+    camera.position.set(0, 0.04, 21.5);
+
+    const root = new THREE.Group();
+    root.position.set(0, -0.02, 0);
+    scene.add(root);
+
+    const uniforms = {
+      uTime: { value: 0 },
+      uDpr: { value: Math.min(window.devicePixelRatio || 1, 2) },
+      uColorA: { value: new THREE.Color("#ffe5d9") },
+      uColorB: { value: new THREE.Color("#ff3326") },
+      uColorC: { value: new THREE.Color("#5a0009") }
+    };
+
+    const pointMaterial = new THREE.ShaderMaterial({
+      transparent: true,
+      depthWrite: false,
+      blending: THREE.AdditiveBlending,
+      uniforms,
+      vertexShader: `
+        uniform float uTime;
+        uniform float uDpr;
+        attribute float aSize;
+        attribute float aAlpha;
+        attribute float aDepth;
+        attribute float aKind;
+        attribute float aSeed;
+        varying float vAlpha;
+        varying float vKind;
+        varying float vDepth;
+
+        void main() {
+          vec3 p = position;
+          float pulse = sin(uTime * 0.72 + aSeed * 6.2831 + p.x * 1.05 + p.y * 1.2);
+          p.z += pulse * 0.045;
+          p.y += pulse * 0.008;
+
+          if (aKind > 2.5) {
+            p.y += sin(uTime * 0.24 + aSeed * 5.0) * 0.16;
+            p.z += cos(uTime * 0.18 + aSeed * 4.0) * 0.14;
+          }
+
+          vec4 mvPosition = modelViewMatrix * vec4(p, 1.0);
+          gl_Position = projectionMatrix * mvPosition;
+          float perspective = 510.0 / max(0.6, -mvPosition.z);
+          gl_PointSize = aSize * uDpr * perspective;
+          vAlpha = aAlpha * (0.78 + 0.22 * sin(uTime * 1.15 + aSeed * 8.0));
+          vKind = aKind;
+          vDepth = aDepth;
+        }
+      `,
+      fragmentShader: `
+        uniform vec3 uColorA;
+        uniform vec3 uColorB;
+        uniform vec3 uColorC;
+        varying float vAlpha;
+        varying float vKind;
+        varying float vDepth;
+
+        void main() {
+          vec2 uv = gl_PointCoord - 0.5;
+          float d = length(uv);
+          float disc = smoothstep(0.5, 0.035, d);
+          float core = smoothstep(0.16, 0.0, d);
+          vec3 col = mix(uColorC, uColorB, 0.72 + core * 0.18);
+          col = mix(col, uColorA, core * 0.7);
+          gl_FragColor = vec4(col, disc * vAlpha);
+        }
+      `
+    });
+
+    function addPoint(arrays, x, y, z, size, alpha, depth, kind, seed = Math.random()) {
+      arrays.positions.push(x, y, z);
+      arrays.sizes.push(size);
+      arrays.alphas.push(alpha);
+      arrays.depths.push(depth);
+      arrays.kinds.push(kind);
+      arrays.seeds.push(seed);
+    }
+
+    function buildRedGalaxyShield() {
+      const arrays = { positions: [], sizes: [], alphas: [], depths: [], kinds: [], seeds: [] };
+
+      // Particle-only round shield galaxy. No hard borders, no line geometry.
+      for (let layer = 0; layer < 145; layer++) {
+        const d = layer / 144;
+        const z = 9.5 - d * 45.0;
+        const radius = 3.22 - d * 1.55;
+        const count = Math.round(520 - d * 210);
+        const alpha = 0.42 * Math.pow(1 - d, 0.35) + 0.055;
+
+        for (let i = 0; i < count; i++) {
+          const a = (i / count) * Math.PI * 2;
+          const softEdge = Math.sin(a * 9 + layer * 0.12) * 0.035 + Math.sin(a * 17 + layer * 0.06) * 0.018;
+          const r = radius + softEdge + (Math.random() - 0.5) * 0.035;
+          const x = Math.cos(a) * r;
+          const y = Math.sin(a) * r;
+          addPoint(arrays, x, y, z, 0.014 + Math.random() * 0.022, alpha * (0.58 + Math.random() * 0.55), d * 2.7, 1);
+        }
+      }
+
+      // Dense inner galaxy rings, also particle-only.
+      for (let layer = 0; layer < 128; layer++) {
+        const d = layer / 127;
+        const z = 8.4 - d * 43.5;
+        const rings = [2.5, 2.05, 1.62, 1.18, 0.78, 0.42];
+
+        rings.forEach((baseRadius, ringIndex) => {
+          const radius = baseRadius - d * (0.72 + ringIndex * 0.05);
+          if (radius < 0.16) return;
+          const count = 150;
+          const alpha = 0.15 + (1 - d) * 0.16 - ringIndex * 0.008;
+
+          for (let i = 0; i < count; i++) {
+            const a = (i / count) * Math.PI * 2;
+            const swirl = d * 2.2 + ringIndex * 0.22;
+            const rr = radius + Math.sin(a * 6 + layer * 0.18) * 0.025 + (Math.random() - 0.5) * 0.018;
+            const x = Math.cos(a + swirl) * rr;
+            const y = Math.sin(a + swirl) * rr;
+            addPoint(arrays, x, y, z, 0.009 + Math.random() * 0.015, alpha * (0.62 + Math.random() * 0.48), d * 2.9, 2);
+          }
+        });
+      }
+
+      // Three subtle samurai/mon spiral arms made of only particles.
+      for (let arm = 0; arm < 3; arm++) {
+        const baseRot = arm * Math.PI * 2 / 3 - Math.PI / 2;
+        for (let layer = 0; layer < 135; layer++) {
+          const d = layer / 134;
+          const z = 8.7 - d * 44.5;
+          const scale = 1 - d * 0.36;
+
+          for (let i = 0; i < 70; i++) {
+            const t = i / 69;
+            const a = baseRot + t * 2.55 + d * 1.25;
+            const r = (0.22 + t * 2.1) * scale + Math.sin(t * Math.PI * 2 + layer * 0.12) * 0.025;
+            const x = Math.cos(a) * r;
+            const y = Math.sin(a) * r;
+            const fade = Math.sin(t * Math.PI);
+            addPoint(arrays, x, y, z, 0.012 + fade * 0.016 + Math.random() * 0.008, (0.06 + fade * 0.18) * (1 - d * 0.45), 1.4 + d * 2.6, 2);
+          }
+        }
+      }
+
+      // Meteor trails: not different colors, just brighter red-white cores in same palette.
+      for (let meteor = 0; meteor < 90; meteor++) {
+        const startAngle = Math.random() * Math.PI * 2;
+        const side = Math.random() < 0.5 ? -1 : 1;
+        const startR = 3.4 + Math.random() * 3.8;
+        const endR = 0.4 + Math.random() * 1.5;
+        const z = 7.5 - Math.random() * 42.0;
+        const length = 24 + Math.floor(Math.random() * 34);
+
+        for (let i = 0; i < length; i++) {
+          const t = i / (length - 1);
+          const a = startAngle + side * t * (0.55 + Math.random() * 0.18);
+          const r = startR + (endR - startR) * t;
+          const x = Math.cos(a) * r + (Math.random() - 0.5) * 0.025;
+          const y = Math.sin(a) * r + (Math.random() - 0.5) * 0.025;
+          const alpha = (1 - t) * 0.12 + t * 0.32;
+          const size = 0.014 + t * 0.03;
+          addPoint(arrays, x, y, z + t * 0.9, size, alpha, 1.0 + Math.random() * 2.0, 2.6);
+        }
+      }
+
+      // Galaxy volume dust.
+      for (let i = 0; i < 6200; i++) {
+        const a = Math.random() * Math.PI * 2;
+        const r = Math.pow(Math.random(), 0.72) * 3.05;
+        const spiral = r * 0.38 + Math.random() * 0.7;
+        const x = Math.cos(a + spiral) * r;
+        const y = Math.sin(a + spiral) * r;
+        const z = 9.6 - Math.random() * 46.5;
+        const centerGlow = 1 - Math.min(1, r / 3.05);
+        addPoint(arrays, x, y, z, 0.007 + Math.random() * 0.021, 0.03 + centerGlow * 0.13 + Math.random() * 0.07, Math.random() * 3.1, 1.5);
+      }
+
+      // Lower red nebula field.
+      for (let i = 0; i < 2400; i++) {
+        const x = (Math.random() - 0.5) * 13.8;
+        const y = -2.72 - Math.pow(Math.random(), 1.35) * 1.42 + Math.sin(x * 0.85) * 0.12;
+        const z = 9.4 - Math.random() * 47.5;
+        addPoint(arrays, x, y, z, 0.035 + Math.pow(Math.random(), 2.2) * 0.16, 0.025 + Math.random() * 0.12, 0.5 + Math.random() * 2.2, 3);
+      }
+
+      // Sparse space dust.
+      for (let i = 0; i < 1600; i++) {
+        const x = (Math.random() - 0.5) * 14.5;
+        const y = (Math.random() - 0.5) * 6.8;
+        const z = 9.2 - Math.random() * 48.0;
+        addPoint(arrays, x, y, z, 0.008 + Math.random() * 0.045, 0.018 + Math.random() * 0.095, Math.random() * 2.0, 3);
+      }
+
+      const geometry = new THREE.BufferGeometry();
+      geometry.setAttribute("position", new THREE.Float32BufferAttribute(arrays.positions, 3));
+      geometry.setAttribute("aSize", new THREE.Float32BufferAttribute(arrays.sizes, 1));
+      geometry.setAttribute("aAlpha", new THREE.Float32BufferAttribute(arrays.alphas, 1));
+      geometry.setAttribute("aDepth", new THREE.Float32BufferAttribute(arrays.depths, 1));
+      geometry.setAttribute("aKind", new THREE.Float32BufferAttribute(arrays.kinds, 1));
+      geometry.setAttribute("aSeed", new THREE.Float32BufferAttribute(arrays.seeds, 1));
+      return geometry;
+    }
+
+    const galaxyParticles = new THREE.Points(buildRedGalaxyShield(), pointMaterial);
+    root.add(galaxyParticles);
+
+    const copyLines = [
+      "The red shield galaxy waits at the gate.",
+      "HONOUR / the first particles open into orbit.",
+      "FOCUS / the inner rings begin to pull you forward.",
+      "MON / three crimson paths spiral through the void.",
+      "RONIN / meteors cross the shield as you dive deeper.",
+      "VOID / the galaxy collapses into the final red layer."
+    ];
+
+    let activeLine = -1;
+    let targetProgress = 0;
+    let progress = 0;
+    let pinTrigger = null;
+    let mouseX = 0;
+    let mouseY = 0;
+    let cursorX = 0;
+    let cursorY = 0;
+
+    function smootherstep(value) {
+      const x = Math.min(1, Math.max(0, value));
+      return x * x * x * (x * (x * 6 - 15) + 10);
+    }
+
+    function setCenterLine(index) {
+      if (index === activeLine) return;
+      activeLine = index;
+      gsap.to(centerText, {
+        opacity: 0,
+        filter: "blur(5px)",
+        y: 8,
+        duration: 0.18,
+        ease: "power2.out",
+        onComplete() {
+          centerText.textContent = copyLines[index];
+          gsap.to(centerText, { opacity: 0.98, filter: "blur(0px)", y: 0, duration: 0.42, ease: "power3.out" });
+        }
+      });
+    }
+
+    function setupPinnedScroll() {
+      pinTrigger = ScrollTrigger.create({
+        trigger: scrollSection,
+        start: "top top",
+        end: "bottom bottom",
+        pin: ".samurai-stage",
+        pinSpacing: false,
+        scrub: true,
+        anticipatePin: 1,
+        invalidateOnRefresh: true,
+        onUpdate(self) {
+          targetProgress = self.progress;
+        }
+      });
+    }
+
+    function resize() {
+      const width = window.innerWidth;
+      const height = window.innerHeight;
+      renderer.setSize(width, height, false);
+      renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+      camera.aspect = width / height;
+      camera.updateProjectionMatrix();
+      uniforms.uDpr.value = Math.min(window.devicePixelRatio || 1, 2);
+      ScrollTrigger.refresh();
+    }
+
+    window.addEventListener("resize", resize);
+
+    window.addEventListener("pointermove", (event) => {
+      document.body.classList.add("cursor-ready");
+      mouseX = (event.clientX / window.innerWidth - 0.5) * 2;
+      mouseY = (event.clientY / window.innerHeight - 0.5) * 2;
+      cursorX = event.clientX;
+      cursorY = event.clientY;
+    });
+
+    const cursorMoveX = gsap.quickTo(cursor, "x", { duration: 0.28, ease: "power3.out" });
+    const cursorMoveY = gsap.quickTo(cursor, "y", { duration: 0.28, ease: "power3.out" });
+
+    setupPinnedScroll();
+    resize();
+    setCenterLine(0);
+
+    const clock = new THREE.Clock();
+
+    function animate() {
+      requestAnimationFrame(animate);
+
+      const time = clock.getElapsedTime();
+      progress += (targetProgress - progress) * 0.08;
+      const travel = smootherstep((progress - 0.075) / 0.925);
+
+      uniforms.uTime.value = time;
+
+      // Galaxy dive: starts outside the particle shield, then travels into the particle-only tunnel.
+      const camZ = 21.5 - travel * 39.8;
+      const targetZ = 5.2 - travel * 30.0;
+      camera.position.z += (camZ - camera.position.z) * 0.066;
+      camera.position.x += ((mouseX * 0.16) - camera.position.x) * 0.045;
+      camera.position.y += ((0.04 - mouseY * 0.075) - camera.position.y) * 0.045;
+      camera.lookAt(mouseX * 0.08, -0.01, targetZ);
+
+      root.rotation.y += ((travel * 0.14 + mouseX * 0.03) - root.rotation.y) * 0.048;
+      root.rotation.x += ((-mouseY * 0.022) - root.rotation.x) * 0.048;
+      root.rotation.z = Math.sin(time * 0.1) * 0.004 + travel * 0.12;
+      root.scale.setScalar(1.0 + travel * 0.06);
+
+      const lineIndex = Math.min(copyLines.length - 1, Math.floor(progress * copyLines.length));
+      setCenterLine(lineIndex);
+      const pulse = Math.abs(((progress * copyLines.length) % 1) - 0.5) * 2;
+      centerText.style.opacity = String(0.86 + pulse * 0.12);
+      centerText.style.transform = `translate(-50%, -50%) scale(${1 + (1 - pulse) * 0.014})`;
+
+      cursorMoveX(cursorX);
+      cursorMoveY(cursorY);
+
+      renderer.render(scene, camera);
+    }
+
+    animate();
+  </script>
+</body>
+</html>

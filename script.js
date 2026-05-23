@@ -2174,13 +2174,13 @@ if (window.gsap && window.ScrollTrigger) {
         // Particle — exact original colors
         ctx.beginPath();
         ctx.arc(p.x, p.y, (35 / 100) * (arm.length - i), 0, 2 * Math.PI);
-        ctx.strokeStyle = `hsla(${200 + i * 4}, 90%, 50%, 0.7)`;
+        ctx.strokeStyle = `hsla(${354 + i * 2}, 90%, 50%, 0.7)`;
         ctx.stroke();
 
         // Stick line — first particle connects to central target, rest to previous
         ctx.beginPath();
         ctx.lineWidth = 1;
-        ctx.strokeStyle = `hsla(${180 + i * 4}, 80%, 50%, 0.7)`;
+        ctx.strokeStyle = `hsla(${340 + i * 2}, 80%, 50%, 0.7)`;
         if (i === 0) {
           ctx.moveTo(target.x, target.y);
         } else {
