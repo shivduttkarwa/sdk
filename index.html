@@ -689,6 +689,23 @@
       </div><!-- /proc-layout -->
     </section>
 
+    <!-- ── Tubes CTA ── -->
+    <section class="tcta-section" id="hire">
+      <canvas id="tubes-canvas" aria-hidden="true"></canvas>
+      <div class="tcta-dim" aria-hidden="true"></div>
+      <div class="tcta-content">
+        <span class="eyebrow">Ready to create something great?</span>
+        <h2 class="tcta-headline">Let's build<br>something<br>remarkable.</h2>
+        <p class="tcta-sub">Open to freelance projects, collaborations &amp; full-time roles.</p>
+        <a href="#contact" class="tcta-btn">
+          <span>Get in Touch</span>
+          <svg width="16" height="16" viewBox="0 0 14 14" fill="none" aria-hidden="true">
+            <path d="M1 7h12M8 2l5 5-5 5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </a>
+      </div>
+    </section>
+
     <!-- ── Contact + Footer ── -->
     <section class="cf-section" id="contact">
       <div class="cf-glow" aria-hidden="true"></div>
@@ -781,6 +798,42 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
   <script src="script.js"></script>
+
+  <script type="module">
+    import TubesCursor from "https://cdn.jsdelivr.net/npm/threejs-components@0.0.19/build/cursors/tubes1.min.js";
+
+    const tubesCanvas = document.getElementById("tubes-canvas");
+    if (tubesCanvas) {
+      /* seed colors — crimson palette so the initial frame isn't default blue */
+      const app = TubesCursor(tubesCanvas, {
+        tubes: {
+          colors: ["#E03F4F","#c0162a","#8e1b12","#ff5060","#d8a24d"],
+          lights: { intensity: 320, colors: ["#E03F4F","#8e1b12","#d8a24d","#ff3040"] }
+        }
+      });
+
+      /* slow drift — stays within warm red/crimson band (hue 330–20, wrapping) */
+      let t = 0;
+      function crimsonLoop() {
+        t += 0.18;
+        /* oscillate: center 348°, spread ±28° for tubes; ±18° for lights */
+        const tubeColors  = Array.from({length: 10}, (_, i) => {
+          const h = ((348 + Math.sin((t + i * 2.5) * 0.04) * 28) + 360) % 360;
+          const l = 38 + Math.sin((t + i) * 0.05) * 10;
+          return `hsl(${h},88%,${l}%)`;
+        });
+        const lightColors = Array.from({length: 12}, (_, i) => {
+          const h = ((348 + Math.sin((t + i * 1.8) * 0.035) * 18) + 360) % 360;
+          const l = 32 + i * 1.5;
+          return `hsl(${h},90%,${l}%)`;
+        });
+        app.tubes.setColors(tubeColors);
+        app.tubes.setLightsColors(lightColors);
+        requestAnimationFrame(crimsonLoop);
+      }
+      crimsonLoop();
+    }
+  </script>
 
 </body>
 </html>

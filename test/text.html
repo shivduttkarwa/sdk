@@ -1,307 +1,214 @@
-<!doctype html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>What We Do Slow Cards Section</title>
+<div id="app">
+  <canvas id="canvas"></canvas>
+  <div class="hero">
+    <h1>Tubes</h1>
+    <h2>Cursor</h2>
+    <h3>Code link in my BIO</h3>
+    <p>Follow For More</p>
+  </div>
+</div>
 
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">
 
-  <style>
-    :root{
-      --ab-bg:#f7f7f2;
-      --ab-black:#10110d;
-      --ab-red:#f23a35;
-      --ab-gutter:clamp(1rem,2.8vw,3.25rem);
+/* body, html, #app {
+  margin: 0;
+  width: 100%;
+  height: 100%;
+}
+
+body {
+  touch-action: none;
+}
+
+#app {
+  height: 100%;
+  font-family: "Montserrat", serif;
+}
+
+#app a {
+  text-decoration: none;
+  color: #fff;
+}
+
+.hero {
+  position: relative;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
+
+h1, h2, p {
+  margin: 0;
+  padding: 0;
+  color: white;
+  text-shadow: 0 0 20px rgba(0, 0, 0, 1);
+  line-height: 100%;
+  user-select: none;
+}
+
+h1 {
+  font-size: 80px;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+h2 {
+  font-size: 60px;
+  font-weight: 500;
+  text-transform: uppercase;
+}
+
+#canvas {
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  overflow: hidden;
+}
+p{
+  color:white;
+  background:Black;
+  padding:10px;
+}
+
+h3 {
+  font-size: 20px;
+  font-weight: 500;
+  color:white;
+  text-transform: uppercase;
+} */
+
+body, html, #app {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+}
+
+body {
+  touch-action: none;
+  background: #000; /* Better background for Tubes Cursor */
+  font-family: "Montserrat", sans-serif;
+}
+
+#app {
+  position: relative;
+  height: 100%;
+  overflow: hidden;
+}
+
+#canvas {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: -1; /* Behind text */
+}
+
+.hero {
+  position: relative;
+  z-index: 10;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  gap: 12px;
+  padding: 20px;
+}
+
+h1, h2, h3, p {
+  margin: 0;
+  padding: 0;
+  color: #fff;
+  text-shadow: 0 0 20px rgba(0,0,0,0.9);
+  user-select: none;
+}
+
+/* Main Heading */
+h1 {
+  font-size: 80px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 3px;
+}
+
+/* Sub Heading */
+h2 {
+  font-size: 55px;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+/* Small Heading */
+h3 {
+  font-size: 22px;
+  font-weight: 500;
+  opacity: 0.9;
+  letter-spacing: 2px;
+}
+
+/* Paragraph Text */
+p {
+  font-size: 18px;
+  background: rgba(0,0,0,0.5);
+  padding: 10px 20px;
+  border-radius: 8px;
+  font-weight: 400;
+}
+
+/* -------- Responsive for Mobile -------- */
+@media (max-width: 768px) {
+  h1 { font-size: 50px; }
+  h2 { font-size: 35px; }
+  h3 { font-size: 16px; }
+  p  { font-size: 14px; padding: 8px 15px; }
+}
+
+@media (max-width: 480px) {
+  h1 { font-size: 38px; }
+  h2 { font-size: 28px; }
+}
+
+
+
+import TubesCursor from "https://cdn.jsdelivr.net/npm/threejs-components@0.0.19/build/cursors/tubes1.min.js"
+
+const app = TubesCursor(document.getElementById("canvas"), {
+  tubes: {
+    colors: ["#ff0000", "#00ff00", "#0000ff"],
+    lights: {
+      intensity: 250,
+      colors: ["#ff0000", "#00ff00", "#0000ff", "#ff00ff"]
     }
+  }
+})
 
-    *{box-sizing:border-box;margin:0;padding:0}
-    html{font-size:16px;scroll-behavior:smooth;background:var(--ab-bg)}
-    body{
-      min-height:100vh;
-      overflow-x:hidden;
-      background:var(--ab-bg);
-      color:var(--ab-black);
-      font-family:Inter,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
-    }
+// RAINBOW LOOP
+let hue = 0
+function rainbowLoop() {
+  hue = (hue + 1) % 360
 
-    /* ---------- DUMMY SECTIONS ---------- */
-    .dummy-section{
-      min-height:100vh;
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      padding:var(--ab-gutter);
-      background:var(--ab-bg);
-      border-bottom:1px solid rgba(16,17,13,.12);
-    }
+  const tubeColors = generateRainbowColors(10)
+  const lightColors = generateRainbowColors(12)
 
-    .dummy-section h1,
-    .dummy-section h2{
-      font-family:Anton,Impact,sans-serif;
-      text-transform:uppercase;
-      font-size:clamp(4rem,14vw,18rem);
-      line-height:.82;
-      letter-spacing:-.07em;
-      text-align:center;
-      max-width:10ch;
-    }
+  app.tubes.setColors(tubeColors)
+  app.tubes.setLightsColors(lightColors)
 
-    .dummy-section--bottom{
-      border-top:1px solid rgba(16,17,13,.12);
-      border-bottom:none;
-    }
+  requestAnimationFrame(rainbowLoop)
+}
 
-    /* ---------- WHAT WE DO SECTION ---------- */
-    .abc-services{
-      position:relative;
-      /* Bigger scroll area = cards enter/exit slower */
-      min-height:560vh;
-      padding:0 var(--ab-gutter);
-      background:var(--ab-bg);
-    }
+rainbowLoop()
 
-    .abc-services__sticky{
-      position:sticky;
-      top:0;
-      min-height:100vh;
-      display:grid;
-      grid-template-columns:repeat(12,1fr);
-      grid-template-rows:1fr auto 1fr;
-      align-items:center;
-      column-gap:1rem;
-      overflow:hidden;
-    }
-
-    .abc-big-word{
-      font-family:Anton,Impact,sans-serif;
-      font-size:clamp(5.2rem,16vw,18rem);
-      line-height:.8;
-      letter-spacing:-.06em;
-      text-transform:uppercase;
-      font-weight:900;
-      opacity:0;
-      transform:translateY(50%);
-      will-change:transform,opacity;
-      pointer-events:none;
-      position:relative;
-      z-index:1;
-    }
-
-    .abc-big-word--what{grid-column:1 / span 5;grid-row:1;align-self:end}
-    .abc-big-word--we{grid-column:8 / span 4;grid-row:2}
-    .abc-big-word--do{grid-column:4 / span 4;grid-row:3;align-self:start}
-
-    .abc-services__text{
-      grid-column:4 / span 4;
-      grid-row:2;
-      max-width:22rem;
-      font-size:clamp(1rem,1.35vw,1.4rem);
-      line-height:1.12;
-      font-weight:800;
-      letter-spacing:-.035em;
-      opacity:0;
-      transform:translateY(2rem);
-      will-change:transform,opacity;
-      position:relative;
-      z-index:2;
-    }
-
-    .abc-card-layer{
-      position:absolute;
-      inset:0;
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      pointer-events:none;
-      perspective:1200px;
-      z-index:5;
-    }
-
-    .abc-card{
-      position:absolute;
-      width:clamp(18rem,33vw,34rem);
-      min-height:clamp(20rem,44vh,30rem);
-      padding:clamp(1.1rem,1.6vw,1.7rem);
-      background:var(--ab-red);
-      color:#fff;
-      border-radius:.45rem;
-      display:flex;
-      flex-direction:column;
-      justify-content:space-between;
-      opacity:0;
-      transform:translateY(45%) rotate(var(--start-rotate)) scale(1.24);
-      box-shadow:0 2rem 4rem rgba(0,0,0,.18);
-      pointer-events:auto;
-      will-change:transform,opacity;
-    }
-
-    .abc-card h3{
-      max-width:80%;
-      font-size:clamp(1.5rem,2.2vw,2.7rem);
-      line-height:.92;
-      letter-spacing:-.05em;
-      text-transform:uppercase;
-      font-weight:900;
-    }
-
-    .abc-card p{
-      margin-top:.85rem;
-      max-width:80%;
-      font-weight:800;
-      line-height:1.1;
-      letter-spacing:-.03em;
-    }
-
-    .abc-card__bottom{
-      display:flex;
-      align-items:flex-end;
-      justify-content:space-between;
-      gap:1rem;
-      font-weight:900;
-    }
-
-    .abc-card__keywords{
-      display:flex;
-      flex-direction:column;
-      gap:.2rem;
-      font-size:clamp(1.2rem,2vw,2.4rem);
-      line-height:.92;
-      letter-spacing:-.04em;
-    }
-
-    .abc-card__num{
-      font-size:clamp(1.6rem,2.8vw,3.2rem);
-      letter-spacing:-.06em;
-    }
-
-    @media (max-width:900px){
-      .abc-services{min-height:auto;padding:0 var(--ab-gutter) 5rem}
-      .abc-services__sticky{
-        position:relative;
-        display:block;
-        min-height:auto;
-        padding:6rem 0;
-        overflow:visible;
-      }
-      .abc-big-word{opacity:1!important;transform:none!important;margin:.05em 0}
-      .abc-services__text{opacity:1!important;transform:none!important;margin:2rem 0}
-      .abc-card-layer{position:relative;display:grid;gap:1rem;perspective:none;margin-top:3rem}
-      .abc-card{position:relative;opacity:1!important;transform:none!important;width:100%;min-height:18rem}
-    }
-
-    @media (prefers-reduced-motion:reduce){
-      *,*::before,*::after{animation:none!important;transition:none!important;scroll-behavior:auto!important}
-      .abc-card,.abc-big-word,.abc-services__text{transform:none!important;opacity:1!important}
-    }
-  </style>
-</head>
-<body>
-
-  <section class="dummy-section dummy-section--top">
-    <h1>Dummy Section Above</h1>
-  </section>
-
-  <section class="abc-services" aria-label="What we do sticky service cards">
-    <div class="abc-services__sticky">
-      <h2 class="abc-big-word abc-big-word--what">What</h2>
-      <p class="abc-services__text">
-        Vision is nothing without execution. We build both. We create campaigns, films, and the systems that get them made.
-      </p>
-      <h2 class="abc-big-word abc-big-word--we">We</h2>
-      <h2 class="abc-big-word abc-big-word--do">Do</h2>
-
-      <div class="abc-card-layer">
-        <article class="abc-card" style="--start-rotate:10deg">
-          <div>
-            <h3>Brand & Creative</h3>
-            <p>We find your truth. Then define your identity and creative structure.</p>
-          </div>
-          <div class="abc-card__bottom">
-            <div class="abc-card__keywords"><span>Strategy</span><span>Narrative</span><span>Direction</span></div>
-            <span class="abc-card__num">01</span>
-          </div>
-        </article>
-
-        <article class="abc-card" style="--start-rotate:20deg">
-          <div>
-            <h3>Campaign & Film</h3>
-            <p>We tell stories that connect emotionally and perform commercially.</p>
-          </div>
-          <div class="abc-card__bottom">
-            <div class="abc-card__keywords"><span>Concept</span><span>Production</span><span>Storytelling</span></div>
-            <span class="abc-card__num">02</span>
-          </div>
-        </article>
-
-        <article class="abc-card" style="--start-rotate:-20deg">
-          <div>
-            <h3>Visual & Experiential</h3>
-            <p>We turn spaces into experiences you can feel.</p>
-          </div>
-          <div class="abc-card__bottom">
-            <div class="abc-card__keywords"><span>Design</span><span>Environments</span><span>Merch</span></div>
-            <span class="abc-card__num">03</span>
-          </div>
-        </article>
-
-        <article class="abc-card" style="--start-rotate:-5deg">
-          <div>
-            <h3>Growth & Partnership</h3>
-            <p>We connect creativity with operations so ideas ship, not die in a deck.</p>
-          </div>
-          <div class="abc-card__bottom">
-            <div class="abc-card__keywords"><span>PR</span><span>Process</span><span>Procurement</span></div>
-            <span class="abc-card__num">04</span>
-          </div>
-        </article>
-      </div>
-    </div>
-  </section>
-
-  <section class="dummy-section dummy-section--bottom">
-    <h2>Dummy Section Below</h2>
-  </section>
-
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
-  <script>
-    gsap.registerPlugin(ScrollTrigger);
-
-    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-
-    if(!reduceMotion){
-      const serviceTl = gsap.timeline({
-        scrollTrigger:{
-          trigger:'.abc-services',
-          start:'top top',
-          end:'bottom bottom',
-          scrub:1.8
-        }
-      });
-
-      /* Slower timing: each card now has a longer enter, a small hold, and a longer exit. */
-      serviceTl
-        .to('.abc-big-word--what', { opacity:1, y:0, duration:1.2, ease:'power3.out' }, 0)
-        .to('.abc-big-word--we', { opacity:1, y:0, duration:1.2, ease:'power3.out' }, .3)
-        .to('.abc-big-word--do', { opacity:1, y:0, duration:1.2, ease:'power3.out' }, .6)
-        .to('.abc-services__text', { opacity:1, y:0, duration:1.1, ease:'power3.out' }, .9)
-
-        .to('.abc-card:nth-child(1)', { opacity:1, y:'5%', rotate:10, scale:1, duration:2.1, ease:'power3.out' }, 1.3)
-        .to('.abc-card:nth-child(1)', { y:'-118%', rotate:-6, scale:.86, duration:2.3, ease:'power2.inOut' }, 3.9)
-
-        .to('.abc-card:nth-child(2)', { opacity:1, y:'5%', rotate:20, scale:1, duration:2.1, ease:'power3.out' }, 4.7)
-        .to('.abc-card:nth-child(2)', { y:'-118%', rotate:8, scale:.86, duration:2.3, ease:'power2.inOut' }, 7.3)
-
-        .to('.abc-card:nth-child(3)', { opacity:1, y:'5%', rotate:-20, scale:1, duration:2.1, ease:'power3.out' }, 8.1)
-        .to('.abc-card:nth-child(3)', { y:'-118%', rotate:-8, scale:.86, duration:2.3, ease:'power2.inOut' }, 10.7)
-
-        .to('.abc-card:nth-child(4)', { opacity:1, y:'5%', rotate:-5, scale:1, duration:2.1, ease:'power3.out' }, 11.5)
-        .to('.abc-card:nth-child(4)', { y:'-8%', rotate:0, scale:1, duration:2.4, ease:'power2.out' }, 14.1)
-        .to({}, { duration:1.5 });
-    }
-  </script>
-</body>
-</html>
+// Generate evenly spaced rainbow colors
+function generateRainbowColors(count) {
+  return Array.from({ length: count }, (_, i) => {
+    const h = (hue + (i * (360 / count))) % 360
+    return `hsl(${h}, 100%, 50%)`
+  })
+}
