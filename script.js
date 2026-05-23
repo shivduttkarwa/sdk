@@ -2071,8 +2071,8 @@ if (window.gsap && window.ScrollTrigger) {
   let frameStep = 0;
   let inView = false;
 
-  const ARMS    = 12;
-  const PER_ARM = 16;
+  const ARMS    = 18;
+  const PER_ARM = 22;
   const STICK   = 10;
 
   const target = { x: 0, y: 0, radius: 30 };
@@ -2117,25 +2117,32 @@ if (window.gsap && window.ScrollTrigger) {
 
   function frame() {
     frameStep++;
-    target.radius = 40 + 20 * Math.sin(frameStep / 10);
+    target.radius = 50 + 30 * Math.sin(frameStep / 10);
 
     if (mouse.active) {
       target.x = mouse.x;
       target.y = mouse.y;
     } else {
-      target.x = xC + 120 * Math.cos(frameStep / 50);
-      target.y = yC + 120 * Math.sin(frameStep / 20);
+      target.x = xC + 150 * Math.cos(frameStep / 50);
+      target.y = yC + 150 * Math.sin(frameStep / 20);
     }
 
+    // Fade trail — exact original
     ctx.beginPath();
     ctx.rect(0, 0, W, H);
-    ctx.fillStyle = 'rgba(10, 4, 18, 0.28)';
+    ctx.fillStyle = 'rgba(0, 0, 0, 0.3)';
+    ctx.fill();
+
+    // Central target dot
+    ctx.beginPath();
+    ctx.arc(target.x, target.y, 15, 0, 2 * Math.PI);
+    ctx.fillStyle = 'rgba(255, 255, 255, 0.1)';
     ctx.fill();
 
     for (let a = 0; a < arms.length; a++) {
-      const arm   = arms[a];
+      const arm    = arms[a];
       const aAngle = 2 * Math.PI * a / arms.length;
-      const ot    = {
+      const ot     = {
         x: target.x + target.radius * Math.cos(aAngle),
         y: target.y + target.radius * Math.sin(aAngle),
       };
@@ -2162,20 +2169,20 @@ if (window.gsap && window.ScrollTrigger) {
       }
 
       for (let i = 0; i < arm.length; i++) {
-        const p   = arm[i];
-        const hue = 345 + i * 4;
-        const r   = Math.max(0.4, (35 / 100) * (arm.length - i));
+        const p = arm[i];
 
+        // Particle — exact original colors
         ctx.beginPath();
-        ctx.arc(p.x, p.y, r, 0, 2 * Math.PI);
-        ctx.strokeStyle = `hsla(${hue}, 85%, 58%, 0.55)`;
+        ctx.arc(p.x, p.y, (35 / 100) * (arm.length - i), 0, 2 * Math.PI);
+        ctx.strokeStyle = `hsla(${200 + i * 4}, 90%, 50%, 0.7)`;
         ctx.stroke();
 
+        // Stick line — first particle connects to central target, rest to previous
         ctx.beginPath();
         ctx.lineWidth = 1;
-        ctx.strokeStyle = `hsla(${hue - 8}, 80%, 55%, 0.45)`;
+        ctx.strokeStyle = `hsla(${180 + i * 4}, 80%, 50%, 0.7)`;
         if (i === 0) {
-          ctx.moveTo(ot.x, ot.y);
+          ctx.moveTo(target.x, target.y);
         } else {
           ctx.moveTo(arm[i - 1].x, arm[i - 1].y);
         }
@@ -2195,13 +2202,18 @@ if (window.gsap && window.ScrollTrigger) {
 
   observer.observe(section);
 
-  section.addEventListener('mousemove', e => {
+  document.addEventListener('mousemove', e => {
     const rect = section.getBoundingClientRect();
-    mouse.x = e.clientX - rect.left;
-    mouse.y = e.clientY - rect.top;
-    mouse.active = true;
+    const lx = e.clientX - rect.left;
+    const ly = e.clientY - rect.top;
+    if (lx >= 0 && lx <= W && ly >= 0 && ly <= H) {
+      mouse.x = lx;
+      mouse.y = ly;
+      mouse.active = true;
+    } else {
+      mouse.active = false;
+    }
   });
-  section.addEventListener('mouseleave', () => { mouse.active = false; });
 
   resize();
   seedArms();

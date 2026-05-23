@@ -878,6 +878,7 @@ img {
   height: 100%;
   z-index: 2;
   pointer-events: none;
+  background: #000;
 }
 
 /* ── Showcase section (pill video + expand on scroll) ── */
