@@ -1,785 +1,225 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Samurai Coding Preloader</title>
+body {
+  background: #333;
+  margin: 0;
+  overflow: hidden;
+}
+canvas {
+  background: black;
+}
 
-  <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
+
+var App = {};
+
+jQuery(document).ready(function() {
+  // Setup canvas and app
+  App.setup();
+  // Launch animation loop
+  App.frame = function() {
+    App.update();
+    window.requestAnimationFrame(App.frame);
+  };
+	App.frame();
+  
+  jQuery('canvas#ourCanvas').on('click', function(event) {
+    App.hasUserClicked = !App.hasUserClicked;
+  });
+  
+  jQuery('canvas#ourCanvas').on('mousemove', function(event) {
+    App.target.x = event.pageX;
+    App.target.y = event.pageY;
+  });
+});
+
+App.setup = function() {
+  // Setup canvas and get canvas context
+  var canvas = document.createElement('canvas');
+  canvas.height = window.innerHeight;
+  canvas.width = window.innerWidth;
+  canvas.id = 'ourCanvas';
+  document.body.appendChild(canvas);
+  this.ctx = canvas.getContext('2d');
+  this.width = canvas.width;
+  this.height = canvas.height;
+  
+  // Define a few useful elements
+  this.stepCount = 0;
+  this.hasUserClicked = false;
+  this.xC = canvas.width / 2;
+  this.yC = canvas.height / 2;
+  this.target = {
+    x: this.xC,
+    y: this.yC,
+    radius: 20
+  };
+  this.armsPop = 18;
+  this.particlesPerArm = 22;
+  this.baseArmThickness = 35;
+  
+  // Create initial targets and arms
+  this.arms = [];
+  for (var i = 0; i < this.armsPop; i++) {
+    this.arms.push([]);
+  }
+  // Fill initial arms
+  this.initialBirth();
+  
+  // Some forces
+  this.gravity = -1;
+  this.springStiffness = 0.5;
+  this.viscosity = 0.1;
+  this.isElastic = false;
+};
+App.initialBirth = function() {
+  for (var armIndex = 0; armIndex < this.arms.length; armIndex++) {
+    var arm = this.arms[armIndex];
+    // Random arm length! Sorta.
+    var particlesNb = this.particlesPerArm + Math.ceil(this.particlesPerArm * Math.random());
+    for (var i = 0; i < particlesNb; i++) {
+      var x = this.width * Math.random();
+      var y = this.height * Math.random();
+      var particle = {
+        x: x,
+        y: y,
+        xLast: x,
+        yLast: y,
+        xSpeed: 0,
+        ySpeed: 0,
+        stickLength: 10,
+        name: 'seed' + this.stepCount
+      };
+
+      arm.push(particle);
     }
-
-    :root {
-      --red: #c01818;
-      --dark-red: #4b0505;
-      --gold: #f4c56f;
-      --cream: #fff1cf;
-      --black: #050303;
+  }
+  
+};
+App.update = function() {
+  // Evolve system
+  this.evolve();
+  // Move particles
+  this.move();
+  // Draw particles
+  this.draw();
+};
+App.evolve = function() {
+  this.stepCount++;
+  this.target.radius = 50 + 30 * Math.sin(this.stepCount / 10);
+};
+App.move = function() {
+  // This is inverse kinematics, the particles form an arm with N joints, and its shape adapts with a target contraint
+  // Move target point
+  if (!this.hasUserClicked) {
+    this.target.x = this.xC + 150 * Math.cos(this.stepCount / 50);
+    this.target.y = this.yC + 150 * Math.sin(this.stepCount / 20);
+  }
+  
+  // Move particles accordingly (on each arm)
+  for (var armIndex = 0; armIndex < this.arms.length; armIndex++) {
+    var arm = this.arms[armIndex];
+    var ownTargetAngle = 2 * Math.PI * armIndex / this.arms.length;
+    var ownTarget = {
+      x: this.target.x + this.target.radius * Math.cos(ownTargetAngle),
+      y: this.target.y + this.target.radius * Math.sin(ownTargetAngle),
     }
-
-    body {
-      min-height: 100vh;
-      overflow: hidden;
-      font-family: "Inter", "Segoe UI", Arial, sans-serif;
-      background: #090909;
-      color: white;
-    }
-
-    body.loaded {
-      overflow: auto;
-    }
-
-    .samurai-loader {
-      position: fixed;
-      inset: 0;
-      z-index: 9999;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      overflow: hidden;
-      background:
-        radial-gradient(circle at 50% 42%, rgba(180, 18, 18, 0.28), transparent 28%),
-        radial-gradient(circle at 20% 20%, rgba(244, 197, 111, 0.08), transparent 32%),
-        radial-gradient(circle at 80% 80%, rgba(180, 18, 18, 0.15), transparent 34%),
-        linear-gradient(135deg, #030202, #0c0606 48%, #030303);
-      transition:
-        opacity 0.95s cubic-bezier(.19, 1, .22, 1),
-        visibility 0.95s cubic-bezier(.19, 1, .22, 1);
-    }
-
-    .samurai-loader.hide {
-      opacity: 0;
-      visibility: hidden;
-      pointer-events: none;
-    }
-
-    .code-canvas {
-      position: absolute;
-      inset: 0;
-      width: 100%;
-      height: 100%;
-      opacity: 0.38;
-      mix-blend-mode: screen;
-    }
-
-    .loader-grid {
-      position: absolute;
-      inset: 0;
-      background-image:
-        linear-gradient(rgba(255,255,255,0.035) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(255,255,255,0.035) 1px, transparent 1px);
-      background-size: 72px 72px;
-      opacity: 0.28;
-      mask-image: radial-gradient(circle at center, black 0%, transparent 72%);
-    }
-
-    .vignette {
-      position: absolute;
-      inset: 0;
-      background:
-        radial-gradient(circle at center, transparent 0%, rgba(0,0,0,0.38) 58%, rgba(0,0,0,0.92) 100%);
-      pointer-events: none;
-    }
-
-    .loader-core {
-      position: relative;
-      width: min(560px, 94vw);
-      height: 620px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      isolation: isolate;
-    }
-
-    .core-aura {
-      position: absolute;
-      width: 390px;
-      height: 390px;
-      border-radius: 50%;
-      background:
-        radial-gradient(circle, rgba(190, 20, 20, 0.46), transparent 60%),
-        radial-gradient(circle at 38% 22%, rgba(244, 197, 111, 0.23), transparent 40%);
-      filter: blur(38px);
-      animation: auraPulse 2.8s ease-in-out infinite alternate;
-      z-index: -4;
-    }
-
-    @keyframes auraPulse {
-      from {
-        transform: scale(0.84);
-        opacity: 0.55;
+    for (var i = 0; i < arm.length; i++) {
+      var p = arm[i];
+      // Leading particle (particle bound to head at first, then the preceding particle)
+      var pLead = ( i == 0 ? ownTarget : arm[i-1] );
+      var angle = segmentAngleRad(p.x, p.y, pLead.x, pLead.y, false);
+      var dist = Math.sqrt(Math.pow(p.x - pLead.x, 2) + Math.pow(p.y - pLead.y, 2));
+      var translationDist = dist - p.stickLength;
+      if (translationDist < 0) {
+        angle += Math.PI;
+        translationDist = Math.abs(translationDist);
       }
-
-      to {
-        transform: scale(1.1);
-        opacity: 1;
+      /* Kinetic binding */
+      // Rotation, then translation for each particle/stick from head to tail
+      var dx = translationDist * Math.cos(angle);
+      var dy = translationDist * Math.sin(angle);
+      if (!this.isElastic) {
+        p.x += dx;
+        p.y -= dy;
       }
+      /* Forces */
+      var xAcc = this.springStiffness * dx - this.viscosity * p.xSpeed;
+      var yAcc = this.springStiffness * dy + this.gravity - this.viscosity * p.ySpeed;
+      p.xSpeed += xAcc;
+      p.ySpeed += yAcc;
+      p.x += 0.1 * p.xSpeed;
+      p.y -= 0.1 * p.ySpeed;
     }
+  }
+  
+};
+App.draw = function() {
+  // Add transparent layer for trace effect
+  this.ctx.beginPath();
+  this.ctx.rect(0, 0, this.width, this.height);
+  this.ctx.fillStyle = 'rgba(0, 0, 0, 0.3)';
+  this.ctx.fill();
+  
+  // Draw target
+  this.ctx.beginPath();
+  this.ctx.arc(this.target.x, this.target.y, 15, 0, 2 * Math.PI, false);
+  this.ctx.fillStyle = 'rgba(255, 255, 255, 0.1)';
+  this.ctx.fill();
+  
+  // Draw particles
+  for (var armIndex = 0; armIndex < this.arms.length; armIndex++) {
+    var arm = this.arms[armIndex];
+    for (var i = 0; i < arm.length; i++) {
+      var particle = arm[i];
+      if (i != 0) { var particleLead = arm[i-1]; }
 
-    .ring {
-      position: absolute;
-      border-radius: 50%;
-      border: 1px solid rgba(244, 197, 111, 0.18);
-      box-shadow:
-        inset 0 0 28px rgba(190, 20, 20, 0.18),
-        0 0 34px rgba(244, 197, 111, 0.08);
-      opacity: 0;
-      animation: ringReveal 1.1s ease forwards;
+      // Draw particle
+      this.ctx.beginPath();
+      this.ctx.arc(particle.x, particle.y, this.baseArmThickness / 100 * (arm.length - i), 0, 2 * Math.PI, false);
+      this.ctx.strokeStyle = 'hsla(' + (200 + i * 4) + ', 90%, 50%, 0.7)';
+      this.ctx.stroke();
+      // Draw its stick
+      this.ctx.beginPath();
+      this.ctx.lineWidth = 1;
+      this.ctx.strokeStyle = 'hsla(' + (180 + i * 4) + ', 80%, 50%, 0.7)';
+      if (i == 0) this.ctx.moveTo(this.target.x, this.target.y);
+      else this.ctx.moveTo(particleLead.x, particleLead.y);
+      this.ctx.lineTo(particle.x, particle.y);
+      this.ctx.stroke();
+
     }
-
-    .ring-1 {
-      width: 390px;
-      height: 390px;
-      animation:
-        ringReveal 1.1s ease forwards,
-        spin 18s linear infinite;
-      animation-delay: 0.4s, 1.2s;
-    }
-
-    .ring-2 {
-      width: 300px;
-      height: 300px;
-      border-style: dashed;
-      border-color: rgba(255,255,255,0.15);
-      animation:
-        ringReveal 1.1s ease forwards,
-        spinReverse 12s linear infinite;
-      animation-delay: 0.55s, 1.2s;
-    }
-
-    .ring-3 {
-      width: 465px;
-      height: 465px;
-      border-color: rgba(190, 20, 20, 0.18);
-      animation:
-        ringReveal 1.1s ease forwards,
-        spin 25s linear infinite;
-      animation-delay: 0.7s, 1.2s;
-    }
-
-    .ring::before {
-      content: "";
-      position: absolute;
-      top: 36px;
-      left: 50%;
-      width: 9px;
-      height: 9px;
-      border-radius: 50%;
-      background: var(--gold);
-      box-shadow:
-        0 0 12px var(--gold),
-        0 0 28px rgba(244, 197, 111, 0.65);
-    }
-
-    @keyframes ringReveal {
-      from {
-        opacity: 0;
-        transform: scale(0.74);
-      }
-
-      to {
-        opacity: 1;
-        transform: scale(1);
-      }
-    }
-
-    @keyframes spin {
-      to {
-        rotate: 360deg;
-      }
-    }
-
-    @keyframes spinReverse {
-      to {
-        rotate: -360deg;
-      }
-    }
-
-    /* ==============================
-       CROSSED SWORDS ASSEMBLY
-    ============================== */
-
-    .sword-emblem {
-      position: relative;
-      width: 340px;
-      height: 340px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      filter:
-        drop-shadow(0 0 22px rgba(190, 20, 20, 0.72))
-        drop-shadow(0 0 42px rgba(244, 197, 111, 0.18));
-      z-index: 3;
-      animation: emblemIdle 4.6s ease-in-out infinite;
-      animation-delay: 2.2s;
-    }
-
-    .sword-emblem::before {
-      content: "";
-      position: absolute;
-      width: 132px;
-      height: 132px;
-      border-radius: 50%;
-      background:
-        radial-gradient(circle, rgba(190, 20, 20, 0.45), transparent 62%);
-      border: 1px solid rgba(244, 197, 111, 0.22);
-      box-shadow:
-        inset 0 0 30px rgba(244, 197, 111, 0.08),
-        0 0 42px rgba(190, 20, 20, 0.45);
-      opacity: 0;
-      transform: scale(0.72);
-      animation: centerSealReveal 0.9s cubic-bezier(.19, 1, .22, 1) forwards;
-      animation-delay: 1.25s;
-      z-index: -1;
-    }
-
-    .sword-emblem::after {
-      content: "</>";
-      position: absolute;
-      font-size: 21px;
-      font-weight: 900;
-      letter-spacing: 2px;
-      color: rgba(255, 241, 207, 0.95);
-      text-shadow:
-        0 0 12px rgba(244, 197, 111, 0.7),
-        0 0 26px rgba(190, 20, 20, 0.7);
-      opacity: 0;
-      transform: scale(0.7);
-      animation: codeMarkReveal 0.7s cubic-bezier(.19, 1, .22, 1) forwards;
-      animation-delay: 1.85s;
-      z-index: 5;
-    }
-
-    .sword {
-      position: absolute;
-      width: 320px;
-      height: auto;
-      object-fit: contain;
-      transform-origin: center;
-      user-select: none;
-      pointer-events: none;
-      opacity: 0;
-      will-change: transform, opacity;
-    }
-
-    .sword-one {
-      transform: translate(-120vw, -120px) rotate(45deg) scale(0.92);
-      animation: swordOneAssemble 1.45s cubic-bezier(.16, 1, .3, 1) forwards;
-      animation-delay: 0.35s;
-    }
-
-    .sword-two {
-      transform: translate(120vw, 120px) rotate(-45deg) scaleX(-1) scale(0.92);
-      animation: swordTwoAssemble 1.45s cubic-bezier(.16, 1, .3, 1) forwards;
-      animation-delay: 0.5s;
-    }
-
-    @keyframes swordOneAssemble {
-      0% {
-        opacity: 0;
-        transform: translate(-120vw, -120px) rotate(45deg) scale(0.92);
-        filter: blur(4px);
-      }
-
-      72% {
-        opacity: 1;
-        transform: translate(10px, 4px) rotate(45deg) scale(1.04);
-        filter: blur(0);
-      }
-
-      100% {
-        opacity: 1;
-        transform: translate(0, 0) rotate(45deg) scale(1);
-        filter: blur(0);
-      }
-    }
-
-    @keyframes swordTwoAssemble {
-      0% {
-        opacity: 0;
-        transform: translate(120vw, 120px) rotate(-45deg) scaleX(-1) scale(0.92);
-        filter: blur(4px);
-      }
-
-      72% {
-        opacity: 1;
-        transform: translate(-10px, -4px) rotate(-45deg) scaleX(-1) scale(1.04);
-        filter: blur(0);
-      }
-
-      100% {
-        opacity: 1;
-        transform: translate(0, 0) rotate(-45deg) scaleX(-1) scale(1);
-        filter: blur(0);
-      }
-    }
-
-    @keyframes centerSealReveal {
-      to {
-        opacity: 1;
-        transform: scale(1);
-      }
-    }
-
-    @keyframes codeMarkReveal {
-      to {
-        opacity: 1;
-        transform: scale(1);
-      }
-    }
-
-    @keyframes emblemIdle {
-      0%, 100% {
-        transform: translateY(0) scale(1);
-      }
-
-      50% {
-        transform: translateY(-8px) scale(1.015);
-      }
-    }
-
-    .orbit-code {
-      position: absolute;
-      padding: 8px 12px;
-      border-radius: 999px;
-      border: 1px solid rgba(244, 197, 111, 0.18);
-      background: rgba(255,255,255,0.035);
-      backdrop-filter: blur(12px);
-      color: rgba(255, 241, 207, 0.78);
-      font-size: 11px;
-      letter-spacing: 1.4px;
-      font-family: "Consolas", monospace;
-      box-shadow: 0 0 22px rgba(190, 20, 20, 0.14);
-      animation: floatChip 3.6s ease-in-out infinite;
-      opacity: 0;
-      z-index: 4;
-    }
-
-    .chip-1 {
-      top: 108px;
-      left: 22px;
-      animation:
-        chipReveal 0.7s ease forwards,
-        floatChip 3.6s ease-in-out infinite;
-      animation-delay: 1.75s, 2.3s;
-    }
-
-    .chip-2 {
-      top: 145px;
-      right: 8px;
-      animation:
-        chipReveal 0.7s ease forwards,
-        floatChip 3.6s ease-in-out infinite;
-      animation-delay: 1.9s, 2.4s;
-    }
-
-    .chip-3 {
-      bottom: 158px;
-      left: 40px;
-      animation:
-        chipReveal 0.7s ease forwards,
-        floatChip 3.6s ease-in-out infinite;
-      animation-delay: 2.05s, 2.5s;
-    }
-
-    .chip-4 {
-      bottom: 118px;
-      right: 48px;
-      animation:
-        chipReveal 0.7s ease forwards,
-        floatChip 3.6s ease-in-out infinite;
-      animation-delay: 2.2s, 2.6s;
-    }
-
-    @keyframes chipReveal {
-      from {
-        opacity: 0;
-        transform: translateY(16px);
-      }
-
-      to {
-        opacity: 0.8;
-        transform: translateY(0);
-      }
-    }
-
-    @keyframes floatChip {
-      0%, 100% {
-        transform: translateY(0);
-        opacity: 0.65;
-      }
-
-      50% {
-        transform: translateY(-14px);
-        opacity: 1;
-      }
-    }
-
-    .loader-panel {
-      position: absolute;
-      bottom: 0;
-      width: min(470px, 90vw);
-      padding: 22px 24px 24px;
-      border-radius: 22px;
-      background:
-        linear-gradient(180deg, rgba(255,255,255,0.075), rgba(255,255,255,0.025)),
-        rgba(7, 7, 7, 0.74);
-      border: 1px solid rgba(244, 197, 111, 0.16);
-      backdrop-filter: blur(18px);
-      box-shadow:
-        inset 0 1px 0 rgba(255,255,255,0.08),
-        0 30px 90px rgba(0,0,0,0.58);
-      z-index: 6;
-      opacity: 0;
-      transform: translateY(22px);
-      animation: panelReveal 0.8s cubic-bezier(.19, 1, .22, 1) forwards;
-      animation-delay: 1.45s;
-    }
-
-    @keyframes panelReveal {
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
-    }
-
-    .panel-top {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 16px;
-      margin-bottom: 16px;
-    }
-
-    .panel-top h1 {
-      font-size: 13px;
-      letter-spacing: 4px;
-      text-transform: uppercase;
-      color: var(--cream);
-      font-weight: 900;
-      text-shadow: 0 0 18px rgba(244, 197, 111, 0.34);
-    }
-
-    .count {
-      font-size: 13px;
-      letter-spacing: 2px;
-      color: #ffffff;
-    }
-
-    .terminal {
-      min-height: 20px;
-      font-family: "Consolas", "Courier New", monospace;
-      font-size: 12px;
-      color: rgba(255, 239, 210, 0.72);
-      margin-bottom: 18px;
-      white-space: nowrap;
-      overflow: hidden;
-    }
-
-    .terminal::before {
-      content: "> ";
-      color: var(--red);
-      text-shadow: 0 0 12px rgba(190,20,20,0.8);
-    }
-
-    .cursor {
-      display: inline-block;
-      width: 7px;
-      height: 13px;
-      margin-left: 4px;
-      background: var(--gold);
-      vertical-align: middle;
-      animation: cursorBlink 0.8s steps(2) infinite;
-    }
-
-    @keyframes cursorBlink {
-      50% {
-        opacity: 0;
-      }
-    }
-
-    .progress-track {
-      position: relative;
-      width: 100%;
-      height: 7px;
-      border-radius: 999px;
-      overflow: hidden;
-      background: rgba(255,255,255,0.08);
-      box-shadow: inset 0 0 12px rgba(0,0,0,0.55);
-    }
-
-    .progress-bar {
-      width: 0%;
-      height: 100%;
-      border-radius: inherit;
-      background:
-        linear-gradient(90deg, var(--red), #d86a31, var(--gold), var(--cream));
-      box-shadow:
-        0 0 14px rgba(244, 197, 111, 0.8),
-        0 0 28px rgba(190,20,20,0.5);
-      transition: width 0.25s ease;
-    }
-
-    .progress-track::after {
-      content: "";
-      position: absolute;
-      inset: 0;
-      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.34), transparent);
-      transform: translateX(-120%);
-      animation: shine 1.9s ease-in-out infinite;
-    }
-
-    @keyframes shine {
-      to {
-        transform: translateX(120%);
-      }
-    }
-
-    .site-content {
-      min-height: 100vh;
-      display: grid;
-      place-items: center;
-      text-align: center;
-      padding: 40px;
-      background:
-        radial-gradient(circle at 50% 30%, rgba(190,20,20,0.18), transparent 36%),
-        linear-gradient(135deg, #070707, #0d0707);
-      opacity: 0;
-      transform: translateY(30px);
-      transition: 1s cubic-bezier(.19,1,.22,1);
-    }
-
-    body.loaded .site-content {
-      opacity: 1;
-      transform: translateY(0);
-    }
-
-    .site-content h2 {
-      font-size: clamp(42px, 8vw, 96px);
-      line-height: 0.92;
-      letter-spacing: -3px;
-      text-transform: uppercase;
-      color: #fff0cf;
-      text-shadow: 0 0 40px rgba(190,20,20,0.35);
-    }
-
-    .site-content p {
-      margin-top: 22px;
-      color: rgba(255,255,255,0.68);
-      max-width: 650px;
-      line-height: 1.7;
-    }
-
-    @media (max-width: 620px) {
-      .loader-core {
-        height: 600px;
-      }
-
-      .sword-emblem {
-        width: 260px;
-        height: 260px;
-      }
-
-      .sword {
-        width: 250px;
-      }
-
-      .ring-1 {
-        width: 320px;
-        height: 320px;
-      }
-
-      .ring-2 {
-        width: 250px;
-        height: 250px;
-      }
-
-      .ring-3 {
-        width: 385px;
-        height: 385px;
-      }
-
-      .orbit-code {
-        display: none;
-      }
-
-      .panel-top h1 {
-        font-size: 11px;
-        letter-spacing: 3px;
-      }
-    }
-  </style>
-</head>
-
-<body>
-
-  <div class="samurai-loader" id="loader">
-    <canvas class="code-canvas" id="codeCanvas"></canvas>
-
-    <div class="loader-grid"></div>
-    <div class="vignette"></div>
-
-    <div class="loader-core">
-      <div class="core-aura"></div>
-
-      <div class="ring ring-1"></div>
-      <div class="ring ring-2"></div>
-      <div class="ring ring-3"></div>
-
-      <div class="orbit-code chip-1">const craft = true;</div>
-      <div class="orbit-code chip-2">&lt;React /&gt;</div>
-      <div class="orbit-code chip-3">GSAP.timeline()</div>
-      <div class="orbit-code chip-4">deploy()</div>
-
-      <div class="sword-emblem">
-        <img class="sword sword-one" src="assets/sword-red.png" alt="Samurai sword">
-        <img class="sword sword-two" src="assets/sword-red.png" alt="Samurai sword">
-      </div>
-
-      <div class="loader-panel">
-        <div class="panel-top">
-          <h1>Forging Interface</h1>
-          <div class="count" id="count">000%</div>
-        </div>
-
-        <div class="terminal">
-          <span id="terminalText"></span><span class="cursor"></span>
-        </div>
-
-        <div class="progress-track">
-          <div class="progress-bar" id="progressBar"></div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <main class="site-content">
-    <div>
-      <h2>Code. Craft. Honor.</h2>
-      <p>
-        Your samurai coding portfolio is ready. Replace this content with your actual website.
-      </p>
-    </div>
-  </main>
-
-  <script>
-    const canvas = document.getElementById("codeCanvas");
-    const ctx = canvas.getContext("2d");
-
-    let width;
-    let height;
-    let columns;
-    let drops;
-
-    const symbols = [
-      "0", "1", "{", "}", "<", ">", "/", "=", ";",
-      "JS", "CSS", "HTML", "React", "GSAP", "const", "let", "fn"
-    ];
-
-    function resizeCanvas() {
-      width = canvas.width = window.innerWidth;
-      height = canvas.height = window.innerHeight;
-      columns = Math.floor(width / 26);
-      drops = Array(columns).fill(1);
-    }
-
-    resizeCanvas();
-    window.addEventListener("resize", resizeCanvas);
-
-    function drawCodeRain() {
-      ctx.fillStyle = "rgba(5, 3, 3, 0.12)";
-      ctx.fillRect(0, 0, width, height);
-
-      ctx.font = "13px Consolas, monospace";
-
-      for (let i = 0; i < drops.length; i++) {
-        const text = symbols[Math.floor(Math.random() * symbols.length)];
-        const x = i * 26;
-        const y = drops[i] * 22;
-
-        ctx.fillStyle = Math.random() > 0.86
-          ? "rgba(244, 197, 111, 0.82)"
-          : "rgba(190, 42, 32, 0.48)";
-
-        ctx.fillText(text, x, y);
-
-        if (y > height && Math.random() > 0.965) {
-          drops[i] = 0;
-        }
-
-        drops[i]++;
-      }
-
-      requestAnimationFrame(drawCodeRain);
-    }
-
-    drawCodeRain();
-
-    const loader = document.getElementById("loader");
-    const progressBar = document.getElementById("progressBar");
-    const count = document.getElementById("count");
-    const terminalText = document.getElementById("terminalText");
-
-    const lines = [
-      "loading sword assets...",
-      "assembling crossed blades...",
-      "compiling samurai interface...",
-      "syncing code particles...",
-      "forging modern interactions...",
-      "deployment honor ready..."
-    ];
-
-    let progress = 0;
-    let lineIndex = 0;
-    let charIndex = 0;
-    let currentText = "";
-
-    function typeTerminal() {
-      const fullLine = lines[lineIndex];
-
-      if (charIndex < fullLine.length) {
-        currentText += fullLine.charAt(charIndex);
-        terminalText.textContent = currentText;
-        charIndex++;
-        setTimeout(typeTerminal, 38);
-      } else {
-        setTimeout(() => {
-          currentText = "";
-          charIndex = 0;
-          lineIndex = (lineIndex + 1) % lines.length;
-          terminalText.textContent = "";
-          typeTerminal();
-        }, 650);
-      }
-    }
-
-    typeTerminal();
-
-    const loadInterval = setInterval(() => {
-      const speed = progress < 74 ? Math.random() * 7 : Math.random() * 3;
-      progress += speed;
-
-      if (progress >= 100) {
-        progress = 100;
-        clearInterval(loadInterval);
-
-        progressBar.style.width = "100%";
-        count.textContent = "100%";
-
-        setTimeout(() => {
-          loader.classList.add("hide");
-          document.body.classList.add("loaded");
-        }, 650);
-      }
-
-      const cleanProgress = Math.floor(progress);
-      progressBar.style.width = cleanProgress + "%";
-      count.textContent = String(cleanProgress).padStart(3, "0") + "%";
-    }, 120);
-  </script>
-
-</body>
-</html>
+  }
+};
+
+
+
+/**
+ * @param {Number} Xstart X value of the segment starting point
+ * @param {Number} Ystart Y value of the segment starting point
+ * @param {Number} Xtarget X value of the segment target point
+ * @param {Number} Ytarget Y value of the segment target point
+ * @param {Boolean} realOrWeb true if Real (Y towards top), false if Web (Y towards bottom)
+ * @returns {Number} Angle between 0 and 2PI
+ */
+segmentAngleRad = function(Xstart, Ystart, Xtarget, Ytarget, realOrWeb) {
+	var result;// Will range between 0 and 2PI
+	if (Xstart == Xtarget) {
+		if (Ystart == Ytarget) {
+			result = 0; 
+		} else if (Ystart < Ytarget) {
+			result = Math.PI/2;
+		} else if (Ystart > Ytarget) {
+			result = 3*Math.PI/2;
+		} else {}
+	} else if (Xstart < Xtarget) {
+		result = Math.atan((Ytarget - Ystart)/(Xtarget - Xstart));
+	} else if (Xstart > Xtarget) {
+		result = Math.PI + Math.atan((Ytarget - Ystart)/(Xtarget - Xstart));
+	}
+	
+	result = (result + 2*Math.PI)%(2*Math.PI);
+	
+	if (!realOrWeb) {
+		result = 2*Math.PI - result;
+	}
+	
+	return result;
+}

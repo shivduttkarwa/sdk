@@ -2058,4 +2058,153 @@ if (window.gsap && window.ScrollTrigger) {
       if (!raf) raf = requestAnimationFrame(step);
     });
   });
+
+// ── Showcase tentacle canvas ──
+(function initTentacleCanvas() {
+  const section = document.getElementById('showcase');
+  const canvas  = document.getElementById('tentacle-canvas');
+  if (!canvas || !section) return;
+
+  const ctx = canvas.getContext('2d');
+  let W, H, xC, yC;
+  let raf = null;
+  let frameStep = 0;
+  let inView = false;
+
+  const ARMS    = 12;
+  const PER_ARM = 16;
+  const STICK   = 10;
+
+  const target = { x: 0, y: 0, radius: 30 };
+  const mouse  = { x: -9999, y: -9999, active: false };
+  let arms = [];
+
+  function resize() {
+    const rect  = section.getBoundingClientRect();
+    W = canvas.width  = rect.width;
+    H = canvas.height = rect.height;
+    xC = W / 2;
+    yC = H / 2;
+    target.x = xC;
+    target.y = yC;
+  }
+
+  function seedArms() {
+    arms = [];
+    for (let a = 0; a < ARMS; a++) {
+      const arm = [];
+      const n   = PER_ARM + Math.ceil(PER_ARM * Math.random());
+      for (let i = 0; i < n; i++) {
+        const x = W * Math.random();
+        const y = H * Math.random();
+        arm.push({ x, y, xSpeed: 0, ySpeed: 0, stickLength: STICK });
+      }
+      arms.push(arm);
+    }
+  }
+
+  function angleRad(x1, y1, x2, y2) {
+    if (x1 === x2) {
+      if (y1 === y2) return 0;
+      return y1 < y2 ? Math.PI / 2 : 3 * Math.PI / 2;
+    }
+    let r = x1 < x2
+      ? Math.atan((y2 - y1) / (x2 - x1))
+      : Math.PI + Math.atan((y2 - y1) / (x2 - x1));
+    r = (r + 2 * Math.PI) % (2 * Math.PI);
+    return 2 * Math.PI - r;
+  }
+
+  function frame() {
+    frameStep++;
+    target.radius = 40 + 20 * Math.sin(frameStep / 10);
+
+    if (mouse.active) {
+      target.x = mouse.x;
+      target.y = mouse.y;
+    } else {
+      target.x = xC + 120 * Math.cos(frameStep / 50);
+      target.y = yC + 120 * Math.sin(frameStep / 20);
+    }
+
+    ctx.beginPath();
+    ctx.rect(0, 0, W, H);
+    ctx.fillStyle = 'rgba(10, 4, 18, 0.28)';
+    ctx.fill();
+
+    for (let a = 0; a < arms.length; a++) {
+      const arm   = arms[a];
+      const aAngle = 2 * Math.PI * a / arms.length;
+      const ot    = {
+        x: target.x + target.radius * Math.cos(aAngle),
+        y: target.y + target.radius * Math.sin(aAngle),
+      };
+
+      for (let i = 0; i < arm.length; i++) {
+        const p    = arm[i];
+        const lead = i === 0 ? ot : arm[i - 1];
+        const ang  = angleRad(p.x, p.y, lead.x, lead.y);
+        const dist = Math.hypot(p.x - lead.x, p.y - lead.y);
+        let td     = dist - p.stickLength;
+        let ang2   = ang;
+        if (td < 0) { ang2 += Math.PI; td = -td; }
+
+        const dx = td * Math.cos(ang2);
+        const dy = td * Math.sin(ang2);
+
+        p.x += dx;
+        p.y -= dy;
+
+        p.xSpeed += 0.5 * dx - 0.1 * p.xSpeed;
+        p.ySpeed += 0.5 * dy - 1   - 0.1 * p.ySpeed;
+        p.x += 0.1 * p.xSpeed;
+        p.y -= 0.1 * p.ySpeed;
+      }
+
+      for (let i = 0; i < arm.length; i++) {
+        const p   = arm[i];
+        const hue = 345 + i * 4;
+        const r   = Math.max(0.4, (35 / 100) * (arm.length - i));
+
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, r, 0, 2 * Math.PI);
+        ctx.strokeStyle = `hsla(${hue}, 85%, 58%, 0.55)`;
+        ctx.stroke();
+
+        ctx.beginPath();
+        ctx.lineWidth = 1;
+        ctx.strokeStyle = `hsla(${hue - 8}, 80%, 55%, 0.45)`;
+        if (i === 0) {
+          ctx.moveTo(ot.x, ot.y);
+        } else {
+          ctx.moveTo(arm[i - 1].x, arm[i - 1].y);
+        }
+        ctx.lineTo(p.x, p.y);
+        ctx.stroke();
+      }
+    }
+
+    if (inView) raf = requestAnimationFrame(frame);
+  }
+
+  const observer = new IntersectionObserver(entries => {
+    inView = entries[0].isIntersecting;
+    if (inView && !raf) raf = requestAnimationFrame(frame);
+    if (!inView && raf) { cancelAnimationFrame(raf); raf = null; }
+  }, { threshold: 0.1 });
+
+  observer.observe(section);
+
+  section.addEventListener('mousemove', e => {
+    const rect = section.getBoundingClientRect();
+    mouse.x = e.clientX - rect.left;
+    mouse.y = e.clientY - rect.top;
+    mouse.active = true;
+  });
+  section.addEventListener('mouseleave', () => { mouse.active = false; });
+
+  resize();
+  seedArms();
+  window.addEventListener('resize', () => { resize(); seedArms(); });
+})();
 })();
