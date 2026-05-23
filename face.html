@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Face</title>
+  <title>Portal</title>
 
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -11,13 +11,13 @@
     html, body {
       min-height: 100%;
       overflow-x: hidden;
-      background: #060102;
+      background: #050101;
     }
 
     .aleph-scroll {
       position: relative;
       height: 880vh;
-      background: #060102;
+      background: #050101;
     }
 
     .aleph-stage {
@@ -25,37 +25,9 @@
       height: 100vh;
       width: 100%;
       overflow: hidden;
-      isolation: isolate;
       background:
-        radial-gradient(circle at 50% 43%, rgba(180, 20, 20, 0.42), transparent 31%),
-        radial-gradient(circle at 50% 116%, rgba(140, 30, 20, 0.55), transparent 34%),
-        radial-gradient(circle at 8% 22%, rgba(100, 10, 10, 0.65), transparent 39%),
-        linear-gradient(180deg, #1a0505 0%, #0d0202 49%, #180404 80%, #2a0808 145%);
-    }
-
-    .aleph-stage::before {
-      content: "";
-      position: absolute;
-      inset: 0;
-      z-index: 4;
-      pointer-events: none;
-      background:
-        radial-gradient(circle at 50% 48%, transparent 0 42%, rgba(30, 4, 4, 0.17) 70%, rgba(10, 1, 1, 0.48) 100%),
-        radial-gradient(circle at 50% 112%, rgba(180, 40, 40, 0.18), transparent 43%),
-        linear-gradient(90deg, rgba(0,0,0,0.2), transparent 26%, transparent 74%, rgba(0,0,0,0.18));
-    }
-
-    .aleph-stage::after {
-      content: "";
-      position: absolute;
-      inset: 0;
-      z-index: 5;
-      pointer-events: none;
-      opacity: 0.28;
-      background:
-        repeating-linear-gradient(0deg, rgba(255,180,160,0.018) 0 1px, transparent 1px 4px),
-        radial-gradient(circle at 50% 50%, transparent 0 52%, rgba(0,0,0,0.22) 100%);
-      mix-blend-mode: soft-light;
+        radial-gradient(circle at 50% 50%, rgba(35,3,3,0.7) 0%, transparent 55%),
+        #050101;
     }
 
     #alephCanvas {
@@ -88,35 +60,34 @@
     gsap.registerPlugin(ScrollTrigger);
 
     const scrollSection = document.querySelector('#alephScroll');
-    const canvas = document.querySelector('#alephCanvas');
+    const canvas        = document.querySelector('#alephCanvas');
 
-    const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true, powerPreference: 'high-performance' });
-    renderer.setClearColor(0x000000, 0);
+    const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: false, powerPreference: 'high-performance' });
+    renderer.setClearColor(0x050101, 1);   // opaque dark — no CSS bleed
     renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
 
     const scene = new THREE.Scene();
-    scene.fog = new THREE.FogExp2(0x080101, 0.018);
+    scene.fog = new THREE.FogExp2(0x050101, 0.024);  // rings fade to dark at distance
 
-    const camera = new THREE.PerspectiveCamera(43, window.innerWidth / window.innerHeight, 0.03, 220);
-    camera.position.set(0, 0.08, 18.5);
+    const camera = new THREE.PerspectiveCamera(46, window.innerWidth / window.innerHeight, 0.03, 200);
+    camera.position.set(0, 0, 18.5);
 
     const root = new THREE.Group();
     scene.add(root);
 
-    // Color palette — kind 0: gold, kind 1: crimson, kind 2: dark maroon, kind 3: atmosphere
+    // Samurai palette only — gold / crimson / deep maroon
     const uniforms = {
       uTime:   { value: 0 },
       uDpr:    { value: Math.min(window.devicePixelRatio || 1, 2) },
-      uColorA: { value: new THREE.Color('#c89828') },  // gold  — rim, boss, spoke ends
-      uColorB: { value: new THREE.Color('#c0141c') },  // crimson — main rings, spokes
-      uColorC: { value: new THREE.Color('#3a0606') },  // dark maroon — inner ring
+      uColorA: { value: new THREE.Color('#c89020') },   // gold  — rim, boss, spoke ends
+      uColorB: { value: new THREE.Color('#b81020') },   // crimson — main rings / spokes
+      uColorC: { value: new THREE.Color('#1e0204') },   // deep maroon — depth fade
     };
 
-    // NormalBlending = matte, solid-colour particles, no shiny glow
     const pointMaterial = new THREE.ShaderMaterial({
       transparent: true,
-      depthWrite: false,
-      blending: THREE.NormalBlending,
+      depthWrite:  false,
+      blending:    THREE.NormalBlending,
       uniforms,
       vertexShader: `
         uniform float uTime;
@@ -128,10 +99,12 @@
         attribute float aSeed;
         varying float vAlpha;
         varying float vKind;
+        varying float vDepth;
 
         void main() {
           vec3 p = position;
-          p.z += sin(uTime * 0.42 + aSeed * 6.2831) * 0.012;
+          // Uniform slow pulse — no per-particle sparkling
+          p.z += sin(uTime * 0.30 + aSeed * 1.40) * 0.006;
 
           vec4 mvPosition = modelViewMatrix * vec4(p, 1.0);
           gl_Position = projectionMatrix * mvPosition;
@@ -139,6 +112,7 @@
           gl_PointSize = aSize * uDpr * perspective;
           vAlpha = aAlpha;
           vKind  = aKind;
+          vDepth = aDepth;
         }
       `,
       fragmentShader: `
@@ -147,6 +121,7 @@
         uniform vec3 uColorC;
         varying float vAlpha;
         varying float vKind;
+        varying float vDepth;
 
         void main() {
           vec2 uv = gl_PointCoord - 0.5;
@@ -154,32 +129,35 @@
           float disc = smoothstep(0.5, 0.08, d);
 
           vec3 col;
-          if      (vKind < 0.5) col = uColorA;                       // gold
-          else if (vKind < 1.5) col = uColorB;                       // crimson
-          else if (vKind < 2.5) col = uColorC;                       // dark inner
-          else                  col = mix(uColorC, uColorB, 0.18);   // atmosphere
+          if (vKind < 0.5) {
+            // Gold — rim and boss; slightly darkened at depth
+            col = mix(uColorA, uColorC, clamp(vDepth * 0.38, 0.0, 1.0));
+          } else {
+            // Crimson — rings / spokes; fades to deep maroon
+            col = mix(uColorB, uColorC, clamp(vDepth * 0.52, 0.0, 1.0));
+          }
 
           gl_FragColor = vec4(col, disc * vAlpha);
         }
       `
     });
 
-    // Lines keep AdditiveBlending for a subtle wire-frame glow
-    const lineGold = new THREE.LineBasicMaterial({ color: 0xc89020, transparent: true, opacity: 0.42, blending: THREE.AdditiveBlending, depthWrite: false });
-    const lineRed  = new THREE.LineBasicMaterial({ color: 0x980e14, transparent: true, opacity: 0.22, blending: THREE.AdditiveBlending, depthWrite: false });
+    // Wire-frame ring lines — additive at low opacity for subtle glow on edges
+    const lineGold = new THREE.LineBasicMaterial({ color: 0xc89020, transparent: true, opacity: 0.38, blending: THREE.AdditiveBlending, depthWrite: false });
+    const lineRed  = new THREE.LineBasicMaterial({ color: 0x980e14, transparent: true, opacity: 0.18, blending: THREE.AdditiveBlending, depthWrite: false });
     const animatedLines = [];
     const textPlanes    = [];
 
-    // Shield ring definitions
-    const SHIELD_RINGS = [
-      { r: 2.18, kind: 0 },  // outer rim — gold
-      { r: 1.98, kind: 0 },  // inner rim lip — gold
-      { r: 1.55, kind: 1 },  // ring 1 — crimson
-      { r: 1.08, kind: 1 },  // ring 2 — crimson
-      { r: 0.62, kind: 2 },  // inner ring — dark maroon
-      { r: 0.24, kind: 0 },  // center boss — gold
+    // Ring definitions — two gold (rim), three crimson, gold boss
+    const RINGS = [
+      { r: 2.20, kind: 0 },
+      { r: 1.94, kind: 0 },
+      { r: 1.52, kind: 1 },
+      { r: 1.08, kind: 1 },
+      { r: 0.62, kind: 1 },
+      { r: 0.22, kind: 0 },
     ];
-    const SPOKE_COUNT = 8;
+    const SPOKES = 8;
 
     function circleProfile(r, count) {
       const pts = [];
@@ -190,105 +168,104 @@
       return pts;
     }
 
-    function addPoint(arrays, x, y, z, size, alpha, depth, kind, seed = Math.random()) {
-      arrays.positions.push(x, y, z);
-      arrays.sizes.push(size);
-      arrays.alphas.push(alpha);
-      arrays.depths.push(depth);
-      arrays.kinds.push(kind);
-      arrays.seeds.push(seed);
+    function addPoint(a, x, y, z, size, alpha, depth, kind, seed = Math.random()) {
+      a.positions.push(x, y, z);
+      a.sizes.push(size);
+      a.alphas.push(alpha);
+      a.depths.push(depth);
+      a.kinds.push(kind);
+      a.seeds.push(seed);
     }
 
-    function addLine(points, material, baseOpacity, depth, scale, z) {
+    function addLine(pts, mat, baseOpacity, depth, z) {
       const verts = [];
-      for (const p of points) verts.push(p[0] * scale, p[1] * scale, z);
-      const geometry = new THREE.BufferGeometry();
-      geometry.setAttribute('position', new THREE.Float32BufferAttribute(verts, 3));
-      const line = new THREE.Line(geometry, material.clone());
+      for (const p of pts) verts.push(p[0], p[1], z);
+      const geo  = new THREE.BufferGeometry();
+      geo.setAttribute('position', new THREE.Float32BufferAttribute(verts, 3));
+      const line = new THREE.Line(geo, mat.clone());
       line.material.opacity = baseOpacity;
       root.add(line);
       animatedLines.push({ line, baseOpacity, depth });
     }
 
-    function buildShieldLayers() {
-      const arrays = { positions: [], sizes: [], alphas: [], depths: [], kinds: [], seeds: [] };
+    function buildPortalLayers() {
+      const a = { positions: [], sizes: [], alphas: [], depths: [], kinds: [], seeds: [] };
 
-      for (let layer = 0; layer < 72; layer++) {
-        const d     = layer / 71;
-        const z     = 7.5 - d * 38.0;
-        const scale = 1.10 - d * 0.38;
-        const alpha = 0.85 * Math.pow(1 - d, 0.30) + 0.05;
+      // 80 circle layers — all same physical radius (perspective makes near=large, far=small)
+      for (let layer = 0; layer < 80; layer++) {
+        const d     = layer / 79;
+        const z     = 8.0 - d * 42.0;   // z: +8 (front) → -34 (back)
+        const alpha = 0.82 * Math.pow(1 - d, 0.22) + 0.05;
 
         // Concentric rings
-        for (const ring of SHIELD_RINGS) {
-          const r     = ring.r * scale;
-          const count = Math.max(8, Math.floor(r * 165));
+        for (const ring of RINGS) {
+          const count = Math.max(10, Math.floor(ring.r * 175));
           for (let i = 0; i < count; i++) {
-            const a = (i / count) * Math.PI * 2;
-            addPoint(arrays,
-              Math.cos(a) * r + (Math.random() - 0.5) * 0.006,
-              Math.sin(a) * r + (Math.random() - 0.5) * 0.006,
+            const ang = (i / count) * Math.PI * 2;
+            addPoint(a,
+              Math.cos(ang) * ring.r + (Math.random() - 0.5) * 0.005,
+              Math.sin(ang) * ring.r + (Math.random() - 0.5) * 0.005,
               z,
-              0.015 + Math.random() * 0.013,
-              alpha * (0.78 + Math.random() * 0.36),
-              d * 2.2,
+              0.014 + Math.random() * 0.012,
+              alpha * (0.80 + Math.random() * 0.28),
+              d * 2.0,
               ring.kind
             );
           }
         }
 
-        // 8 radial spokes — gold at junctions, crimson through middle
-        const STEPS = 42;
-        for (let spoke = 0; spoke < SPOKE_COUNT; spoke++) {
-          const a = (spoke / SPOKE_COUNT) * Math.PI * 2;
-          for (let s = 0; s <= STEPS; s++) {
-            const t = s / STEPS;
-            const r = (0.24 + t * (2.18 - 0.24)) * scale;
-            const atJunction = t < 0.09 || t > 0.91;
-            addPoint(arrays,
-              Math.cos(a) * r + (Math.random() - 0.5) * 0.005,
-              Math.sin(a) * r + (Math.random() - 0.5) * 0.005,
+        // 8 spokes — gold at rim/boss junctions, crimson through middle
+        const STEPS = 40;
+        for (let s = 0; s < SPOKES; s++) {
+          const ang = (s / SPOKES) * Math.PI * 2;
+          for (let t = 0; t <= STEPS; t++) {
+            const p = t / STEPS;
+            const r = 0.22 + p * (2.20 - 0.22);
+            addPoint(a,
+              Math.cos(ang) * r + (Math.random() - 0.5) * 0.004,
+              Math.sin(ang) * r + (Math.random() - 0.5) * 0.004,
               z,
-              0.009 + Math.random() * 0.007,
-              alpha * (0.35 + Math.random() * 0.25),
-              d * 2.2,
-              atJunction ? 0 : 1
+              0.008 + Math.random() * 0.006,
+              alpha * (0.30 + Math.random() * 0.18),
+              d * 2.0,
+              (p < 0.08 || p > 0.92) ? 0 : 1   // gold ends, crimson shaft
             );
           }
         }
 
-        // Wire-frame lines every 4 layers: outer rim, ring1, boss
-        if (layer % 4 === 0) {
-          addLine(circleProfile(2.18, 220), lineGold, 0.40, d * 2.4, scale, z);
-          addLine(circleProfile(1.55, 170), lineRed,  0.20, d * 2.4, scale, z);
-          addLine(circleProfile(0.24,  70), lineGold, 0.32, d * 2.4, scale, z);
-        }
+        // Wire-frame lines: outer rim every 5 layers, mid ring every 10
+        if (layer % 5 === 0)
+          addLine(circleProfile(2.20, 220), lineGold, 0.36, d * 2.2, z);
+        if (layer % 5 === 0)
+          addLine(circleProfile(1.52, 165), lineRed,  0.17, d * 2.2, z);
+        if (layer % 10 === 0)
+          addLine(circleProfile(0.22,  65), lineGold, 0.26, d * 2.2, z);
       }
 
-      // Ambient scatter just outside the shield
-      for (let i = 0; i < 1600; i++) {
-        const a = Math.random() * Math.PI * 2;
-        const r = 1.9 + Math.pow(Math.random(), 0.6) * 1.3;
-        const z = 7.4 - Math.random() * 40.0;
-        addPoint(arrays,
-          Math.cos(a) * r, Math.sin(a) * r, z,
-          0.005 + Math.random() * 0.009,
-          0.014 + Math.random() * 0.038,
-          Math.random() * 1.8, 3
+      // Minimal dark scatter just outside rings — no bright colours
+      for (let i = 0; i < 700; i++) {
+        const ang = Math.random() * Math.PI * 2;
+        const r   = 2.25 + Math.random() * 0.9;
+        const z   = 8.0 - Math.random() * 42.0;
+        addPoint(a,
+          Math.cos(ang) * r, Math.sin(ang) * r, z,
+          0.005 + Math.random() * 0.007,
+          0.012 + Math.random() * 0.028,
+          0.8 + Math.random() * 1.2, 1   // crimson kind, darkened by depth
         );
       }
 
-      const geometry = new THREE.BufferGeometry();
-      geometry.setAttribute('position', new THREE.Float32BufferAttribute(arrays.positions, 3));
-      geometry.setAttribute('aSize',    new THREE.Float32BufferAttribute(arrays.sizes,     1));
-      geometry.setAttribute('aAlpha',   new THREE.Float32BufferAttribute(arrays.alphas,    1));
-      geometry.setAttribute('aDepth',   new THREE.Float32BufferAttribute(arrays.depths,    1));
-      geometry.setAttribute('aKind',    new THREE.Float32BufferAttribute(arrays.kinds,     1));
-      geometry.setAttribute('aSeed',    new THREE.Float32BufferAttribute(arrays.seeds,     1));
-      return geometry;
+      const geo = new THREE.BufferGeometry();
+      geo.setAttribute('position', new THREE.Float32BufferAttribute(a.positions, 3));
+      geo.setAttribute('aSize',    new THREE.Float32BufferAttribute(a.sizes,     1));
+      geo.setAttribute('aAlpha',   new THREE.Float32BufferAttribute(a.alphas,    1));
+      geo.setAttribute('aDepth',   new THREE.Float32BufferAttribute(a.depths,    1));
+      geo.setAttribute('aKind',    new THREE.Float32BufferAttribute(a.kinds,     1));
+      geo.setAttribute('aSeed',    new THREE.Float32BufferAttribute(a.seeds,     1));
+      return geo;
     }
 
-    root.add(new THREE.Points(buildShieldLayers(), pointMaterial));
+    root.add(new THREE.Points(buildPortalLayers(), pointMaterial));
 
     function createTextTexture(text) {
       const c   = document.createElement('canvas');
@@ -300,9 +277,9 @@
       ctx.textBaseline = 'middle';
       ctx.font         = '900 72px Inter, Arial, sans-serif';
       ctx.letterSpacing = '6px';
-      ctx.shadowColor  = 'rgba(224, 63, 79, 0.95)';
-      ctx.shadowBlur   = 28;
-      ctx.fillStyle    = 'rgba(255, 235, 225, 0.94)';
+      ctx.shadowColor  = 'rgba(200, 80, 20, 0.90)';
+      ctx.shadowBlur   = 24;
+      ctx.fillStyle    = 'rgba(248, 220, 185, 0.92)';
 
       const words = text.toUpperCase().split(' ');
       let line = '';
@@ -323,20 +300,20 @@
     }
 
     const deepTexts = [
-      { text: 'Shivdutt Karwa',         z:  5.4, y:  0.00, scale: 1.25 },
-      { text: 'Full Stack Developer',   z: -2.8, y:  0.06, scale: 1.12 },
-      { text: 'Crafted with precision', z:-10.8, y: -0.02, scale: 1.08 },
-      { text: 'Forged in code',         z:-18.8, y:  0.04, scale: 1.00 },
-      { text: 'Push limits',            z:-27.2, y:  0.00, scale: 0.96 },
+      { text: 'Shivdutt Karwa',         z:  5.4, y:  0.00, scale: 1.20 },
+      { text: 'Full Stack Developer',   z: -3.8, y:  0.00, scale: 1.08 },
+      { text: 'Crafted with precision', z:-12.5, y:  0.00, scale: 1.04 },
+      { text: 'Forged in code',         z:-21.0, y:  0.00, scale: 1.00 },
+      { text: 'Push limits',            z:-30.0, y:  0.00, scale: 0.96 },
     ];
 
     deepTexts.forEach(item => {
       const mat  = new THREE.MeshBasicMaterial({ map: createTextTexture(item.text), transparent: true, opacity: 0.0, blending: THREE.AdditiveBlending, depthWrite: false });
-      const geo  = new THREE.PlaneGeometry(5.6 * item.scale, 1.4 * item.scale);
+      const geo  = new THREE.PlaneGeometry(5.4 * item.scale, 1.35 * item.scale);
       const mesh = new THREE.Mesh(geo, mat);
-      mesh.position.set(0.32, item.y, item.z);
+      mesh.position.set(0, item.y, item.z);
       mesh.userData.baseZ       = item.z;
-      mesh.userData.baseOpacity = 0.88;
+      mesh.userData.baseOpacity = 0.85;
       textPlanes.push(mesh);
       root.add(mesh);
     });
@@ -388,34 +365,38 @@
 
       const time = clock.getElapsedTime();
       progress += (targetProgress - progress) * 0.08;
-      const travel = smootherstep((progress - 0.065) / 0.935);
+      const travel = smootherstep((progress - 0.05) / 0.95);
 
       uniforms.uTime.value = time;
 
-      const camZ    = 18.5 - travel * 39.5;
-      const targetZ =  4.7 - travel * 29.5;
-      camera.position.z += (camZ    - camera.position.z) * 0.065;
-      camera.position.x += ((mouseX * 0.14) - camera.position.x) * 0.045;
-      camera.position.y += ((0.08 - mouseY * 0.075) - camera.position.y) * 0.045;
-      camera.lookAt(0.24 + mouseX * 0.08, -0.02, targetZ);
+      // Straight-through travel — camera moves along z with no deviation
+      const camZ = 18.5 - travel * 53.0;   // 18.5 → -34.5  (through all 80 layers)
+      camera.position.z += (camZ - camera.position.z) * 0.065;
 
-      root.rotation.y += ((-0.15 + travel * 0.46 + mouseX * 0.04) - root.rotation.y) * 0.05;
-      root.rotation.x += ((-mouseY * 0.028) - root.rotation.x) * 0.05;
-      root.rotation.z  = Math.sin(time * 0.11) * 0.008;
-      root.scale.setScalar(1.0 + travel * 0.08);
+      // Very subtle mouse parallax — keeps feel of control without veering off axis
+      camera.position.x += ((mouseX * 0.04) - camera.position.x) * 0.04;
+      camera.position.y += ((-mouseY * 0.04) - camera.position.y) * 0.04;
+
+      // Always look straight ahead along z — no side drift
+      camera.lookAt(0, 0, camera.position.z - 6);
+
+      // No Y/X rotation on root — circles stay perfectly perpendicular
+      root.rotation.x = 0;
+      root.rotation.y = 0;
+      root.rotation.z = Math.sin(time * 0.07) * 0.004;  // barely-perceptible slow turn
 
       for (const mesh of textPlanes) {
-        const dz       = Math.abs(mesh.position.z - targetZ);
-        const visible  = smootherstep(1 - dz / 5.2);
+        const lookZ    = camera.position.z - 6;
+        const dz       = Math.abs(mesh.position.z - lookZ);
+        const visible  = smootherstep(1 - dz / 5.0);
         const tooClose = smootherstep((dz - 0.8) / 1.4);
         mesh.material.opacity = visible * tooClose * mesh.userData.baseOpacity;
-        mesh.position.z = mesh.userData.baseZ + Math.sin(time * 0.22 + mesh.userData.baseZ) * 0.04;
+        mesh.position.z = mesh.userData.baseZ + Math.sin(time * 0.18 + mesh.userData.baseZ) * 0.03;
         mesh.lookAt(camera.position);
       }
 
       for (const item of animatedLines) {
-        item.line.position.z       = travel * item.depth * 4.2 + Math.sin(time * 0.28 + item.depth * 7) * 0.025;
-        item.line.material.opacity = item.baseOpacity * (0.8 + 0.2 * Math.sin(time * 0.7 + item.depth * 9));
+        item.line.material.opacity = item.baseOpacity * (0.82 + 0.18 * Math.sin(time * 0.55 + item.depth * 5));
       }
 
       renderer.render(scene, camera);
