@@ -2059,164 +2059,38 @@ if (window.gsap && window.ScrollTrigger) {
     });
   });
 
-// ── Showcase tentacle canvas ──
-(function initTentacleCanvas() {
-  const section = document.getElementById('showcase');
-  const canvas  = document.getElementById('tentacle-canvas');
-  if (!canvas || !section) return;
-
-  const ctx = canvas.getContext('2d');
-  let W, H, xC, yC;
-  let raf = null;
-  let frameStep = 0;
-  let inView = false;
-
-  const ARMS    = 18;
-  const PER_ARM = 22;
-  const STICK   = 10;
-
-  const target = { x: 0, y: 0, radius: 30 };
-  const mouse  = { x: -9999, y: -9999, active: false };
-  let arms = [];
-
-  function resize() {
-    const rect  = section.getBoundingClientRect();
-    W = canvas.width  = rect.width;
-    H = canvas.height = rect.height;
-    xC = W / 2;
-    yC = H / 2;
-    target.x = xC;
-    target.y = yC;
-  }
-
-  function seedArms() {
-    arms = [];
-    for (let a = 0; a < ARMS; a++) {
-      const arm = [];
-      const n   = PER_ARM + Math.ceil(PER_ARM * Math.random());
-      for (let i = 0; i < n; i++) {
-        const x = W * Math.random();
-        const y = H * Math.random();
-        arm.push({ x, y, xSpeed: 0, ySpeed: 0, stickLength: STICK });
-      }
-      arms.push(arm);
-    }
-  }
-
-  function angleRad(x1, y1, x2, y2) {
-    if (x1 === x2) {
-      if (y1 === y2) return 0;
-      return y1 < y2 ? Math.PI / 2 : 3 * Math.PI / 2;
-    }
-    let r = x1 < x2
-      ? Math.atan((y2 - y1) / (x2 - x1))
-      : Math.PI + Math.atan((y2 - y1) / (x2 - x1));
-    r = (r + 2 * Math.PI) % (2 * Math.PI);
-    return 2 * Math.PI - r;
-  }
-
-  function frame() {
-    frameStep++;
-    target.radius = 50 + 30 * Math.sin(frameStep / 10);
-
-    if (mouse.active) {
-      target.x = mouse.x;
-      target.y = mouse.y;
-    } else {
-      target.x = xC + 150 * Math.cos(frameStep / 50);
-      target.y = yC + 150 * Math.sin(frameStep / 20);
-    }
-
-    // Fade trail — exact original
-    ctx.beginPath();
-    ctx.rect(0, 0, W, H);
-    ctx.fillStyle = 'rgba(0, 0, 0, 0.3)';
-    ctx.fill();
-
-    // Central target dot
-    ctx.beginPath();
-    ctx.arc(target.x, target.y, 15, 0, 2 * Math.PI);
-    ctx.fillStyle = 'rgba(255, 255, 255, 0.1)';
-    ctx.fill();
-
-    for (let a = 0; a < arms.length; a++) {
-      const arm    = arms[a];
-      const aAngle = 2 * Math.PI * a / arms.length;
-      const ot     = {
-        x: target.x + target.radius * Math.cos(aAngle),
-        y: target.y + target.radius * Math.sin(aAngle),
-      };
-
-      for (let i = 0; i < arm.length; i++) {
-        const p    = arm[i];
-        const lead = i === 0 ? ot : arm[i - 1];
-        const ang  = angleRad(p.x, p.y, lead.x, lead.y);
-        const dist = Math.hypot(p.x - lead.x, p.y - lead.y);
-        let td     = dist - p.stickLength;
-        let ang2   = ang;
-        if (td < 0) { ang2 += Math.PI; td = -td; }
-
-        const dx = td * Math.cos(ang2);
-        const dy = td * Math.sin(ang2);
-
-        p.x += dx;
-        p.y -= dy;
-
-        p.xSpeed += 0.5 * dx - 0.1 * p.xSpeed;
-        p.ySpeed += 0.5 * dy - 1   - 0.1 * p.ySpeed;
-        p.x += 0.1 * p.xSpeed;
-        p.y -= 0.1 * p.ySpeed;
-      }
-
-      for (let i = 0; i < arm.length; i++) {
-        const p = arm[i];
-
-        // Particle — exact original colors
-        ctx.beginPath();
-        ctx.arc(p.x, p.y, (18 / 100) * (arm.length - i), 0, 2 * Math.PI);
-        ctx.strokeStyle = `hsla(${354 + i * 2}, 90%, 50%, 0.7)`;
-        ctx.stroke();
-
-        // Stick line — first particle connects to central target, rest to previous
-        ctx.beginPath();
-        ctx.lineWidth = 1;
-        ctx.strokeStyle = `hsla(${340 + i * 2}, 80%, 50%, 0.7)`;
-        if (i === 0) {
-          ctx.moveTo(target.x, target.y);
-        } else {
-          ctx.moveTo(arm[i - 1].x, arm[i - 1].y);
-        }
-        ctx.lineTo(p.x, p.y);
-        ctx.stroke();
-      }
-    }
-
-    if (inView) raf = requestAnimationFrame(frame);
-  }
-
-  const observer = new IntersectionObserver(entries => {
-    inView = entries[0].isIntersecting;
-    if (inView && !raf) raf = requestAnimationFrame(frame);
-    if (!inView && raf) { cancelAnimationFrame(raf); raf = null; }
-  }, { threshold: 0.1 });
-
-  observer.observe(section);
-
-  document.addEventListener('mousemove', e => {
-    const rect = section.getBoundingClientRect();
-    const lx = e.clientX - rect.left;
-    const ly = e.clientY - rect.top;
-    if (lx >= 0 && lx <= W && ly >= 0 && ly <= H) {
-      mouse.x = lx;
-      mouse.y = ly;
-      mouse.active = true;
-    } else {
-      mouse.active = false;
-    }
+// ── Showcase fluid canvas ──
+(function () {
+  const canvas = document.getElementById('tentacle-canvas');
+  if (!canvas || !window['webgl-fluid']) return;
+  window['webgl-fluid'](canvas, {
+    TRANSPARENT:        true,
+    IMMEDIATE:          false,
+    TRIGGER:            'hover',
+    SIM_RESOLUTION:     128,
+    DYE_RESOLUTION:     512,
+    CAPTURE_RESOLUTION: 512,
+    DENSITY_DISSIPATION:  2,
+    VELOCITY_DISSIPATION: 1,
+    PRESSURE:             0.8,
+    PRESSURE_ITERATIONS:  4,
+    CURL:                 4,
+    SPLAT_RADIUS:         0.22,
+    SPLAT_FORCE:          2000,
+    SHADING:              true,
+    COLORFUL:             true,
+    COLOR_UPDATE_SPEED:   3,
+    PAUSED:               false,
+    BACK_COLOR:           { r: 10, g: 10, b: 10 },
+    BLOOM:                false,
+    BLOOM_ITERATIONS:     8,
+    BLOOM_RESOLUTION:     256,
+    BLOOM_INTENSITY:      0.8,
+    BLOOM_THRESHOLD:      0.6,
+    BLOOM_SOFT_KNEE:      0.7,
+    SUNRAYS:              false,
+    SUNRAYS_RESOLUTION:   64,
+    SUNRAYS_WEIGHT:       9.5,
   });
-
-  resize();
-  seedArms();
-  window.addEventListener('resize', () => { resize(); seedArms(); });
 })();
 })();

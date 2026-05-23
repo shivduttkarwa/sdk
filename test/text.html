@@ -1,214 +1,108 @@
-<div id="app">
-  <canvas id="canvas"></canvas>
-  <div class="hero">
-    <h1>Tubes</h1>
-    <h2>Cursor</h2>
-    <h3>Code link in my BIO</h3>
-    <p>Follow For More</p>
+<!-- 
+  Inspired by: https://advanced.team/
+-->
+
+
+<body>
+  <!-- PEN CONTENT -->
+  <div class="content">
+    <h1>Move your cursor!</h1>
   </div>
-</div>
+  <canvas></canvas>
+  
+  <!-- BRAND -->
+  <p class="bname">By ElTjempo - Timo Timmermans</p>
+</body>
 
-
-/* body, html, #app {
-  margin: 0;
-  width: 100%;
-  height: 100%;
+/* BASE STYLING */
+:root {
+  --col-bg: 10,10,10;
+  --col-fg-p: 230,230,230;
+  --col-fg-s: 60,70,70;
+  --col-text: 120,120,120;
 }
 
 body {
-  touch-action: none;
-}
-
-#app {
-  height: 100%;
-  font-family: "Montserrat", serif;
-}
-
-#app a {
-  text-decoration: none;
-  color: #fff;
-}
-
-.hero {
-  position: relative;
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 10px;
-}
-
-h1, h2, p {
+  height: 100vh;
+  width: 100vw;
   margin: 0;
   padding: 0;
-  color: white;
-  text-shadow: 0 0 20px rgba(0, 0, 0, 1);
-  line-height: 100%;
-  user-select: none;
+  
+  display: grid;
+  place-items: center;
+  background-color: rgb(var(--col-bg));
+  color: rgb(var(--col-text));
+  font-family: system-ui;
+  overflow:hidden;
 }
 
-h1 {
-  font-size: 80px;
-  font-weight: 700;
-  text-transform: uppercase;
-}
-
-h2 {
-  font-size: 60px;
-  font-weight: 500;
-  text-transform: uppercase;
-}
-
-#canvas {
-  position: fixed;
-  top: 0;
-  right: 0;
-  bottom: 0;
-  left: 0;
-  overflow: hidden;
-}
-p{
-  color:white;
-  background:Black;
-  padding:10px;
-}
-
-h3 {
-  font-size: 20px;
-  font-weight: 500;
-  color:white;
-  text-transform: uppercase;
-} */
-
-body, html, #app {
-  margin: 0;
-  padding: 0;
-  width: 100%;
-  height: 100%;
-}
-
-body {
-  touch-action: none;
-  background: #000; /* Better background for Tubes Cursor */
-  font-family: "Montserrat", sans-serif;
-}
-
-#app {
-  position: relative;
-  height: 100%;
-  overflow: hidden;
-}
-
-#canvas {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  z-index: -1; /* Behind text */
-}
-
-.hero {
-  position: relative;
-  z-index: 10;
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
-  gap: 12px;
-  padding: 20px;
-}
-
-h1, h2, h3, p {
-  margin: 0;
-  padding: 0;
-  color: #fff;
-  text-shadow: 0 0 20px rgba(0,0,0,0.9);
-  user-select: none;
-}
-
-/* Main Heading */
-h1 {
-  font-size: 80px;
-  font-weight: 800;
-  text-transform: uppercase;
-  letter-spacing: 3px;
-}
-
-/* Sub Heading */
-h2 {
-  font-size: 55px;
-  font-weight: 600;
-  text-transform: uppercase;
-}
-
-/* Small Heading */
-h3 {
-  font-size: 22px;
-  font-weight: 500;
-  opacity: 0.9;
+.bname {
+  position: absolute;
+  top: 1%;
+  right: 1%;
+  font-variant: all-small-caps;
   letter-spacing: 2px;
+  color: rgb(var(--col-fg-p));
+  font-weight: 600;
+  font-size: 13px;
+  margin: 0;
 }
 
-/* Paragraph Text */
-p {
-  font-size: 18px;
-  background: rgba(0,0,0,0.5);
-  padding: 10px 20px;
-  border-radius: 8px;
-  font-weight: 400;
+/* PEN CONTENT STYLING */
+
+.content {
+  text-align: center;
 }
 
-/* -------- Responsive for Mobile -------- */
-@media (max-width: 768px) {
-  h1 { font-size: 50px; }
-  h2 { font-size: 35px; }
-  h3 { font-size: 16px; }
-  p  { font-size: 14px; padding: 8px 15px; }
+.content h1 {
+  color: rgb(var(--col-fg-s));
+  animation: blinker 1s linear infinite;
 }
 
-@media (max-width: 480px) {
-  h1 { font-size: 38px; }
-  h2 { font-size: 28px; }
+canvas{
+  width: 100%;
+  height: 100%;
+  position:fixed;
+  inset:0;
+  z-index: 1;
 }
 
-
-
-import TubesCursor from "https://cdn.jsdelivr.net/npm/threejs-components@0.0.19/build/cursors/tubes1.min.js"
-
-const app = TubesCursor(document.getElementById("canvas"), {
-  tubes: {
-    colors: ["#ff0000", "#00ff00", "#0000ff"],
-    lights: {
-      intensity: 250,
-      colors: ["#ff0000", "#00ff00", "#0000ff", "#ff00ff"]
-    }
+@keyframes blinker {
+  50% {
+    opacity: 0.3;
   }
+}
+
+window['webgl-fluid'].default(document.querySelector('canvas'), {
+  TRANSPARENT: true,
+  IMMEDIATE: false,
+    TRIGGER: 'hover',
+    SIM_RESOLUTION: 128,
+    DYE_RESOLUTION: 512,
+    CAPTURE_RESOLUTION: 512,
+    DENSITY_DISSIPATION: 2,
+    VELOCITY_DISSIPATION: 1,
+    PRESSURE: 0.8,
+    PRESSURE_ITERATIONS: 4,
+    CURL: 4,
+    SPLAT_RADIUS: 0.9,
+    SPLAT_FORCE: 5500,
+    SHADING: true,
+    COLORFUL: true,
+    COLOR_UPDATE_SPEED: 3,
+    PAUSED: false,
+    BACK_COLOR: {
+      r: 10,
+      g: 10,
+      b: 10
+    },
+    BLOOM: false,
+    BLOOM_ITERATIONS: 8,
+    BLOOM_RESOLUTION: 256,
+    BLOOM_INTENSITY: 0.8,
+    BLOOM_THRESHOLD: 0.6,
+    BLOOM_SOFT_KNEE: 0.7,
+    SUNRAYS: false,
+    SUNRAYS_RESOLUTION: 64,
+    SUNRAYS_WEIGHT: 9.5
 })
-
-// RAINBOW LOOP
-let hue = 0
-function rainbowLoop() {
-  hue = (hue + 1) % 360
-
-  const tubeColors = generateRainbowColors(10)
-  const lightColors = generateRainbowColors(12)
-
-  app.tubes.setColors(tubeColors)
-  app.tubes.setLightsColors(lightColors)
-
-  requestAnimationFrame(rainbowLoop)
-}
-
-rainbowLoop()
-
-// Generate evenly spaced rainbow colors
-function generateRainbowColors(count) {
-  return Array.from({ length: count }, (_, i) => {
-    const h = (hue + (i * (360 / count))) % 360
-    return `hsl(${h}, 100%, 50%)`
-  })
-}
