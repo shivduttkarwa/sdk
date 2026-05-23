@@ -2159,7 +2159,7 @@ if (window.gsap && window.ScrollTrigger) {
   gl.texImage2D(gl.TEXTURE_2D,0,gl.RGBA,1,1,0,gl.RGBA,gl.UNSIGNED_BYTE,new Uint8Array([5,3,10,255]));
   gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MIN_FILTER,gl.LINEAR); gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MAG_FILTER,gl.LINEAR);
   gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_WRAP_S,gl.CLAMP_TO_EDGE); gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_WRAP_T,gl.CLAMP_TO_EDGE);
-  fetch('assets/hero-main-bg.png',{mode:'cors'}).then(r=>r.blob())
+  fetch('assets/hero-showcase-bg.png',{mode:'cors'}).then(r=>r.blob())
     .then(b=>createImageBitmap(b,{imageOrientation:'flipY',premultiplyAlpha:'none'}))
     .then(bmp=>{ gl.activeTexture(gl.TEXTURE5); gl.bindTexture(gl.TEXTURE_2D,bgTex); gl.texImage2D(gl.TEXTURE_2D,0,gl.RGBA,gl.RGBA,gl.UNSIGNED_BYTE,bmp); bmp.close(); }).catch(()=>{});
 

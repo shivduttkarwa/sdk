@@ -877,6 +877,7 @@ img {
   height: 100svh;
   display: flex;
   flex-direction: column;
+  background: url('assets/hero-showcase-bg.png') center/cover no-repeat;
   align-items: center;
   justify-content: center;
   gap: max(1.125rem, 2.6vw);
@@ -1495,6 +1496,14 @@ img {
   height: 100%;
   pointer-events: none;
   z-index: 1;
+}
+
+.showcase-dim {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  background: rgba(5, 3, 10, 0.82);
+  pointer-events: none;
 }
 
 /* ── Featured Work Section ── */
