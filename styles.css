@@ -870,18 +870,6 @@ img {
   font-weight: 300;
 }
 
-/* ── Showcase tentacle canvas ── */
-#tentacle-canvas {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  z-index: 2;
-  pointer-events: all;
-  background: transparent;
-  /* shift fluid output to crimson — sepia anchors hue ~37°, rotate 320° lands on ~357° (crimson) */
-  filter: sepia(1) saturate(10) hue-rotate(320deg);
-}
 
 /* ── Showcase section (pill video + expand on scroll) ── */
 .hero-showcase {
@@ -1499,7 +1487,8 @@ img {
 }
 
 
-.stats-blob-canvas {
+.stats-blob-canvas,
+.showcase-blob-canvas {
   position: absolute;
   inset: 0;
   width: 100%;
