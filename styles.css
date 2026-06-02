@@ -943,7 +943,7 @@ img {
 .hero-rotating-word {
   font-family: "Alpino", "Space Grotesk", sans-serif;
   font-size: clamp(3.9375rem, 10.8vw, 11.625rem);
-  font-weight: 900;
+  font-weight: 300;
   font-style: normal;
   letter-spacing: 0;
   line-height: 0.9;
@@ -951,8 +951,8 @@ img {
   color: #E03F4F;
   text-shadow: 0 0.25rem 0 rgba(0,0,0,.4), 0 0.875rem 2.75rem rgba(0,0,0,.55);
   position: absolute;
-  top: 52%;
-  left: 49%;
+  top: 50%;
+  left: 50%;
   white-space: nowrap;
   opacity: 0;
   pointer-events: none;
@@ -1181,13 +1181,13 @@ img {
   bottom: 5rem;
   right: 2.25rem;
   z-index: 200;
-  width: 11.375rem;
-  height: 3.125rem;
+  width: 13.65rem;
+  height: 3.75rem;
   border: 0;
   background: transparent;
   cursor: pointer;
   color: #f8e2b8;
-  font-size: 0.9375rem;
+  font-size: 1.125rem;
   font-weight: 900;
   letter-spacing: 0.0875rem;
   text-transform: none;
@@ -1283,7 +1283,7 @@ img {
   align-items: center;
   justify-content: center;
   color: inherit;
-  font-family: "Handlee", cursive;
+  font-family: "Alpino", sans-serif;
   text-shadow:
     0 0 0.875rem rgba(248,226,184,0.35),
     0 0 1.75rem rgba(150,30,20,0.25);
