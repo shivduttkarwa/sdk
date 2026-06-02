@@ -1284,13 +1284,15 @@ img {
   justify-content: center;
   color: inherit;
   font-family: "Alpino", sans-serif;
+  font-size: 1.25rem;
+  font-weight: 300;
   text-shadow:
     0 0 0.875rem rgba(248,226,184,0.35),
     0 0 1.75rem rgba(150,30,20,0.25);
   transition: color 0.45s ease;
 }
 
-.hero-fixed-cta:hover { transform: translateY(-0.4375rem); }
+.hero-fixed-cta:hover { transform: translateY(-0.05rem); }
 .hero-fixed-cta:hover .hb-surface::before { transform: translateX(120%) skewX(-18deg); }
 .hero-fixed-cta:hover .hb-aura  { opacity: 1; transform: scale(1); }
 .hero-fixed-cta:hover .hb-soft  { opacity: 1; }
