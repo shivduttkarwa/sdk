@@ -259,7 +259,7 @@ img {
   inset: 0;
   z-index: 10000;
   background: #080808;
-  display: flex;
+  display: none; /* temporarily disabled */
   align-items: center;
   justify-content: center;
   transform: translateY(0);
@@ -715,10 +715,10 @@ img {
 .hero-line {
   position: relative;
   z-index: 3;
-  font-family: "Marcellus", serif;
+  font-family: "Bricolage Grotesque", sans-serif;
   font-size: max(3.5rem, 9.8vw);
-  font-weight: 200;
-  letter-spacing: -.09em;
+  font-weight: 400;
+  letter-spacing: -.03em;
   line-height: .85;
   text-transform: uppercase;
   color: #fff;
@@ -941,15 +941,15 @@ img {
 }
 
 .hero-rotating-word {
-  font-family: "Alpino", "Space Grotesk", sans-serif;
+  font-family: "Bricolage Grotesque", sans-serif;
   font-size: clamp(3.9375rem, 10.8vw, 11.625rem);
   font-weight: 300;
   font-style: normal;
-  letter-spacing: 0;
+  letter-spacing: -0.04em;
   line-height: 0.9;
   text-transform: none;
-  color: #E03F4F;
-  text-shadow: 0 0.25rem 0 rgba(0,0,0,.4), 0 0.875rem 2.75rem rgba(0,0,0,.55);
+  color: var(--red);
+  text-shadow: none;
   position: absolute;
   top: 50%;
   left: 50%;
