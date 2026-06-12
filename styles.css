@@ -78,7 +78,7 @@ body {
 .site-footer {
   background-image:
     linear-gradient(160deg, rgba(80,8,18,0.82) 0%, rgba(20,4,10,0.88) 40%, rgba(8,4,22,0.90) 70%, rgba(15,5,30,0.85) 100%),
-    url('assets/hero-main-bg.png');
+    url('assets/images/hero-main-bg.jpg');
   background-size: cover;
   background-position: center top;
   background-repeat: no-repeat;
@@ -884,7 +884,7 @@ img {
   height: 100svh;
   display: flex;
   flex-direction: column;
-  background: url('assets/hero-showcase-bg.png') center/cover no-repeat;
+  background: url('assets/images/hero-showcase-bg.jpg') center/cover no-repeat;
   align-items: center;
   justify-content: center;
   gap: max(1.125rem, 2.6vw);
@@ -905,7 +905,7 @@ img {
 .hero-video-wrap {
   position: relative;
   z-index: 5;
-  width: clamp(15.9375rem, 49vw, 45.6875rem);
+  width: clamp(12.75rem, 39.2vw, 36.55rem);
   height: clamp(6.375rem, 20vh, 18.0625rem);
   border-radius: 2.5rem;
   overflow: hidden;
