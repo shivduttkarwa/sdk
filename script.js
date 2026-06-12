@@ -2,9 +2,9 @@ const body          = document.body;
 const navRoot       = document.getElementById('twostepNav');
 const menuBtn       = document.getElementById('menuBtn');
 const menuPanel     = document.getElementById('menuPanel');
-const navClosers    = document.querySelectorAll('[data-nav-toggle="close"]');
+const navClosers    = document.querySelectorAll('[data-sdk-nav__toggle="close"]');
 
-// Hero starts immediately (preloader removed)
+// Hero starts immediately (sdk-preloader removed)
 startHeroAnimation();
 
 // Menu
@@ -12,7 +12,7 @@ function setNavStatus(isOpen) {
   if (!navRoot || !menuBtn) return;
   navRoot.setAttribute('data-nav-status', isOpen ? 'active' : 'inactive');
   menuBtn.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
-  body.classList.toggle('nav-open', isOpen);
+  body.classList.toggle('sdk-nav--open', isOpen);
 }
 
 if (menuBtn && navRoot && menuPanel) {
@@ -73,7 +73,7 @@ const revealObserver = new IntersectionObserver((entries) => {
   });
 }, { threshold: 0.12 });
 
-document.querySelectorAll('.reveal').forEach(el => revealObserver.observe(el));
+document.querySelectorAll('.sdk-reveal').forEach(el => revealObserver.observe(el));
 
 
 // ── Showcase HUD: live cursor coords ──
@@ -113,7 +113,7 @@ document.querySelectorAll('.reveal').forEach(el => revealObserver.observe(el));
 
 // Hero rotating words — each word has a distinct animation personality
 (function initRotatingWords() {
-  const words = document.querySelectorAll('.hero-rotating-word');
+  const words = document.querySelectorAll('.sdk-showcase__kinetic-word');
   if (!words.length || !window.gsap) return;
 
   const DISPLAY_MS = 2700;
@@ -123,7 +123,7 @@ document.querySelectorAll('.reveal').forEach(el => revealObserver.observe(el));
     const text = el.textContent.trim();
     el.dataset.text = text;
     el.innerHTML = [...text].map(ch =>
-      `<span class="rw-char" data-ch="${ch}">${ch}</span>`
+      `<span class="sdk-kinetic__char" data-ch="${ch}">${ch}</span>`
     ).join('');
   });
 
@@ -134,7 +134,7 @@ document.querySelectorAll('.reveal').forEach(el => revealObserver.observe(el));
     // 0 · "Fast" — chars whip in from left (blur streak), exit right
     {
       in(el) {
-        const chars = el.querySelectorAll('.rw-char');
+        const chars = el.querySelectorAll('.sdk-kinetic__char');
         gsap.set(el, { opacity: 1, x: 0 });
         gsap.fromTo(chars,
           { x: -80, opacity: 0, filter: 'blur(12px)' },
@@ -177,7 +177,7 @@ document.querySelectorAll('.reveal').forEach(el => revealObserver.observe(el));
     // 2 · "Clean" — all chars converge from spread positions simultaneously, lock in at once
     {
       in(el) {
-        const chars = [...el.querySelectorAll('.rw-char')];
+        const chars = [...el.querySelectorAll('.sdk-kinetic__char')];
         const mid   = (chars.length - 1) / 2;
         gsap.set(el, { opacity: 1 });
         const tl = gsap.timeline();
@@ -190,7 +190,7 @@ document.querySelectorAll('.reveal').forEach(el => revealObserver.observe(el));
         });
       },
       out(el, done) {
-        const chars = [...el.querySelectorAll('.rw-char')];
+        const chars = [...el.querySelectorAll('.sdk-kinetic__char')];
         const mid   = (chars.length - 1) / 2;
         const tl = gsap.timeline({
           onComplete() {
@@ -211,7 +211,7 @@ document.querySelectorAll('.reveal').forEach(el => revealObserver.observe(el));
     // 3 · "Alive" — each letter springs up with elastic bounce, falls away on exit
     {
       in(el) {
-        const chars = el.querySelectorAll('.rw-char');
+        const chars = el.querySelectorAll('.sdk-kinetic__char');
         gsap.set(el, { opacity: 1 });
         gsap.fromTo(chars,
           { y: 75, opacity: 0, rotation: 12 },
@@ -219,7 +219,7 @@ document.querySelectorAll('.reveal').forEach(el => revealObserver.observe(el));
         );
       },
       out(el, done) {
-        const chars = el.querySelectorAll('.rw-char');
+        const chars = el.querySelectorAll('.sdk-kinetic__char');
         gsap.to(chars, {
           y: 60, opacity: 0, rotation: -10,
           duration: 0.26, stagger: 0.04, ease: 'power2.in',
@@ -251,7 +251,7 @@ document.querySelectorAll('.reveal').forEach(el => revealObserver.observe(el));
 
 function startHeroAnimation() {
   if (!window.gsap) return;
-  gsap.from('.hero-name-line', {
+  gsap.from('.sdk-hero__name-line', {
     opacity: 0,
     y: 60,
     duration: 1.2,
@@ -259,7 +259,7 @@ function startHeroAnimation() {
     ease: 'power4.out',
     delay: 0.1
   });
-  gsap.from('.scroll-indicator, .hero-avail, .hero-tagline', {
+  gsap.from('.sdk-scroll-cue, .sdk-hero__status, .sdk-hero__tagline', {
     opacity: 0,
     y: 14,
     duration: 1,
@@ -267,7 +267,7 @@ function startHeroAnimation() {
     ease: 'power2.out',
     delay: 0.6
   });
-  gsap.from('.hero-line .inner', {
+  gsap.from('.sdk-showcase__headline .inner', {
     yPercent: 105,
     duration: 1.2,
     stagger: 0.14,
@@ -296,10 +296,10 @@ if (window.gsap && window.ScrollTrigger) {
 
   // Pill expands to fullscreen on scroll
   const heroWrap     = document.getElementById('heroVideoWrap');
-  const showcaseSection = document.querySelector('.hero-showcase');
+  const showcaseSection = document.querySelector('.sdk-showcase');
   if (heroWrap && showcaseSection) {
-    const topInner = showcaseSection.querySelector('.hero-line-top .inner');
-    const bottomInner = showcaseSection.querySelector('.hero-line-bottom .inner');
+    const topInner = showcaseSection.querySelector('.sdk-showcase__headline--top .inner');
+    const bottomInner = showcaseSection.querySelector('.sdk-showcase__headline--bottom .inner');
     const tl = gsap.timeline({
       scrollTrigger: {
         trigger: showcaseSection,
@@ -332,7 +332,7 @@ if (window.gsap && window.ScrollTrigger) {
     }
   }
 
-  gsap.utils.toArray('.reveal').forEach((el) => {
+  gsap.utils.toArray('.sdk-reveal').forEach((el) => {
     gsap.fromTo(el,
       { y: 45, opacity: 0 },
       {
@@ -348,9 +348,9 @@ if (window.gsap && window.ScrollTrigger) {
 
 }
 
-// ── Stats row: single water-trail cursor reveal (3 bg images) ──
+// ── Stats row: single water-trail cursor sdk-reveal (3 bg images) ──
 (function initStatsWater() {
-  const row = document.querySelector('.stats-row');
+  const row = document.querySelector('.sdk-stats__row');
   if (!row) return;
 
   const IMAGES = [
@@ -362,7 +362,7 @@ if (window.gsap && window.ScrollTrigger) {
   const SIM_W = 256, SIM_H = 96;
 
   const canvas = document.createElement('canvas');
-  canvas.className = 'stats-blob-canvas';
+  canvas.className = 'sdk-stats__canvas';
   row.prepend(canvas);
 
   const gl = canvas.getContext('webgl', { alpha: true, premultipliedAlpha: false, antialias: false, powerPreference: 'low-power' });
@@ -471,7 +471,7 @@ if (window.gsap && window.ScrollTrigger) {
       gl_FragColor = vec4(vel, 0., 1.);
     }`;
 
-  // Final render: use dye density as alpha to reveal 3 bg images
+  // Final render: use dye density as alpha to sdk-reveal 3 bg images
   const RENDER_FS = `precision highp float;
     uniform sampler2D u_dye, u_bg0, u_bg1, u_bg2;
     varying vec2 v_uv;
@@ -716,7 +716,7 @@ if (window.gsap && window.ScrollTrigger) {
   })(0);
 })();
 
-// ── Nav reveal: WebGL blob cursor ──
+// ── Nav sdk-reveal: WebGL blob cursor ──
 (function initNavReveal() {
   const canvas = document.getElementById('navRevealCanvas');
   if (!canvas) return;
@@ -855,13 +855,13 @@ if (window.gsap && window.ScrollTrigger) {
 // ── Stats section entrance animation ──
 (function initStats() {
   if (!window.gsap || !window.ScrollTrigger) return;
-  const section = document.querySelector('.stats-section');
+  const section = document.querySelector('.sdk-stats');
   if (!section) return;
 
-  const ruleTop  = section.querySelector('.stats-rule--top');
-  const ruleBot  = section.querySelector('.stats-rule--bot');
-  const dividers = section.querySelectorAll('.stats-divider');
-  const items    = section.querySelectorAll('.si');
+  const ruleTop  = section.querySelector('.sdk-stats__rule--top');
+  const ruleBot  = section.querySelector('.sdk-stats__rule--bottom');
+  const dividers = section.querySelectorAll('.sdk-stats__divider');
+  const items    = section.querySelectorAll('.sdk-stat');
 
   const master = gsap.timeline({
     scrollTrigger: { trigger: section, start: 'top 50%', toggleActions: 'play none none none' }
@@ -871,9 +871,9 @@ if (window.gsap && window.ScrollTrigger) {
   master.to(dividers, { scaleY: 1, duration: 0.6, ease: 'power3.inOut', stagger: 0.18 }, '-=0.3');
 
   items.forEach((item, i) => {
-    const num    = item.querySelector('.si-num');
-    const sup    = item.querySelector('.si-sup');
-    const foot   = item.querySelector('.si-foot');
+    const num    = item.querySelector('.sdk-stat__number');
+    const sup    = item.querySelector('.sdk-stat__suffix');
+    const foot   = item.querySelector('.sdk-stat__footer');
     const target = parseInt(num.dataset.target || '0', 10);
 
     master.to([num, sup], { y: '0%', duration: 0.9, ease: 'power4.out' }, i === 0 ? 0 : '<0.18');
@@ -888,20 +888,20 @@ if (window.gsap && window.ScrollTrigger) {
   master.to(ruleBot, { scaleX: 1, duration: 0.8, ease: 'power3.inOut' }, '-=0.2');
 })();
 
-// ── Section heading: char-by-char mask reveal ──
+// ── Section heading: char-by-char mask sdk-reveal ──
 (function initTiHeading() {
   if (!window.gsap || !window.ScrollTrigger) return;
-  const wrap = document.querySelector('.ti-ch-wrap');
+  const wrap = document.querySelector('.sdk-intro__char-wrap');
   if (!wrap) return;
 
   const text = 'Why I Build';
   wrap.innerHTML = text.split('').map(ch =>
     ch === ' '
-      ? '<span class="ti-char" style="display:inline-block;width:0.28em;"></span>'
-      : `<span class="ti-char">${ch}</span>`
+      ? '<span class="sdk-intro__char" style="display:inline-block;width:0.28em;"></span>'
+      : `<span class="sdk-intro__char">${ch}</span>`
   ).join('');
 
-  const chars = wrap.querySelectorAll('.ti-char');
+  const chars = wrap.querySelectorAll('.sdk-intro__char');
 
   gsap.from(chars, {
     yPercent: 110,
@@ -909,18 +909,18 @@ if (window.gsap && window.ScrollTrigger) {
     ease: 'power4.out',
     duration: 1,
     scrollTrigger: {
-      trigger: '.ti-header',
+      trigger: '.sdk-intro__header',
       start: 'top 82%',
       toggleAction: 'play none none none',
     }
   });
 })();
 
-// ── Text intro: word-by-word blur reveal on scrub ──
+// ── Text intro: word-by-word blur sdk-reveal on scrub ──
 (function initTextIntro() {
   if (!window.gsap || !window.ScrollTrigger) return;
 
-  const textEl = document.querySelector('.ti-text');
+  const textEl = document.querySelector('.sdk-intro__body');
   if (!textEl) return;
 
   function splitIntoWords() {
@@ -930,7 +930,7 @@ if (window.gsap && window.ScrollTrigger) {
       if (node.nodeType === 3) {
         node.textContent.split(/(\s+)/).forEach(part => {
           if (/^\s+$/.test(part)) { html += part; }
-          else if (part)           { html += `<span class="ti-word">${part}</span>`; }
+          else if (part)           { html += `<span class="sdk-intro__word">${part}</span>`; }
         });
       } else if (node.nodeType === 1) {
         const cls   = node.className;
@@ -941,7 +941,7 @@ if (window.gsap && window.ScrollTrigger) {
           if (/^\s+$/.test(part)) { html += part; }
           else if (part) {
             const isLast = wi === words.length - 1;
-            html += `<span class="ti-word${isLast ? ' ' + cls : ''}">${part}</span>`;
+            html += `<span class="sdk-intro__word${isLast ? ' ' + cls : ''}">${part}</span>`;
             wi++;
           }
         });
@@ -959,11 +959,11 @@ if (window.gsap && window.ScrollTrigger) {
 
     splitIntoWords();
 
-    const words = textEl.querySelectorAll('.ti-word');
+    const words = textEl.querySelectorAll('.sdk-intro__word');
 
     animTl = gsap.timeline({
       scrollTrigger: {
-        trigger: '.text-intro',
+        trigger: '.sdk-intro',
         start: 'top 30%',
         end: 'top -20%',
         scrub: 1.2,
@@ -984,7 +984,7 @@ if (window.gsap && window.ScrollTrigger) {
   document.fonts?.ready ? document.fonts.ready.then(setup) : setTimeout(setup, 400);
 })();
 
-// ── Hero blob: WebGL cursor reveal ──
+// ── Hero blob: WebGL cursor sdk-reveal ──
 (function initHeroBlob() {
   if (window.matchMedia('(max-width: 768px)').matches) return;
   const hero   = document.getElementById('home');
@@ -1272,7 +1272,7 @@ if (window.gsap && window.ScrollTrigger) {
 
 // ── Featured Work section ──
 (function initFeaturedWork() {
-  const section = document.querySelector('.jg-featured');
+  const section = document.querySelector('.sdk-work');
   if (!section || !window.gsap || !window.ScrollTrigger) return;
 
   section.querySelectorAll('[data-split]').forEach(el => {
@@ -1280,24 +1280,24 @@ if (window.gsap && window.ScrollTrigger) {
     el.innerHTML = text.split('').map(ch =>
       ch === ' '
         ? '<span style="display:inline-block;width:0.18em"></span>'
-        : `<span class="char-wrap"><span class="char">${ch}</span></span>`
+        : `<span class="sdk-char-wrap"><span class="sdk-split-char">${ch}</span></span>`
     ).join('');
   });
 
   gsap.timeline({
     scrollTrigger: { trigger: section, start: 'top 72%', once: true }
   })
-    .from('.jg-title .char', { yPercent: 110, duration: 1, stagger: 0.04, ease: 'power4.out' })
-    .to('.jg-line',          { scaleX: 1, duration: 1.1, ease: 'power4.inOut' }, '-=0.55')
-    .to('.jg-kicker span',   { y: 0, duration: 0.85, ease: 'power4.out' }, '-=0.65')
-    .to('.jg-pill',          { y: 0, opacity: 1, duration: 0.8, stagger: 0.08, ease: 'power4.out' }, '-=0.7');
+    .from('.sdk-work__title .sdk-split-char', { yPercent: 110, duration: 1, stagger: 0.04, ease: 'power4.out' })
+    .to('.sdk-work__rule',          { scaleX: 1, duration: 1.1, ease: 'power4.inOut' }, '-=0.55')
+    .to('.sdk-work__kicker span',   { y: 0, duration: 0.85, ease: 'power4.out' }, '-=0.65')
+    .to('.sdk-work__pill',          { y: 0, opacity: 1, duration: 0.8, stagger: 0.08, ease: 'power4.out' }, '-=0.7');
 
-  gsap.to('.jg-cta', {
+  gsap.to('.sdk-work__cta', {
     y: 0, opacity: 1, duration: 0.9, ease: 'power4.out',
-    scrollTrigger: { trigger: '.jg-cta-wrap', start: 'top 88%', once: true }
+    scrollTrigger: { trigger: '.sdk-work__cta-wrap', start: 'top 88%', once: true }
   });
 
-  const cta = section.querySelector('.jg-cta');
+  const cta = section.querySelector('.sdk-work__cta');
   if (cta) {
     cta.addEventListener('mousemove', e => {
       const r = cta.getBoundingClientRect();
@@ -1323,12 +1323,12 @@ if (window.gsap && window.ScrollTrigger) {
   ];
 
   const canvas      = document.getElementById('projects-fx');
-  const section     = document.getElementById('recent-projects');
-  const stick       = document.getElementById('projects-stick');
-  const bgFallback  = document.getElementById('projects-bg');
-  const panels      = [...document.querySelectorAll('.project-panel')];
-  const counter     = [...document.querySelectorAll('.project-counter span')];
-  const progressBar = document.getElementById('projects-progress-bar');
+  const section     = document.getElementById('sdk-projects');
+  const stick       = document.getElementById('sdk-projects__sticky');
+  const bgFallback  = document.getElementById('sdk-projects__bg');
+  const panels      = [...document.querySelectorAll('.sdk-project-slide')];
+  const counter     = [...document.querySelectorAll('.sdk-projects__counter span')];
+  const progressBar = document.getElementById('sdk-projects__progress-bar');
 
   if(!canvas || !stick) return;
 
@@ -1583,7 +1583,7 @@ if (window.gsap && window.ScrollTrigger) {
     panels.forEach((panel,i)=>{
       panel.classList.remove('is-from','is-to','is-single');
       panel.style.opacity='0';
-      const copy=panel.querySelector('.project-copy');
+      const copy=panel.querySelector('.sdk-project-slide__copy');
       if(copy){copy.style.filter='';copy.style.transform='';}
       if(s.from===s.to||s.mix<.001){
         if(i===s.from){panel.classList.add('is-single');panel.style.opacity='1';}
@@ -1661,7 +1661,7 @@ if (window.gsap && window.ScrollTrigger) {
 
   function initSectionTitleAnims() {
     if (!window.gsap || !window.ScrollTrigger) return;
-    document.querySelectorAll('.ts-section').forEach(sec => {
+    document.querySelectorAll('.sdk-stack-section').forEach(sec => {
 
       // split chars
       sec.querySelectorAll('[data-split]').forEach(el => {
@@ -1669,13 +1669,13 @@ if (window.gsap && window.ScrollTrigger) {
         el.innerHTML = text.split('').map(ch =>
           ch === ' '
             ? '<span style="display:inline-block;width:0.18em"></span>'
-            : `<span class="char-wrap"><span class="char">${ch}</span></span>`
+            : `<span class="sdk-char-wrap"><span class="sdk-split-char">${ch}</span></span>`
         ).join('');
       });
 
-      const chars    = [...sec.querySelectorAll('.ts-title .char')];
-      const eyebrow  = sec.querySelector('.eyebrow');
-      const subtitle = sec.querySelector('.ts-subtitle');
+      const chars    = [...sec.querySelectorAll('.sdk-stack__title .sdk-split-char')];
+      const eyebrow  = sec.querySelector('.sdk-eyebrow');
+      const subtitle = sec.querySelector('.sdk-stack__subtitle');
 
       const tl = gsap.timeline({
         scrollTrigger: { trigger: sec, start: 'top 65%', once: true }
@@ -1694,7 +1694,7 @@ if (window.gsap && window.ScrollTrigger) {
   }
 
   function initTechStackCards() {
-    const cards = document.querySelectorAll('#tsBento .ts-card');
+    const cards = document.querySelectorAll('#tsBento .sdk-stack__card');
     if (!cards.length || !window.gsap || !window.ScrollTrigger) return;
     gsap.from(cards, {
       opacity: 0,
@@ -1711,8 +1711,8 @@ if (window.gsap && window.ScrollTrigger) {
   }
 
   function initProcessTimeline() {
-    const panels    = [...document.querySelectorAll('.proc-panel')];
-    const imgSlides = [...document.querySelectorAll('.proc-img-slide')];
+    const panels    = [...document.querySelectorAll('.sdk-process__step')];
+    const imgSlides = [...document.querySelectorAll('.sdk-process__frame-slide')];
     const frame     = document.getElementById('procFrame');
     const sword     = document.getElementById('procSword');
     const rail      = document.getElementById('procRail');
@@ -1772,7 +1772,7 @@ if (window.gsap && window.ScrollTrigger) {
     }
 
     // First image fades in on entrance
-    const frameWrap = document.querySelector('.proc-frame-wrap');
+    const frameWrap = document.querySelector('.sdk-process__frame-wrap');
     if (frameWrap) {
       gsap.fromTo(frameWrap,
         { opacity: 0 },
@@ -1799,7 +1799,7 @@ if (window.gsap && window.ScrollTrigger) {
       });
 
       // Content slides in from left (scrubbed)
-      const els = [...panel.querySelectorAll('.proc-num,.proc-title,.proc-sep,.proc-desc,.proc-tags')];
+      const els = [...panel.querySelectorAll('.sdk-process__step-index,.sdk-process__step-title,.sdk-process__step-divider,.sdk-process__step-desc,.sdk-process__step-tags')];
       const tl  = gsap.timeline({ paused: true });
       tl.fromTo(els,
         { x: -150, opacity: 0 },
@@ -1912,7 +1912,7 @@ if (window.gsap && window.ScrollTrigger) {
     requestAnimationFrame(animate);
   }).catch(err=>{
     console.warn('WebGL unavailable. Falling back to CSS background.',err);
-    if(section) section.classList.add('no-webgl');
+    if(section) section.classList.add('sdk-no-webgl');
     setupScroll();
     ScrollTrigger.refresh();
     initSectionTitleAnims();
@@ -1925,7 +1925,7 @@ if (window.gsap && window.ScrollTrigger) {
 
 // ── Tech Stack spotlight ──
 (function() {
-  document.querySelectorAll('.ts-card').forEach(card => {
+  document.querySelectorAll('.sdk-stack__card').forEach(card => {
     card.addEventListener('mousemove', e => {
       const r = card.getBoundingClientRect();
       card.style.setProperty('--mouse-x', `${e.clientX - r.left}px`);
@@ -1944,7 +1944,7 @@ if (window.gsap && window.ScrollTrigger) {
   const MAX_VEL  = 20;    // velocity cap (px / frame)
   const WALL_PAD = 20;    // inner clearance from card edge
 
-  document.querySelectorAll('.ts-card').forEach(card => {
+  document.querySelectorAll('.sdk-stack__card').forEach(card => {
     let pts   = [];
     let raf   = null;
     let mx    = -9999;
@@ -1954,7 +1954,7 @@ if (window.gsap && window.ScrollTrigger) {
     /* snapshot home positions from live layout */
     function init() {
       const cr = card.getBoundingClientRect();
-      pts = Array.from(card.querySelectorAll('.ts-tag')).map(el => {
+      pts = Array.from(card.querySelectorAll('.sdk-stack__tag')).map(el => {
         const tr = el.getBoundingClientRect();
         return {
           el,
@@ -1969,8 +1969,8 @@ if (window.gsap && window.ScrollTrigger) {
     }
 
     function smashTag(p) {
-      p.el.classList.add('ts-tag--smash');
-      setTimeout(() => p.el.classList.remove('ts-tag--smash'), 210);
+      p.el.classList.add('sdk-stack__tag--impact');
+      setTimeout(() => p.el.classList.remove('sdk-stack__tag--impact'), 210);
     }
 
     function step() {
@@ -2030,7 +2030,7 @@ if (window.gsap && window.ScrollTrigger) {
         /* fully settled — clean up */
         pts.forEach(p => {
           p.el.style.transform = '';
-          p.el.classList.remove('ts-tag--phys');
+          p.el.classList.remove('sdk-stack__tag--physics');
         });
         pts = [];
         raf = null;
@@ -2041,7 +2041,7 @@ if (window.gsap && window.ScrollTrigger) {
       over = true;
       if (pts.length === 0) {
         init();
-        pts.forEach(p => p.el.classList.add('ts-tag--phys'));
+        pts.forEach(p => p.el.classList.add('sdk-stack__tag--physics'));
       }
       if (!raf) raf = requestAnimationFrame(step);
     });
@@ -2059,10 +2059,10 @@ if (window.gsap && window.ScrollTrigger) {
     });
   });
 
-// ── Showcase: water-trail cursor reveal ──
+// ── Showcase: water-trail cursor sdk-reveal ──
 (function initShowcaseWater() {
-  const section = document.querySelector('.hero-showcase');
-  const canvas  = section && section.querySelector('.showcase-blob-canvas');
+  const section = document.querySelector('.sdk-showcase');
+  const canvas  = section && section.querySelector('.sdk-showcase__canvas');
   if (!canvas) return;
 
   const SIM_W = 256, SIM_H = 144;
@@ -2218,17 +2218,17 @@ if (window.gsap && window.ScrollTrigger) {
 })();
 
 // ── "Get in touch" double-hover animation ──
-document.querySelectorAll('.git-double-hover').forEach(link => {
+document.querySelectorAll('.sdk-email-link').forEach(link => {
   const text = link.dataset.text || link.textContent.trim();
-  const baseLine  = link.querySelector('.git-base');
-  const hoverLine = link.querySelector('.git-hover');
+  const baseLine  = link.querySelector('.sdk-email-line--base');
+  const hoverLine = link.querySelector('.sdk-email-line--hover');
 
   function buildChars(target) {
     target.innerHTML = '';
     [...text].forEach(letter => {
       const span = document.createElement('span');
-      if (letter === ' ') { span.className = 'git-char git-space'; span.innerHTML = '&nbsp;'; }
-      else                { span.className = 'git-char'; span.textContent = letter; }
+      if (letter === ' ') { span.className = 'sdk-email-char sdk-email-char--space'; span.innerHTML = '&nbsp;'; }
+      else                { span.className = 'sdk-email-char'; span.textContent = letter; }
       target.appendChild(span);
     });
   }
@@ -2236,8 +2236,8 @@ document.querySelectorAll('.git-double-hover').forEach(link => {
   buildChars(baseLine);
   buildChars(hoverLine);
 
-  const baseChars  = baseLine.querySelectorAll('.git-char');
-  const hoverChars = hoverLine.querySelectorAll('.git-char');
+  const baseChars  = baseLine.querySelectorAll('.sdk-email-char');
+  const hoverChars = hoverLine.querySelectorAll('.sdk-email-char');
 
   gsap.set(baseChars,  { yPercent: 0,  scaleY: 1,    rotateX: 0,   z: 0,   transformOrigin: '50% 0%' });
   gsap.set(hoverChars, { yPercent: 26, scaleY: 0.08, rotateX: -82, z: -40, transformOrigin: '50% 100%' });

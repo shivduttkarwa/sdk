@@ -21,13 +21,13 @@
 <body>
 
   <!-- ── Preloader ── -->
-  <div class="preloader" id="preloader" aria-hidden="true">
-    <canvas class="pl-canvas" id="plCanvas"></canvas>
-    <svg class="pl-svg" viewBox="0 0 200 200" aria-hidden="true">
-      <circle class="pl-arc" cx="100" cy="100" r="88" id="plArc"/>
+  <div class="sdk-preloader" id="sdk-preloader" aria-hidden="true">
+    <canvas class="sdk-preloader__canvas" id="plCanvas"></canvas>
+    <svg class="sdk-preloader__ring" viewBox="0 0 200 200" aria-hidden="true">
+      <circle class="sdk-preloader__arc" cx="100" cy="100" r="88" id="plArc"/>
     </svg>
-    <div class="pl-num" id="plNum">0</div>
-    <span class="pl-mark">Shivdutt Karwa</span>
+    <div class="sdk-preloader__counter" id="plNum">0</div>
+    <span class="sdk-preloader__brand">Shivdutt Karwa</span>
   </div>
 
   <script>
@@ -106,7 +106,7 @@
         num.classList.add('done');
         clearInterval(rainInterval);
         setTimeout(function () {
-          var pl = document.getElementById('preloader');
+          var pl = document.getElementById('sdk-preloader');
           pl.classList.add('exit');
           setTimeout(function () { pl.style.display = 'none'; }, 1000);
         }, 520);
@@ -118,70 +118,70 @@
   })();
   </script>
 
-  <div class="grain"></div>
+  <div class="sdk-grain"></div>
 
-  <header class="nav-main" data-nav-status="inactive" id="twostepNav">
-    <div class="nav-overlay" data-nav-toggle="close" aria-hidden="true"></div>
-    <nav class="nav-bar" aria-label="Main navigation">
-      <div class="nav-back">
-        <div class="nav-back-bg"></div>
+  <header class="sdk-nav" data-nav-status="inactive" id="twostepNav">
+    <div class="sdk-nav__overlay" data-sdk-nav__toggle="close" aria-hidden="true"></div>
+    <nav class="sdk-nav__bar" aria-label="Main navigation">
+      <div class="sdk-nav__backdrop">
+        <div class="sdk-nav__backdrop-fill"></div>
       </div>
-      <div class="nav-top-row">
-        <a href="#home" class="nav-brand" aria-label="Shivdutt Karwa home">
+      <div class="sdk-nav__topbar">
+        <a href="#home" class="sdk-nav__logo" aria-label="Shivdutt Karwa home">
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="36" height="36"><rect width="32" height="32" rx="8" fill="#05030a"/><text x="50%" y="54%" dominant-baseline="middle" text-anchor="middle" font-family="system-ui" font-weight="800" font-size="18" fill="#E03F4F">SK</text></svg>
         </a>
-        <button class="nav-toggle" id="menuBtn" data-nav-toggle="toggle" aria-label="Open menu" aria-expanded="false">
-          <span class="nav-toggle-inner">
-            <span class="nav-toggle-word">Menu</span>
-            <span class="nav-toggle-word">Close</span>
+        <button class="sdk-nav__toggle" id="menuBtn" data-sdk-nav__toggle="toggle" aria-label="Open menu" aria-expanded="false">
+          <span class="sdk-nav__toggle-inner">
+            <span class="sdk-nav__toggle-label">Menu</span>
+            <span class="sdk-nav__toggle-label">Close</span>
           </span>
         </button>
-        <div class="nav-divider"></div>
+        <div class="sdk-nav__divider"></div>
       </div>
-      <div class="nav-panel" id="menuPanel">
-        <div class="nav-panel-overflow">
-          <div class="nav-panel-inner">
-            <div class="nav-panel-row">
-              <div class="nav-panel-col">
-                <nav class="nl">
-                  <a href="#work" class="nl-item is-active">
-                    <span class="nl-num">01</span>
-                    <span class="nl-body">
-                      <span class="nl-label">Work</span>
-                      <span class="nl-desc">Selected projects</span>
+      <div class="sdk-nav__panel" id="menuPanel">
+        <div class="sdk-nav__panel-overflow">
+          <div class="sdk-nav__panel-inner">
+            <div class="sdk-nav__panel-row">
+              <div class="sdk-nav__panel-col">
+                <nav class="sdk-nav__links">
+                  <a href="#work" class="sdk-nav__link is-active">
+                    <span class="sdk-nav__link-index">01</span>
+                    <span class="sdk-nav__link-body">
+                      <span class="sdk-nav__link-label">Work</span>
+                      <span class="sdk-nav__link-desc">Selected projects</span>
                     </span>
-                    <span class="nl-arrow">→</span>
+                    <span class="sdk-nav__link-arrow">→</span>
                   </a>
-                  <a href="#services" class="nl-item">
-                    <span class="nl-num">02</span>
-                    <span class="nl-body">
-                      <span class="nl-label">Services</span>
-                      <span class="nl-desc">What I offer</span>
+                  <a href="#services" class="sdk-nav__link">
+                    <span class="sdk-nav__link-index">02</span>
+                    <span class="sdk-nav__link-body">
+                      <span class="sdk-nav__link-label">Services</span>
+                      <span class="sdk-nav__link-desc">What I offer</span>
                     </span>
-                    <span class="nl-arrow">→</span>
+                    <span class="sdk-nav__link-arrow">→</span>
                   </a>
-                  <a href="#about" class="nl-item">
-                    <span class="nl-num">03</span>
-                    <span class="nl-body">
-                      <span class="nl-label">About</span>
-                      <span class="nl-desc">Background &amp; skills</span>
+                  <a href="#about" class="sdk-nav__link">
+                    <span class="sdk-nav__link-index">03</span>
+                    <span class="sdk-nav__link-body">
+                      <span class="sdk-nav__link-label">About</span>
+                      <span class="sdk-nav__link-desc">Background &amp; skills</span>
                     </span>
-                    <span class="nl-arrow">→</span>
+                    <span class="sdk-nav__link-arrow">→</span>
                   </a>
-                  <a href="#contact" class="nl-item">
-                    <span class="nl-num">04</span>
-                    <span class="nl-body">
-                      <span class="nl-label">Contact</span>
-                      <span class="nl-desc">Let's collaborate</span>
+                  <a href="#contact" class="sdk-nav__link">
+                    <span class="sdk-nav__link-index">04</span>
+                    <span class="sdk-nav__link-body">
+                      <span class="sdk-nav__link-label">Contact</span>
+                      <span class="sdk-nav__link-desc">Let's collaborate</span>
                     </span>
-                    <span class="nl-arrow">→</span>
+                    <span class="sdk-nav__link-arrow">→</span>
                   </a>
                 </nav>
               </div>
             </div>
-            <div class="nav-foot">
-              <span class="nav-foot-loc">Based in India</span>
-              <div class="nav-foot-socials">
+            <div class="sdk-nav__footer">
+              <span class="sdk-nav__footer-location">Based in India</span>
+              <div class="sdk-nav__footer-socials">
                 <a href="https://www.instagram.com" target="_blank" rel="noopener noreferrer">IG</a>
                 <a href="https://www.linkedin.com" target="_blank" rel="noopener noreferrer">LI</a>
                 <a href="https://www.youtube.com" target="_blank" rel="noopener noreferrer">YT</a>
@@ -193,62 +193,62 @@
     </nav>
   </header>
 
-  <main class="page">
-    <section class="hero" id="home">
-      <!-- WebGL blob cursor canvas — full hero background layer -->
+  <main class="sdk-page">
+    <section class="sdk-hero" id="home">
+      <!-- WebGL blob cursor canvas — full sdk-hero background layer -->
       <canvas id="hero-blob-canvas" aria-hidden="true"></canvas>
       <!-- Mobile fallback image -->
-      <div class="hero-mobile-bg" aria-hidden="true"></div>
+      <div class="sdk-hero__mobile-bg" aria-hidden="true"></div>
 
       <!-- Availability badge — top right -->
-      <div class="hero-avail">
-        <span class="hero-avail-dot"></span>
+      <div class="sdk-hero__status">
+        <span class="sdk-hero__status-dot"></span>
         Available for work
       </div>
 
       <!-- Layer A: default visible state -->
-      <div class="hero-name hero-name--a" aria-label="Shivdutt Karwa">
-        <span class="hero-name-line">SHIVDUTT</span>
-        <span class="hero-name-line">KARWA</span>
-        <span class="hero-tagline">Full Stack Developer &middot; 2025</span>
+      <div class="sdk-hero__name sdk-hero__name--primary" aria-label="Shivdutt Karwa">
+        <span class="sdk-hero__name-line">SHIVDUTT</span>
+        <span class="sdk-hero__name-line">KARWA</span>
+        <span class="sdk-hero__tagline">Full Stack Developer &middot; 2025</span>
       </div>
 
-      <!-- Layer B: blob-revealed state — wrapper carries the smoke displacement filter -->
-      <div class="hero-smoke-wrap" id="heroSmokeWrap" aria-hidden="true">
-        <div class="hero-name hero-name--b" id="heroNameRevealed">
-          <span class="hero-name-line">SHIVDUTT</span>
-          <span class="hero-name-line">KARWA</span>
-          <span class="hero-tagline">Full Stack Developer &middot; 2025</span>
+      <!-- Layer B: blob-sdk-revealed state — wrapper carries the smoke displacement filter -->
+      <div class="sdk-hero__reveal-layer" id="heroSmokeWrap" aria-hidden="true">
+        <div class="sdk-hero__name sdk-hero__name--revealed" id="heroNameRevealed">
+          <span class="sdk-hero__name-line">SHIVDUTT</span>
+          <span class="sdk-hero__name-line">KARWA</span>
+          <span class="sdk-hero__tagline">Full Stack Developer &middot; 2025</span>
         </div>
       </div>
 
       <!-- Marquee strip -->
-      <div class="hero-marquee" aria-hidden="true">
-        <div class="hero-marquee-track">
-          <span>React</span><span class="hero-marquee-dot">·</span>
-          <span>Node.js</span><span class="hero-marquee-dot">·</span>
-          <span>WebGL</span><span class="hero-marquee-dot">·</span>
-          <span>Motion</span><span class="hero-marquee-dot">·</span>
-          <span>TypeScript</span><span class="hero-marquee-dot">·</span>
-          <span>Next.js</span><span class="hero-marquee-dot">·</span>
-          <span>PostgreSQL</span><span class="hero-marquee-dot">·</span>
-          <span>GSAP</span><span class="hero-marquee-dot">·</span>
-          <span>CMS</span><span class="hero-marquee-dot">·</span>
-          <span>Docker</span><span class="hero-marquee-dot">·</span>
-          <span>React</span><span class="hero-marquee-dot">·</span>
-          <span>Node.js</span><span class="hero-marquee-dot">·</span>
-          <span>WebGL</span><span class="hero-marquee-dot">·</span>
-          <span>Motion</span><span class="hero-marquee-dot">·</span>
-          <span>TypeScript</span><span class="hero-marquee-dot">·</span>
-          <span>Next.js</span><span class="hero-marquee-dot">·</span>
-          <span>PostgreSQL</span><span class="hero-marquee-dot">·</span>
-          <span>GSAP</span><span class="hero-marquee-dot">·</span>
-          <span>CMS</span><span class="hero-marquee-dot">·</span>
-          <span>Docker</span><span class="hero-marquee-dot">·</span>
+      <div class="sdk-hero__marquee" aria-hidden="true">
+        <div class="sdk-hero__marquee-track">
+          <span>React</span><span class="sdk-hero__marquee-dot">·</span>
+          <span>Node.js</span><span class="sdk-hero__marquee-dot">·</span>
+          <span>WebGL</span><span class="sdk-hero__marquee-dot">·</span>
+          <span>Motion</span><span class="sdk-hero__marquee-dot">·</span>
+          <span>TypeScript</span><span class="sdk-hero__marquee-dot">·</span>
+          <span>Next.js</span><span class="sdk-hero__marquee-dot">·</span>
+          <span>PostgreSQL</span><span class="sdk-hero__marquee-dot">·</span>
+          <span>GSAP</span><span class="sdk-hero__marquee-dot">·</span>
+          <span>CMS</span><span class="sdk-hero__marquee-dot">·</span>
+          <span>Docker</span><span class="sdk-hero__marquee-dot">·</span>
+          <span>React</span><span class="sdk-hero__marquee-dot">·</span>
+          <span>Node.js</span><span class="sdk-hero__marquee-dot">·</span>
+          <span>WebGL</span><span class="sdk-hero__marquee-dot">·</span>
+          <span>Motion</span><span class="sdk-hero__marquee-dot">·</span>
+          <span>TypeScript</span><span class="sdk-hero__marquee-dot">·</span>
+          <span>Next.js</span><span class="sdk-hero__marquee-dot">·</span>
+          <span>PostgreSQL</span><span class="sdk-hero__marquee-dot">·</span>
+          <span>GSAP</span><span class="sdk-hero__marquee-dot">·</span>
+          <span>CMS</span><span class="sdk-hero__marquee-dot">·</span>
+          <span>Docker</span><span class="sdk-hero__marquee-dot">·</span>
         </div>
       </div>
 
-      <a href="#showcase" class="scroll-indicator" aria-label="Scroll down">⌄</a>
+      <a href="#showcase" class="sdk-scroll-cue" aria-label="Scroll down">⌄</a>
       <svg width="0" height="0" style="position:absolute" aria-hidden="true">
         <defs>
           <linearGradient id="heroMysticGradient" x1="0%" y1="0%" x2="100%" y2="0%">
@@ -267,15 +267,15 @@
           </filter>
         </defs>
       </svg>
-      <a href="#contact" class="hero-fixed-cta">
-        <span class="hb-aura"></span>
-        <span class="hb-surface"></span>
-        <svg class="hb-svg" viewBox="0 0 260 72" preserveAspectRatio="none" aria-hidden="true">
-          <path class="hb-base"   pathLength="100" d="M 12 3 H 248 Q 257 3 257 12 V 60 Q 257 69 248 69 H 12 Q 3 69 3 60 V 12 Q 3 3 12 3 Z"/>
-          <path class="hb-soft"   pathLength="100" d="M 12 3 H 248 Q 257 3 257 12 V 60 Q 257 69 248 69 H 12 Q 3 69 3 60 V 12 Q 3 3 12 3 Z"/>
-          <path class="hb-moving" pathLength="100" d="M 12 3 H 248 Q 257 3 257 12 V 60 Q 257 69 248 69 H 12 Q 3 69 3 60 V 12 Q 3 3 12 3 Z"/>
+      <a href="#contact" class="sdk-hero__cta">
+        <span class="sdk-cta-btn__aura"></span>
+        <span class="sdk-cta-btn__surface"></span>
+        <svg class="sdk-cta-btn__svg" viewBox="0 0 260 72" preserveAspectRatio="none" aria-hidden="true">
+          <path class="sdk-cta-btn__border-base"   pathLength="100" d="M 12 3 H 248 Q 257 3 257 12 V 60 Q 257 69 248 69 H 12 Q 3 69 3 60 V 12 Q 3 3 12 3 Z"/>
+          <path class="sdk-cta-btn__border-glow"   pathLength="100" d="M 12 3 H 248 Q 257 3 257 12 V 60 Q 257 69 248 69 H 12 Q 3 69 3 60 V 12 Q 3 3 12 3 Z"/>
+          <path class="sdk-cta-btn__border-trail" pathLength="100" d="M 12 3 H 248 Q 257 3 257 12 V 60 Q 257 69 248 69 H 12 Q 3 69 3 60 V 12 Q 3 3 12 3 Z"/>
         </svg>
-        <span class="hb-label">
+        <span class="sdk-cta-btn__label">
           Start a Project
           <svg width="11" height="11" viewBox="0 0 14 14" fill="none" aria-hidden="true" style="margin-left:7px;flex-shrink:0;transition:transform 0.35s ease">
             <path d="M1 7h12M8 2l5 5-5 5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
@@ -284,139 +284,139 @@
       </a>
     </section>
 
-    <div class="site-bg-scope">
+    <div class="sdk-bg-scope">
 
     <!-- Pill video showcase — pill expands to fullscreen on scroll -->
-    <section class="hero-showcase" id="showcase">
-      <canvas class="showcase-blob-canvas" aria-hidden="true"></canvas>
-      <div class="showcase-dim" aria-hidden="true"></div>
-      <h2 class="hero-line hero-line-top">
+    <section class="sdk-showcase" id="showcase">
+      <canvas class="sdk-showcase__canvas" aria-hidden="true"></canvas>
+      <div class="sdk-showcase__overlay" aria-hidden="true"></div>
+      <h2 class="sdk-showcase__headline sdk-showcase__headline--top">
         <span class="inner">CRAFTED TO</span>
       </h2>
 
-      <div class="hero-video-wrap" id="heroVideoWrap">
-        <div class="hero-video-inner">
-          <video class="hero-video" autoplay loop muted playsinline>
+      <div class="sdk-showcase__reel-wrap" id="heroVideoWrap">
+        <div class="sdk-showcase__reel-inner">
+          <video class="sdk-showcase__reel" autoplay loop muted playsinline>
             <source src="assets/hero-vid.mp4" type="video/mp4" />
           </video>
         </div>
       </div>
 
-      <div class="hero-rotating-wrap" aria-hidden="true">
-        <span class="hero-rotating-word is-active">Fast</span>
-        <span class="hero-rotating-word">Bold</span>
-        <span class="hero-rotating-word">Clean</span>
-        <span class="hero-rotating-word">Alive</span>
+      <div class="sdk-showcase__kinetic-wrap" aria-hidden="true">
+        <span class="sdk-showcase__kinetic-word is-active">Fast</span>
+        <span class="sdk-showcase__kinetic-word">Bold</span>
+        <span class="sdk-showcase__kinetic-word">Clean</span>
+        <span class="sdk-showcase__kinetic-word">Alive</span>
       </div>
 
-      <h1 class="hero-line hero-line-bottom">
+      <h1 class="sdk-showcase__headline sdk-showcase__headline--bottom">
         <span class="inner">PUSH LIMITS</span>
       </h1>
 
       <!-- Cursor HUD — top right -->
-      <div class="sc-hud" id="scHud" aria-hidden="true">
-        <div class="sc-hud-status">
-          <span class="sc-hud-dot"></span>
-          <span class="sc-hud-label">SYS ACTIVE</span>
+      <div class="sdk-hud" id="scHud" aria-hidden="true">
+        <div class="sdk-hud__status">
+          <span class="sdk-hud__dot"></span>
+          <span class="sdk-hud__label">SYS ACTIVE</span>
         </div>
-        <div class="sc-hud-coords">
-          <span class="sc-hud-axis">X <span id="hudX">000</span></span>
-          <span class="sc-hud-axis">Y <span id="hudY">000</span></span>
+        <div class="sdk-hud__coords">
+          <span class="sdk-hud__axis">X <span id="hudX">000</span></span>
+          <span class="sdk-hud__axis">Y <span id="hudY">000</span></span>
         </div>
-        <div class="sc-hud-wave">
+        <div class="sdk-hud__wave">
           <span></span><span></span><span></span><span></span>
           <span></span><span></span><span></span><span></span>
         </div>
       </div>
 
       <!-- Live clock card — bottom left -->
-      <div class="sc-clock" id="scClock" aria-hidden="true">
-        <div class="sc-clock-header">
-          <span class="sc-clock-dot"></span>
-          <span class="sc-clock-zone">IST · UTC+5:30</span>
+      <div class="sdk-clock" id="scClock" aria-hidden="true">
+        <div class="sdk-clock__header">
+          <span class="sdk-clock__dot"></span>
+          <span class="sdk-clock__timezone">IST · UTC+5:30</span>
         </div>
-        <div class="sc-clock-time">
-          <span id="scH">00</span><span class="sc-colon">:</span><span id="scM">00</span><span class="sc-colon">:</span><span id="scS">00</span>
+        <div class="sdk-clock__time">
+          <span id="scH">00</span><span class="sdk-clock__colon">:</span><span id="scM">00</span><span class="sdk-clock__colon">:</span><span id="scS">00</span>
         </div>
-        <div class="sc-clock-loc">Jaipur · India</div>
+        <div class="sdk-clock__location">Jaipur · India</div>
       </div>
 
     </section>
-    <section class="text-intro" id="intro">
-      <div class="ti-inner">
-        <div class="ti-header">
-          <span class="eyebrow">About</span>
-          <h2 class="ti-heading"><span class="ti-ch-wrap"></span></h2>
+    <section class="sdk-intro" id="intro">
+      <div class="sdk-intro__inner">
+        <div class="sdk-intro__header">
+          <span class="sdk-eyebrow">About</span>
+          <h2 class="sdk-intro__heading"><span class="sdk-intro__char-wrap"></span></h2>
         </div>
-        <p class="ti-text">I was drawn to a world where <em class="ti-hi">design meets engineering</em> — a space where I can imagine, build and <em class="ti-hi">ship anything.</em> That's what makes me a full&#8209;stack developer.</p>
+        <p class="sdk-intro__body">I was drawn to a world where <em class="sdk-intro__highlight">design meets engineering</em> — a space where I can imagine, build and <em class="sdk-intro__highlight">ship anything.</em> That's what makes me a full&#8209;stack developer.</p>
 
       </div>
     </section>
 
-    <section class="stats-section" id="stats">
-      <div class="stats-rule stats-rule--top"></div>
+    <section class="sdk-stats" id="stats">
+      <div class="sdk-stats__rule sdk-stats__rule--top"></div>
 
-      <div class="stats-row">
+      <div class="sdk-stats__row">
 
-        <article class="si">
-          <div class="si-num-clip">
-            <span class="si-num" data-target="5">0</span><span class="si-sup">+</span>
+        <article class="sdk-stat">
+          <div class="sdk-stat__num-clip">
+            <span class="sdk-stat__number" data-target="5">0</span><span class="sdk-stat__suffix">+</span>
           </div>
-          <footer class="si-foot">
-            <span class="si-idx">01</span>
-            <span class="si-name">Years<br>of craft</span>
+          <footer class="sdk-stat__footer">
+            <span class="sdk-stat__index">01</span>
+            <span class="sdk-stat__label">Years<br>of craft</span>
           </footer>
         </article>
 
-        <div class="stats-divider"></div>
+        <div class="sdk-stats__divider"></div>
 
-        <article class="si si--mid">
-          <div class="si-num-clip">
-            <span class="si-num" data-target="40">0</span><span class="si-sup">+</span>
+        <article class="sdk-stat sdk-stat--mid">
+          <div class="sdk-stat__num-clip">
+            <span class="sdk-stat__number" data-target="40">0</span><span class="sdk-stat__suffix">+</span>
           </div>
-          <footer class="si-foot">
-            <span class="si-idx">02</span>
-            <span class="si-name">Projects<br>shipped</span>
+          <footer class="sdk-stat__footer">
+            <span class="sdk-stat__index">02</span>
+            <span class="sdk-stat__label">Projects<br>shipped</span>
           </footer>
         </article>
 
-        <div class="stats-divider"></div>
+        <div class="sdk-stats__divider"></div>
 
-        <article class="si si--bot">
-          <div class="si-num-clip">
-            <span class="si-num" data-target="12">0</span><span class="si-sup">+</span>
+        <article class="sdk-stat sdk-stat--bottom">
+          <div class="sdk-stat__num-clip">
+            <span class="sdk-stat__number" data-target="12">0</span><span class="sdk-stat__suffix">+</span>
           </div>
-          <footer class="si-foot">
-            <span class="si-idx">03</span>
-            <span class="si-name">Tech<br>mastered</span>
+          <footer class="sdk-stat__footer">
+            <span class="sdk-stat__index">03</span>
+            <span class="sdk-stat__label">Tech<br>mastered</span>
           </footer>
         </article>
 
       </div>
 
-      <div class="stats-rule stats-rule--bot"></div>
+      <div class="sdk-stats__rule sdk-stats__rule--bottom"></div>
     </section>
 
     <!-- ── Featured Work ── -->
-    <section class="jg-featured" id="work">
-      <div class="jg-featured__inner">
+    <section class="sdk-work" id="work">
+      <div class="sdk-work__inner">
 
-        <span class="eyebrow">Work</span>
-        <div class="jg-title-wrap">
-          <h2 class="jg-title">
-            <span class="jg-title-line" data-split>Selected</span><br>
-            <span class="jg-title-line jg-title-dim" data-split>Work</span>
+        <span class="sdk-eyebrow">Work</span>
+        <div class="sdk-work__title-wrap">
+          <h2 class="sdk-work__title">
+            <span class="sdk-work__title-line" data-split>Selected</span><br>
+            <span class="sdk-work__title-line sdk-work__title-dim" data-split>Work</span>
           </h2>
         </div>
 
-        <div class="jg-meta">
-          <div class="jg-line"></div>
-          <div class="jg-meta-row">
-            <div class="jg-kicker"><span>Portfolio &middot; 2024</span></div>
-            <div class="jg-top-tags">
-              <span class="jg-pill">Full Stack</span>
-              <span class="jg-pill">Motion</span>
-              <span class="jg-pill">CMS</span>
+        <div class="sdk-work__meta">
+          <div class="sdk-work__rule"></div>
+          <div class="sdk-work__meta-row">
+            <div class="sdk-work__kicker"><span>Portfolio &middot; 2024</span></div>
+            <div class="sdk-work__tag-list">
+              <span class="sdk-work__pill">Full Stack</span>
+              <span class="sdk-work__pill">Motion</span>
+              <span class="sdk-work__pill">CMS</span>
             </div>
           </div>
         </div>
@@ -425,170 +425,170 @@
     </section>
 
     <!-- ── Work Shader Slider ── -->
-    <section class="recent-projects" id="recent-projects" aria-labelledby="recent-projects-title">
-      <div class="projects-stick" id="projects-stick">
-        <div class="projects-bg" id="projects-bg" aria-hidden="true"></div>
+    <section class="sdk-projects" id="sdk-projects" aria-labelledby="sdk-projecsdk-stack__title">
+      <div class="sdk-projects__sticky" id="sdk-projects__sticky">
+        <div class="sdk-projects__bg" id="sdk-projects__bg" aria-hidden="true"></div>
         <canvas id="projects-fx" aria-hidden="true"></canvas>
-        <div class="projects-overlay" aria-hidden="true"></div>
-        <div class="projects-noise" aria-hidden="true"></div>
-        <div class="projects-rain" aria-hidden="true"></div>
-        <div class="projects-frame" aria-hidden="true"></div>
-        <h2 id="recent-projects-title" class="sr-only">Recent Projects</h2>
-        <div class="projects-content-wrap" id="projects-content-wrap" aria-label="Recent project details">
+        <div class="sdk-projects__overlay" aria-hidden="true"></div>
+        <div class="sdk-projects__grain" aria-hidden="true"></div>
+        <div class="sdk-projects__particles" aria-hidden="true"></div>
+        <div class="sdk-projects__vignette" aria-hidden="true"></div>
+        <h2 id="sdk-projecsdk-stack__title" class="sdk-sr-only">Recent Projects</h2>
+        <div class="sdk-projects__content" id="sdk-projects__content" aria-label="Recent project details">
 
-          <article class="project-panel is-single" data-index="0" data-side="left">
-            <div class="project-copy">
-              <div class="project-kicker"><span class="project-number">01</span><span>Food &middot; Cloud Kitchen</span></div>
-              <h3 class="project-title">Bunny<br>Bytes</h3>
-              <span class="project-type">Modern food brand &middot; clean visual identity</span>
-              <p class="project-desc">A modern food brand website designed with a clean, appetizing layout, smooth user experience, responsive sections, and strong visual branding.</p>
-              <div class="project-tags"><span>Food Brand</span><span>Clean UI</span><span>Responsive</span><span>Branding</span></div>
+          <article class="sdk-project-slide is-single" data-index="0" data-side="left">
+            <div class="sdk-project-slide__copy">
+              <div class="sdk-project-slide__kicker"><span class="sdk-project-slide__index">01</span><span>Food &middot; Cloud Kitchen</span></div>
+              <h3 class="sdk-project-slide__title">Bunny<br>Bytes</h3>
+              <span class="sdk-project-slide__category">Modern food brand &middot; clean visual identity</span>
+              <p class="sdk-project-slide__desc">A modern food brand website designed with a clean, appetizing layout, smooth user experience, responsive sections, and strong visual branding.</p>
+              <div class="sdk-project-slide__tags"><span>Food Brand</span><span>Clean UI</span><span>Responsive</span><span>Branding</span></div>
             </div>
-            <a href="https://bunny-bytes.in/" target="_blank" rel="noopener noreferrer" class="project-link">
+            <a href="https://bunny-bytes.in/" target="_blank" rel="noopener noreferrer" class="sdk-project-slide__link">
               Visit Site
               <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true"><path d="M1 13L13 1M13 1H4M13 1v9" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
             </a>
           </article>
 
-          <article class="project-panel" data-index="1" data-side="left">
-            <div class="project-copy">
-              <div class="project-kicker"><span class="project-number">02</span><span>Real Estate &middot; Property</span></div>
-              <h3 class="project-title">Shambala<br>Homes</h3>
-              <span class="project-type">Premium property &middot; professional layout</span>
-              <p class="project-desc">A professional real estate website with a clean property-focused layout, premium design feel, responsive structure, and user-friendly navigation.</p>
-              <div class="project-tags"><span>Real Estate</span><span>Property Cards</span><span>Premium UI</span><span>Responsive</span></div>
+          <article class="sdk-project-slide" data-index="1" data-side="left">
+            <div class="sdk-project-slide__copy">
+              <div class="sdk-project-slide__kicker"><span class="sdk-project-slide__index">02</span><span>Real Estate &middot; Property</span></div>
+              <h3 class="sdk-project-slide__title">Shambala<br>Homes</h3>
+              <span class="sdk-project-slide__category">Premium property &middot; professional layout</span>
+              <p class="sdk-project-slide__desc">A professional real estate website with a clean property-focused layout, premium design feel, responsive structure, and user-friendly navigation.</p>
+              <div class="sdk-project-slide__tags"><span>Real Estate</span><span>Property Cards</span><span>Premium UI</span><span>Responsive</span></div>
             </div>
-            <a href="https://shambalahomes.com.au/" target="_blank" rel="noopener noreferrer" class="project-link">
+            <a href="https://shambalahomes.com.au/" target="_blank" rel="noopener noreferrer" class="sdk-project-slide__link">
               Visit Site
               <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true"><path d="M1 13L13 1M13 1H4M13 1v9" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
             </a>
           </article>
 
-          <article class="project-panel" data-index="2" data-side="left">
-            <div class="project-copy">
-              <div class="project-kicker"><span class="project-number">03</span><span>Real Estate &middot; Investment</span></div>
-              <h3 class="project-title">Real Gold<br>Properties</h3>
-              <span class="project-type">Luxury real estate &middot; GSAP storytelling</span>
-              <p class="project-desc">A premium real estate and property investment website with modern visuals, GSAP-based animations, smooth transitions, and a high-end brand presentation.</p>
-              <div class="project-tags"><span>GSAP</span><span>Luxury UI</span><span>Animations</span><span>Branding</span></div>
+          <article class="sdk-project-slide" data-index="2" data-side="left">
+            <div class="sdk-project-slide__copy">
+              <div class="sdk-project-slide__kicker"><span class="sdk-project-slide__index">03</span><span>Real Estate &middot; Investment</span></div>
+              <h3 class="sdk-project-slide__title">Real Gold<br>Properties</h3>
+              <span class="sdk-project-slide__category">Luxury real estate &middot; GSAP storytelling</span>
+              <p class="sdk-project-slide__desc">A premium real estate and property investment website with modern visuals, GSAP-based animations, smooth transitions, and a high-end brand presentation.</p>
+              <div class="sdk-project-slide__tags"><span>GSAP</span><span>Luxury UI</span><span>Animations</span><span>Branding</span></div>
             </div>
-            <a href="https://shivduttkarwa.github.io/rgp-v4/" target="_blank" rel="noopener noreferrer" class="project-link">
+            <a href="https://shivduttkarwa.github.io/rgp-v4/" target="_blank" rel="noopener noreferrer" class="sdk-project-slide__link">
               Visit Site
               <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true"><path d="M1 13L13 1M13 1H4M13 1v9" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
             </a>
           </article>
 
-          <article class="project-panel" data-index="3" data-side="left">
-            <div class="project-copy">
-              <div class="project-kicker"><span class="project-number">04</span><span>Fashion &middot; Clothing Brand</span></div>
-              <h3 class="project-title">Behna<br>Studio</h3>
-              <span class="project-type">Ethnic fashion &middot; boutique brand feel</span>
-              <p class="project-desc">A stylish clothing brand website designed for ethnic and women's fashion, with elegant visuals, responsive design, product-focused sections, and a boutique-style brand feel.</p>
-              <div class="project-tags"><span>Fashion</span><span>Elegant UI</span><span>Responsive</span><span>E-Commerce</span></div>
+          <article class="sdk-project-slide" data-index="3" data-side="left">
+            <div class="sdk-project-slide__copy">
+              <div class="sdk-project-slide__kicker"><span class="sdk-project-slide__index">04</span><span>Fashion &middot; Clothing Brand</span></div>
+              <h3 class="sdk-project-slide__title">Behna<br>Studio</h3>
+              <span class="sdk-project-slide__category">Ethnic fashion &middot; boutique brand feel</span>
+              <p class="sdk-project-slide__desc">A stylish clothing brand website designed for ethnic and women's fashion, with elegant visuals, responsive design, product-focused sections, and a boutique-style brand feel.</p>
+              <div class="sdk-project-slide__tags"><span>Fashion</span><span>Elegant UI</span><span>Responsive</span><span>E-Commerce</span></div>
             </div>
-            <a href="https://behna.in/" target="_blank" rel="noopener noreferrer" class="project-link">
+            <a href="https://behna.in/" target="_blank" rel="noopener noreferrer" class="sdk-project-slide__link">
               Visit Site
               <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true"><path d="M1 13L13 1M13 1H4M13 1v9" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
             </a>
           </article>
 
         </div>
-        <div class="project-counter" aria-hidden="true">
+        <div class="sdk-projects__counter" aria-hidden="true">
           <span class="is-active">01</span><span>02</span><span>03</span><span>04</span>
         </div>
-        <div class="projects-progress" aria-hidden="true"><span id="projects-progress-bar"></span></div>
+        <div class="sdk-projects__progress" aria-hidden="true"><span id="sdk-projects__progress-bar"></span></div>
       </div>
     </section>
 
-    <div class="jg-cta-wrap">
-      <a href="#" class="jg-cta"><span>View All Work</span></a>
+    <div class="sdk-work__cta-wrap">
+      <a href="#" class="sdk-work__cta"><span>View All Work</span></a>
     </div>
 
     <!-- ── Tech Stack ── -->
-    <section id="services" class="ts-section">
-      <div class="ts-inner">
+    <section id="services" class="sdk-stack-section">
+      <div class="sdk-stack__inner">
 
-        <div class="ts-header">
-          <span class="eyebrow">Capabilities</span>
-          <h2 class="ts-title">
-            <span class="ts-title-line" data-split>My Tech</span>
-            <span class="ts-title-line ts-title-dim" data-split>Stack</span>
+        <div class="sdk-stack__header">
+          <span class="sdk-eyebrow">Capabilities</span>
+          <h2 class="sdk-stack__title">
+            <span class="sdk-stack__title-line" data-split>My Tech</span>
+            <span class="sdk-stack__title-line sdk-stack__title-dim" data-split>Stack</span>
           </h2>
-          <p class="ts-subtitle">A refined toolkit for building fast, accessible, and premium digital products.</p>
+          <p class="sdk-stack__subtitle">A refined toolkit for building fast, accessible, and premium digital products.</p>
         </div>
 
-        <div class="ts-bento" id="tsBento">
+        <div class="sdk-stack__grid" id="tsBento">
 
-          <div class="ts-card ts-card--wide">
-            <div class="ts-card-inner">
-              <div class="ts-card-head">
-                <div class="ts-icon">
+          <div class="sdk-stack__card sdk-stack__card--wide">
+            <div class="sdk-stack__card-inner">
+              <div class="sdk-stack__card-header">
+                <div class="sdk-stack__card-icon">
                   <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
                 </div>
                 <h3>Frontend Engineering</h3>
               </div>
-              <div class="ts-tags">
-                <span class="ts-tag"><span class="ts-dot"></span>React</span>
-                <span class="ts-tag"><span class="ts-dot"></span>Next.js</span>
-                <span class="ts-tag"><span class="ts-dot"></span>TypeScript</span>
-                <span class="ts-tag"><span class="ts-dot"></span>Tailwind CSS</span>
-                <span class="ts-tag"><span class="ts-dot"></span>GSAP</span>
-                <span class="ts-tag"><span class="ts-dot"></span>Three.js</span>
-                <span class="ts-tag"><span class="ts-dot"></span>Vanilla JS</span>
+              <div class="sdk-stack__tags">
+                <span class="sdk-stack__tag"><span class="sdk-stack__tag-dot"></span>React</span>
+                <span class="sdk-stack__tag"><span class="sdk-stack__tag-dot"></span>Next.js</span>
+                <span class="sdk-stack__tag"><span class="sdk-stack__tag-dot"></span>TypeScript</span>
+                <span class="sdk-stack__tag"><span class="sdk-stack__tag-dot"></span>Tailwind CSS</span>
+                <span class="sdk-stack__tag"><span class="sdk-stack__tag-dot"></span>GSAP</span>
+                <span class="sdk-stack__tag"><span class="sdk-stack__tag-dot"></span>Three.js</span>
+                <span class="sdk-stack__tag"><span class="sdk-stack__tag-dot"></span>Vanilla JS</span>
               </div>
             </div>
           </div>
 
-          <div class="ts-card">
-            <div class="ts-card-inner">
-              <div class="ts-card-head">
-                <div class="ts-icon">
+          <div class="sdk-stack__card">
+            <div class="sdk-stack__card-inner">
+              <div class="sdk-stack__card-header">
+                <div class="sdk-stack__card-icon">
                   <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="8" rx="2"/><rect x="2" y="14" width="20" height="8" rx="2"/><line x1="6" y1="6" x2="6.01" y2="6"/><line x1="6" y1="18" x2="6.01" y2="18"/></svg>
                 </div>
                 <h3>Backend &amp; API</h3>
               </div>
-              <div class="ts-tags">
-                <span class="ts-tag"><span class="ts-dot"></span>Node.js</span>
-                <span class="ts-tag"><span class="ts-dot"></span>Express</span>
-                <span class="ts-tag"><span class="ts-dot"></span>Python</span>
-                <span class="ts-tag"><span class="ts-dot"></span>Django</span>
-                <span class="ts-tag"><span class="ts-dot"></span>REST API</span>
+              <div class="sdk-stack__tags">
+                <span class="sdk-stack__tag"><span class="sdk-stack__tag-dot"></span>Node.js</span>
+                <span class="sdk-stack__tag"><span class="sdk-stack__tag-dot"></span>Express</span>
+                <span class="sdk-stack__tag"><span class="sdk-stack__tag-dot"></span>Python</span>
+                <span class="sdk-stack__tag"><span class="sdk-stack__tag-dot"></span>Django</span>
+                <span class="sdk-stack__tag"><span class="sdk-stack__tag-dot"></span>REST API</span>
               </div>
             </div>
           </div>
 
-          <div class="ts-card">
-            <div class="ts-card-inner">
-              <div class="ts-card-head">
-                <div class="ts-icon">
+          <div class="sdk-stack__card">
+            <div class="sdk-stack__card-inner">
+              <div class="sdk-stack__card-header">
+                <div class="sdk-stack__card-icon">
                   <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/></svg>
                 </div>
                 <h3>Database</h3>
               </div>
-              <div class="ts-tags">
-                <span class="ts-tag"><span class="ts-dot"></span>PostgreSQL</span>
-                <span class="ts-tag"><span class="ts-dot"></span>MongoDB</span>
-                <span class="ts-tag"><span class="ts-dot"></span>Firebase</span>
-                <span class="ts-tag"><span class="ts-dot"></span>Supabase</span>
+              <div class="sdk-stack__tags">
+                <span class="sdk-stack__tag"><span class="sdk-stack__tag-dot"></span>PostgreSQL</span>
+                <span class="sdk-stack__tag"><span class="sdk-stack__tag-dot"></span>MongoDB</span>
+                <span class="sdk-stack__tag"><span class="sdk-stack__tag-dot"></span>Firebase</span>
+                <span class="sdk-stack__tag"><span class="sdk-stack__tag-dot"></span>Supabase</span>
               </div>
             </div>
           </div>
 
-          <div class="ts-card ts-card--wide">
-            <div class="ts-card-inner">
-              <div class="ts-card-head">
-                <div class="ts-icon">
+          <div class="sdk-stack__card sdk-stack__card--wide">
+            <div class="sdk-stack__card-inner">
+              <div class="sdk-stack__card-header">
+                <div class="sdk-stack__card-icon">
                   <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
                 </div>
                 <h3>DevOps &amp; Tools</h3>
               </div>
-              <div class="ts-tags">
-                <span class="ts-tag"><span class="ts-dot"></span>Git</span>
-                <span class="ts-tag"><span class="ts-dot"></span>Docker</span>
-                <span class="ts-tag"><span class="ts-dot"></span>AWS</span>
-                <span class="ts-tag"><span class="ts-dot"></span>Vercel</span>
-                <span class="ts-tag"><span class="ts-dot"></span>Figma</span>
-                <span class="ts-tag"><span class="ts-dot"></span>GitHub Actions</span>
+              <div class="sdk-stack__tags">
+                <span class="sdk-stack__tag"><span class="sdk-stack__tag-dot"></span>Git</span>
+                <span class="sdk-stack__tag"><span class="sdk-stack__tag-dot"></span>Docker</span>
+                <span class="sdk-stack__tag"><span class="sdk-stack__tag-dot"></span>AWS</span>
+                <span class="sdk-stack__tag"><span class="sdk-stack__tag-dot"></span>Vercel</span>
+                <span class="sdk-stack__tag"><span class="sdk-stack__tag-dot"></span>Figma</span>
+                <span class="sdk-stack__tag"><span class="sdk-stack__tag-dot"></span>GitHub Actions</span>
               </div>
             </div>
           </div>
@@ -597,111 +597,111 @@
       </div>
     </section>
 
-    <section id="about" class="ts-section">
-      <div class="ts-inner">
-        <div class="ts-header">
-          <span class="eyebrow">Process</span>
-          <h2 class="ts-title">
-            <span class="ts-title-line" data-split>How I</span>
-            <span class="ts-title-line ts-title-dim" data-split>Work</span>
+    <section id="about" class="sdk-stack-section">
+      <div class="sdk-stack__inner">
+        <div class="sdk-stack__header">
+          <span class="sdk-eyebrow">Process</span>
+          <h2 class="sdk-stack__title">
+            <span class="sdk-stack__title-line" data-split>How I</span>
+            <span class="sdk-stack__title-line sdk-stack__title-dim" data-split>Work</span>
           </h2>
-          <p class="ts-subtitle">A true blade is never rushed. Every site I build is shaped with discipline, refined with patience, and delivered with the quiet care of a master at work.</p>
+          <p class="sdk-stack__subtitle">A true blade is never rushed. Every site I build is shaped with discipline, refined with patience, and delivered with the quiet care of a master at work.</p>
         </div>
 
-      </div><!-- /ts-inner -->
+      </div><!-- /sdk-stack__inner -->
 
-      <!-- Timeline layout sits outside ts-inner so it spans full section width -->
-      <div class="proc-layout">
+      <!-- Timeline layout sits outside sdk-stack__inner so it spans full section width -->
+      <div class="sdk-process__layout">
 
         <!-- Left: scrolling content panels -->
-        <div class="proc-rail" id="procRail">
+        <div class="sdk-process__steps-col" id="procRail">
 
-          <div class="proc-panel" data-index="0">
-            <div class="proc-dot"></div>
-            <p class="proc-num">01</p>
-            <h3 class="proc-title">Study</h3>
-            <div class="proc-sep"></div>
-            <p class="proc-desc">Before the blade is drawn, the ground is understood. I learn your goals, your users, and your rivals — until the path forward is unmistakably clear.</p>
-            <p class="proc-tags">Kickoff · Research · Strategy</p>
+          <div class="sdk-process__step" data-index="0">
+            <div class="sdk-process__step-marker"></div>
+            <p class="sdk-process__step-index">01</p>
+            <h3 class="sdk-process__step-title">Study</h3>
+            <div class="sdk-process__step-divider"></div>
+            <p class="sdk-process__step-desc">Before the blade is drawn, the ground is understood. I learn your goals, your users, and your rivals — until the path forward is unmistakably clear.</p>
+            <p class="sdk-process__step-tags">Kickoff · Research · Strategy</p>
           </div>
 
-          <div class="proc-panel" data-index="1">
-            <div class="proc-dot"></div>
-            <p class="proc-num">02</p>
-            <h3 class="proc-title">Forge</h3>
-            <div class="proc-sep"></div>
-            <p class="proc-desc">The blade is shaped before it is sharpened. Wireframes become high-fidelity UI — every detail considered, every interaction deliberate, nothing left to chance.</p>
-            <p class="proc-tags">Wireframes · UI · Prototype</p>
+          <div class="sdk-process__step" data-index="1">
+            <div class="sdk-process__step-marker"></div>
+            <p class="sdk-process__step-index">02</p>
+            <h3 class="sdk-process__step-title">Forge</h3>
+            <div class="sdk-process__step-divider"></div>
+            <p class="sdk-process__step-desc">The blade is shaped before it is sharpened. Wireframes become high-fidelity UI — every detail considered, every interaction deliberate, nothing left to chance.</p>
+            <p class="sdk-process__step-tags">Wireframes · UI · Prototype</p>
           </div>
 
-          <div class="proc-panel" data-index="2">
-            <div class="proc-dot"></div>
-            <p class="proc-num">03</p>
-            <h3 class="proc-title">Temper</h3>
-            <div class="proc-sep"></div>
-            <p class="proc-desc">Steel is tempered through heat and patience — so is good code. Built clean, scaled with care, and refined until every layer holds without compromise.</p>
-            <p class="proc-tags">Frontend · Backend · APIs</p>
+          <div class="sdk-process__step" data-index="2">
+            <div class="sdk-process__step-marker"></div>
+            <p class="sdk-process__step-index">03</p>
+            <h3 class="sdk-process__step-title">Temper</h3>
+            <div class="sdk-process__step-divider"></div>
+            <p class="sdk-process__step-desc">Steel is tempered through heat and patience — so is good code. Built clean, scaled with care, and refined until every layer holds without compromise.</p>
+            <p class="sdk-process__step-tags">Frontend · Backend · APIs</p>
           </div>
 
-          <div class="proc-panel" data-index="3">
-            <div class="proc-dot"></div>
-            <p class="proc-num">04</p>
-            <h3 class="proc-title">Honour</h3>
-            <div class="proc-sep"></div>
-            <p class="proc-desc">The craft does not end at delivery. Tested, polished, and handed over with care — a commitment to quality that quietly outlasts the launch.</p>
-            <p class="proc-tags">Deploy · Test · Support</p>
+          <div class="sdk-process__step" data-index="3">
+            <div class="sdk-process__step-marker"></div>
+            <p class="sdk-process__step-index">04</p>
+            <h3 class="sdk-process__step-title">Honour</h3>
+            <div class="sdk-process__step-divider"></div>
+            <p class="sdk-process__step-desc">The craft does not end at delivery. Tested, polished, and handed over with care — a commitment to quality that quietly outlasts the launch.</p>
+            <p class="sdk-process__step-tags">Deploy · Test · Support</p>
           </div>
         </div>
 
         <!-- Middle: sword travels through steps on scroll -->
-        <div class="proc-mid" id="procMid">
-          <div class="proc-sword-wrap" id="procSword">
-            <img class="proc-sword-img" src="assets/sword-red.png" alt="">
+        <div class="sdk-process__spine-col" id="procMid">
+          <div class="sdk-process__sword-wrap" id="procSword">
+            <img class="sdk-process__sword" src="assets/sword-red.png" alt="">
           </div>
         </div>
 
         <!-- Right: sticky flipping image frame -->
-        <div class="proc-img-rail">
-          <div class="proc-frame-wrap">
-            <div class="proc-frame" id="procFrame">
-              <div class="proc-frame-imgs">
-                <div class="proc-img-slide" data-img="0">
+        <div class="sdk-process__visual-col">
+          <div class="sdk-process__frame-wrap">
+            <div class="sdk-process__frame" id="procFrame">
+              <div class="sdk-process__frame-stack">
+                <div class="sdk-process__frame-slide" data-img="0">
                   <img src="assets/images/process-1.jpg" alt="Study phase" loading="lazy">
-                  <div class="proc-img-overlay"></div>
-                  <span class="proc-img-label">01 · Study</span>
+                  <div class="sdk-process__frame-overlay"></div>
+                  <span class="sdk-process__frame-label">01 · Study</span>
                 </div>
-                <div class="proc-img-slide" data-img="1">
+                <div class="sdk-process__frame-slide" data-img="1">
                   <img src="assets/images/process-2.jpg" alt="Forge phase" loading="lazy">
-                  <div class="proc-img-overlay"></div>
-                  <span class="proc-img-label">02 · Forge</span>
+                  <div class="sdk-process__frame-overlay"></div>
+                  <span class="sdk-process__frame-label">02 · Forge</span>
                 </div>
-                <div class="proc-img-slide" data-img="2">
+                <div class="sdk-process__frame-slide" data-img="2">
                   <img src="assets/images/process-3.jpg" alt="Temper phase" loading="lazy">
-                  <div class="proc-img-overlay"></div>
-                  <span class="proc-img-label">03 · Temper</span>
+                  <div class="sdk-process__frame-overlay"></div>
+                  <span class="sdk-process__frame-label">03 · Temper</span>
                 </div>
-                <div class="proc-img-slide" data-img="3">
+                <div class="sdk-process__frame-slide" data-img="3">
                   <img src="assets/images/process-4.jpg" alt="Honour phase" loading="lazy">
-                  <div class="proc-img-overlay"></div>
-                  <span class="proc-img-label">04 · Honour</span>
+                  <div class="sdk-process__frame-overlay"></div>
+                  <span class="sdk-process__frame-label">04 · Honour</span>
                 </div>
               </div>
             </div>
           </div>
         </div>
 
-      </div><!-- /proc-layout -->
+      </div><!-- /sdk-process__layout -->
     </section>
 
     <!-- ── Tubes CTA ── -->
-    <section class="tcta-section" id="hire">
+    <section class="sdk-cta-section" id="hire">
       <canvas id="tubes-canvas" aria-hidden="true"></canvas>
-      <div class="tcta-dim" aria-hidden="true"></div>
-      <div class="tcta-content">
-        <span class="eyebrow">Ready to create something great?</span>
-        <h2 class="tcta-headline">Let's build<br>something<br>remarkable.</h2>
-        <p class="tcta-sub">Open to freelance projects, collaborations &amp; full-time roles.</p>
-        <a href="#contact" class="tcta-btn">
+      <div class="sdk-cta__dim" aria-hidden="true"></div>
+      <div class="sdk-cta__content">
+        <span class="sdk-eyebrow">Ready to create something great?</span>
+        <h2 class="sdk-cta__headline">Let's build<br>something<br>remarkable.</h2>
+        <p class="sdk-cta__subtext">Open to freelance projects, collaborations &amp; full-time roles.</p>
+        <a href="#contact" class="sdk-cta__btn">
           <span>Get in Touch</span>
           <svg width="16" height="16" viewBox="0 0 14 14" fill="none" aria-hidden="true">
             <path d="M1 7h12M8 2l5 5-5 5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
@@ -711,29 +711,29 @@
     </section>
 
     <!-- ── Contact + Footer ── -->
-    <section class="cf-section" id="contact">
-      <div class="cf-glow" aria-hidden="true"></div>
+    <section class="sdk-contact" id="contact">
+      <div class="sdk-contact__glow" aria-hidden="true"></div>
 
-      <div class="cf-inner">
-        <div class="cf-cta-block">
-          <span class="eyebrow">Let's work together</span>
-          <h2 class="cf-headline">
-            <span class="cf-hl-main">Have an idea?</span>
-            <span class="cf-hl-dim">Let's build it.</span>
+      <div class="sdk-contact__inner">
+        <div class="sdk-contact__cta-block">
+          <span class="sdk-eyebrow">Let's work together</span>
+          <h2 class="sdk-contact__headline">
+            <span class="sdk-contact__headline-main">Have an idea?</span>
+            <span class="sdk-contact__headline-dim">Let's build it.</span>
           </h2>
-          <p class="cf-tagline">Every great website begins with a conversation. Reach out and let's shape your vision into reality.</p>
+          <p class="sdk-contact__tagline">Every great website begins with a conversation. Reach out and let's shape your vision into reality.</p>
         </div>
 
-        <div class="cf-panel">
-          <div class="git-cta-wrap">
-            <a href="mailto:shivdutt@example.com" class="git-double-hover" data-text="Get in touch" aria-label="Get in touch">
-              <span class="git-line git-base"></span>
-              <span class="git-line git-hover"></span>
+        <div class="sdk-contact__panel">
+          <div class="sdk-email-wrap">
+            <a href="mailto:shivdutt@example.com" class="sdk-email-link" data-text="Get in touch" aria-label="Get in touch">
+              <span class="sdk-email-line sdk-email-line--base"></span>
+              <span class="sdk-email-line sdk-email-line--hover"></span>
             </a>
           </div>
 
-          <div class="cf-panel-footer">
-          <div class="cf-panel-socials">
+          <div class="sdk-contact__panel-footer">
+          <div class="sdk-contact__socials">
             <a href="mailto:shivdutt@example.com" class="cf-social-icon" aria-label="Email">
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
             </a>
@@ -747,24 +747,24 @@
               <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.747l7.73-8.835L1.254 2.25H8.08l4.253 5.622zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
             </a>
           </div>
-          <p class="cf-panel-location">
-            <span class="cf-dot" aria-hidden="true"></span>
+          <p class="sdk-contact__location">
+            <span class="sdk-contact__dot" aria-hidden="true"></span>
             Suratgarh · Jaipur, India
           </p>
           </div>
         </div>
       </div>
 
-      <div class="cf-rule"></div>
+      <div class="sdk-contact__rule"></div>
 
-      <div class="cf-meta">
+      <div class="sdk-contact__meta">
         <span>© 2026 Shivdutt Karwa</span>
-        <span class="cf-meta-dot" aria-hidden="true"></span>
+        <span class="sdk-contact__meta-dot" aria-hidden="true"></span>
         <span>Forged with precision &amp; code</span>
       </div>
 
-      <div class="cf-name-wrap">
-        <span class="cf-name" id="cfName">SHIVDUTT <span class="cf-name-gap"></span>KARWA</span>
+      <div class="sdk-contact__name-wrap">
+        <span class="sdk-contact__signature" id="cfName">SHIVDUTT <span class="sdk-contact__name-gap"></span>KARWA</span>
       </div>
     </section>
     </div>
