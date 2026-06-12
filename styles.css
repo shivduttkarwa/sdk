@@ -60,7 +60,7 @@ html {
   scrollbar-gutter: stable;
 }
 
-/* ── Responsive rem scale ── */
+
 @media (max-width: 1440px) { html { font-size: 15px; } }
 @media (max-width: 1100px) { html { font-size: 14px; } }
 @media (max-width: 768px)  { html { font-size: 13px; } }
@@ -70,7 +70,7 @@ body {
   min-height: 100vh;
   font-family: "Inter", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
   color: var(--text);
- 
+
   overflow-x: clip;
 }
 
@@ -253,13 +253,13 @@ img {
   100% { transform: rotate(0deg) translateY(0); }
 }
 
-/* ── Preloader ── */
+
 .sdk-preloader {
   position: fixed;
   inset: 0;
   z-index: 10000;
   background: #080808;
-  display: none; /* temporarily disabled */
+  display: none;
   align-items: center;
   justify-content: center;
   transform: translateY(0);
@@ -327,7 +327,7 @@ img {
   transform: translateY(-100%);
 }
 
-/* ── Nav (twostep) ── */
+
 :root {
   --nav-ease: cubic-bezier(0.625, 0.05, 0, 1);
   --nav-dur: 0.5s;
@@ -560,7 +560,7 @@ img {
   z-index: 2;
 }
 
-/* ── Nav Editorial Links ── */
+
 .sdk-nav__links {
   display: flex;
   flex-direction: column;
@@ -653,7 +653,7 @@ img {
   color: var(--nav-accent);
 }
 
-/* ── Nav Footer ── */
+
 .sdk-nav__footer {
   display: flex;
   align-items: center;
@@ -699,7 +699,7 @@ img {
   color: var(--nav-accent);
 }
 
-/* ── Hero ── */
+
 .sdk-hero {
   position: relative;
   height: 100svh;
@@ -736,7 +736,7 @@ img {
 .sdk-showcase__headline--top    { margin-bottom: max(1rem, 2.5vw); }
 .sdk-showcase__headline--bottom { margin-top: max(1rem, 2.5vw); }
 
-/* ── Hero availability badge ── */
+
 .sdk-hero__status {
   position: absolute;
   top: 1.75rem;
@@ -774,7 +774,7 @@ img {
   50%       { opacity: 0.5; box-shadow: 0 0 1.125rem #22c55e; }
 }
 
-/* ── Hero marquee ── */
+
 .sdk-hero__marquee {
   position: absolute;
   bottom: 0;
@@ -812,7 +812,7 @@ img {
   to   { transform: translateX(-50%); }
 }
 
-/* ── Hero tagline ── */
+
 .sdk-hero__tagline {
   display: block;
   font-family: "Space Grotesk", sans-serif;
@@ -827,7 +827,7 @@ img {
 .sdk-hero__name--primary .sdk-hero__tagline { color: #fff; }
 .sdk-hero__name--revealed .sdk-hero__tagline { color: #fff; }
 
-/* ── Hero name text (two-layer sdk-reveal) ── */
+
 .sdk-hero__name {
   position: absolute;
   inset: 0;
@@ -851,13 +851,13 @@ img {
   text-transform: uppercase;
 }
 
-/* Layer A — red, Marcellus */
+
 .sdk-hero__name--primary .sdk-hero__name-line {
   font-family: "Marcellus", serif;
   color: #e03f4f;
 }
 
-/* Layer B wrapper */
+
 .sdk-hero__reveal-layer {
   position: absolute;
   inset: 0;
@@ -865,7 +865,7 @@ img {
   pointer-events: none;
 }
 
-/* Layer B — white, Marcellus, sdk-revealed by blob via soft mask-image */
+
 .sdk-hero__name--revealed {
   -webkit-mask-image: radial-gradient(circle 0px at 50% 50%, black 80%, transparent 100%);
   mask-image: radial-gradient(circle 0px at 50% 50%, black 80%, transparent 100%);
@@ -878,7 +878,7 @@ img {
 }
 
 
-/* ── Showcase section (pill video + expand on scroll) ── */
+
 .sdk-showcase {
   position: relative;
   height: 100svh;
@@ -901,7 +901,7 @@ img {
 .sdk-showcase .sdk-showcase__headline--top    { text-align: left;  padding-inline: 5rem; }
 .sdk-showcase .sdk-showcase__headline--bottom { text-align: right; padding-inline: 5rem; }
 
-/* Horizontal pill video */
+
 .sdk-showcase__reel-wrap {
   position: relative;
   z-index: 5;
@@ -964,7 +964,7 @@ img {
   will-change: transform, opacity, filter;
 }
 
-/* ── Showcase HUD (top-right) ── */
+
 .sdk-hud {
   position: absolute;
   top: clamp(1.4rem, 3vw, 2.8rem);
@@ -1071,7 +1071,7 @@ img {
   to   { transform: scaleY(1);   opacity: 1; }
 }
 
-/* ── Live clock card (bottom-left) ── */
+
 .sdk-clock {
   position: absolute;
   bottom: clamp(1.4rem, 3vw, 2.8rem);
@@ -1160,7 +1160,7 @@ img {
   .sdk-hud, .sdk-clock { display: none; }
 }
 
-/* ── end showcase extras ── */
+
 
 .sdk-hero__meta {
   position: absolute;
@@ -1323,7 +1323,7 @@ img {
   to   { transform: rotate(360deg); }
 }
 
-/* Text intro */
+
 .sdk-intro {
   padding: clamp(6.25rem, 14vw, 12.5rem) 0;
   background: transparent;
@@ -1392,7 +1392,7 @@ img {
 }
 
 
-/* ── Editorial stats section ── */
+
 .sdk-stats {
   width: 100%;
   overflow: hidden;
@@ -1516,7 +1516,7 @@ img {
   pointer-events: none;
 }
 
-/* ── Featured Work Section ── */
+
 .sdk-work {
   width: 100%;
 
@@ -1626,7 +1626,7 @@ img {
   opacity: 0;
 }
 
-/* Grid */
+
 .jg-work-grid {
   margin-top: clamp(4.5rem, 9vw, 8rem);
   display: grid;
@@ -1635,7 +1635,7 @@ img {
   align-items: start;
 }
 
-/* CTA */
+
 .sdk-work__cta-wrap {
   display: flex;
   justify-content: center;
@@ -1697,7 +1697,7 @@ img {
 .sdk-work__cta:hover::before { opacity: 1; }
 .sdk-work__cta:hover span { color: #f4c16b; }
 
-/* Responsive */
+
 @media (max-width: 900px) {
   .sdk-work__meta-row { flex-direction: column; gap: 1.2rem; }
   .sdk-work__tag-list { justify-content: flex-start; }
@@ -1709,7 +1709,7 @@ img {
 }
 
 
-/* Footer */
+
 .footer {
   padding: 3.5rem 2rem;
   border-top: 1px solid rgba(255,255,255,.08);
@@ -1765,7 +1765,7 @@ img {
   flex-wrap: wrap;
 }
 
-/* Scroll sdk-reveal */
+
 .sdk-reveal {
   opacity: 0;
   transform: translateY(40px);
@@ -1777,7 +1777,7 @@ img {
   transform: translateY(0);
 }
 
-/* ── Responsive ── */
+
 @media (max-width: 1100px) {
   .showcase-grid {
     grid-template-columns: minmax(220px, 28vw) minmax(0, 1fr);
@@ -1904,7 +1904,7 @@ img {
   .bento-title { font-size: clamp(1.75rem, 7vw, 3rem); }
 }
 
-/* ── Recent Projects Shader Slider ──────────────────────────────────── */
+
 .sdk-projects {
   position: relative;
   isolation: isolate;
@@ -2270,7 +2270,7 @@ img {
   .sdk-projects__counter, .sdk-projects__progress { display: none; }
 }
 
-/* ── Tech Stack Section ─────────────────────────────────────────────── */
+
 .sdk-stack-section {
   padding: clamp(3rem, 6vw, 6rem) clamp(1.5rem, 5vw, 6rem) clamp(4rem, 8vw, 10rem);
 }
@@ -2412,14 +2412,14 @@ img {
   transform: translateY(-1px);
 }
 
-/* physics active — strip transform from transition so JS drives it */
+
 .sdk-stack__tag--physics {
   transition: background 0.3s var(--ease), border-color 0.3s var(--ease), color 0.3s var(--ease);
   will-change: transform;
 }
 .sdk-stack__tag--physics:hover { transform: none; }
 
-/* wall-smash flash */
+
 .sdk-stack__tag--impact {
   background: rgba(224,63,79,.25) !important;
   border-color: rgba(255,80,96,.65) !important;
@@ -2435,20 +2435,20 @@ img {
   flex-shrink: 0;
 }
 
-/* ── Process Timeline ────────────────────────────────────────────── */
+
 .sdk-process__layout {
   display: flex;
   gap: 0;
   align-items: stretch;
 }
 
-/* Left rail — 50% */
+
 .sdk-process__steps-col {
   flex: 1;
   position: relative;
 }
 
-/* Centre column — sword travels here */
+
 .sdk-process__spine-col {
   width: 10rem;
   flex-shrink: 0;
@@ -2498,7 +2498,7 @@ img {
   position: relative;
 }
 
-/* Progress dot — sits at centre of sdk-process__spine-col (10rem → 5rem from rail edge; dot is 0.6875rem wide so -5.34rem) */
+
 .sdk-process__step-marker {
   position: absolute;
   right: -5.34rem;
@@ -2564,7 +2564,7 @@ img {
   100% { border-color: rgba(185,23,41,0); transform: scale(5); opacity: 0; }
 }
 
-/* Panel typography */
+
 .sdk-process__step-index {
   font-family: "Space Grotesk", sans-serif;
   font-size: clamp(5rem, 10vw, 9rem);
@@ -2631,7 +2631,7 @@ img {
   color: rgba(245,242,234,.48);
 }
 
-/* Right: sticky image frame — 50% */
+
 .sdk-process__visual-col {
   flex: 1;
   position: relative;
@@ -2722,16 +2722,16 @@ img {
   .sdk-stack__grid { grid-template-columns: 1fr; }
   .sdk-stack__card--wide { grid-column: span 1; }
 
-  /* ── Process: mobile layout ── */
+
   .sdk-process__layout {
     flex-direction: column;
     gap: 0;
   }
 
-  /* Hide sword column entirely */
+
   .sdk-process__spine-col { display: none; }
 
-  /* Image frame sits at the top, smaller */
+
   .sdk-process__visual-col {
     order: -1;
     padding-left: 0;
@@ -2749,14 +2749,14 @@ img {
     perspective: 1000px;
   }
 
-  /* Left content rail */
+
   .sdk-process__steps-col {
     padding-right: 0;
     padding-left: 0;
     position: relative;
   }
 
-  /* Thin left border as timeline indicator */
+
   .sdk-process__steps-col::before {
     content: '';
     position: absolute;
@@ -2779,7 +2779,7 @@ img {
   .sdk-process__step-title { font-size: clamp(2.4rem, 9vw, 4rem); }
   .sdk-process__step-desc { font-size: 1rem; }
 
-  /* ── Stats: mobile compact ── */
+
   .sdk-stats__row {
     min-height: unset;
   }
@@ -2809,7 +2809,7 @@ img {
     font-size: 0.625rem;
   }
 
- 
+
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -2817,7 +2817,7 @@ img {
   .sdk-projects__grain { animation: none; }
 }
 
-/* ── Contact + Footer ───────────────────────────────────────────── */
+
 .sdk-contact {
   position: relative;
   overflow: hidden;
@@ -3049,13 +3049,13 @@ img {
   .sdk-contact__meta { flex-direction: column; gap: 0.4rem; text-align: center; }
 }
 
-/* ── Tubes CTA ────────────────────────────────────────────────────── */
+
 .sdk-cta-section {
   position: relative;
   width: 100%;
   height: 100vh;
   overflow: hidden;
-  background: #05030a;   /* site bg — tubes render on top of this */
+  background: #05030a;
   touch-action: none;
 }
 
@@ -3065,7 +3065,7 @@ img {
   width: 100%;
   height: 100%;
   z-index: 0;
-  mix-blend-mode: screen; /* black bg of ThreeJS renderer becomes transparent */
+  mix-blend-mode: screen;
 }
 
 .sdk-cta__dim {
@@ -3090,7 +3090,7 @@ img {
   pointer-events: none;
 }
 
-/* sdk-eyebrow already styled globally — override colour for this section */
+
 .sdk-cta-section .sdk-eyebrow {
   color: #E03F4F;
 }

@@ -4,10 +4,10 @@ const menuBtn       = document.getElementById('menuBtn');
 const menuPanel     = document.getElementById('menuPanel');
 const navClosers    = document.querySelectorAll('[data-sdk-nav__toggle="close"]');
 
-// Hero starts immediately (sdk-preloader removed)
+
 startHeroAnimation();
 
-// Menu
+
 function setNavStatus(isOpen) {
   if (!navRoot || !menuBtn) return;
   navRoot.setAttribute('data-nav-status', isOpen ? 'active' : 'inactive');
@@ -34,7 +34,7 @@ if (menuBtn && navRoot && menuPanel) {
   });
 }
 
-// Magnetic buttons
+
 document.querySelectorAll('.magnetic').forEach((el) => {
   el.addEventListener('mousemove', (e) => {
     const rect = el.getBoundingClientRect();
@@ -47,7 +47,7 @@ document.querySelectorAll('.magnetic').forEach((el) => {
   });
 });
 
-// Tilt cards
+
 document.querySelectorAll('.tilt-card').forEach(card => {
   card.addEventListener('mousemove', (e) => {
     const rect    = card.getBoundingClientRect();
@@ -63,7 +63,7 @@ document.querySelectorAll('.tilt-card').forEach(card => {
 });
 
 
-// Reveal observer
+
 const revealObserver = new IntersectionObserver((entries) => {
   entries.forEach(entry => {
     if (entry.isIntersecting) {
@@ -76,7 +76,7 @@ const revealObserver = new IntersectionObserver((entries) => {
 document.querySelectorAll('.sdk-reveal').forEach(el => revealObserver.observe(el));
 
 
-// ── Showcase HUD: live cursor coords ──
+
 (function initShowcaseHUD() {
   const elX  = document.getElementById('hudX');
   const elY  = document.getElementById('hudY');
@@ -90,7 +90,7 @@ document.querySelectorAll('.sdk-reveal').forEach(el => revealObserver.observe(el
   });
 })();
 
-// ── Live clock (IST) ──
+
 (function initClock() {
   const elH = document.getElementById('scH');
   const elM = document.getElementById('scM');
@@ -111,14 +111,14 @@ document.querySelectorAll('.sdk-reveal').forEach(el => revealObserver.observe(el
 })();
 
 
-// Hero rotating words — each word has a distinct animation personality
+
 (function initRotatingWords() {
   const words = document.querySelectorAll('.sdk-showcase__kinetic-word');
   if (!words.length || !window.gsap) return;
 
   const DISPLAY_MS = 2700;
 
-  // Split text into char spans for per-letter animations
+
   words.forEach(el => {
     const text = el.textContent.trim();
     el.dataset.text = text;
@@ -127,11 +127,11 @@ document.querySelectorAll('.sdk-reveal').forEach(el => revealObserver.observe(el
     ).join('');
   });
 
-  // GSAP owns all transforms — set xPercent/yPercent for centering
+
   gsap.set(words, { opacity: 0, xPercent: -50, yPercent: -50 });
 
   const recipes = [
-    // 0 · "Fast" — chars whip in from left (blur streak), exit right
+
     {
       in(el) {
         const chars = el.querySelectorAll('.sdk-kinetic__char');
@@ -153,7 +153,7 @@ document.querySelectorAll('.sdk-reveal').forEach(el => revealObserver.observe(el
       }
     },
 
-    // 1 · "Bold" — stamp drop with back.out overshoot, crush-down exit
+
     {
       in(el) {
         gsap.set(el, { opacity: 1, y: 0, scaleY: 1, transformOrigin: '50% 50%' });
@@ -174,7 +174,7 @@ document.querySelectorAll('.sdk-reveal').forEach(el => revealObserver.observe(el
       }
     },
 
-    // 2 · "Clean" — all chars converge from spread positions simultaneously, lock in at once
+
     {
       in(el) {
         const chars = [...el.querySelectorAll('.sdk-kinetic__char')];
@@ -208,7 +208,7 @@ document.querySelectorAll('.sdk-reveal').forEach(el => revealObserver.observe(el
       }
     },
 
-    // 3 · "Alive" — each letter springs up with elastic bounce, falls away on exit
+
     {
       in(el) {
         const chars = el.querySelectorAll('.sdk-kinetic__char');
@@ -276,7 +276,7 @@ function startHeroAnimation() {
   });
 }
 
-// Lenis smooth scroll
+
 if (window.Lenis && !matchMedia('(prefers-reduced-motion: reduce)').matches) {
   const lenis = new Lenis({
     duration: 1.42,
@@ -290,11 +290,11 @@ if (window.Lenis && !matchMedia('(prefers-reduced-motion: reduce)').matches) {
   if (window.ScrollTrigger) { lenis.on('scroll', ScrollTrigger.update); }
 }
 
-// GSAP scroll animations
+
 if (window.gsap && window.ScrollTrigger) {
   gsap.registerPlugin(ScrollTrigger);
 
-  // Pill expands to fullscreen on scroll
+
   const heroWrap     = document.getElementById('heroVideoWrap');
   const showcaseSection = document.querySelector('.sdk-showcase');
   if (heroWrap && showcaseSection) {
@@ -348,7 +348,7 @@ if (window.gsap && window.ScrollTrigger) {
 
 }
 
-// ── Stats row: single water-trail cursor sdk-reveal (3 bg images) ──
+
 (function initStatsWater() {
   const row = document.querySelector('.sdk-stats__row');
   if (!row) return;
@@ -368,14 +368,14 @@ if (window.gsap && window.ScrollTrigger) {
   const gl = canvas.getContext('webgl', { alpha: true, premultipliedAlpha: false, antialias: false, powerPreference: 'low-power' });
   if (!gl) { canvas.remove(); return; }
 
-  // Float textures required for velocity/pressure fields
+
   if (!gl.getExtension('OES_texture_float')) { canvas.remove(); return; }
-  gl.getExtension('OES_texture_float_linear'); // bilinear on floats (optional)
+  gl.getExtension('OES_texture_float_linear');
 
   const VS = `attribute vec2 a_pos; varying vec2 v_uv;
     void main(){ v_uv=a_pos*.5+.5; gl_Position=vec4(a_pos,0.,1.); }`;
 
-  // Inject a Gaussian splat of color/velocity at u_point
+
   const SPLAT_FS = `precision highp float;
     uniform sampler2D u_src;
     uniform vec2 u_point, u_aspect;
@@ -388,7 +388,7 @@ if (window.gsap && window.ScrollTrigger) {
       gl_FragColor = vec4(texture2D(u_src, v_uv).rgb + u_color * d, 1.);
     }`;
 
-  // Semi-Lagrangian advection: trace each texel back along velocity
+
   const ADVECT_FS = `precision highp float;
     uniform sampler2D u_velocity, u_quantity;
     uniform vec2 u_texelSize;
@@ -400,7 +400,7 @@ if (window.gsap && window.ScrollTrigger) {
       gl_FragColor = u_dissipation * texture2D(u_quantity, coord);
     }`;
 
-  // Curl (z-component of ∇×v) — feeds vorticity confinement
+
   const CURL_FS = `precision highp float;
     uniform sampler2D u_velocity;
     uniform vec2 u_texelSize;
@@ -413,7 +413,7 @@ if (window.gsap && window.ScrollTrigger) {
       gl_FragColor = vec4(0.5*(R-L-(T-B)), 0., 0., 1.);
     }`;
 
-  // Vorticity confinement: amplify curl to restore swirling detail
+
   const VORTICITY_FS = `precision highp float;
     uniform sampler2D u_velocity, u_curl;
     uniform vec2 u_texelSize;
@@ -430,7 +430,7 @@ if (window.gsap && window.ScrollTrigger) {
       gl_FragColor = vec4(vel, 0., 1.);
     }`;
 
-  // Divergence of velocity field (∇·v)
+
   const DIVERGENCE_FS = `precision highp float;
     uniform sampler2D u_velocity;
     uniform vec2 u_texelSize;
@@ -443,7 +443,7 @@ if (window.gsap && window.ScrollTrigger) {
       gl_FragColor = vec4(0.5*(R-L+T-B), 0., 0., 1.);
     }`;
 
-  // Jacobi pressure solve — one iteration per draw call
+
   const PRESSURE_FS = `precision highp float;
     uniform sampler2D u_pressure, u_divergence;
     uniform vec2 u_texelSize;
@@ -457,7 +457,7 @@ if (window.gsap && window.ScrollTrigger) {
       gl_FragColor = vec4((L+R+T+B-div)*0.25, 0., 0., 1.);
     }`;
 
-  // Subtract pressure gradient to enforce incompressibility
+
   const GRADIENT_FS = `precision highp float;
     uniform sampler2D u_pressure, u_velocity;
     uniform vec2 u_texelSize;
@@ -471,7 +471,7 @@ if (window.gsap && window.ScrollTrigger) {
       gl_FragColor = vec4(vel, 0., 1.);
     }`;
 
-  // Final render: use dye density as alpha to sdk-reveal 3 bg images
+
   const RENDER_FS = `precision highp float;
     uniform sampler2D u_dye, u_bg0, u_bg1, u_bg2;
     varying vec2 v_uv;
@@ -523,7 +523,7 @@ if (window.gsap && window.ScrollTrigger) {
     return t;
   }
 
-  // Compile all passes
+
   const splatProg = mkProg(SPLAT_FS);
   const advectProg = mkProg(ADVECT_FS);
   const curlProg = mkProg(CURL_FS);
@@ -533,7 +533,7 @@ if (window.gsap && window.ScrollTrigger) {
   const gradProg = mkProg(GRADIENT_FS);
   const renderProg = mkProg(RENDER_FS);
 
-  // Float FBOs for velocity, pressure, dye; single buffers for divergence/curl
+
   let vel0 = mkFBO(SIM_W, SIM_H, true),  vel1 = mkFBO(SIM_W, SIM_H, true);
   let pre0 = mkFBO(SIM_W, SIM_H, true),  pre1 = mkFBO(SIM_W, SIM_H, true);
   let dye0 = mkFBO(SIM_W, SIM_H, true),  dye1 = mkFBO(SIM_W, SIM_H, true);
@@ -560,7 +560,7 @@ if (window.gsap && window.ScrollTrigger) {
   gl.enable(gl.BLEND);
   gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
 
-  // Draw a full-screen quad into fbo using prog, with uniforms set by fn
+
   function blit(fbo, prog, fn) {
     gl.bindFramebuffer(gl.FRAMEBUFFER, fbo ? fbo.fbo : null);
     gl.viewport(0, 0, fbo ? fbo.w : (canvas.width || 1), fbo ? fbo.h : (canvas.height || 1));
@@ -581,7 +581,7 @@ if (window.gsap && window.ScrollTrigger) {
   const TXS = [1/SIM_W, 1/SIM_H];
 
   let mx = 0.5, my = 0.5;
-  let dmx = 0, dmy = 0;   // total delta accumulated across all events this frame
+  let dmx = 0, dmy = 0;
   let hasMouse = false;
 
   row.addEventListener('mousemove', e => {
@@ -615,7 +615,7 @@ if (window.gsap && window.ScrollTrigger) {
     const dt = Math.min((t - last) * 0.001, 0.016);
     last = t;
 
-    // 1. Splat cursor velocity + dye — use frame-accumulated delta so fast swipes don't lose data
+
     if (hasMouse && Math.abs(dmx) + Math.abs(dmy) > 0.0001) {
       const ar = (canvas.width || 1) / (canvas.height || 1);
       blit(vel1, splatProg, p => {
@@ -636,15 +636,15 @@ if (window.gsap && window.ScrollTrigger) {
       });
       [dye0,dye1]=[dye1,dye0];
     }
-    dmx = 0; dmy = 0; // reset after each frame
+    dmx = 0; dmy = 0;
 
-    // 2. Curl
+
     blit(curlFBO, curlProg, p => {
       tex(0,vel0.tex); u1i(p,'u_velocity',0);
       u2f(p,'u_texelSize',TXS[0],TXS[1]);
     });
 
-    // 3. Vorticity confinement
+
     blit(vel1, vortProg, p => {
       tex(0,vel0.tex); u1i(p,'u_velocity',0);
       tex(1,curlFBO.tex); u1i(p,'u_curl',1);
@@ -654,13 +654,13 @@ if (window.gsap && window.ScrollTrigger) {
     });
     [vel0,vel1]=[vel1,vel0];
 
-    // 4. Divergence
+
     blit(divFBO, divProg, p => {
       tex(0,vel0.tex); u1i(p,'u_velocity',0);
       u2f(p,'u_texelSize',TXS[0],TXS[1]);
     });
 
-    // 5. Clear pressure then Jacobi solve
+
     gl.bindFramebuffer(gl.FRAMEBUFFER, pre0.fbo);
     gl.viewport(0,0,SIM_W,SIM_H);
     gl.clearColor(0,0,0,1); gl.clear(gl.COLOR_BUFFER_BIT);
@@ -674,7 +674,7 @@ if (window.gsap && window.ScrollTrigger) {
       [pre0,pre1]=[pre1,pre0];
     }
 
-    // 6. Subtract pressure gradient
+
     blit(vel1, gradProg, p => {
       tex(0,pre0.tex); u1i(p,'u_pressure',0);
       tex(1,vel0.tex); u1i(p,'u_velocity',1);
@@ -682,7 +682,7 @@ if (window.gsap && window.ScrollTrigger) {
     });
     [vel0,vel1]=[vel1,vel0];
 
-    // 7. Advect velocity
+
     blit(vel1, advectProg, p => {
       tex(0,vel0.tex); u1i(p,'u_velocity',0);
       tex(1,vel0.tex); u1i(p,'u_quantity',1);
@@ -691,7 +691,7 @@ if (window.gsap && window.ScrollTrigger) {
     });
     [vel0,vel1]=[vel1,vel0];
 
-    // 8. Advect dye — collapse fast when cursor stops/leaves
+
     const dyeDiss = hasMouse ? DYE_DISS : 0.55;
     blit(dye1, advectProg, p => {
       tex(0,vel0.tex); u1i(p,'u_velocity',0);
@@ -701,7 +701,7 @@ if (window.gsap && window.ScrollTrigger) {
     });
     [dye0,dye1]=[dye1,dye0];
 
-    // 9. Render to canvas
+
     gl.bindFramebuffer(gl.FRAMEBUFFER, null);
     gl.viewport(0,0,canvas.width||1,canvas.height||1);
     gl.clearColor(0,0,0,0);
@@ -716,7 +716,7 @@ if (window.gsap && window.ScrollTrigger) {
   })(0);
 })();
 
-// ── Nav sdk-reveal: WebGL blob cursor ──
+
 (function initNavReveal() {
   const canvas = document.getElementById('navRevealCanvas');
   if (!canvas) return;
@@ -745,10 +745,8 @@ if (window.gsap && window.ScrollTrigger) {
       float cAspect = u_res.x / u_res.y;
       float iAspect = u_imgSize.x / u_imgSize.y;
       if (iAspect > cAspect) {
-        // image wider than canvas: fit height, center-crop x
         return vec2((uv.x - 0.5) * (cAspect / iAspect) + 0.5, uv.y);
       } else {
-        // image taller than canvas: fit width, center-crop y
         return vec2(uv.x, (uv.y - 0.5) * (iAspect / cAspect) + 0.5);
       }
     }
@@ -852,7 +850,7 @@ if (window.gsap && window.ScrollTrigger) {
 })();
 
 
-// ── Stats section entrance animation ──
+
 (function initStats() {
   if (!window.gsap || !window.ScrollTrigger) return;
   const section = document.querySelector('.sdk-stats');
@@ -888,7 +886,7 @@ if (window.gsap && window.ScrollTrigger) {
   master.to(ruleBot, { scaleX: 1, duration: 0.8, ease: 'power3.inOut' }, '-=0.2');
 })();
 
-// ── Section heading: char-by-char mask sdk-reveal ──
+
 (function initTiHeading() {
   if (!window.gsap || !window.ScrollTrigger) return;
   const wrap = document.querySelector('.sdk-intro__char-wrap');
@@ -916,7 +914,7 @@ if (window.gsap && window.ScrollTrigger) {
   });
 })();
 
-// ── Text intro: word-by-word blur sdk-reveal on scrub ──
+
 (function initTextIntro() {
   if (!window.gsap || !window.ScrollTrigger) return;
 
@@ -984,7 +982,7 @@ if (window.gsap && window.ScrollTrigger) {
   document.fonts?.ready ? document.fonts.ready.then(setup) : setTimeout(setup, 400);
 })();
 
-// ── Hero blob: WebGL cursor sdk-reveal ──
+
 (function initHeroBlob() {
   if (window.matchMedia('(max-width: 768px)').matches) return;
   const hero   = document.getElementById('home');
@@ -1085,7 +1083,7 @@ if (window.gsap && window.ScrollTrigger) {
       vec2 vc  = uv * 2.0 - 1.0;
       col *= 1.0 - dot(vc, vc) * 0.32;
 
-      vec2 gradDir = normalize(vec2(0.94, -0.342)); // top-left to bottom-right flow
+      vec2 gradDir = normalize(vec2(0.94, -0.342));
       float g = clamp(dot(uv - vec2(0.5), gradDir) + 0.5, 0.0, 1.0);
       float gs = smoothstep(0.0, 1.0, g);
       float redFocus = smoothstep(0.62, 0.0, distance(uv, vec2(0.16, 0.12)));
@@ -1270,7 +1268,7 @@ if (window.gsap && window.ScrollTrigger) {
   }, { passive: true });
 })();
 
-// ── Featured Work section ──
+
 (function initFeaturedWork() {
   const section = document.querySelector('.sdk-work');
   if (!section || !window.gsap || !window.ScrollTrigger) return;
@@ -1313,7 +1311,7 @@ if (window.gsap && window.ScrollTrigger) {
   }
 })();
 
-/* ── Recent Projects Shader Slider ─────────────────────────────────── */
+
 (() => {
   const imageUrls = [
     'https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?auto=format&fit=crop&w=2400&h=1350&q=84',
@@ -1576,7 +1574,7 @@ if (window.gsap && window.ScrollTrigger) {
     if(progressBar) progressBar.style.transform=`scaleY(${barP})`;
     if(bgFallback)  bgFallback.style.setProperty('--fallback-bg',`url('${imageUrls[s.active]}')`);
 
-    // burn edge enters text at ~6%, exits at ~55%; bell curve between those points
+
     const tL=6, tR=55;
     const melt=(wipe>=tL&&wipe<=tR)?Math.sin(((wipe-tL)/(tR-tL))*Math.PI):0;
 
@@ -1652,7 +1650,7 @@ if (window.gsap && window.ScrollTrigger) {
     initWebGL().then(r => { renderer = r; }).catch(() => {});
   }, false);
 
-  // Tab hidden → context lost but webglcontextrestored never fires; reinit on return
+
   document.addEventListener('visibilitychange', () => {
     if (!document.hidden && !renderer) {
       initWebGL().then(r => { renderer = r; }).catch(() => {});
@@ -1663,7 +1661,7 @@ if (window.gsap && window.ScrollTrigger) {
     if (!window.gsap || !window.ScrollTrigger) return;
     document.querySelectorAll('.sdk-stack-section').forEach(sec => {
 
-      // split chars
+
       sec.querySelectorAll('[data-split]').forEach(el => {
         const text = el.textContent.trim();
         el.innerHTML = text.split('').map(ch =>
@@ -1721,7 +1719,7 @@ if (window.gsap && window.ScrollTrigger) {
     let currentActive = -1;
     let trackStart = 0, trackEnd = 0;
 
-    // Initialise image visibility
+
     imgSlides.forEach((s, i) => gsap.set(s, { opacity: i === 0 ? 1 : 0 }));
     panels[0].classList.add('is-active');
     currentActive = 0;
@@ -1748,15 +1746,15 @@ if (window.gsap && window.ScrollTrigger) {
 
     const procSection = document.getElementById('about');
 
-    // Sword entrance: 3-point arc — scrubbed, fully reversible
+
     if (sword) {
       const entranceTl = gsap.timeline({ paused: true })
-        // leg 1: top-right → arc waypoint (a bit down and left, not all the way)
+
         .fromTo(sword,
           { x: 1000, y: -500, rotation: 180 },
           { x: 100,  y: -80,  rotation: 60, ease: 'none', duration: 0.55 }
         )
-        // leg 2: arc waypoint → resting position
+
         .to(sword,
           { x: 0, y: () => trackStart, rotation: 0, ease: 'none', duration: 0.45 }
         );
@@ -1771,7 +1769,7 @@ if (window.gsap && window.ScrollTrigger) {
       });
     }
 
-    // First image fades in on entrance
+
     const frameWrap = document.querySelector('.sdk-process__frame-wrap');
     if (frameWrap) {
       gsap.fromTo(frameWrap,
@@ -1789,7 +1787,7 @@ if (window.gsap && window.ScrollTrigger) {
     }
 
     panels.forEach((panel, i) => {
-      // Activate dot / panel colours when panel hits centre
+
       ScrollTrigger.create({
         trigger: panel,
         start: 'top center',
@@ -1798,7 +1796,7 @@ if (window.gsap && window.ScrollTrigger) {
         onEnterBack: () => activateStep(i),
       });
 
-      // Content slides in from left (scrubbed)
+
       const els = [...panel.querySelectorAll('.sdk-process__step-index,.sdk-process__step-title,.sdk-process__step-divider,.sdk-process__step-desc,.sdk-process__step-tags')];
       const tl  = gsap.timeline({ paused: true });
       tl.fromTo(els,
@@ -1810,7 +1808,7 @@ if (window.gsap && window.ScrollTrigger) {
         scrub: 1.2, animation: tl,
       });
 
-      // 3-D flip frame between this panel and the next
+
       if (i < panels.length - 1) {
         const DROP = 0.35, DROP_PX = 80;
         ScrollTrigger.create({
@@ -1862,7 +1860,7 @@ if (window.gsap && window.ScrollTrigger) {
       }
     });
 
-    // Sword travels from first panel centre to last, spinning as it goes
+
     if (sword) {
       gsap.fromTo(sword,
         { y: () => trackStart },
@@ -1880,7 +1878,7 @@ if (window.gsap && window.ScrollTrigger) {
       );
     }
 
-    setTrackBounds(); // recalculate after triggers are registered
+    setTrackBounds();
   }
 
   function initFooterName() {
@@ -1923,7 +1921,7 @@ if (window.gsap && window.ScrollTrigger) {
   });
 })();
 
-// ── Tech Stack spotlight ──
+
 (function() {
   document.querySelectorAll('.sdk-stack__card').forEach(card => {
     card.addEventListener('mousemove', e => {
@@ -1934,15 +1932,15 @@ if (window.gsap && window.ScrollTrigger) {
   });
 })();
 
-// ── Tag physics — flee mouse, bounce off card walls, spring back ──
+
 (function () {
-  const REPEL_R  = 135;   // mouse influence radius (px)
-  const REPEL_F  = 1.6;   // repulsion acceleration magnitude
-  const SPRING   = 0.042; // spring stiffness pulling back to home
-  const DAMP     = 0.78;  // velocity damping per frame
-  const RESTIT   = 0.38;  // energy kept on wall collision
-  const MAX_VEL  = 20;    // velocity cap (px / frame)
-  const WALL_PAD = 20;    // inner clearance from card edge
+  const REPEL_R  = 135;
+  const REPEL_F  = 1.6;
+  const SPRING   = 0.042;
+  const DAMP     = 0.78;
+  const RESTIT   = 0.38;
+  const MAX_VEL  = 20;
+  const WALL_PAD = 20;
 
   document.querySelectorAll('.sdk-stack__card').forEach(card => {
     let pts   = [];
@@ -1951,19 +1949,19 @@ if (window.gsap && window.ScrollTrigger) {
     let my    = -9999;
     let over  = false;
 
-    /* snapshot home positions from live layout */
+
     function init() {
       const cr = card.getBoundingClientRect();
       pts = Array.from(card.querySelectorAll('.sdk-stack__tag')).map(el => {
         const tr = el.getBoundingClientRect();
         return {
           el,
-          hx : tr.left - cr.left + tr.width  * 0.5,  // home centre x in card
-          hy : tr.top  - cr.top  + tr.height * 0.5,  // home centre y in card
+          hx : tr.left - cr.left + tr.width  * 0.5,
+          hy : tr.top  - cr.top  + tr.height * 0.5,
           tw : tr.width,
           th : tr.height,
-          x  : 0, y  : 0,   // offset from home
-          vx : 0, vy : 0,   // velocity
+          x  : 0, y  : 0,
+          vx : 0, vy : 0,
         };
       });
     }
@@ -1979,32 +1977,32 @@ if (window.gsap && window.ScrollTrigger) {
       let   live = false;
 
       for (const p of pts) {
-        /* repulsion from mouse */
+
         if (over) {
           const dx = p.hx + p.x - mx;
           const dy = p.hy + p.y - my;
           const d  = Math.hypot(dx, dy) || 0.01;
           if (d < REPEL_R) {
             const t = 1 - d / REPEL_R;
-            const f = REPEL_F * t * t / d;   // quadratic falloff, normalised
+            const f = REPEL_F * t * t / d;
             p.vx += dx * f;
             p.vy += dy * f;
           }
         }
 
-        /* spring + damping */
+
         p.vx = (p.vx - SPRING * p.x) * DAMP;
         p.vy = (p.vy - SPRING * p.y) * DAMP;
 
-        /* velocity cap */
+
         const spd = Math.hypot(p.vx, p.vy);
         if (spd > MAX_VEL) { p.vx *= MAX_VEL / spd; p.vy *= MAX_VEL / spd; }
 
-        /* integrate */
+
         p.x += p.vx;
         p.y += p.vy;
 
-        /* boundary collision — keep tag centre within card */
+
         const hw = p.tw * 0.5, hh = p.th * 0.5;
         const x0 = WALL_PAD + hw - p.hx,  x1 = cw - WALL_PAD - hw - p.hx;
         const y0 = WALL_PAD + hh - p.hy,  y1 = ch - WALL_PAD - hh - p.hy;
@@ -2027,7 +2025,7 @@ if (window.gsap && window.ScrollTrigger) {
       if (over || live) {
         raf = requestAnimationFrame(step);
       } else {
-        /* fully settled — clean up */
+
         pts.forEach(p => {
           p.el.style.transform = '';
           p.el.classList.remove('sdk-stack__tag--physics');
@@ -2059,7 +2057,7 @@ if (window.gsap && window.ScrollTrigger) {
     });
   });
 
-// ── Showcase: water-trail cursor sdk-reveal ──
+
 (function initShowcaseWater() {
   const section = document.querySelector('.sdk-showcase');
   const canvas  = section && section.querySelector('.sdk-showcase__canvas');
@@ -2217,7 +2215,7 @@ if (window.gsap && window.ScrollTrigger) {
   })(0);
 })();
 
-// ── "Get in touch" double-hover animation ──
+
 document.querySelectorAll('.sdk-email-link').forEach(link => {
   const text = link.dataset.text || link.textContent.trim();
   const baseLine  = link.querySelector('.sdk-email-line--base');

@@ -20,8 +20,7 @@
 </head>
 <body>
 
-  <!-- ── Preloader ── -->
-  <div class="sdk-preloader" id="sdk-preloader" aria-hidden="true">
+<div class="sdk-preloader" id="sdk-preloader" aria-hidden="true">
     <canvas class="sdk-preloader__canvas" id="plCanvas"></canvas>
     <svg class="sdk-preloader__ring" viewBox="0 0 200 200" aria-hidden="true">
       <circle class="sdk-preloader__arc" cx="100" cy="100" r="88" id="plArc"/>
@@ -32,7 +31,7 @@
 
   <script>
   (function () {
-    /* ── matrix rain ── */
+
     var canvas = document.getElementById('plCanvas');
     var ctx    = canvas.getContext('2d');
     var kanji  = '武士道侍剣魂刃忍鬼龍神将軍忠義';
@@ -81,7 +80,7 @@
     window.addEventListener('resize', resize);
     rainInterval = setInterval(rain, 90);
 
-    /* ── counter + arc ── */
+
     var arc = document.getElementById('plArc');
     var num = document.getElementById('plNum');
     var C   = 552.92;
@@ -195,26 +194,23 @@
 
   <main class="sdk-page">
     <section class="sdk-hero" id="home">
-      <!-- WebGL blob cursor canvas — full sdk-hero background layer -->
+
       <canvas id="hero-blob-canvas" aria-hidden="true"></canvas>
-      <!-- Mobile fallback image -->
+
       <div class="sdk-hero__mobile-bg" aria-hidden="true"></div>
 
-      <!-- Availability badge — top right -->
-      <div class="sdk-hero__status">
+<div class="sdk-hero__status">
         <span class="sdk-hero__status-dot"></span>
         Available for work
       </div>
 
-      <!-- Layer A: default visible state -->
-      <div class="sdk-hero__name sdk-hero__name--primary" aria-label="Shivdutt Karwa">
+<div class="sdk-hero__name sdk-hero__name--primary" aria-label="Shivdutt Karwa">
         <span class="sdk-hero__name-line">SHIVDUTT</span>
         <span class="sdk-hero__name-line">KARWA</span>
         <span class="sdk-hero__tagline">Full Stack Developer &middot; 2025</span>
       </div>
 
-      <!-- Layer B: blob-sdk-revealed state — wrapper carries the smoke displacement filter -->
-      <div class="sdk-hero__reveal-layer" id="heroSmokeWrap" aria-hidden="true">
+<div class="sdk-hero__reveal-layer" id="heroSmokeWrap" aria-hidden="true">
         <div class="sdk-hero__name sdk-hero__name--revealed" id="heroNameRevealed">
           <span class="sdk-hero__name-line">SHIVDUTT</span>
           <span class="sdk-hero__name-line">KARWA</span>
@@ -222,8 +218,7 @@
         </div>
       </div>
 
-      <!-- Marquee strip -->
-      <div class="sdk-hero__marquee" aria-hidden="true">
+<div class="sdk-hero__marquee" aria-hidden="true">
         <div class="sdk-hero__marquee-track">
           <span>React</span><span class="sdk-hero__marquee-dot">·</span>
           <span>Node.js</span><span class="sdk-hero__marquee-dot">·</span>
@@ -258,7 +253,7 @@
             <stop offset="78%"  stop-color="#d8a24d"/>
             <stop offset="100%" stop-color="#8e1b12"/>
           </linearGradient>
-          <!-- Turbulence displacement — makes the mask boundary smoky/irregular -->
+
           <filter id="hero-smoke-filter" x="-8%" y="-8%" width="116%" height="116%" color-interpolation-filters="sRGB">
             <feTurbulence type="fractalNoise" baseFrequency="0.016 0.022" numOctaves="4" result="noise">
               <animate attributeName="baseFrequency" values="0.014 0.020;0.018 0.024;0.014 0.020" dur="5s" repeatCount="indefinite"/>
@@ -286,8 +281,7 @@
 
     <div class="sdk-bg-scope">
 
-    <!-- Pill video showcase — pill expands to fullscreen on scroll -->
-    <section class="sdk-showcase" id="showcase">
+<section class="sdk-showcase" id="showcase">
       <canvas class="sdk-showcase__canvas" aria-hidden="true"></canvas>
       <div class="sdk-showcase__overlay" aria-hidden="true"></div>
       <h2 class="sdk-showcase__headline sdk-showcase__headline--top">
@@ -313,8 +307,7 @@
         <span class="inner">PUSH LIMITS</span>
       </h1>
 
-      <!-- Cursor HUD — top right -->
-      <div class="sdk-hud" id="scHud" aria-hidden="true">
+<div class="sdk-hud" id="scHud" aria-hidden="true">
         <div class="sdk-hud__status">
           <span class="sdk-hud__dot"></span>
           <span class="sdk-hud__label">SYS ACTIVE</span>
@@ -329,8 +322,7 @@
         </div>
       </div>
 
-      <!-- Live clock card — bottom left -->
-      <div class="sdk-clock" id="scClock" aria-hidden="true">
+<div class="sdk-clock" id="scClock" aria-hidden="true">
         <div class="sdk-clock__header">
           <span class="sdk-clock__dot"></span>
           <span class="sdk-clock__timezone">IST · UTC+5:30</span>
@@ -397,8 +389,7 @@
       <div class="sdk-stats__rule sdk-stats__rule--bottom"></div>
     </section>
 
-    <!-- ── Featured Work ── -->
-    <section class="sdk-work" id="work">
+<section class="sdk-work" id="work">
       <div class="sdk-work__inner">
 
         <span class="sdk-eyebrow">Work</span>
@@ -424,8 +415,7 @@
       </div>
     </section>
 
-    <!-- ── Work Shader Slider ── -->
-    <section class="sdk-projects" id="sdk-projects" aria-labelledby="sdk-projecsdk-stack__title">
+<section class="sdk-projects" id="sdk-projects" aria-labelledby="sdk-projecsdk-stack__title">
       <div class="sdk-projects__sticky" id="sdk-projects__sticky">
         <div class="sdk-projects__bg" id="sdk-projects__bg" aria-hidden="true"></div>
         <canvas id="projects-fx" aria-hidden="true"></canvas>
@@ -504,8 +494,7 @@
       <a href="#" class="sdk-work__cta"><span>View All Work</span></a>
     </div>
 
-    <!-- ── Tech Stack ── -->
-    <section id="services" class="sdk-stack-section">
+<section id="services" class="sdk-stack-section">
       <div class="sdk-stack__inner">
 
         <div class="sdk-stack__header">
@@ -608,13 +597,11 @@
           <p class="sdk-stack__subtitle">A true blade is never rushed. Every site I build is shaped with discipline, refined with patience, and delivered with the quiet care of a master at work.</p>
         </div>
 
-      </div><!-- /sdk-stack__inner -->
+      </div>
 
-      <!-- Timeline layout sits outside sdk-stack__inner so it spans full section width -->
-      <div class="sdk-process__layout">
+<div class="sdk-process__layout">
 
-        <!-- Left: scrolling content panels -->
-        <div class="sdk-process__steps-col" id="procRail">
+<div class="sdk-process__steps-col" id="procRail">
 
           <div class="sdk-process__step" data-index="0">
             <div class="sdk-process__step-marker"></div>
@@ -653,15 +640,13 @@
           </div>
         </div>
 
-        <!-- Middle: sword travels through steps on scroll -->
-        <div class="sdk-process__spine-col" id="procMid">
+<div class="sdk-process__spine-col" id="procMid">
           <div class="sdk-process__sword-wrap" id="procSword">
             <img class="sdk-process__sword" src="assets/sword-red.png" alt="">
           </div>
         </div>
 
-        <!-- Right: sticky flipping image frame -->
-        <div class="sdk-process__visual-col">
+<div class="sdk-process__visual-col">
           <div class="sdk-process__frame-wrap">
             <div class="sdk-process__frame" id="procFrame">
               <div class="sdk-process__frame-stack">
@@ -690,11 +675,10 @@
           </div>
         </div>
 
-      </div><!-- /sdk-process__layout -->
+      </div>
     </section>
 
-    <!-- ── Tubes CTA ── -->
-    <section class="sdk-cta-section" id="hire">
+<section class="sdk-cta-section" id="hire">
       <canvas id="tubes-canvas" aria-hidden="true"></canvas>
       <div class="sdk-cta__dim" aria-hidden="true"></div>
       <div class="sdk-cta__content">
@@ -710,8 +694,7 @@
       </div>
     </section>
 
-    <!-- ── Contact + Footer ── -->
-    <section class="sdk-contact" id="contact">
+<section class="sdk-contact" id="contact">
       <div class="sdk-contact__glow" aria-hidden="true"></div>
 
       <div class="sdk-contact__inner">
@@ -771,8 +754,7 @@
 
   </main>
 
-
-  <script src="https://unpkg.com/lenis@1.1.20/dist/lenis.min.js"></script>
+<script src="https://unpkg.com/lenis@1.1.20/dist/lenis.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
   <script src="script.js"></script>
@@ -782,7 +764,7 @@
 
     const tubesCanvas = document.getElementById("tubes-canvas");
     if (tubesCanvas) {
-      /* seed colors — crimson palette so the initial frame isn't default blue */
+
       const app = TubesCursor(tubesCanvas, {
         tubes: {
           colors: ["#E03F4F","#c0162a","#8e1b12","#ff5060","#d8a24d"],
@@ -790,11 +772,11 @@
         }
       });
 
-      /* slow drift — stays within warm red/crimson band (hue 330–20, wrapping) */
+
       let t = 0;
       function crimsonLoop() {
         t += 0.18;
-        /* oscillate: center 348°, spread ±28° for tubes; ±18° for lights */
+
         const tubeColors  = Array.from({length: 10}, (_, i) => {
           const h = ((348 + Math.sin((t + i * 2.5) * 0.04) * 28) + 360) % 360;
           const l = 38 + Math.sin((t + i) * 0.05) * 10;
