@@ -3262,6 +3262,44 @@ img {
 .sdk-hero__m-cta:hover .sdk-cta-btn__label { color: #fff1c9; }
 .sdk-hero__m-cta:hover .sdk-cta-btn__label svg { transform: translateX(0.25rem); }
 
+/* ── Mobile projects nav (hidden globally; shown only in ≤768px block below) ── */
+.sdk-projects__m-nav { display: none; }
+.sdk-projects__m-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.625rem;
+  height: 2.625rem;
+  border-radius: 50%;
+  border: 1px solid rgba(245,242,234,0.18);
+  background: rgba(5,3,10,0.6);
+  color: rgba(245,242,234,0.72);
+  cursor: pointer;
+  transition: border-color 0.2s, color 0.2s, background 0.2s;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  flex-shrink: 0;
+}
+.sdk-projects__m-btn:hover:not(:disabled) {
+  border-color: rgba(224,63,79,0.55);
+  color: #E03F4F;
+  background: rgba(224,63,79,0.09);
+}
+.sdk-projects__m-btn:disabled {
+  opacity: 0.25;
+  cursor: default;
+  pointer-events: none;
+}
+.sdk-projects__m-count {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 0.7rem;
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  color: rgba(245,242,234,0.35);
+  min-width: 3.8rem;
+  text-align: center;
+}
+
 /* ═══════════════════════════════════════════════════
    MOBILE HERO REDESIGN  ·  ≤768px  ·  desktop untouched
    ═══════════════════════════════════════════════════ */
@@ -3322,6 +3360,24 @@ img {
     left: 50%;
     transform: translateX(-50%);
     z-index: 20;
+  }
+
+  /* ── Projects nav: shown and positioned at very bottom on mobile ── */
+  .sdk-projects__m-nav {
+    display: flex;
+    align-items: center;
+    gap: 1.125rem;
+    position: absolute;
+    bottom: 1.25rem;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 22;
+  }
+
+  /* Push "Visit Site" link above the nav buttons */
+  .sdk-project-slide__link {
+    bottom: 5.25rem;
+    z-index: 21;
   }
 
 }
