@@ -1619,7 +1619,6 @@ if (window.gsap && window.ScrollTrigger) {
   }
 
   function setupScroll(){
-    if (window.matchMedia('(max-width: 768px)').matches) return;
     if(window.gsap && window.ScrollTrigger){
       gsap.registerPlugin(ScrollTrigger);
       ScrollTrigger.create({
@@ -1638,26 +1637,6 @@ if (window.gsap && window.ScrollTrigger) {
         targetProgress=clamp(-rect.top/(stick.offsetHeight*3.6));
       },{passive:true});
     }
-  }
-
-  function setupMobileNav(){
-    if (!window.matchMedia('(max-width: 768px)').matches) return;
-    const prevBtn = document.getElementById('sdk-proj-prev');
-    const nextBtn = document.getElementById('sdk-proj-next');
-    const countEl = document.getElementById('sdk-proj-count');
-    let idx = 0;
-
-    function goTo(i) {
-      idx = Math.max(0, Math.min(total - 1, i));
-      targetProgress = total <= 1 ? 0 : idx / (total - 1);
-      if (countEl) countEl.textContent = `0${idx + 1} / 0${total}`;
-      if (prevBtn) prevBtn.disabled = idx === 0;
-      if (nextBtn) nextBtn.disabled = idx === total - 1;
-    }
-
-    if (prevBtn) prevBtn.addEventListener('click', () => goTo(idx - 1));
-    if (nextBtn) nextBtn.addEventListener('click', () => goTo(idx + 1));
-    goTo(0);
   }
 
   window.addEventListener('pointermove',e=>{
@@ -1934,8 +1913,7 @@ if (window.gsap && window.ScrollTrigger) {
   initWebGL().then(r=>{
     renderer=r;
     setupScroll();
-    setupMobileNav();
-    if (window.ScrollTrigger) ScrollTrigger.refresh();
+    ScrollTrigger.refresh();
     initSectionTitleAnims();
     initTechStackCards();
     initProcessTimeline();
@@ -1946,8 +1924,7 @@ if (window.gsap && window.ScrollTrigger) {
     console.warn('WebGL unavailable. Falling back to CSS background.',err);
     if(section) section.classList.add('sdk-no-webgl');
     setupScroll();
-    setupMobileNav();
-    if (window.ScrollTrigger) ScrollTrigger.refresh();
+    ScrollTrigger.refresh();
     initSectionTitleAnims();
     initTechStackCards();
     initProcessTimeline();
