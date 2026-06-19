@@ -34,6 +34,18 @@ if (menuBtn && navRoot && menuPanel) {
   });
 }
 
+(function initHeroCtaVisibility() {
+  const hero = document.getElementById('home');
+  const heroCta = document.querySelector('.sdk-hero__cta');
+  if (!hero || !heroCta) return;
+
+  const observer = new IntersectionObserver(([entry]) => {
+    heroCta.classList.toggle('is-hidden', !entry.isIntersecting);
+  }, { threshold: 0 });
+
+  observer.observe(hero);
+})();
+
 
 document.querySelectorAll('.magnetic').forEach((el) => {
   el.addEventListener('mousemove', (e) => {
