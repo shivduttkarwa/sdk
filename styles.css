@@ -2775,6 +2775,11 @@ img {
     background-attachment: scroll;
   }
 
+  .sdk-bg-scope,
+  .site-footer {
+    background-attachment: scroll;
+  }
+
   .sdk-stack-section { padding: 5rem 1.25rem 6rem; }
   .sdk-intro__inner { padding: 0 1.25rem; }
   .sdk-stack__grid { grid-template-columns: 1fr; }
