@@ -289,7 +289,7 @@ function startHeroAnimation() {
 }
 
 
-if (window.Lenis && !matchMedia('(prefers-reduced-motion: reduce)').matches) {
+if (window.Lenis && !matchMedia('(prefers-reduced-motion: reduce)').matches && !matchMedia('(max-width: 768px)').matches) {
   const lenis = new Lenis({
     duration: 1.42,
     smoothWheel: true,
@@ -1639,6 +1639,38 @@ if (window.gsap && window.ScrollTrigger) {
     }
   }
 
+  function setupMobileNav(){
+    if(!window.matchMedia('(max-width: 768px)').matches) return;
+    const prevBtn = document.getElementById('sdk-proj-prev');
+    const nextBtn = document.getElementById('sdk-proj-next');
+    const countEl = document.getElementById('sdk-proj-count');
+    let idx = 0;
+    function goTo(i){
+      idx = Math.max(0, Math.min(total - 1, i));
+      targetProgress = total <= 1 ? 0 : idx / (total - 1);
+      if(countEl) countEl.textContent = String(idx+1).padStart(2,'0')+' / '+String(total).padStart(2,'0');
+      if(prevBtn) prevBtn.disabled = idx === 0;
+      if(nextBtn) nextBtn.disabled = idx === total - 1;
+    }
+    if(prevBtn) prevBtn.addEventListener('click', () => goTo(idx - 1));
+    if(nextBtn) nextBtn.addEventListener('click', () => goTo(idx + 1));
+
+    let touchStartX = 0, touchStartY = 0;
+    stick.addEventListener('touchstart', e => {
+      touchStartX = e.touches[0].clientX;
+      touchStartY = e.touches[0].clientY;
+    }, { passive: true });
+    stick.addEventListener('touchend', e => {
+      const dx = e.changedTouches[0].clientX - touchStartX;
+      const dy = e.changedTouches[0].clientY - touchStartY;
+      if(Math.abs(dx) > Math.abs(dy) && Math.abs(dx) > 48){
+        goTo(dx < 0 ? idx + 1 : idx - 1);
+      }
+    }, { passive: true });
+
+    goTo(0);
+  }
+
   window.addEventListener('pointermove',e=>{
     mouse.tx=e.clientX/window.innerWidth;
     mouse.ty=e.clientY/window.innerHeight;
@@ -1910,10 +1942,12 @@ if (window.gsap && window.ScrollTrigger) {
 
   function initContact() {}
 
+  const _isMobile = window.matchMedia('(max-width: 768px)').matches;
+
   initWebGL().then(r=>{
     renderer=r;
-    setupScroll();
-    ScrollTrigger.refresh();
+    if(!_isMobile){ setupScroll(); ScrollTrigger.refresh(); }
+    else { setupMobileNav(); }
     initSectionTitleAnims();
     initTechStackCards();
     initProcessTimeline();
@@ -1923,8 +1957,8 @@ if (window.gsap && window.ScrollTrigger) {
   }).catch(err=>{
     console.warn('WebGL unavailable. Falling back to CSS background.',err);
     if(section) section.classList.add('sdk-no-webgl');
-    setupScroll();
-    ScrollTrigger.refresh();
+    if(!_isMobile){ setupScroll(); ScrollTrigger.refresh(); }
+    else { setupMobileNav(); }
     initSectionTitleAnims();
     initTechStackCards();
     initProcessTimeline();
