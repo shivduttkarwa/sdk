@@ -1924,8 +1924,18 @@ img {
   }
 
   .sdk-showcase__reel-wrap {
-    width: 88vw;
-    height: clamp(5.625rem, 16vh, 10rem);
+    width: 92vw;
+    height: clamp(14rem, 55vh, 22rem);
+    border-radius: 1.75rem;
+  }
+
+  .sdk-showcase .sdk-showcase__headline--top,
+  .sdk-showcase .sdk-showcase__headline--bottom {
+    padding-inline: 1.25rem;
+  }
+
+  .sdk-showcase__headline {
+    font-size: max(2.625rem, 9.5vw);
   }
 
   .sdk-hero__meta {
@@ -2769,36 +2779,55 @@ img {
   .sdk-process__layout {
     flex-direction: column;
     gap: 0;
-  }
-
-
-  .sdk-process__spine-col { display: none; }
-
-
-  .sdk-process__visual-col {
-    order: -1;
-    padding-left: 0;
-    width: 100%;
-  }
-
-  .sdk-process__frame-wrap {
     position: relative;
-    top: auto;
-    margin: 0 auto 2rem;
-    width: min(20rem, 88vw);
-    height: auto;
-    aspect-ratio: 3 / 4;
-    max-height: none;
-    perspective: 1000px;
   }
 
+  /* Spine col repositioned as absolute overlay on left line */
+  .sdk-process__spine-col {
+    display: block;
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 0;
+    overflow: visible;
+    pointer-events: none;
+    perspective: none;
+  }
+
+  .sdk-process__sword-wrap {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 3.75rem;
+    transform: translateX(-50%);
+  }
+
+  /* Visual col hidden — each step shows its own image via JS */
+  .sdk-process__visual-col { display: none; }
+
+  /* Per-step injected image */
+  .sdk-process__step-frame-mobile {
+    width: 100%;
+    margin-top: 1.5rem;
+    border-radius: 0.875rem;
+    overflow: hidden;
+    aspect-ratio: 4 / 3;
+    will-change: transform, opacity;
+  }
+
+  .sdk-process__step-frame-mobile img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
 
   .sdk-process__steps-col {
     padding-right: 0;
     padding-left: 0;
     position: relative;
   }
-
 
   .sdk-process__steps-col::before {
     content: '';
@@ -2815,7 +2844,7 @@ img {
   .sdk-process__step {
     height: auto;
     min-height: 60vh;
-    padding: 3rem 2rem 3rem 3rem;
+    padding: 3rem 1.5rem 3rem 2.5rem;
   }
 
   .sdk-process__step-index { font-size: clamp(4rem, 18vw, 7rem); }
