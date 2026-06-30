@@ -3396,26 +3396,17 @@ img {
 
   /* ── Name lines: fill width dramatically ── */
   .sdk-hero__name-line {
-    font-size: clamp(3rem, 19vw, 5.5rem);
+    font-size: clamp(2.25rem, 14.25vw, 4.125rem);
     line-height: 0.88;
     letter-spacing: -0.03em;
   }
 
-  /* Thin gradient hairline between SHIVDUTT and KARWA */
   .sdk-hero__name--primary .sdk-hero__name-line:first-of-type {
-    position: relative;
-    padding-bottom: 0.875rem;
-    margin-bottom: 0.625rem;
+    padding-bottom: 0;
+    margin-bottom: 0;
   }
   .sdk-hero__name--primary .sdk-hero__name-line:first-of-type::after {
-    content: '';
-    position: absolute;
-    bottom: 0;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 3.75rem;
-    height: 1px;
-    background: linear-gradient(90deg, transparent, rgba(224,63,79,0.6), transparent);
+    content: none;
   }
 
   /* Tagline */
