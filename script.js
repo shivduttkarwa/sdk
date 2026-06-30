@@ -1811,40 +1811,47 @@ if (window.gsap && window.ScrollTrigger) {
       // Recalculate bounds now that images are in the DOM
       setTrackBounds();
 
-      // Sword: start off-screen right, slide in to the left timeline line
+      // Sword: rotating arc entrance from right, same two-step motion as desktop
       if (sword) {
-        gsap.set(sword, { x: window.innerWidth + 300, y: 0, rotation: -30 });
+        const vw = window.innerWidth;
+        gsap.set(sword, { x: vw + 200, y: -300, rotation: 180 });
 
         const entranceTl = gsap.timeline({ paused: true })
-          .to(sword, {
-            x: 0,
-            y: () => trackStart,
-            rotation: 0,
-            ease: 'power2.out',
-            duration: 1,
-          });
+          // arc through the air — mirrors desktop's first keyframe
+          .fromTo(sword,
+            { x: vw + 200, y: -300, rotation: 180 },
+            { x: vw * 0.45, y: -60, rotation: 60, ease: 'none', duration: 0.55 }
+          )
+          // final plunge down to top of timeline line
+          .to(sword,
+            { x: 0, y: 0, rotation: 0, ease: 'none', duration: 0.45 }
+          );
 
+        // Entrance completes at 'top 30%' — follow picks up from exact same point
         ScrollTrigger.create({
           trigger: rail,
           start: 'top 90%',
-          end:   'top 25%',
+          end:   'top 30%',
           scrub: true,
           animation: entranceTl,
           invalidateOnRefresh: true,
         });
 
-        // Sword follows the left timeline line as user scrolls through steps
-        gsap.to(sword, {
-          y: () => trackEnd,
-          ease: 'none',
-          scrollTrigger: {
-            trigger: rail,
-            start: () => `top+=${trackStart}px center`,
-            end:   () => `top+=${trackEnd}px center`,
-            scrub: true,
-            invalidateOnRefresh: true,
-          },
-        });
+        // Follow the left line: y goes from 0 (line top) to trackEnd (line bottom)
+        gsap.fromTo(sword,
+          { y: 0 },
+          {
+            y: () => trackEnd,
+            ease: 'none',
+            scrollTrigger: {
+              trigger: rail,
+              start: 'top 30%',
+              end:   () => `top+=${trackEnd}px center`,
+              scrub: true,
+              invalidateOnRefresh: true,
+            },
+          }
+        );
       }
 
       // Per-step: content + image slide in from the RIGHT
@@ -1874,8 +1881,8 @@ if (window.gsap && window.ScrollTrigger) {
         }
         ScrollTrigger.create({
           trigger: panel,
-          start: 'top 78%',
-          end:   'top 12%',
+          start: 'top 48%',
+          end:   'top -8%',
           scrub: 1,
           animation: tl,
         });
