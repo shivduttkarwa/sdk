@@ -319,7 +319,8 @@ if (window.gsap && window.ScrollTrigger) {
         end: '+=100%',
         scrub: true,
         pin: true,
-        pinSpacing: true
+        pinSpacing: true,
+        invalidateOnRefresh: true,
       }
     });
 
@@ -342,6 +343,15 @@ if (window.gsap && window.ScrollTrigger) {
         ease: 'none'
       }, 0);
     }
+  }
+
+  // Refresh GSAP when mobile browser chrome shows/hides (changes visual viewport height)
+  if (window.visualViewport) {
+    let vvRefreshTimer;
+    window.visualViewport.addEventListener('resize', () => {
+      clearTimeout(vvRefreshTimer);
+      vvRefreshTimer = setTimeout(() => ScrollTrigger.refresh(), 100);
+    });
   }
 
   gsap.utils.toArray('.sdk-reveal').forEach((el) => {

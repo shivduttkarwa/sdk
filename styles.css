@@ -1923,6 +1923,10 @@ img {
     font-size: clamp(0.5625rem, 2.8vw, 0.75rem);
   }
 
+  .sdk-showcase {
+    height: 100dvh;
+  }
+
   .sdk-showcase__reel-wrap {
     width: 92vw;
     height: clamp(14rem, 55vh, 22rem);
@@ -3426,6 +3430,11 @@ img {
     left: 50%;
     transform: translateX(-50%);
     z-index: 20;
+    width: 12.285rem;
+    height: 3.375rem;
+  }
+  .sdk-hero__m-cta .sdk-cta-btn__label {
+    font-size: 1.125rem;
   }
 
   /* ── Projects nav: shown and positioned at very bottom on mobile ── */
