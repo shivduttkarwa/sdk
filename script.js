@@ -2089,7 +2089,6 @@ if (window.gsap && window.ScrollTrigger) {
   });
 })();
 
-
 (() => {
   const section = document.getElementById('countries');
   const runway = document.getElementById('sdk-countries-runway');
