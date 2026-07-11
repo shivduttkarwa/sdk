@@ -1,0 +1,1271 @@
+
+<!--
+  project: Mina Massoud — Portfolio Hero (2026)
+  aesthetic: Japanese samurai cultural · editorial · split-face shader
+  palette:  black (#0A0A0A) + oxblood (#8B0F1D) + vermillion (#B91729)
+  interaction: Lando-Norris-style WebGL split-face with liquid ripple,
+               chromatic aberration, film grain, per-side dim/desat, rim glow
+-->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="color-scheme" content="dark" />
+  <meta name="theme-color" content="#0A0A0A" />
+
+  <title>Mina Massoud</title>
+  <meta name="description" content="Mina Massoud — frontend engineer crafting editorial, motion-rich web experiences. Selected work, experiments, and writing." />
+  <meta name="author" content="Mina Massoud" />
+  <meta name="robots" content="index, follow, max-image-preview:large" />
+  <meta name="googlebot" content="index, follow, max-image-preview:large, max-snippet:-1" />
+
+  <link rel="canonical" href="https://mina-massoud.com/" />
+
+  <!-- Favicons & PWA touch icons (absolute paths so Google's favicon crawler resolves them consistently from any URL) -->
+  <link rel="icon" href="./favicon.ico" sizes="any" />
+  <link rel="icon" type="image/png" sizes="16x16" href="./assets/favicon-16.png" />
+  <link rel="icon" type="image/png" sizes="32x32" href="./assets/favicon-32.png" />
+  <link rel="icon" type="image/png" sizes="48x48" href="./assets/favicon-48.png" />
+  <link rel="icon" type="image/png" sizes="192x192" href="./assets/favicon-192.png" />
+  <link rel="apple-touch-icon" sizes="180x180" href="./assets/apple-touch-icon.png" />
+  <link rel="manifest" href="./site.webmanifest" />
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="Mina Massoud" />
+  <meta property="og:title" content="Mina Massoud" />
+  <meta property="og:description" content="Frontend engineer crafting editorial, motion-rich web experiences. Selected work, experiments, and writing." />
+  <meta property="og:url" content="https://mina-massoud.com/" />
+  <meta property="og:locale" content="en_US" />
+  <meta property="og:image" content="https://mina-massoud.com/assets/og.jpg" />
+  <meta property="og:image:secure_url" content="https://mina-massoud.com/assets/og.jpg" />
+  <meta property="og:image:type" content="image/jpeg" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:image:alt" content="Portrait of Mina Massoud — black mask, twin katanas, editorial samurai composition." />
+
+  <!-- Twitter -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Mina Massoud" />
+  <meta name="twitter:description" content="Frontend engineer crafting editorial, motion-rich web experiences." />
+  <meta name="twitter:image" content="https://mina-massoud.com/assets/og.jpg" />
+  <meta name="twitter:image:alt" content="Portrait of Mina Massoud — black mask, twin katanas, editorial samurai composition." />
+
+  <!-- Structured data: Person + WebSite -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "Person",
+        "@id": "https://mina-massoud.com/#person",
+        "name": "Mina Massoud",
+        "url": "https://mina-massoud.com/",
+        "image": "https://mina-massoud.com/assets/og.jpg",
+        "jobTitle": "Frontend Engineer",
+        "knowsAbout": ["Frontend Engineering", "WebGL", "Creative Coding", "UI Design", "Motion Design"],
+        "sameAs": [
+          "https://www.linkedin.com/in/mina-melad/",
+          "https://github.com/Mina-Massoud",
+          "https://www.instagram.com/mina_melad_14/"
+        ]
+      },
+      {
+        "@type": "WebSite",
+        "@id": "https://mina-massoud.com/#website",
+        "url": "https://mina-massoud.com/",
+        "name": "Mina Massoud",
+        "publisher": { "@id": "https://mina-massoud.com/#person" },
+        "inLanguage": "en"
+      }
+    ]
+  }
+  </script>
+
+  <script>document.documentElement.classList.add('js-enabled');</script>
+
+  <!-- Capability detection: sets html[data-tier=high|mid|low] before first paint.
+       Desktop reports 'high' so visuals stay byte-identical. Mobile mid/low tiers
+       silently opt into cheaper shader paths, fewer compositor layers, etc. -->
+
+  <link rel="preload" as="font" type="font/otf" crossorigin
+        href="./assets/fonts/Harmond - Free For Personal Use/Harmond-ExtraBoldExpanded.otf" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+        href="./assets/fonts/body-font/Fonts/WEB/fonts/Ranade-Variable.woff2" />
+
+  <link rel="preload" as="image" href="./assets/mina-modern.webp" fetchpriority="high" />
+  <link rel="preload" as="image" href="./assets/mina-samurai.webp" fetchpriority="high" />
+  <link rel="preload" as="image" href="./assets/depth-map.webp" />
+  <link rel="preload" as="image" href="./assets/topographic.svg" />
+  <link rel="preload" as="image" href="./assets/inspiration-frames/frame_0001.webp" fetchpriority="high" />
+  <!-- Countries section portraits — lazy preload; section is below the fold. -->
+  <link rel="preload" as="image" href="./assets/anubis/anubis.webp" fetchpriority="low" />
+  <link rel="preload" as="image" href="./assets/liberty/liberty.webp" fetchpriority="low" />
+  <link rel="preload" as="image" href="./assets/kangaro/kangaro.webp" fetchpriority="low" />
+
+  <!-- Stylesheets — order mirrors the original inline cascade; reduced-motion.css MUST be last. -->
+
+  <!-- Google Analytics (GA4) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-GZJ8X4DM94"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-GZJ8X4DM94');
+  </script>
+  <script type="module" crossorigin src="./assets/main-CEYqTp0L.js"></script>
+  <link rel="modulepreload" crossorigin href="./assets/rolldown-runtime-ciTZEWaI.js">
+  <link rel="modulepreload" crossorigin href="./assets/preload-helper-Dbp7xEFQ.js">
+  <link rel="stylesheet" crossorigin href="./assets/style-DznmjWGb.css">
+</head>
+<body>
+
+  <!-- ================= PRELOADER (particle portrait assembly) ================= -->
+  <div id="preloader" class="preloader" role="status" aria-live="polite"
+       aria-label="Loading portfolio — move the cursor while assets assemble">
+    <canvas class="preloader-canvas" aria-hidden="true"></canvas>
+    <div class="p-halo" aria-hidden="true"></div>
+
+    <div class="preloader-ui">
+
+      <div class="p-tl">
+        <span class="kanji">零</span>
+        <span class="label">
+          <span>CHAPTER</span>
+          <b>00 / ENTERING</b>
+        </span>
+      </div>
+
+      <div class="p-tr">
+        <span class="pulse"><b>BUILD · M.26</b></span>
+        <span>MINA MASSOUD / 2026</span>
+      </div>
+
+      <div class="p-bl">
+        <div class="preloader-pct">
+          <span class="num">000</span><span class="sign">%</span>
+        </div>
+        <div class="stack">
+          <span><b>ASSEMBLING</b></span>
+          <span class="divider"></span>
+          <span>SHADERS · PORTRAIT</span>
+        </div>
+      </div>
+
+      <div class="p-br">
+        <div class="kanji"><span class="jp">散華</span>SANGE · PETALS SCATTER</div>
+        <div class="preloader-bar"></div>
+        <div class="hint">TAP TO ENTER · AUDIO ON FOR FULL EXPERIENCE</div>
+      </div>
+
+    </div>
+  </div>
+  <!-- Opt-in perf overlay — visible only with ?perf=1. Records rAF FPS,
+       hover/scroll/nav events, and hero-shader init marks. Gives a
+       copy-pasteable JSON report for A/B comparison across browsers. -->
+
+  <!-- ================= THEME AUDIO ================= -->
+  <audio id="theme-audio" src="./assets/theme-shamisen.mp3" loop preload="auto" aria-hidden="true"></audio>
+  <button id="audio-toggle" class="audio-toggle" type="button" aria-label="Toggle audio" aria-pressed="false">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+      <path class="ico-on"  d="M4 10v4h4l5 4V6L8 10H4z M16 8a5 5 0 0 1 0 8 M19 5a9 9 0 0 1 0 14" />
+      <path class="ico-off" d="M4 10v4h4l5 4V6L8 10H4z M17 9l5 6 M22 9l-5 6" />
+    </svg>
+  </button>
+
+  <main role="main">
+
+  <!-- ============================================================
+       CHAPTER 00 · HERO
+       ============================================================ -->
+  <section class="hero" id="hero" aria-label="Mina Massoud hero introduction">
+
+    <!-- Background topographic brush lines -->
+    <div class="bg-topo" aria-hidden="true">
+      <!-- inlined topographic contour set (red oxblood) -->
+      <svg viewBox="0 0 1920 1080" preserveAspectRatio="xMidYMid slice" fill="none" stroke="#5A0711" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M-100 120 C 260 60, 540 220, 820 180 S 1380 60, 1720 180 S 2100 320, 2200 260" />
+        <path d="M-100 240 C 280 180, 600 340, 900 300 S 1440 180, 1780 300 S 2120 440, 2200 380" opacity="0.75" />
+        <path d="M-120 360 C 300 300, 640 460, 960 420 S 1500 300, 1840 420 S 2140 560, 2240 500" opacity="0.6" />
+        <path d="M-140 480 C 320 420, 680 580, 1020 540 S 1560 420, 1900 540 S 2160 680, 2260 620" opacity="0.5" />
+        <path d="M-160 600 C 340 540, 720 700, 1080 660 S 1620 540, 1960 660 S 2180 800, 2280 740" opacity="0.6" />
+        <path d="M-180 720 C 360 660, 760 820, 1140 780 S 1680 660, 2020 780 S 2200 920, 2300 860" opacity="0.75" />
+        <path d="M-200 840 C 380 780, 800 940, 1200 900 S 1740 780, 2080 900 S 2220 1040, 2320 980" opacity="0.55" />
+        <path d="M-220 960 C 400 900, 840 1060, 1260 1020 S 1800 900, 2140 1020 S 2240 1160, 2340 1100" opacity="0.4" />
+      </svg>
+    </div>
+
+    <!-- Vertical vermillion seam -->
+    <div class="bg-seam" aria-hidden="true"></div>
+
+    <!-- Cherry blossom silhouette petals (samurai side) -->
+    <div class="bg-petals" aria-hidden="true">
+      <span class="petal"></span>
+      <span class="petal"></span>
+      <span class="petal"></span>
+      <span class="petal"></span>
+      <span class="petal"></span>
+      <span class="petal"></span>
+    </div>
+
+    <!-- Top-left wordmark -->
+    <div class="wordmark">
+      <span class="line-1" data-text-effect="char-variation-5">MINA</span>
+      <span class="line-2" data-text-effect="char-variation-5">MASSOUD</span>
+      <span class="meta">Portfolio · M.26</span>
+    </div>
+
+    <!-- Top-center M7 monogram -->
+    <!-- <a href="#" class="monogram" aria-label="Home">
+      <img src="./assets/m7-mark.svg" alt="M7 monogram" />
+    </a> -->
+
+    <!-- Top-right navigation -->
+    <nav class="top-nav" aria-label="Primary">
+      <button class="btn-menu" id="btn-menu" aria-label="Open menu" aria-controls="site-drawer" aria-expanded="false">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true">
+          <path d="M5 9 H19" />
+          <path d="M5 15 H19" />
+        </svg>
+      </button>
+    </nav>
+
+    <!-- Side label -->
+    <div class="side-label side-r">Hover to Reveal&nbsp;&nbsp;<span>◎</span></div>
+
+    <!-- Oversized background wordmark — auto-fit to viewport width by JS -->
+    <div class="big-name" aria-hidden="true" data-text-effect="word-variation-1">MINA&nbsp;MASSOUD</div>
+
+    <!-- Diagonal marquee field: one red strip crossing one black strip -->
+    <div class="mq-field" aria-hidden="true">
+      <div class="mq mq-2"><div class="mq-track">
+        <span>FRONTEND AS RITUAL</span><i class="sep"></i>
+        <span class="jp">執念</span><i class="sep"></i>
+        <span>CRAFT OVER HYPE</span><i class="sep"></i>
+        <span class="jp">美学</span><i class="sep"></i>
+        <span>EGO SOLD SEPARATELY</span><i class="sep"></i>
+        <span class="jp">孤高</span><i class="sep"></i>
+        <span>MINA MASSOUD</span><i class="sep"></i>
+        <span class="jp">覚悟</span><i class="sep"></i>
+        <span>THE FUTURE WEARS A MASK</span><i class="sep"></i>
+        <span class="jp">侍</span><i class="sep"></i>
+      </div></div>
+
+      <div class="mq mq-5"><div class="mq-track">
+        <span>ONE TAKE ONE CUT</span><i class="sep"></i>
+        <span class="jp">覇王</span><i class="sep"></i>
+        <span>PIXELS ARE A PROMISE</span><i class="sep"></i>
+        <span class="jp">無双</span><i class="sep"></i>
+        <span>HIRE ONCE</span><i class="sep"></i>
+        <span class="jp">魂</span><i class="sep"></i>
+        <span>CODE LIKE A SAMURAI</span><i class="sep"></i>
+        <span class="jp">斬</span><i class="sep"></i>
+        <span>NO SECOND TRY</span><i class="sep"></i>
+        <span class="jp">決意</span><i class="sep"></i>
+      </div></div>
+    </div>
+
+    <!-- THE INTERACTIVE PORTRAIT STAGE -->
+    <div class="portrait-stage" id="portrait-stage">
+      <!-- Samurai-only decorative wings: two crossed katanas behind the figure.
+           Fades out as the modern reveal takes over. -->
+      <div class="samurai-wings" aria-hidden="true">
+        <img class="wing wing-l" src="./assets/sword.webp" alt="" decoding="async" />
+        <img class="wing wing-r" src="./assets/sword.webp" alt="" decoding="async" />
+      </div>
+
+      <canvas id="hero-fx" aria-hidden="true"></canvas>
+
+      <div class="portrait-fallback" aria-hidden="false">
+        <img class="layer-base"   src="./assets/mina-samurai.webp" alt="Mina Massoud as a samurai warrior wearing a black menpō mask" decoding="async" fetchpriority="high" />
+        <img class="layer-reveal" src="./assets/mina-modern.webp"  alt="" aria-hidden="true" decoding="async" fetchpriority="high" />
+      </div>
+
+      <div class="hover-zones">
+        <button class="zone" aria-label="Reveal modern portrait"></button>
+      </div>
+    </div>
+
+
+    <!-- Bottom-right availability badge -->
+    <div class="avail-badge" role="status" aria-live="polite">
+      <span class="dot" aria-hidden="true"></span>
+      <span class="label">Available for work · 2026</span>
+    </div>
+
+  </section>
+  <!-- /Chapter 00 -->
+
+  <!-- Document-level overlays (fixed, span full scroll) -->
+  <div class="grain" aria-hidden="true"></div>
+
+  <!-- Vertical chapter counter rail (零〜八) — one item per <section> in main -->
+  <nav class="chapter-rail" aria-label="Chapter counter">
+    <ol>
+      <li data-ch="0" class="is-active"><a href="#hero"><span class="ch-num jp">零</span><span class="ch-label">HERO</span></a></li>
+      <li data-ch="1"><a href="#ch-manifesto"><span class="ch-num jp">一</span><span class="ch-label">ABOUT</span></a></li>
+      <li data-ch="2"><a href="#ch-about"><span class="ch-num jp">二</span><span class="ch-label">NUMBERS</span></a></li>
+      <li data-ch="3"><a href="#ch-numbers"><span class="ch-num jp">三</span><span class="ch-label">KITSUNE</span></a></li>
+      <li data-ch="4"><a href="#ch-kitsune"><span class="ch-num jp">四</span><span class="ch-label">JOURNEY</span></a></li>
+      <!-- Hidden for now — 五 · 道 · THE ROAD section
+      <li data-ch="5"><a href="#ch-journey"><span class="ch-num jp">五</span><span class="ch-label">HITOMI</span></a></li>
+      -->
+
+      <li data-ch="6"><a href="#ch-hitomi"><span class="ch-num jp">六</span><span class="ch-label">INVITE</span></a></li>
+      <li data-ch="7"><a href="#ch-cta"><span class="ch-num jp">七</span><span class="ch-label">INVITE</span></a></li>
+      <li data-ch="8"><a href="#ch-contact"><span class="ch-num jp">八</span><span class="ch-label">BOOK</span></a></li>
+    </ol>
+  </nav>
+
+  <!-- ============================================================
+       CHAPTER 01 · MANIFESTO — "WHY YOU WILL HIRE ME"
+       ============================================================ -->
+  <section class="chapter ch-manifesto" id="ch-manifesto" data-nr="01" aria-labelledby="manifesto-title">
+    <img class="ornament-enso" src="./assets/ornament-enso.svg" alt="" width="400" height="400" loading="lazy" decoding="async" aria-hidden="true" />
+    <div class="ch-head">
+      <span class="ch-kicker"><span class="jp">一</span> · MANIFESTO</span>
+      <span class="ch-meta">SO… WHY WILL YOU HIRE ME?</span>
+    </div>
+
+    <h2 id="manifesto-title" class="manifesto-head" data-text-effect="word-variation-1">What pulled me in.<span class="manifesto-jp jp" aria-hidden="true">惹</span></h2>
+
+    <figure class="manifesto-quote">
+      <span class="mq-mark mq-open" aria-hidden="true">&ldquo;</span>
+      <blockquote>
+        <p data-scroll-reveal>
+          I was drawn to a world where <em>design meets logic</em> — a space where
+          I can <em>imagine and create anything</em>. That's what pulled me into
+          <em>frontend</em>.
+        </p>
+      </blockquote>
+      <span class="mq-mark mq-close" aria-hidden="true">&rdquo;</span>
+      <figcaption class="mq-attrib">
+        <span class="mq-rule" aria-hidden="true"></span>
+        <span class="mq-sign">Mina · <span class="jp">志</span> · M.26</span>
+        <span class="mq-rule" aria-hidden="true"></span>
+      </figcaption>
+    </figure>
+  </section>
+
+  <!-- ============================================================
+       SAMURAI SLASH · cinematic statement piece between MANIFESTO
+       (01) and ABOUT (02). Scene 1: static slab only — no JS, no
+       shader, no animation. Future scenes layer on top.
+       ============================================================ -->
+  <section id="samurai-slash" aria-labelledby="samurai-slash-title">
+    <div class="samurai-runway">
+      <div class="samurai-stick">
+        <!-- Holy backlight family — same vermillion language as the hero
+             .bg-seam: a soft radial halo behind the hand, plus a pulsing
+             vertical seam down the centre. Reads as a sacred/oblique
+             icon glow around the figure. -->
+        <div class="samurai-aura" aria-hidden="true"></div>
+        <div class="samurai-seam" aria-hidden="true"></div>
+        <!-- Dark dimming overlay sits above the canvas + marquee but
+             below the foreground quote. Always-on so the quote reads
+             against a stable dim backdrop from the moment the section
+             enters until it leaves. -->
+        <div class="samurai-overlay" aria-hidden="true"></div>
+        <div class="samurai-slab">
+          <h2 id="samurai-slash-title" class="samurai-sr">
+            The hand will shake. The heart will not. Go anyway.
+          </h2>
+          <!-- Semantic quote for screen readers + SEO. The visible
+               version below is animated line-by-line on scroll. -->
+          <blockquote class="samurai-sr">
+            <p>Our deepest fear is not that we are inadequate. Our deepest fear is that we are powerful beyond measure. It is our light, not our darkness that most frightens us.</p>
+            <cite>&mdash; Marianne Williamson</cite>
+          </blockquote>
+          <div class="samurai-marquee" aria-hidden="true">
+            <div class="samurai-row samurai-row--top">
+              Fear<span class="samurai-row__sep">&times;</span>Tremble<span class="samurai-row__sep">&times;</span>Dread<span class="samurai-row__sep">&times;</span>Flinch<span class="samurai-row__sep">&times;</span>Fear<span class="samurai-row__sep">&times;</span>Tremble<span class="samurai-row__sep">&times;</span>Dread<span class="samurai-row__sep">&times;</span>
+            </div>
+            <div class="samurai-row samurai-row--mid">
+              <span class="jp">侍の道</span><span class="samurai-row__sep">&middot;</span>Go anyway<span class="samurai-row__sep">&middot;</span><span class="jp">侍の道</span><span class="samurai-row__sep">&middot;</span>Go anyway<span class="samurai-row__sep">&middot;</span><span class="jp">侍の道</span><span class="samurai-row__sep">&middot;</span>Go anyway<span class="samurai-row__sep">&middot;</span><span class="jp">侍の道</span><span class="samurai-row__sep">&middot;</span>Go anyway
+            </div>
+            <div class="samurai-row samurai-row--bot">
+              the hand will shake<span class="samurai-row__sep">&middot;</span>the heart will not<span class="samurai-row__sep">&middot;</span>the hand will shake<span class="samurai-row__sep">&middot;</span>the heart will not<span class="samurai-row__sep">&middot;</span>the hand will shake
+            </div>
+          </div>
+          <!-- Scrollytelling quote — each line fades in / lingers / fades
+               out on its scroll beat. Driven by GSAP scrub timeline in
+               samurai-slash.mjs. Uses the .k-line / .k-line-inner mask
+               primitive (defined in kitsune.css) — same one HITOMI and
+               KITSUNE chapters use, so behaviour stays consistent.
+               aria-hidden because the semantic <blockquote> above
+               carries the same content for assistive tech. -->
+          <div class="samurai-quote" aria-hidden="true">
+            <p class="samurai-quote__line"><span class="k-line"><span class="k-line-inner">Our deepest <span class="k-red">fear</span> is <span class="k-red">not</span></span></span></p>
+            <p class="samurai-quote__line"><span class="k-line"><span class="k-line-inner">that we are <em>inadequate</em>.</span></span></p>
+            <p class="samurai-quote__line"><span class="k-line"><span class="k-line-inner">Our deepest <span class="k-red">fear</span> is</span></span></p>
+            <p class="samurai-quote__line"><span class="k-line"><span class="k-line-inner">that we are <em>powerful</em> beyond measure.</span></span></p>
+            <p class="samurai-quote__line"><span class="k-line"><span class="k-line-inner">It is our <em>light</em>,</span></span></p>
+            <p class="samurai-quote__line"><span class="k-line"><span class="k-line-inner">not our <span class="k-red">darkness</span>,</span></span></p>
+            <p class="samurai-quote__line"><span class="k-line"><span class="k-line-inner">that most <span class="k-red">frightens</span> us.</span></span></p>
+            <p class="samurai-quote__attr"><span class="k-line"><span class="k-line-inner">&mdash; Marianne Williamson</span></span></p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       CHAPTER 02 · ABOUT — "I AM STILL ALIVE."
+       ============================================================ -->
+  <section class="chapter ch-about" id="ch-about" data-nr="02" aria-labelledby="about-title">
+    <!-- Decorative dragon: sketch by default, shader-revealed filled version on hover.
+         Mirrors the hero's .portrait-stage / .portrait-fallback / hover-zone triad so
+         the three-tier fallback (reduced-motion / WebGL-fail / success) stays intact. -->
+    <div class="dragon-stage" id="dragon-stage" aria-hidden="true">
+      <canvas id="dragon-fx" aria-hidden="true"></canvas>
+      <div class="dragon-fallback">
+        <img class="dragon-base"   src="./assets/dragon-skitched.webp" alt="" decoding="async" loading="lazy" width="1536" height="1024" />
+        <img class="dragon-reveal" src="./assets/dragon-filled.webp"   alt="" decoding="async" loading="lazy" width="1536" height="1024" />
+      </div>
+      <div class="dragon-hover-zone" role="presentation"></div>
+    </div>
+
+    <div class="bg-rings" aria-hidden="true">
+      <svg viewBox="0 0 1920 1080" preserveAspectRatio="xMidYMid slice" fill="none" stroke="#5A0711" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M 1440 500 C 1440 461, 1400 430, 1350 430 C 1300 430, 1260 461, 1260 500 C 1260 539, 1300 570, 1350 570 C 1400 570, 1440 539, 1440 500 Z" />
+        <path d="M 1510 500 C 1510 431, 1438 375, 1350 375 C 1262 375, 1190 431, 1190 500 C 1190 569, 1262 625, 1350 625 C 1438 625, 1510 569, 1510 500 Z" opacity="0.78" />
+        <path d="M 1585 500 C 1585 399, 1480 317, 1350 317 C 1220 317, 1115 399, 1115 500 C 1115 601, 1220 683, 1350 683 C 1480 683, 1585 601, 1585 500 Z" opacity="0.66" />
+        <path d="M 1665 500 C 1665 364, 1524 254, 1350 254 C 1176 254, 1035 364, 1035 500 C 1035 636, 1176 746, 1350 746 C 1524 746, 1665 636, 1665 500 Z" opacity="0.54" />
+        <path d="M 1750 500 C 1750 328, 1571 188, 1350 188 C 1129 188, 950 328, 950 500 C 950 672, 1129 812, 1350 812 C 1571 812, 1750 672, 1750 500 Z" opacity="0.44" />
+        <path d="M 1840 500 C 1840 289, 1621 118, 1350 118 C 1079 118, 860 289, 860 500 C 860 711, 1079 882, 1350 882 C 1621 882, 1840 711, 1840 500 Z" opacity="0.36" />
+        <path d="M 1940 500 C 1940 246, 1676 40, 1350 40 C 1024 40, 760 246, 760 500 C 760 754, 1024 960, 1350 960 C 1676 960, 1940 754, 1940 500 Z" opacity="0.28" />
+        <path d="M 2050 500 C 2050 199, 1737 -46, 1350 -46 C 963 -46, 650 199, 650 500 C 650 801, 963 1046, 1350 1046 C 1737 1046, 2050 801, 2050 500 Z" opacity="0.2" />
+      </svg>
+    </div>
+    <div class="ch-head">
+      <span class="ch-kicker"><span class="jp">二</span> · ABOUT</span>
+      <span class="ch-meta">M.26 · 生きてる</span>
+    </div>
+
+    <h2 id="about-title" class="ch-hero-line fit-line" data-text-effect="char-variation-5">I&nbsp;AM&nbsp;STILL&nbsp;ALIVE.</h2>
+
+    <div class="about-grid">
+      <div class="about-copy">
+        <p class="lede">
+          Frontend developer. Based in <em>cairo — egypt</em>. Survived 4 years of school,
+          mastered 3 years of frontend sorcery. Still debugging my life.
+        </p>
+        <p>
+          I build interfaces the way a sword gets forged — slow, obsessive, a little dramatic.
+          Motion, pixels, and the quiet parts of a product nobody notices when they're done right.
+        </p>
+      </div>
+
+      <aside class="about-chips" aria-label="Quick facts">
+        <dl>
+          <div><dt>LOCATION</dt><dd>Cairo · Egypt <span class="jp">エジプト</span></dd></div>
+          <div><dt>ROLE</dt><dd>Frontend Engineer</dd></div>
+          <div><dt>YEARS</dt><dd>3+ in the craft</dd></div>
+          <div><dt>STATUS</dt><dd><span class="dot"></span> Available for work · 2026</dd></div>
+        </dl>
+      </aside>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       CHAPTER 03 · NUMBERS — "BY THE NUMBERS"
+       ============================================================ -->
+  <section class="chapter ch-numbers" id="ch-numbers" data-nr="03" aria-labelledby="numbers-title">
+    <div class="bg-seigaiha-strip" aria-hidden="true"></div>
+    <div class="ch-head">
+      <span class="ch-kicker"><span class="jp">三</span> · <span class="jp">数字</span> · BY THE NUMBERS</span>
+      <span class="ch-meta">TALLIED SO&nbsp;FAR</span>
+    </div>
+
+    <h2 id="numbers-title" class="sr-only">By the numbers</h2>
+
+    <ul class="stat-grid">
+      <li class="stat">
+        <span class="stat-value" data-count="2">2</span>
+        <span class="stat-label">International Awards</span>
+        <span class="stat-note">Still waiting for my Oscar.</span>
+      </li>
+      <li class="stat">
+        <span class="stat-value" data-count="36">36<sup>+</sup></span>
+        <span class="stat-label">Open-Source Contributions</span>
+        <span class="stat-note">Giving back to the community.</span>
+      </li>
+      <li class="stat">
+        <span class="stat-value" data-count="50">50<sup>+</sup></span>
+        <span class="stat-label">Projects Completed</span>
+        <span class="stat-note">Turning ideas into reality.</span>
+      </li>
+      <li class="stat stat-inf">
+        <span class="stat-value" aria-label="Infinite">
+          <svg class="stat-infinity" viewBox="0 0 200 100" aria-hidden="true" focusable="false">
+            <path d="M50,50 C50,22 90,22 100,50 C110,78 150,78 150,50 C150,22 110,22 100,50 C90,78 50,78 50,50 Z"
+                  fill="none" stroke="currentColor" stroke-width="10" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </span>
+        <span class="stat-label">Cups of Coffee</span>
+        <span class="stat-note">Fueled by caffeine &amp; creativity.</span>
+      </li>
+    </ul>
+  </section>
+
+  <!-- ============================================================
+       CHAPTER 04 · KITSUNE — "HOW I WORK, IN NINE TAILS"
+       Editorial interlude. Scroll scrubs the 121-frame sumi-e canvas
+       on the right; on the left, four story chapters reveal via GSAP
+       line-mask animations — mapping my abilities to kitsune traits.
+       ============================================================ -->
+  <section class="chapter ch-kitsune" id="ch-kitsune" data-nr="04" aria-labelledby="kitsune-title">
+    <h2 id="kitsune-title" class="sr-only">Kitsune — how I work, mapped through nine tails</h2>
+    <div class="kitsune-runway">
+      <div class="kitsune-stick">
+
+        <div class="kitsune-head">
+          <span class="kicker"><span class="jp">三</span> · KITSUNE · <span class="jp">九尾の狐</span></span>
+          <span class="meta">HOW I WORK · IN FOUR MOVEMENTS</span>
+        </div>
+
+        <div class="kitsune-stage">
+
+          <div class="kitsune-canvas-wrap">
+            <img class="kitsune-fallback"
+                 src="./assets/kitsune-frames/frame_0001.webp"
+                 alt="Sumi-e illustration of a nine-tailed kitsune spirit."
+                 width="900" height="1350" />
+            <canvas id="kitsune-canvas" aria-hidden="true"></canvas>
+          </div>
+
+          <div class="kitsune-story" aria-label="How I work">
+
+            <!-- 智 · layout A: eyebrow + headline LEFT, body RIGHT -->
+            <article class="kitsune-chapter" data-show="0.06" data-hide="0.28">
+              <div class="k-side k-side-left">
+                <div class="k-eyebrow">
+                  <span class="k-kanji">智</span>
+                  <span class="k-tag">Chi · Intelligence</span>
+                </div>
+                <h3 class="k-headline">
+                  <span class="k-line"><span class="k-line-inner">Read the</span></span>
+                  <span class="k-line"><span class="k-line-inner">unwritten.</span></span>
+                </h3>
+              </div>
+              <div class="k-side k-side-right">
+                <p class="k-body">
+                  <span class="k-line"><span class="k-line-inner">Intent first, markup second.</span></span>
+                  <span class="k-line"><span class="k-line-inner">I listen for the silence —</span></span>
+                  <span class="k-line"><span class="k-line-inner">every pattern, every tell.</span></span>
+                </p>
+              </div>
+            </article>
+
+            <!-- 九 · layout B: body LEFT, eyebrow + headline RIGHT -->
+            <article class="kitsune-chapter" data-show="0.28" data-hide="0.50">
+              <div class="k-side k-side-left">
+                <p class="k-body">
+                  <span class="k-line"><span class="k-line-inner">React · Next · Swift · WebGL.</span></span>
+                  <span class="k-line"><span class="k-line-inner">Systems · a11y · DX · shipping.</span></span>
+                  <span class="k-line"><span class="k-line-inner">Each tail earned — on purpose.</span></span>
+                </p>
+              </div>
+              <div class="k-side k-side-right">
+                <div class="k-eyebrow">
+                  <span class="k-kanji">九</span>
+                  <span class="k-tag">Kyū · Nine Tails</span>
+                </div>
+                <h3 class="k-headline">
+                  <span class="k-line"><span class="k-line-inner">Nine tails,</span></span>
+                  <span class="k-line"><span class="k-line-inner">one hand.</span></span>
+                </h3>
+              </div>
+            </article>
+
+            <!-- 霊 · layout A -->
+            <article class="kitsune-chapter" data-show="0.50" data-hide="0.72">
+              <div class="k-side k-side-left">
+                <div class="k-eyebrow">
+                  <span class="k-kanji">霊</span>
+                  <span class="k-tag">Rei · Fox-fire</span>
+                </div>
+                <h3 class="k-headline">
+                  <span class="k-line"><span class="k-line-inner">Light the</span></span>
+                  <span class="k-line"><span class="k-line-inner">corridor.</span></span>
+                </h3>
+              </div>
+              <div class="k-side k-side-right">
+                <p class="k-body">
+                  <span class="k-line"><span class="k-line-inner">Debugging isn't guessing.</span></span>
+                  <span class="k-line"><span class="k-line-inner">I walk the stack with a flame</span></span>
+                  <span class="k-line"><span class="k-line-inner">until the bug has nowhere left.</span></span>
+                </p>
+              </div>
+            </article>
+
+            <!-- 神 · layout B -->
+            <article class="kitsune-chapter" data-show="0.72" data-hide="0.92">
+              <div class="k-side k-side-left">
+                <p class="k-body">
+                  <span class="k-line"><span class="k-line-inner">Figma to pull request.</span></span>
+                  <span class="k-line"><span class="k-line-inner">Founder vision to production —</span></span>
+                  <span class="k-line"><span class="k-line-inner">without dropping a pixel.</span></span>
+                </p>
+              </div>
+              <div class="k-side k-side-right">
+                <div class="k-eyebrow">
+                  <span class="k-kanji">神</span>
+                  <span class="k-tag">Shin · Between Worlds</span>
+                </div>
+                <h3 class="k-headline">
+                  <span class="k-line"><span class="k-line-inner">Carry it</span></span>
+                  <span class="k-line"><span class="k-line-inner">across.</span></span>
+                </h3>
+              </div>
+            </article>
+
+          </div>
+
+        </div>
+
+        <div class="kitsune-outro" aria-hidden="true">
+          <span class="rule"></span>
+          <span>NEXT · THE ROAD</span>
+          <span class="rule"></span>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       CHAPTER 05 · JOURNEY — "THE ROAD"  [HIDDEN FOR NOW]
+       ============================================================ -->
+  <section class="chapter ch-journey" id="ch-journey" data-nr="05" aria-labelledby="journey-title" hidden style="display: none;">
+    <!-- Decorative Liberty: sketch by default, shader-revealed filled version on hover.
+         Mirrors the About dragon's stage/fallback/hover-zone triad so the three-tier
+         fallback (reduced-motion / no-hover / WebGL-fail) behaviour is identical. -->
+    <div class="liberty-stage" id="liberty-stage" aria-hidden="true">
+      <canvas id="liberty-fx" aria-hidden="true"></canvas>
+      <div class="liberty-fallback">
+        <img class="liberty-base"   src="./assets/liberty-sketch.webp" alt="" decoding="async" loading="lazy" width="1536" height="1024" />
+        <img class="liberty-reveal" src="./assets/liberty-filled.webp" alt="" decoding="async" loading="lazy" width="1536" height="1024" />
+      </div>
+      <div class="liberty-hover-zone" role="presentation"></div>
+    </div>
+
+    <div class="ch-head">
+      <span class="ch-kicker"><span class="jp">五</span> · <span class="jp">道</span> · THE ROAD</span>
+      <span class="ch-meta">THROUGHOUT MY JOURNEY</span>
+    </div>
+
+    <blockquote id="journey-title" class="pull-quote">
+      <p data-text-effect="word-variation-2">
+        Worked across industries and countries. The latest — and ongoing — is in
+        <em>the USA</em>. It gave me the exposure. More importantly, it gave me
+        <em>the people</em> who helped me grow along the way.
+      </p>
+    </blockquote>
+
+    <ol class="road-rail" aria-label="Places I've worked from">
+      <li><span class="dot"></span><span class="road-place">Cairo</span><span class="road-year">M.22</span></li>
+      <li><span class="dot"></span><span class="road-place">Riyadh</span><span class="road-year">M.23</span></li>
+      <li><span class="dot"></span><span class="road-place">Dubai</span><span class="road-year">M.24</span></li>
+      <li class="is-now"><span class="dot"></span><span class="road-place">USA</span><span class="road-year">NOW</span></li>
+    </ol>
+  </section>
+
+  <!-- ============================================================
+       CHAPTER 05b · COUNTRIES — scroll-driven character swipe
+       Three portraits (Anubis · Liberty · Kangaroo) share one pinned
+       stage. Scroll drives an fbm-distorted right→left wipe between
+       them, with blood-red progress bar pinned to the viewport top.
+       ============================================================ -->
+  <div class="countries-progress" id="countries-progress" aria-hidden="true">
+    <div class="countries-progress__track">
+      <div class="countries-progress__fill"></div>
+      <span class="countries-progress__mark countries-progress__mark--1"></span>
+      <span class="countries-progress__mark countries-progress__mark--2"></span>
+    </div>
+  </div>
+
+  <section class="chapter ch-countries" id="ch-countries" aria-labelledby="countries-title">
+    <div class="countries-runway">
+      <div class="countries-stick">
+
+        <!-- Cultural background patterns — one per character, crossfaded by
+             transition state. Low-opacity oxblood so they fill the viewport
+             as subtle thematic texture without fighting the portrait. -->
+        <div class="countries-cultural-bg" aria-hidden="true">
+          <!-- Egypt · hieroglyphs (ankh · eye of horus · water · sun disc) -->
+          <svg class="cultural-bg-layer" data-country="anubis"
+               xmlns="http://www.w3.org/2000/svg"
+               preserveAspectRatio="xMidYMid slice"
+               viewBox="0 0 1920 1080">
+            <defs>
+              <pattern id="ci-hieroglyph" x="0" y="0" width="200" height="200" patternUnits="userSpaceOnUse">
+                <g fill="none" stroke="#8B0F1D" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                  <!-- Ankh -->
+                  <circle cx="46" cy="34" r="12" />
+                  <path d="M 46 46 L 46 88 M 32 58 L 60 58" />
+                  <!-- Eye of Horus -->
+                  <path d="M 108 34 Q 138 18 168 36 Q 138 52 108 34 Z" />
+                  <circle cx="138" cy="34" r="4.5" fill="#8B0F1D" />
+                  <path d="M 162 42 L 176 58 M 138 52 L 130 70" />
+                  <!-- Zigzag / water -->
+                  <polyline points="22,124 38,138 54,124 70,138 86,124 102,138" />
+                  <polyline points="22,150 38,164 54,150 70,164 86,150 102,164" />
+                  <!-- Sun disc with wings -->
+                  <circle cx="150" cy="140" r="13" />
+                  <path d="M 137 140 Q 150 126 163 140" />
+                  <path d="M 150 153 L 150 178" />
+                  <path d="M 132 168 L 168 168" />
+                </g>
+              </pattern>
+            </defs>
+            <rect width="100%" height="100%" fill="url(#ci-hieroglyph)" />
+          </svg>
+
+          <!-- USA · flag-style 5-point stars, scattered scale -->
+          <svg class="cultural-bg-layer" data-country="liberty"
+               xmlns="http://www.w3.org/2000/svg"
+               preserveAspectRatio="xMidYMid slice"
+               viewBox="0 0 1920 1080">
+            <defs>
+              <pattern id="ci-stars" x="0" y="0" width="160" height="160" patternUnits="userSpaceOnUse">
+                <g fill="#8B0F1D">
+                  <path d="M 80 22 L 87 47 L 113 47 L 92 63 L 100 88 L 80 72 L 60 88 L 68 63 L 47 47 L 73 47 Z" />
+                  <path d="M 20 104 L 23 114 L 34 114 L 25 120 L 28 130 L 20 124 L 12 130 L 15 120 L 6 114 L 17 114 Z" />
+                  <path d="M 140 104 L 143 114 L 154 114 L 145 120 L 148 130 L 140 124 L 132 130 L 135 120 L 126 114 L 137 114 Z" />
+                </g>
+              </pattern>
+            </defs>
+            <rect width="100%" height="100%" fill="url(#ci-stars)" />
+          </svg>
+
+          <!-- Australia · kangaroo silhouette (from kangaroo-shape-svgrepo-com.svg) -->
+          <svg class="cultural-bg-layer" data-country="kangaroo"
+               xmlns="http://www.w3.org/2000/svg"
+               preserveAspectRatio="xMidYMid slice"
+               viewBox="0 0 1920 1080">
+            <defs>
+              <pattern id="ci-kangaroo" x="0" y="0" width="96" height="96" patternUnits="userSpaceOnUse">
+                <svg x="10" y="10" width="76" height="76" viewBox="0 0 548.604 548.604"
+                     preserveAspectRatio="xMidYMid meet">
+                  <path fill="#8B0F1D" fill-opacity="0.72" d="M533.131,0.622c-8.98,6.369-16.703,14.088-23.799,22.473c-6.561,7.752-9.155,17.095-10.999,26.781c-0.874,4.59-2.734,5.904-7.761,5.753c-3.374-0.102-5.006-1.942-5.639-5.981c-1.705-10.906-6.81-19.792-16.002-26.075c-9.057-6.193-17.939-12.562-25.365-20.751c-0.914-1.008-2.269-1.624-3.316-2.35c-4.256,3.974-3.04,8.972-3.142,13.231c-0.232,9.621,2.256,18.801,6.907,27.356c3.758,6.912,7.923,13.815,15.198,17.062c5.324,2.375,6.45,5.565,5.634,10.469c-0.236,1.428-0.881,2.787-1.187,4.207c-1.114,5.214-2.501,10.4-3.146,15.675c-0.645,5.268,0.951,10.657-0.779,15.961c-0.819,2.518-1.064,5.227-1.534,7.858c-1.269,7.103-4.034,13.525-9.021,18.792c-6.43,6.797-15.088,9.673-23.492,12.962c-11.343,4.439-21.959,10.074-31.343,17.997c-7.218,6.095-14.312,12.538-22.289,17.491c-11.478,7.128-23.705,13.044-35.606,19.49c-17.246,9.339-31.628,22.024-43.889,37.263c-8.968,11.146-15.54,23.656-21.395,36.593c-5.284,11.673-9.213,23.869-11.126,36.484c-1.689,11.146-2.048,22.416-1.171,33.827c0.979,12.75,0.722,25.655,0.143,38.454c-0.526,11.628-3.909,22.795-8.262,33.579c-6.561,16.246-15.647,30.93-27.136,44.206c-12.631,14.595-27.421,26.328-44.521,35.239c-14.9,7.765-31.293,9.829-47.495,12.648c-10.702,1.864-21.44,3.513-32.138,5.405c-7.324,1.294-14.594,2.901-21.91,4.252c-11.041,2.04-22.089,4.011-33.15,5.94c-4.798,0.836-9.657,1.358-14.439,2.272c-6.785,1.293-13.893,1.819-19.809,7.552c2.436,0.498,4.48,1.281,6.516,1.261c5.782-0.057,11.559-0.665,17.336-0.641c8.132,0.033,16.263,0.706,24.391,0.637c36.083-0.298,72.179,1.028,108.25-1.293c8.825-0.567,17.532-1.196,26.259-2.897c10.061-1.958,19.413-5.581,28.274-10.367c21.069-11.379,37.516-28.136,51.849-46.92c9.71-12.726,18.502-26.148,27.573-39.355c1.701-2.48,3.104-1.995,4.635-0.257c1.13,1.281,2.003,2.799,2.913,4.255c3.207,5.137,7.748,9.548,8.878,15.818c1.229,6.834,2.66,13.66,3.379,20.555c0.656,6.316,1.403,12.86,0.465,19.054c-2.036,13.469-4.904,26.806-3.799,40.547c0.257,3.187,1.354,6.594,4.505,7.394c4.169,1.061,8.67,1.326,12.998,1.154c8.267-0.33,16.418-3.239,24.811-0.954c4.333,1.183,8.748,2.085,13.04,3.39c4.921,1.498,10.082,1.465,15.022,3.652c3.513,1.554,8.299,0.526,12.473,0.159c2.085-0.184,4.725-0.927,5.969-2.392c2.697-3.17,5.357-5.022,9.548-3.325c0.317,0.131,0.738,0.009,1.105,0.021c6.527,0.237,13.056,0.494,19.588,0.702c1.281,0.041,2.566-0.114,4.737-0.221c-4.346-8.653-10.535-14.116-18.752-16.699c-10.641-3.342-21.465-5.948-32.689-7.038c-10.808-1.049-21.501-3.293-32.252-4.945c-4.031-0.62-7.389-4.834-6.516-8.878c2.064-9.555,5.051-18.756,10.612-26.989c2.436-3.606,4.577-7.475,6.372-11.444c5.227-11.555,10.188-23.215,17.654-33.61c1.714-2.387,3.195-2.481,4.468-0.417c3.685,5.985,7.862,11.856,10.339,18.353c3.799,9.955,6.847,20.281,9.192,30.678c1.118,4.948,0.244,10.469-0.376,15.65c-0.615,5.178-2.293,10.232-2.949,15.41c-0.18,1.412,1.276,3.672,2.623,4.496c2.207,1.354,4.888,2.081,7.458,2.664c7.018,1.6,14.076,3.012,21.131,4.443c1.918,0.388,4.002,0.245,5.785,0.931c12.595,4.839,25.749,5.858,39.029,5.679c3.276-0.045,6.789-0.473,9.245-3.472c0.547-0.669,2.004-0.938,2.991-0.853c8.413,0.75,16.813,1.623,25.218,2.468c1.024,0.103,2.045,0.282,3.428,0.478c-0.236-4.3-2.713-6.434-5.487-8.303c-2.334-1.57-5.296-2.546-7.047-4.586c-6.034-7.046-14.067-8.25-22.521-8.678c-4.312-0.217-8.629-0.433-12.934-0.771c-11.856-0.938-23.7-2.081-35.565-2.84c-3.937-0.253-6.087-2.031-7.16-5.545c-3.55-11.587-0.8-22.623,4.108-32.958c4.762-10.017,8.246-20.277,10.024-31.159c1.935-11.807,3.831-23.623,5.569-35.459c1.049-7.128,2.31-14.296,2.473-21.469c0.176-7.585-0.751-15.202-1.362-22.791c-0.453-5.614-0.845-11.265-1.856-16.789c-1.583-8.638-3.819-17.152-5.423-25.786c-0.384-2.056,0.041-4.765,1.146-6.499c3.488-5.455,7.356-10.686,11.384-15.761c0.726-0.914,3.472-1.465,4.324-0.853c9.408,6.772,13.647,13.676,8.119,26.242c-1.485,3.378-2.036,6.279,0.114,9.204c1.881,2.559,4.149,4.831,6.279,7.201c0.229,0.253,0.686,0.515,0.976,0.461c4.268-0.804,8.571-1.489,12.754-2.627c0.975-0.266,1.815-2.016,2.207-3.244c2.525-7.964,2.126-15.602-2.51-22.864c-6.238-9.779-12.346-19.641-18.384-29.547c-0.738-1.212-1.379-3.203-0.886-4.305c1.542-3.435,3.611-6.634,5.549-9.886c1.392-2.334,2.317-2.118,3.844,0.249c3.108,4.81,6.438,9.531,10.155,13.88c2.786,3.26,6.353,5.847,9.519,8.793c7.156,6.65,7.499,18.188,1.306,25.585c-1.804,2.15-3.31,5.59-3.02,8.229c0.555,5.088,2.893,9.89,7.136,13.158c1.126,0.869,3.729,1.253,4.773,0.551c4.35-2.934,7.871-6.838,7.838-12.465c-0.062-9.249-0.416-18.502-0.856-27.743c-0.144-3.016-0.176-6.427-1.575-8.915c-3.02-5.374-6.72-10.4-10.461-15.325c-3.509-4.623-7.141-9.212-7.769-15.133c-0.682-6.43-0.89-12.921-1.02-19.392c-0.103-5.063-0.29-10.245,4.189-14.068c0.946-0.808,1.437-2.232,1.954-3.452c4.093-9.567,6.981-19.474,7.826-29.874c0.922-11.355-0.103-22.562-2.982-33.607c-0.266-1.028,0.452-2.31,0.718-3.477c0.367-0.085,0.738-0.171,1.105-0.253c4.725,5.822,10.987,5.455,17.328,4.705c5.985-0.71,10.767-7.385,9.494-13.228c-0.49-2.244-1.188-4.451-1.526-6.716c-0.689-4.594-1.42-9.205-1.733-13.835c-0.575-8.466-1.375-16.973-1.053-25.423c0.159-4.218,0.448-8.217-0.963-12.219c-0.485-1.379-1.424-2.779-1.375-4.142c0.257-7.503-4.035-12.17-9.735-15.863c-2.921-1.893-2.876-3.476-0.596-5.798c5.811-5.916,10.441-12.485,12.179-20.881c1.33-6.414,2.759-12.901,5.129-18.972c1.383-3.542,2.028-6.867,1.812-10.482C538.211,0.736,535.432-1.01,533.131,0.622z"/>
+                </svg>
+              </pattern>
+            </defs>
+            <rect width="100%" height="100%" fill="url(#ci-kangaroo)" />
+          </svg>
+        </div>
+
+        <!-- Background: topographic contours + vertical seam (hero-adjacent) -->
+        <div class="countries-bg-topo" aria-hidden="true">
+          <svg viewBox="0 0 1920 1080" preserveAspectRatio="xMidYMid slice" fill="none" stroke="#5A0711" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M-100 180 C 280 120, 620 280, 940 240 S 1480 120, 1820 240 S 2140 380, 2240 320" opacity="0.7" />
+            <path d="M-120 320 C 300 260, 660 420, 980 380 S 1520 260, 1860 380 S 2160 520, 2260 460" opacity="0.55" />
+            <path d="M-140 460 C 320 400, 700 560, 1020 520 S 1560 400, 1900 520 S 2180 660, 2280 600" opacity="0.45" />
+            <path d="M-160 600 C 340 540, 740 700, 1060 660 S 1600 540, 1940 660 S 2200 800, 2300 740" opacity="0.55" />
+            <path d="M-180 740 C 360 680, 780 840, 1100 800 S 1640 680, 1980 800 S 2220 940, 2320 880" opacity="0.4" />
+            <path d="M-200 880 C 380 820, 820 980, 1140 940 S 1680 820, 2020 940 S 2240 1080, 2340 1020" opacity="0.3" />
+          </svg>
+        </div>
+        <div class="countries-bg-seam" aria-hidden="true"></div>
+
+        <!-- Header kicker -->
+        <div class="countries-head">
+          <span class="kicker"><span class="jp">国</span> · THE COUNTRIES</span>
+          <span class="meta">THREE LANDS · THREE MASKS</span>
+        </div>
+
+        <h2 id="countries-title" class="sr-only">Countries I've worked in — Egypt, USA, Australia</h2>
+
+        <!-- Character stage — centered, shader takes over from fallback PNGs -->
+        <div class="countries-stage" id="countries-stage">
+          <canvas id="countries-fx" aria-hidden="true"></canvas>
+          <div class="countries-fallback" aria-hidden="false">
+            <img class="countries-fallback__img is-active"
+                 src="./assets/anubis/anubis.webp"
+                 alt="Anubis — a portrait representing Egypt, where the craft began."
+                 width="768" height="1024" decoding="async" loading="lazy" />
+            <img class="countries-fallback__img"
+                 src="./assets/liberty/liberty.webp"
+                 alt="Statue of Liberty — a portrait representing the United States."
+                 width="768" height="1024" decoding="async" loading="lazy" />
+            <img class="countries-fallback__img"
+                 src="./assets/kangaro/kangaro.webp"
+                 alt="A red kangaroo — a portrait representing Australia."
+                 width="768" height="1024" decoding="async" loading="lazy" />
+          </div>
+        </div>
+
+        <!-- Story overlay cards — positioned left/right/left to feel editorial -->
+        <div class="countries-stories" aria-label="Stories from each country">
+
+          <article class="country-story" data-country="anubis" data-side="left">
+            <div class="country-story__meta">
+              <span class="country-story__kanji jp">埃及</span>
+              <span>CHAPTER · ONE</span>
+            </div>
+            <h3 class="country-story__title">
+              Egypt
+              <span class="country-story__year">M.22 · WHERE IT BEGAN</span>
+            </h3>
+            <p class="country-story__body">
+              Cairo taught me discipline.
+              Long nights, small screens, a craft forged under pressure.
+              The first lines of code I wrote looked like prayers.
+            </p>
+          </article>
+
+          <article class="country-story" data-country="liberty" data-side="right">
+            <div class="country-story__meta">
+              <span>CHAPTER · TWO</span>
+              <span class="country-story__kanji jp">米国</span>
+            </div>
+            <h3 class="country-story__title">
+              United States
+              <span class="country-story__year">M.24 · THE EXPOSURE</span>
+            </h3>
+            <p class="country-story__body">
+              The U.S. opened the room.
+              New standards, sharper mentors, a culture that ships.
+              I didn't just learn the stack — I learned the tempo.
+            </p>
+          </article>
+
+          <article class="country-story" data-country="kangaroo" data-side="left">
+            <div class="country-story__meta">
+              <span class="country-story__kanji jp">豪州</span>
+              <span>CHAPTER · THREE</span>
+            </div>
+            <h3 class="country-story__title">
+              Australia
+              <span class="country-story__year">M.25 · THE WILD YEAR</span>
+            </h3>
+            <p class="country-story__body">
+              Australia was the wild one —
+              rough edges, blunt feedback, ideas that bite.
+              I came back leaner, louder, harder to knock off course.
+            </p>
+          </article>
+
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       CHAPTER 06 · HITOMI — "WHAT THE EYE KEEPS"
+       Scroll-scrubs a 96 fps close-up of the eye with website
+       reflections drifting across the iris. Four movements flank the
+       canvas with editorial kanji/headline/body, tracking the path
+       from "what I see" → "what I store" → "what I ship".
+       ============================================================ -->
+  <section class="chapter ch-hitomi" id="ch-hitomi" data-nr="06" aria-labelledby="hitomi-title">
+    <h2 id="hitomi-title" class="sr-only">Hitomi — inspirations that pass through the eye</h2>
+    <div class="hitomi-runway">
+      <div class="hitomi-stick">
+
+        <div class="hitomi-head">
+          <span class="kicker"><span class="jp">四</span> · HITOMI · <span class="jp">瞳に映る</span></span>
+          <span class="meta">INSPIRATIONS · FOUR REFLECTIONS</span>
+        </div>
+
+        <div class="hitomi-stage">
+
+          <div class="hitomi-canvas-wrap">
+            <img class="hitomi-fallback"
+                 src="./assets/inspiration-frames/frame_0001.webp"
+                 alt="Close-up of an eye, reflecting website interfaces drifting across the iris."
+                 width="1400" height="628" />
+            <canvas id="hitomi-canvas" aria-hidden="true"></canvas>
+          </div>
+          <div class="hitomi-overlay" aria-hidden="true"></div>
+
+          <div class="hitomi-story" aria-label="What I watch, what I keep">
+
+            <!-- 映 · layout A: eyebrow + headline LEFT, body RIGHT -->
+            <article class="hitomi-chapter" data-show="0.06" data-hide="0.28">
+              <div class="h-side h-side-left">
+                <div class="h-eyebrow">
+                  <span class="h-kanji">映</span>
+                  <span class="h-tag">Utsu · Reflect</span>
+                </div>
+                <h3 class="h-headline">
+                  <span class="h-line"><span class="h-line-inner">Everything</span></span>
+                  <span class="h-line"><span class="h-line-inner">passes through.</span></span>
+                </h3>
+              </div>
+              <div class="h-side h-side-right">
+                <p class="h-body">
+                  <span class="h-line"><span class="h-line-inner">Every site I've opened,</span></span>
+                  <span class="h-line"><span class="h-line-inner">every motion I've paused —</span></span>
+                  <span class="h-line"><span class="h-line-inner">the eye doesn't forget.</span></span>
+                </p>
+              </div>
+            </article>
+
+            <!-- 観 · layout B: body LEFT, eyebrow + headline RIGHT -->
+            <article class="hitomi-chapter" data-show="0.28" data-hide="0.50">
+              <div class="h-side h-side-left">
+                <p class="h-body">
+                  <span class="h-line"><span class="h-line-inner">Awwwards · FWA · Dribbble.</span></span>
+                  <span class="h-line"><span class="h-line-inner">Linear · Vercel · Rauno.</span></span>
+                  <span class="h-line"><span class="h-line-inner">Studying how the greats move.</span></span>
+                </p>
+              </div>
+              <div class="h-side h-side-right">
+                <div class="h-eyebrow">
+                  <span class="h-kanji">観</span>
+                  <span class="h-tag">Kan · Observe</span>
+                </div>
+                <h3 class="h-headline">
+                  <span class="h-line"><span class="h-line-inner">Watch</span></span>
+                  <span class="h-line"><span class="h-line-inner">the masters.</span></span>
+                </h3>
+              </div>
+            </article>
+
+            <!-- 蔵 · layout A -->
+            <article class="hitomi-chapter" data-show="0.50" data-hide="0.72">
+              <div class="h-side h-side-left">
+                <div class="h-eyebrow">
+                  <span class="h-kanji">蔵</span>
+                  <span class="h-tag">Kura · Archive</span>
+                </div>
+                <h3 class="h-headline">
+                  <span class="h-line"><span class="h-line-inner">A library</span></span>
+                  <span class="h-line"><span class="h-line-inner">behind the eyes.</span></span>
+                </h3>
+              </div>
+              <div class="h-side h-side-right">
+                <p class="h-body">
+                  <span class="h-line"><span class="h-line-inner">Micro-interactions I've saved.</span></span>
+                  <span class="h-line"><span class="h-line-inner">Easings I've stolen with my eyes.</span></span>
+                  <span class="h-line"><span class="h-line-inner">Quiet details, archived.</span></span>
+                </p>
+              </div>
+            </article>
+
+            <!-- 創 · layout B -->
+            <article class="hitomi-chapter" data-show="0.72" data-hide="0.92">
+              <div class="h-side h-side-left">
+                <p class="h-body">
+                  <span class="h-line"><span class="h-line-inner">Everything I've seen</span></span>
+                  <span class="h-line"><span class="h-line-inner">comes back as my work —</span></span>
+                  <span class="h-line"><span class="h-line-inner">reflected, rebuilt, released.</span></span>
+                </p>
+              </div>
+              <div class="h-side h-side-right">
+                <div class="h-eyebrow">
+                  <span class="h-kanji">創</span>
+                  <span class="h-tag">Sō · Forge</span>
+                </div>
+                <h3 class="h-headline">
+                  <span class="h-line"><span class="h-line-inner">Then</span></span>
+                  <span class="h-line"><span class="h-line-inner">I forge mine.</span></span>
+                </h3>
+              </div>
+            </article>
+
+          </div>
+        </div>
+
+        <div class="hitomi-outro" aria-hidden="true">
+          <span class="rule"></span>
+          <span>NEXT · THE TIME</span>
+          <span class="rule"></span>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <div class="chapter-divider" aria-hidden="true">
+    <img src="./assets/divider-knot.svg" alt="" width="600" height="40" loading="lazy" decoding="async" />
+  </div>
+
+  <!-- ============================================================
+       CHAPTER 07 · CTA — "SO NOW IS THE TIME"
+       ============================================================ -->
+  <section class="chapter ch-cta" id="ch-cta" data-nr="07" aria-labelledby="cta-title">
+    <div class="cta-marquees" aria-hidden="true">
+      <div class="cta-mq cta-mq-1"><div class="cta-mq-track">
+        <span>SO NOW IS THE TIME</span><i class="sep"></i>
+        <span class="jp">今こそ</span><i class="sep"></i>
+        <span>SO NOW IS THE TIME</span><i class="sep"></i>
+        <span class="jp">今こそ</span><i class="sep"></i>
+        <span>SO NOW IS THE TIME</span><i class="sep"></i>
+        <span class="jp">今こそ</span><i class="sep"></i>
+      </div></div>
+      <div class="cta-mq cta-mq-2"><div class="cta-mq-track">
+        <span>SO NOW IS THE TIME</span><i class="sep"></i>
+        <span class="jp">今こそ</span><i class="sep"></i>
+        <span>SO NOW IS THE TIME</span><i class="sep"></i>
+        <span class="jp">今こそ</span><i class="sep"></i>
+        <span>SO NOW IS THE TIME</span><i class="sep"></i>
+        <span class="jp">今こそ</span><i class="sep"></i>
+      </div></div>
+    </div>
+
+    <h2 id="cta-title" class="sr-only">So now is the time</h2>
+    <a class="cta-btn" href="#ch-contact">
+      Are you ready to build something great together?
+      <span aria-hidden="true" class="cta-arrow">↑</span>
+    </a>
+  </section>
+
+  <!-- ============================================================
+       CHAPTER 08 · BOOK — "LET'S CREATE SOMETHING TOGETHER"
+       Cal.com inline embed. Handle: mina-massoud.
+       ============================================================ -->
+  <section class="chapter ch-contact ch-book" id="ch-contact" data-nr="08" aria-labelledby="contact-title">
+    <div class="bg-mountains" aria-hidden="true">
+      <svg viewBox="0 0 1920 600" preserveAspectRatio="xMidYMax slice" fill="none" stroke="#5A0711" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round">
+        <path opacity="0.45" d="M -20 310 C 80 250, 180 230, 260 250 C 340 270, 420 200, 520 230 C 600 250, 700 190, 820 220 C 920 250, 1020 200, 1140 240 C 1240 270, 1360 210, 1480 240 C 1580 260, 1700 220, 1820 250 C 1880 260, 1940 290, 1940 310" />
+        <path opacity="0.65" d="M -20 400 C 100 360, 220 330, 340 360 C 440 380, 560 310, 680 340 C 780 360, 900 320, 1040 360 C 1160 390, 1280 330, 1420 360 C 1540 380, 1660 340, 1800 370 C 1880 390, 1940 400, 1940 400" />
+        <path opacity="0.9" d="M -20 500 C 120 470, 260 450, 400 470 C 520 490, 660 450, 800 480 C 920 500, 1060 460, 1200 490 C 1320 510, 1460 470, 1600 490 C 1740 510, 1860 480, 1940 500" />
+        <path opacity="0.28" stroke-dasharray="2 6" d="M 180 180 C 420 140, 680 220, 940 190" />
+        <path opacity="0.28" stroke-dasharray="2 6" d="M 1040 150 C 1260 110, 1480 200, 1780 160" />
+      </svg>
+    </div>
+    <canvas id="contact-fx" class="contact-fx" aria-hidden="true"></canvas>
+    <div class="ch-head">
+      <span class="ch-kicker"><span class="jp">八</span> · <span class="jp">予約</span> · BOOK A CALL</span>
+      <span class="ch-meta">PICK A TIME</span>
+    </div>
+
+    <h2 id="contact-title" class="ch-hero-line ch-hero-line--bounded" data-text-effect="char-variation-5">LET'S&nbsp;CREATE<br>SOMETHING&nbsp;TOGETHER</h2>
+
+    <p class="book-intro">
+      Pick a slot below — no back-and-forth emails.
+      If your project is bigger than a 30-minute chat, we'll extend on the call.
+    </p>
+
+    <!-- Cal.com inline embed target -->
+    <div class="book-frame">
+      <div class="book-frame-ornament" aria-hidden="true">
+        <span class="book-frame-corner book-frame-corner--tl"></span>
+        <span class="book-frame-corner book-frame-corner--tr"></span>
+        <span class="book-frame-corner book-frame-corner--bl"></span>
+        <span class="book-frame-corner book-frame-corner--br"></span>
+      </div>
+      <div
+        id="cal-inline-embed"
+        class="book-embed"
+        data-cal-link="mina-massoud/30min"
+        data-cal-namespace="inline"
+        data-lenis-prevent
+        aria-label="Booking calendar"
+      >
+        <noscript>
+          <p class="book-noscript">
+            JavaScript is disabled. Book directly at
+            <a href="https://cal.com/mina-massoud/30min" target="_blank" rel="noopener">cal.com/mina-massoud</a>.
+          </p>
+        </noscript>
+      </div>
+      <a class="book-fallback" href="https://cal.com/mina-massoud/30min" target="_blank" rel="noopener">
+        <span class="book-fallback-label">Calendar not loading?</span>
+        <span class="book-fallback-link">Open on cal.com <span aria-hidden="true">↗</span></span>
+      </a>
+    </div>
+
+    <!-- Secondary: email + social fallback -->
+    <div class="book-aside">
+      <div class="book-aside-head">
+        <span class="jp">連絡</span>
+        <span class="book-aside-label">Or reach out the old-fashioned way</span>
+      </div>
+
+      <a class="book-email" href="mailto:minamelad232@gmail.com">
+        <span class="book-email-label">Email</span>
+        <span class="book-email-addr">minamelad232@gmail.com</span>
+        <span class="book-email-arrow" aria-hidden="true">↗</span>
+      </a>
+
+      <ul class="contact-socials" aria-label="Elsewhere on the internet">
+        <li>
+          <a href="https://www.linkedin.com/in/mina-melad/" target="_blank" rel="noopener">
+            <span class="soc-label">LinkedIn</span>
+            <span class="soc-note">Professional DMs welcome. Keep it career-related… or not.</span>
+            <span class="soc-arrow" aria-hidden="true">↗</span>
+          </a>
+        </li>
+        <li>
+          <a href="https://github.com/Mina-Massoud" target="_blank" rel="noopener">
+            <span class="soc-label">GitHub</span>
+            <span class="soc-note">Open source and personal projects. Maybe find this site's code.</span>
+            <span class="soc-arrow" aria-hidden="true">↗</span>
+          </a>
+        </li>
+        <li>
+          <a href="https://www.instagram.com/mina_melad_14/" target="_blank" rel="noopener">
+            <span class="soc-label">Instagram</span>
+            <span class="soc-note">Life outside the editor. Mostly coffee and katanas.</span>
+            <span class="soc-arrow" aria-hidden="true">↗</span>
+          </a>
+        </li>
+      </ul>
+    </div>
+
+    <footer class="site-foot">
+      <span><img class="glyph-compass" src="./assets/glyph-compass.svg" alt="" width="22" height="22" loading="lazy" decoding="async" aria-hidden="true" />Mina <span class="jp">永遠</span> © 2026</span>
+      <span>M.26 · PORTFOLIO</span>
+    </footer>
+  </section>
+
+  <!-- ================= CAL.COM INLINE EMBED LOADER ================= -->
+  <script>
+    (function () {
+      // Respect prefers-reduced-data and reduced motion — still load; embed is essential.
+      // Defer loader until section is near-viewport to keep LCP clean.
+      var target = document.getElementById('cal-inline-embed');
+      if (!target) return;
+
+      var loaded = false;
+      function loadCal() {
+        if (loaded) return;
+        loaded = true;
+        (function (C, A, L) {
+          var p = function (a, ar) { a.q.push(ar); };
+          var d = C.document;
+          C.Cal = C.Cal || function () {
+            var cal = C.Cal;
+            var ar = arguments;
+            if (!cal.loaded) {
+              cal.ns = {};
+              cal.q = cal.q || [];
+              d.head.appendChild(d.createElement('script')).src = A;
+              cal.loaded = true;
+            }
+            if (ar[0] === L) {
+              var api = function () { p(api, arguments); };
+              var namespace = ar[1];
+              api.q = api.q || [];
+              if (typeof namespace === 'string') {
+                cal.ns[namespace] = cal.ns[namespace] || api;
+                p(cal.ns[namespace], ar);
+                p(cal, ['initNamespace', namespace]);
+              } else p(cal, ar);
+              return;
+            }
+            p(cal, ar);
+          };
+        })(window, 'https://app.cal.com/embed/embed.js', 'init');
+
+        window.Cal('init', 'inline', { origin: 'https://cal.com' });
+        window.Cal.ns.inline('inline', {
+          elementOrSelector: '#cal-inline-embed',
+          calLink: 'mina-massoud/30min',
+          layout: 'month_view',
+          config: { theme: 'dark' },
+        });
+        window.Cal.ns.inline('ui', {
+          theme: 'dark',
+          cssVarsPerTheme: {
+            dark: {
+              'cal-brand': '#B91729',
+              'cal-brand-emphasis': '#E2293C',
+              'cal-bg': '#0A0A0A',
+              'cal-bg-emphasis': '#141414',
+              'cal-bg-muted': '#111111',
+              'cal-bg-subtle': '#181818',
+              'cal-border': '#252525',
+              'cal-border-subtle': '#1C1C1C',
+              'cal-text': '#F3EDE3',
+              'cal-text-emphasis': '#FFFFFF',
+              'cal-text-subtle': '#9A958C',
+              'cal-text-muted': '#6A6661',
+            },
+          },
+          hideEventTypeDetails: false,
+        });
+      }
+
+      // Lazy-load when the section comes within 30% of viewport.
+      if ('IntersectionObserver' in window) {
+        var io = new IntersectionObserver(function (entries) {
+          entries.forEach(function (e) {
+            if (e.isIntersecting) { loadCal(); io.disconnect(); }
+          });
+        }, { rootMargin: '0px 0px 30% 0px' });
+        io.observe(target);
+      } else {
+        loadCal();
+      }
+
+      // --- Lenis scroll guard ---
+      // When the cursor enters the booking iframe, pause Lenis so wheel/touch
+      // events reach the Cal.com iframe natively. Resume when the cursor leaves.
+      function setLenis(paused) {
+        var l = window.lenis;
+        if (!l) return;
+        if (paused && typeof l.stop === 'function') l.stop();
+        if (!paused && typeof l.start === 'function') l.start();
+      }
+      target.addEventListener('mouseenter', function () { setLenis(true); });
+      target.addEventListener('mouseleave', function () { setLenis(false); });
+      // Touch devices: pause on touchstart inside the embed, resume after touchend.
+      target.addEventListener('touchstart', function () { setLenis(true); }, { passive: true });
+      target.addEventListener('touchend', function () { setLenis(false); }, { passive: true });
+      target.addEventListener('touchcancel', function () { setLenis(false); }, { passive: true });
+    })();
+  </script>
+
+    <!-- ================= SITE NAV DRAWER ================= -->
+    <div class="drawer-scrim" id="drawer-scrim" hidden></div>
+    <aside class="drawer" id="site-drawer" role="dialog" aria-modal="true"
+           aria-labelledby="drawer-title" aria-hidden="true">
+      <canvas class="drawer-mask" id="drawer-mask" aria-hidden="true"></canvas>
+      <div class="drawer-content" id="drawer-content">
+        <div class="drawer-strips" aria-hidden="true">
+          <i></i><i></i><i></i><i></i><i></i>
+        </div>
+        <button class="drawer-close" id="drawer-close" type="button" aria-label="Close menu">
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true">
+            <path d="M6 6 L18 18" />
+            <path d="M18 6 L6 18" />
+          </svg>
+        </button>
+        <header class="drawer-head">
+          <span id="drawer-title"><span class="jp">目次</span>Index · M/26</span>
+          <span>Portfolio — Mina Massoud</span>
+        </header>
+        <nav class="drawer-nav" aria-label="Primary drawer navigation">
+          <ol>
+            <li><a href="#hero"><span class="nav-jp">零</span><span class="nav-label" data-text="HOME">HOME</span><span class="nav-num">00</span></a></li>
+            <li><a href="#ch-about"><span class="nav-jp">一</span><span class="nav-label" data-text="ABOUT">ABOUT</span><span class="nav-num">01</span></a></li>
+            <li><a href="#ch-kitsune"><span class="nav-jp">二</span><span class="nav-label" data-text="WORK">WORK</span><span class="nav-num">02</span></a></li>
+            <li><a href="#ch-hitomi"><span class="nav-jp">三</span><span class="nav-label" data-text="INSPO">INSPO</span><span class="nav-num">03</span></a></li>
+            <li><a href="#ch-contact"><span class="nav-jp">四</span><span class="nav-label" data-text="CONTACT">CONTACT</span><span class="nav-num">04</span></a></li>
+          </ol>
+        </nav>
+        <footer class="drawer-meta">
+          <span class="avail"><span class="dot" aria-hidden="true"></span>Available for work · 2026</span>
+          <ul>
+            <li><a href="https://www.instagram.com/mina_melad_14/" target="_blank" rel="noopener" aria-label="Instagram">IG</a></li>
+            <li><a href="https://github.com/Mina-Massoud" target="_blank" rel="noopener" aria-label="GitHub">GH</a></li>
+            <li><a href="https://www.linkedin.com/in/mina-melad/" target="_blank" rel="noopener" aria-label="LinkedIn">IN</a></li>
+          </ul>
+        </footer>
+      </div>
+    </aside>
+
+  </main>
+
+  <!-- Awwwards Honorable Mention badge — top-level so it persists across all sections (outside .hero's isolated stacking context) -->
+  <a class="awwwards-honorable" href="https://www.awwwards.com/sites/mina-massoud" target="_blank" rel="noopener noreferrer" aria-label="Awwwards Honorable Mention — Mina Massoud">
+    <svg class="awwwards-honorable__svg" width="53" height="171" viewBox="0 0 53.08 171.358" aria-hidden="true" focusable="false">
+      <path class="awwwards-honorable__bg" d="M0 0h53.08v171.358H0z"></path>
+      <g class="awwwards-honorable__fg">
+        <path d="M20.047 153.665v-1.9h3.888v-4.093h-3.888v-1.9h10.231v1.9h-4.59v4.093h4.59v1.9zM29.898 142.236c-.331.565-.784.997-1.359 1.294s-1.222.446-1.944.446c-.721 0-1.369-.149-1.943-.446a3.316 3.316 0 0 1-1.36-1.294c-.331-.564-.497-1.232-.497-2.002s.166-1.438.497-2.002a3.316 3.316 0 0 1 1.36-1.294c.574-.297 1.223-.445 1.943-.445.723 0 1.369.148 1.944.445a3.307 3.307 0 0 1 1.359 1.294c.331.564.497 1.232.497 2.002s-.166 1.438-.497 2.002m-1.703-3.347c-.435-.33-.967-.496-1.601-.496-.633 0-1.166.166-1.601.496-.433.332-.649.78-.649 1.346 0 .564.217 1.013.649 1.345.435.331.968.497 1.601.497.634 0 1.166-.166 1.601-.497.435-.332.649-.78.649-1.345.001-.566-.214-1.014-.649-1.346M22.911 134.852v-1.813h1.186a3.335 3.335 0 0 1-.951-1.009 2.423 2.423 0 0 1-.352-1.271c0-.682.19-1.229.57-1.645.381-.413.932-.621 1.652-.621h5.262v1.812h-4.721c-.419 0-.727.096-.921.285-.195.19-.292.447-.292.769 0 .302.115.58.35.833.234.254.577.458 1.03.613.454.156.993.234 1.616.234h2.938v1.813h-7.367zM29.898 125.136a3.314 3.314 0 0 1-1.359 1.294c-.575.297-1.222.445-1.944.445-.721 0-1.369-.148-1.943-.445a3.322 3.322 0 0 1-1.36-1.294c-.331-.565-.497-1.232-.497-2.002 0-.771.166-1.438.497-2.003a3.313 3.313 0 0 1 1.36-1.293c.574-.297 1.223-.446 1.943-.446.723 0 1.369.149 1.944.446s1.028.728 1.359 1.293.497 1.232.497 2.003c.001.769-.166 1.436-.497 2.002m-1.703-3.347c-.435-.331-.967-.497-1.601-.497-.633 0-1.166.166-1.601.497-.433.331-.649.778-.649 1.345 0 .564.217 1.013.649 1.344.435.332.968.498 1.601.498.634 0 1.166-.166 1.601-.498.435-.331.649-.779.649-1.344.001-.567-.214-1.014-.649-1.345M22.911 117.75v-1.812h1.199c-.419-.265-.742-.586-.972-.966s-.345-.784-.345-1.213c0-.272.05-.569.146-.892l1.682.336a1.429 1.429 0 0 0-.205.76c0 .576.261 1.048.783 1.418.521.37 1.342.557 2.461.557h2.617v1.812h-7.366zM29.812 111.252c-.391.511-.857.851-1.403 1.016l-.776-1.446c.381-.138.68-.329.893-.577.215-.249.321-.544.321-.885a1.2 1.2 0 0 0-.168-.658c-.112-.175-.294-.263-.548-.263-.225 0-.406.105-.548.313-.142.21-.291.534-.446.973-.019.068-.058.17-.117.307-.224.565-.506 1.004-.848 1.315-.34.313-.779.467-1.314.467-.381 0-.727-.102-1.039-.306a2.185 2.185 0 0 1-.744-.84 2.554 2.554 0 0 1-.279-1.207c0-.497.105-.949.314-1.359.211-.408.506-.725.886-.949l.993 1.082c-.43.292-.644.686-.644 1.184a.84.84 0 0 0 .154.504.471.471 0 0 0 .401.212c.176 0 .338-.103.49-.307.15-.205.334-.604.547-1.199.205-.564.474-1.001.805-1.308.332-.308.756-.46 1.271-.46.721 0 1.299.229 1.732.687s.65 1.057.65 1.797c.001.759-.194 1.396-.583 1.907M35.481 17.006l-4.782 14.969h-3.266l-2.584-9.682-2.584 9.682h-3.268l-4.782-14.969h3.713l2.673 10.276 2.525-10.276h3.445l2.524 10.276 2.674-10.276zM37.978 27.163c1.426 0 2.496 1.068 2.496 2.495 0 1.425-1.07 2.495-2.496 2.495-1.425 0-2.494-1.07-2.494-2.495-.001-1.427 1.069-2.495 2.494-2.495"></path>
+      </g>
+    </svg>
+  </a>
+
+  <!-- ================= WebGL Shader Layer ================= -->
+
+  <!-- ================= SITE NAV DRAWER — shader + controller ================= -->
+</body>
+</html>

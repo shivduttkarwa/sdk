@@ -2328,6 +2328,368 @@ img {
 }
 
 
+.sdk-countries {
+  position: relative;
+  isolation: isolate;
+  background: #050505;
+  color: var(--text);
+  overflow: visible;
+}
+
+.sdk-countries__runway {
+  position: relative;
+  height: 400vh;
+}
+
+.sdk-countries__sticky {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  min-height: 42.5rem;
+  overflow: hidden;
+  background:
+    radial-gradient(circle at 50% 8%, rgba(224,63,79,.18), transparent 28rem),
+    linear-gradient(180deg, #050505 0%, #090305 52%, #050505 100%);
+  isolation: isolate;
+}
+
+.sdk-countries__patterns,
+.sdk-countries__topo,
+.sdk-countries__seam,
+.sdk-countries__stage,
+.sdk-countries__stories {
+  position: absolute;
+  inset: 0;
+}
+
+.sdk-countries__patterns {
+  z-index: 0;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.sdk-countries__pattern {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  mix-blend-mode: screen;
+  will-change: opacity;
+  -webkit-mask-image: linear-gradient(#000 0 34%, transparent 58%);
+  mask-image: linear-gradient(#000 0 34%, transparent 58%);
+}
+
+.sdk-countries__pattern--egypt {
+  background:
+    repeating-linear-gradient(90deg, rgba(224,63,79,.18) 0 1px, transparent 1px 82px),
+    repeating-linear-gradient(0deg, rgba(224,63,79,.12) 0 1px, transparent 1px 82px),
+    radial-gradient(circle at 18% 20%, rgba(224,63,79,.35) 0 .18rem, transparent .2rem),
+    radial-gradient(circle at 72% 34%, rgba(224,63,79,.25) 0 .16rem, transparent .19rem);
+  background-size: 164px 164px, 164px 164px, 190px 190px, 240px 240px;
+}
+
+.sdk-countries__pattern--usa {
+  background-image:
+    radial-gradient(circle at 50% 50%, rgba(224,63,79,.36) 0 .2rem, transparent .22rem),
+    radial-gradient(circle at 18% 74%, rgba(224,63,79,.18) 0 .12rem, transparent .14rem);
+  background-size: 9rem 9rem, 13rem 13rem;
+  transform: rotate(-8deg) scale(1.08);
+}
+
+.sdk-countries__pattern--australia {
+  background:
+    radial-gradient(ellipse at 52% 48%, rgba(224,63,79,.18) 0 1.1rem, transparent 1.15rem),
+    radial-gradient(ellipse at 74% 58%, rgba(224,63,79,.16) 0 .72rem, transparent .76rem),
+    repeating-linear-gradient(135deg, rgba(224,63,79,.09) 0 1px, transparent 1px 68px);
+  background-size: 8rem 5rem, 10rem 6rem, 120px 120px;
+}
+
+.sdk-countries__topo {
+  z-index: 1;
+  pointer-events: none;
+  opacity: .35;
+}
+
+.sdk-countries__topo svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+  stroke: rgba(224,63,79,.42);
+  stroke-width: 1.4;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.sdk-countries__seam {
+  z-index: 2;
+  pointer-events: none;
+  left: 50%;
+  right: auto;
+  width: 2px;
+  transform: translateX(-50%);
+  background: linear-gradient(180deg, transparent, rgba(224,63,79,.58) 38%, rgba(224,63,79,.76) 50%, rgba(224,63,79,.50) 64%, transparent);
+  mix-blend-mode: screen;
+}
+
+.sdk-countries__head {
+  position: absolute;
+  z-index: 8;
+  top: clamp(4rem, 8vh, 6.5rem);
+  left: clamp(1.75rem, 6vw, 7.5rem);
+  right: clamp(1.75rem, 6vw, 7.5rem);
+  display: flex;
+  justify-content: space-between;
+  gap: 1.5rem;
+  padding-bottom: .75rem;
+  border-bottom: 1px dashed rgba(224,63,79,.28);
+  color: rgba(245,242,234,.48);
+  font-family: "Space Grotesk", sans-serif;
+  font-size: .72rem;
+  font-weight: 700;
+  letter-spacing: .28em;
+  text-transform: uppercase;
+}
+
+.sdk-countries__head span:first-child {
+  color: rgba(245,242,234,.88);
+}
+
+.sdk-countries__jp,
+.sdk-country-story__mark {
+  font-family: "Noto Serif JP", serif;
+  color: var(--red);
+  letter-spacing: 0;
+}
+
+.sdk-countries__stage {
+  z-index: 5;
+  pointer-events: none;
+  perspective: 900px;
+  transform-style: preserve-3d;
+  will-change: transform;
+}
+
+#sdk-countries-fx,
+.sdk-countries__fallback,
+.sdk-countries__img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+#sdk-countries-fx {
+  z-index: 2;
+}
+
+.sdk-countries__fallback {
+  z-index: 1;
+  transition: opacity .35s var(--ease);
+}
+
+.sdk-countries__stage.webgl-on .sdk-countries__fallback {
+  opacity: 0;
+}
+
+.sdk-countries__img {
+  object-fit: contain;
+  object-position: center bottom;
+  opacity: 0;
+  transition: opacity .52s var(--ease);
+  will-change: opacity;
+}
+
+.sdk-countries__img.is-active {
+  opacity: 1;
+}
+
+.sdk-countries__stories {
+  z-index: 6;
+  pointer-events: none;
+}
+
+.sdk-country-story {
+  position: absolute;
+  top: 50%;
+  max-width: min(32rem, 38vw);
+  opacity: 0;
+  transform: translateY(-50%);
+  filter: blur(4px);
+  will-change: opacity, filter;
+}
+
+.sdk-country-story[data-side="left"] {
+  left: clamp(1.75rem, 6vw, 6rem);
+  text-align: left;
+}
+
+.sdk-country-story[data-side="right"] {
+  right: clamp(1.75rem, 6vw, 6rem);
+  text-align: right;
+}
+
+.sdk-country-story[data-side="right"] .sdk-country-story__meta {
+  justify-content: flex-end;
+}
+
+.sdk-country-story__meta {
+  display: flex;
+  align-items: baseline;
+  gap: .9rem;
+  margin-bottom: 1rem;
+  color: rgba(245,242,234,.46);
+  font-family: "Space Grotesk", sans-serif;
+  font-size: .7rem;
+  font-weight: 700;
+  letter-spacing: .26em;
+  text-transform: uppercase;
+}
+
+.sdk-country-story__mark {
+  font-size: clamp(1.35rem, 2.8vw, 2rem);
+  line-height: 1;
+}
+
+.sdk-country-story h3 {
+  margin: 0 0 .9rem;
+  color: #f5f0e8;
+  font-family: "Bricolage Grotesque", sans-serif;
+  font-size: clamp(3.4rem, 8.2vw, 8rem);
+  font-weight: 800;
+  line-height: .86;
+  letter-spacing: -.035em;
+  text-transform: uppercase;
+}
+
+.sdk-country-story h3 span {
+  display: block;
+  margin-top: 1rem;
+  color: var(--red);
+  font-family: "Space Grotesk", sans-serif;
+  font-size: clamp(.72rem, .9vw, .92rem);
+  font-weight: 800;
+  line-height: 1.2;
+  letter-spacing: .28em;
+}
+
+.sdk-country-story p {
+  max-width: 29ch;
+  margin: 0;
+  color: rgba(245,242,234,.62);
+  font-size: clamp(.9rem, 1vw, 1.06rem);
+  line-height: 1.55;
+}
+
+.sdk-country-story[data-side="right"] p {
+  margin-left: auto;
+}
+
+.sdk-countries__progress {
+  position: fixed;
+  z-index: 80;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity .28s var(--ease);
+}
+
+.sdk-countries__progress.is-visible {
+  opacity: 1;
+}
+
+.sdk-countries__progress-track {
+  position: relative;
+  height: 100%;
+  overflow: hidden;
+  background: linear-gradient(90deg, rgba(5,5,5,.9), rgba(36,3,8,.9), rgba(5,5,5,.9));
+  backdrop-filter: blur(8px);
+}
+
+.sdk-countries__progress-fill {
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: calc(var(--progress, 0) * 100%);
+  background: linear-gradient(90deg, #5a0711, #8b0f1d 44%, var(--red) 78%, #ff6674);
+  box-shadow: 0 0 12px rgba(224,63,79,.68), 0 0 24px rgba(224,63,79,.38);
+}
+
+.sdk-countries__progress-fill::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: 1rem;
+  background: linear-gradient(90deg, transparent, #ff6674);
+  filter: blur(1px);
+}
+
+.sdk-countries__progress-mark {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 1px;
+  background: rgba(245,242,234,.28);
+}
+
+.sdk-countries__progress-mark--one { left: 33.333%; }
+.sdk-countries__progress-mark--two { left: 66.666%; }
+
+@media (max-width: 860px) {
+  .sdk-countries__runway { height: 360vh; }
+  .sdk-countries__sticky { min-height: 42rem; }
+  .sdk-countries__seam { display: none; }
+  .sdk-countries__head {
+    top: clamp(1.5rem, 3.5vh, 3rem);
+    flex-direction: column;
+    align-items: flex-start;
+    gap: .35rem;
+    font-size: .64rem;
+    letter-spacing: .22em;
+  }
+  .sdk-countries__stage {
+    top: max(42vh, 19rem);
+    bottom: 0;
+  }
+  .sdk-country-story,
+  .sdk-country-story[data-side="left"],
+  .sdk-country-story[data-side="right"] {
+    top: clamp(6rem, 11vh, 8rem);
+    left: 50%;
+    right: auto;
+    width: min(92vw, 34rem);
+    max-width: none;
+    text-align: left;
+    transform: translateX(-50%);
+  }
+  .sdk-country-story[data-side="right"] .sdk-country-story__meta {
+    justify-content: flex-start;
+  }
+  .sdk-country-story[data-side="right"] p {
+    margin-left: 0;
+  }
+  .sdk-country-story__meta {
+    margin-bottom: .6rem;
+    font-size: .62rem;
+    letter-spacing: .2em;
+  }
+  .sdk-country-story h3 {
+    margin-bottom: .5rem;
+    font-size: clamp(2.1rem, 9vw, 3.4rem);
+  }
+  .sdk-country-story h3 span {
+    margin-top: .5rem;
+    font-size: .62rem;
+  }
+  .sdk-country-story p {
+    max-width: 54ch;
+    font-size: .88rem;
+    line-height: 1.45;
+  }
+}
+
 .sdk-stack-section {
   padding: clamp(3rem, 6vw, 6rem) clamp(1.5rem, 5vw, 6rem) clamp(4rem, 8vw, 10rem);
 }

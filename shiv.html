@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Shiv Authority Section</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Barlow+Semi+Condensed:ital,wght@0,400;0,500;0,600;1,400;1,500&family=PT+Sans:wght@400;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --section-bg: #0e0e0e;
+      --ink: #ffffff;
+      --muted: #bababa;
+      --warm: #cab181;
+      --rule: rgba(255, 255, 255, 0.1);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      background: #0a0a0a;
+      color: var(--ink);
+      font-family: "PT Sans", Arial, sans-serif;
+      line-height: 1.7;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    img {
+      display: block;
+      max-width: 100%;
+      height: auto;
+    }
+
+    .shiv-proof {
+      min-height: 100vh;
+      background:
+        radial-gradient(circle at 78% 18%, rgba(202, 177, 129, 0.14), transparent 34%),
+        linear-gradient(270deg, rgba(255, 255, 255, 0.025), transparent 46%),
+        var(--section-bg);
+      isolation: isolate;
+      overflow: hidden;
+    }
+
+    .shiv-proof__row {
+      display: grid;
+      grid-template-columns: minmax(0, 58vw) minmax(360px, 1fr);
+      width: 100%;
+      min-height: 100vh;
+    }
+
+    .shiv-proof__intro {
+      position: relative;
+      z-index: 3;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      min-height: 100vh;
+      margin-left: clamp(-128px, -7vw, -72px);
+      padding: clamp(64px, 8vw, 120px) clamp(28px, 5vw, 78px) clamp(64px, 8vw, 120px) clamp(72px, 8vw, 130px);
+      background: linear-gradient(90deg, transparent 0%, rgba(14, 14, 14, 0.78) 16%, #0e0e0e 34%, #0e0e0e 100%);
+    }
+
+    .shiv-proof__eyebrow {
+      margin: 0 0 18px;
+      color: var(--warm);
+      font-family: "Barlow Semi Condensed", Arial, sans-serif;
+      font-size: 14px;
+      font-weight: 600;
+      letter-spacing: 0.18em;
+      line-height: 1.2;
+      text-transform: uppercase;
+    }
+
+    .shiv-proof__intro h2 {
+      max-width: 520px;
+      margin: 0;
+      color: var(--ink);
+      font-family: "Barlow Semi Condensed", Arial, sans-serif;
+      font-size: clamp(31px, 3.7vw, 50px);
+      font-weight: 500;
+      letter-spacing: 0;
+      line-height: 1.08;
+    }
+
+    .shiv-proof__intro h2 span {
+      color: var(--warm);
+    }
+
+    .shiv-proof__lead {
+      max-width: 540px;
+      margin: 24px 0 0;
+      color: var(--muted);
+      font-size: clamp(17px, 1.32vw, 20px);
+      line-height: 1.7;
+    }
+
+    .shiv-proof__lead + .shiv-proof__lead {
+      margin-top: 16px;
+    }
+
+    .shiv-proof__meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-top: 34px;
+    }
+
+    .shiv-proof__meta span {
+      border-top: 1px solid rgba(202, 177, 129, 0.4);
+      padding-top: 10px;
+      color: rgba(255, 255, 255, 0.7);
+      font-family: "Barlow Semi Condensed", Arial, sans-serif;
+      font-size: 15px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .shiv-proof__portrait {
+      position: relative;
+      min-height: 100vh;
+      background: var(--section-bg);
+      overflow: hidden;
+    }
+
+    .shiv-proof__portrait::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      z-index: 2;
+      pointer-events: none;
+      background:
+        linear-gradient(90deg, transparent 0%, transparent 48%, rgba(14, 14, 14, 0.34) 66%, rgba(14, 14, 14, 0.88) 88%, #0e0e0e 100%),
+        linear-gradient(180deg, rgba(14, 14, 14, 0.74) 0%, transparent 26%, transparent 72%, rgba(14, 14, 14, 0.72) 100%),
+        radial-gradient(circle at 42% 45%, transparent 0%, rgba(0, 0, 0, 0.12) 44%, rgba(0, 0, 0, 0.6) 100%);
+    }
+
+    .shiv-proof__portrait::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      z-index: 1;
+      pointer-events: none;
+      background: rgba(14, 14, 14, 0.26);
+      mix-blend-mode: multiply;
+    }
+
+    .shiv-proof__portrait img {
+      width: 100%;
+      height: 100%;
+      min-height: 100vh;
+      object-fit: cover;
+      object-position: 37% 50%;
+      opacity: 0.92;
+      filter: brightness(0.68) contrast(1.08) saturate(0.86);
+      transform: scale(1.16);
+      transform-origin: 38% 52%;
+    }
+
+    @media (max-width: 980px) {
+      .shiv-proof {
+        min-height: auto;
+      }
+
+      .shiv-proof__row {
+        display: block;
+        min-height: auto;
+      }
+
+      .shiv-proof__intro {
+        min-height: auto;
+        margin-left: 0;
+        padding: 56px 7vw 72px;
+        background: var(--section-bg);
+      }
+
+      .shiv-proof__portrait,
+      .shiv-proof__portrait img {
+        min-height: 68svh;
+      }
+
+      .shiv-proof__intro h2 {
+        font-size: clamp(31px, 8vw, 48px);
+      }
+
+      .shiv-proof__portrait img {
+        transform: scale(1.12);
+      }
+    }
+
+    @media (max-width: 767px) {
+      .shiv-proof__portrait::before {
+        background:
+          linear-gradient(0deg, rgba(0, 0, 0, 0.38), transparent 38%),
+          linear-gradient(90deg, rgba(14, 14, 14, 0.22), transparent 52%);
+      }
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <section class="shiv-proof" aria-label="Shiv introduction">
+      <div class="shiv-proof__row">
+        <figure class="shiv-proof__portrait">
+          <img src="shiv-big.png" alt="Shiv in a dark creative developer workspace" />
+        </figure>
+
+        <div class="shiv-proof__intro">
+          <p class="shiv-proof__eyebrow">A little about me</p>
+          <h2>I am Shiv, a full-stack developer focused on <span>clean digital experiences.</span></h2>
+          <p class="shiv-proof__lead">
+            I work across interface design, frontend engineering, motion, and practical AI tools to build websites that feel polished, fast, and intentional.
+          </p>
+          <p class="shiv-proof__lead">
+            My goal is simple: turn complex ideas into smooth, usable products with strong visual detail and reliable code underneath.
+          </p>
+          <div class="shiv-proof__meta" aria-label="Core skills">
+            <span>Frontend</span>
+            <span>WebGL</span>
+            <span>Motion</span>
+            <span>AI Tools</span>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+</body>
+</html>

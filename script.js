@@ -289,17 +289,32 @@ function startHeroAnimation() {
 }
 
 
-if (window.Lenis && !matchMedia('(prefers-reduced-motion: reduce)').matches && !matchMedia('(max-width: 768px)').matches) {
+if (window.Lenis && !matchMedia('(prefers-reduced-motion: reduce)').matches) {
   const lenis = new Lenis({
-    duration: 1.42,
+    lerp: 0.1,
     smoothWheel: true,
-    wheelMultiplier: .88,
-    touchMultiplier: 1.15,
-    easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t))
+    wheelMultiplier: 1,
+    touchMultiplier: 1.2
   });
-  function lenisRaf(t) { lenis.raf(t); requestAnimationFrame(lenisRaf); }
-  requestAnimationFrame(lenisRaf);
+  window.lenis = lenis;
   if (window.ScrollTrigger) { lenis.on('scroll', ScrollTrigger.update); }
+  if (window.gsap) {
+    gsap.ticker.add((time) => lenis.raf(time * 1000));
+    gsap.ticker.lagSmoothing(0);
+  } else {
+    function lenisRaf(t) { lenis.raf(t); requestAnimationFrame(lenisRaf); }
+    requestAnimationFrame(lenisRaf);
+  }
+  document.addEventListener('click', (event) => {
+    const link = event.target.closest('a[href^="#"]');
+    if (!link) return;
+    const href = link.getAttribute('href');
+    if (!href || href === '#') return;
+    const target = document.querySelector(href);
+    if (!target) return;
+    event.preventDefault();
+    lenis.scrollTo(target, { offset: 0, duration: 1.2 });
+  });
 }
 
 
@@ -2072,6 +2087,498 @@ if (window.gsap && window.ScrollTrigger) {
     initFooterName();
     requestAnimationFrame(animate);
   });
+})();
+
+
+(() => {
+  const section = document.getElementById('countries');
+  const runway = document.getElementById('sdk-countries-runway');
+  const sticky = document.getElementById('sdk-countries-sticky');
+  const stage = document.getElementById('sdk-countries-stage');
+  const canvas = document.getElementById('sdk-countries-fx');
+  const progress = document.getElementById('sdk-countries-progress');
+  const fallbackImgs = [...document.querySelectorAll('.sdk-countries__img')];
+  const stories = [...document.querySelectorAll('.sdk-country-story')];
+  const patterns = [...document.querySelectorAll('.sdk-countries__pattern')];
+
+  if (!section || !runway || !sticky || !stage || !canvas || !progress) return;
+
+  const items = [
+    {
+      name: 'egypt',
+      image: 'https://mina-massoud.com/assets/anubis/anubis.webp',
+      depth: 'https://mina-massoud.com/assets/anubis/anubis-depthmap.webp'
+    },
+    {
+      name: 'usa',
+      image: 'https://mina-massoud.com/assets/liberty/liberty.webp',
+      depth: 'https://mina-massoud.com/assets/liberty/liberty-depth-map.webp'
+    },
+    {
+      name: 'australia',
+      image: 'https://mina-massoud.com/assets/kangaro/kangaro.webp',
+      depth: 'https://mina-massoud.com/assets/kangaro/kangaro-depth-map.webp'
+    }
+  ];
+
+  const total = items.length;
+  const storyWindows = [
+    { in: 0.02, out: 0.38 },
+    { in: 0.50, out: 0.74 },
+    { in: 0.84, out: 1.01 }
+  ];
+
+  const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const clamp = (v, a = 0, b = 1) => Math.max(a, Math.min(b, v));
+  const lerp = (a, b, t) => a + (b - a) * t;
+  const smoothstep = (a, b, v) => {
+    const t = clamp((v - a) / (b - a));
+    return t * t * (3 - 2 * t);
+  };
+
+  let runwayRect = runway.getBoundingClientRect();
+  let viewportH = window.innerHeight || document.documentElement.clientHeight;
+  let targetProgress = 0;
+  let smoothProgress = 0;
+  let sectionVisible = false;
+  let renderer = null;
+  let raf = 0;
+  const mouse = { x: 0.5, y: 0.5, tx: 0.5, ty: 0.5, hover: 0, thover: 0 };
+
+  function measure() {
+    runwayRect = runway.getBoundingClientRect();
+    viewportH = window.innerHeight || document.documentElement.clientHeight;
+  }
+
+  function rawProgress() {
+    const travel = Math.max(1, runway.offsetHeight - viewportH);
+    return -runwayRect.top / travel;
+  }
+
+  function getState(p) {
+    const scaled = clamp(p) * (total - 1);
+    let from = Math.floor(scaled);
+    let to = Math.min(total - 1, from + 1);
+    let mix = scaled - from;
+    if (p >= 0.999) {
+      from = total - 2;
+      to = total - 1;
+      mix = 1;
+    }
+    return { from, to, mix, active: mix < 0.5 ? from : to };
+  }
+
+  function setFallback(active) {
+    fallbackImgs.forEach((img, i) => img.classList.toggle('is-active', i === active));
+  }
+
+  function setPatterns(from, to, mix) {
+    patterns.forEach((el, i) => {
+      let opacity = 0;
+      if (i === from && i === to) opacity = 1;
+      else if (i === from) opacity = 1 - mix;
+      else if (i === to) opacity = mix;
+      el.style.opacity = (opacity * 0.55).toFixed(3);
+    });
+  }
+
+  function updateStories(p, state) {
+    stories.forEach((story, i) => {
+      const w = storyWindows[i] || storyWindows[0];
+      const opacity = smoothstep(w.in, w.in + 0.055, p) * (1 - smoothstep(w.out - 0.055, w.out, p));
+      story.style.opacity = opacity.toFixed(3);
+      story.style.filter = `blur(${((1 - opacity) * 4).toFixed(2)}px)`;
+    });
+
+    const sweep = -0.25 + 1.5 * state.mix;
+    stories.forEach((story, i) => {
+      let opacity = 0;
+      if (i === state.from && i === state.to) opacity = 1;
+      else if (i === state.from) opacity = 1 - smoothstep(1 - storyCenter(i) - 0.12, 1 - storyCenter(i) + 0.12, sweep);
+      else if (i === state.to) opacity = smoothstep(1 - storyCenter(i) - 0.12, 1 - storyCenter(i) + 0.12, sweep);
+      if (opacity > 0) {
+        story.style.opacity = Math.max(parseFloat(story.style.opacity || '0'), opacity * 0.92).toFixed(3);
+        story.style.filter = `blur(${((1 - opacity) * 4).toFixed(2)}px)`;
+      }
+    });
+  }
+
+  function storyCenter(index) {
+    return index === 1 ? 0.78 : 0.22;
+  }
+
+  function updateDom(p, raw) {
+    const state = getState(p);
+    progress.classList.toggle('is-visible', raw > -0.02 && raw < 1.02);
+    progress.style.setProperty('--progress', clamp(raw).toFixed(4));
+    setFallback(state.active);
+    setPatterns(state.from, state.to, state.mix);
+    updateStories(p, state);
+  }
+
+  function loadImage(src) {
+    return new Promise((resolve, reject) => {
+      const img = new Image();
+      img.crossOrigin = 'anonymous';
+      img.decoding = 'async';
+      img.onload = () => resolve(img);
+      img.onerror = reject;
+      img.src = src;
+    });
+  }
+
+  function createShader(gl, type, source) {
+    const shader = gl.createShader(type);
+    gl.shaderSource(shader, source);
+    gl.compileShader(shader);
+    if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
+      throw new Error(gl.getShaderInfoLog(shader));
+    }
+    return shader;
+  }
+
+  function createProgram(gl, vertex, fragment) {
+    const program = gl.createProgram();
+    gl.attachShader(program, createShader(gl, gl.VERTEX_SHADER, vertex));
+    gl.attachShader(program, createShader(gl, gl.FRAGMENT_SHADER, fragment));
+    gl.linkProgram(program);
+    if (!gl.getProgramParameter(program, gl.LINK_STATUS)) {
+      throw new Error(gl.getProgramInfoLog(program));
+    }
+    return program;
+  }
+
+  async function initWebGL() {
+    if (reduceMotion) throw new Error('Reduced motion enabled');
+
+    const gl = canvas.getContext('webgl', {
+      alpha: true,
+      antialias: false,
+      premultipliedAlpha: false,
+      preserveDrawingBuffer: false,
+      powerPreference: 'low-power'
+    });
+    if (!gl) throw new Error('WebGL unavailable');
+
+    const loaded = await Promise.all(items.map(item => (
+      Promise.all([
+        loadImage(item.image),
+        loadImage(item.depth).catch(() => null)
+      ])
+    )));
+
+    const vertex = `
+      attribute vec2 a_position;
+      varying vec2 v_uv;
+      void main() {
+        v_uv = a_position * 0.5 + 0.5;
+        gl_Position = vec4(a_position, 0.0, 1.0);
+      }
+    `;
+
+    const fragment = `
+      precision highp float;
+
+      uniform sampler2D u_tex0;
+      uniform sampler2D u_tex1;
+      uniform sampler2D u_tex2;
+      uniform sampler2D u_depth0;
+      uniform sampler2D u_depth1;
+      uniform sampler2D u_depth2;
+      uniform float u_from;
+      uniform float u_to;
+      uniform float u_mix;
+      uniform float u_time;
+      uniform float u_aspect;
+      uniform vec2 u_resolution;
+      uniform vec2 u_mouse;
+      uniform float u_hover;
+
+      varying vec2 v_uv;
+
+      float hash(vec2 p) {
+        p = fract(p * vec2(123.34, 345.45));
+        p += dot(p, p + 34.345);
+        return fract(p.x * p.y);
+      }
+
+      float noise(vec2 p) {
+        vec2 i = floor(p);
+        vec2 f = fract(p);
+        vec2 u = f * f * (3.0 - 2.0 * f);
+        return mix(
+          mix(hash(i + vec2(0.0, 0.0)), hash(i + vec2(1.0, 0.0)), u.x),
+          mix(hash(i + vec2(0.0, 1.0)), hash(i + vec2(1.0, 1.0)), u.x),
+          u.y
+        );
+      }
+
+      float fbm(vec2 p) {
+        float v = 0.0;
+        float a = 0.5;
+        mat2 r = mat2(1.62, 1.12, -1.12, 1.62);
+        for (int i = 0; i < 4; i++) {
+          v += a * noise(p);
+          p = r * p + 17.0;
+          a *= 0.55;
+        }
+        return v;
+      }
+
+      float smoother(float x) {
+        x = clamp(x, 0.0, 1.0);
+        return x * x * x * (x * (x * 6.0 - 15.0) + 10.0);
+      }
+
+      vec4 getTex(float id, vec2 uv) {
+        if (id < 0.5) return texture2D(u_tex0, uv);
+        if (id < 1.5) return texture2D(u_tex1, uv);
+        return texture2D(u_tex2, uv);
+      }
+
+      vec4 getDepth(float id, vec2 uv) {
+        if (id < 0.5) return texture2D(u_depth0, uv);
+        if (id < 1.5) return texture2D(u_depth1, uv);
+        return texture2D(u_depth2, uv);
+      }
+
+      vec2 fitContainBottom(vec2 uv, out float inside) {
+        float imgAspect = 0.75;
+        vec2 scale = vec2(1.0);
+        if (u_aspect > imgAspect) {
+          scale.x = u_aspect / imgAspect;
+        } else {
+          scale.y = imgAspect / u_aspect;
+        }
+        vec2 iuv = (uv - vec2(0.5, 0.0)) * scale + vec2(0.5, 0.0);
+        vec2 edge = step(vec2(0.0), iuv) * step(iuv, vec2(1.0));
+        inside = edge.x * edge.y;
+        return clamp(iuv, 0.0, 1.0);
+      }
+
+      vec4 samplePortrait(float id, vec2 uv) {
+        float insideDepth;
+        vec2 depthUv = fitContainBottom(uv, insideDepth);
+        float depth = getDepth(id, depthUv).r * insideDepth;
+        vec2 cursor = (u_mouse - vec2(0.5)) * u_hover;
+        vec2 offset = cursor * (depth - 0.5) * 0.035;
+
+        float insideColor;
+        vec2 texUv = fitContainBottom(uv - offset, insideColor);
+        vec4 tex = getTex(id, texUv) * insideColor;
+        tex.rgb *= tex.a;
+        return tex;
+      }
+
+      vec4 finish(vec4 col, vec2 uv) {
+        float grain = hash(uv * u_resolution * 0.45 + u_time * 42.0);
+        col.rgb += (grain - 0.5) * 0.045 * col.a;
+
+        float smoke = 1.0 - smoothstep(0.0, 0.22, uv.y);
+        if (uv.y < 0.5) {
+          float wisp = fbm(uv * vec2(2.5, 1.8) + vec2(u_time * 0.05, -u_time * 0.08));
+          wisp = smoothstep(0.45, 0.82, wisp);
+          smoke = clamp(smoke + wisp * (1.0 - smoothstep(0.02, 0.5, uv.y)) * 0.75, 0.0, 1.0);
+        }
+        col.rgb *= 1.0 - smoke * 0.78;
+        col.a *= 1.0 - smoke * 0.7;
+        return col;
+      }
+
+      void main() {
+        vec2 uv = v_uv;
+        float m = smoother(u_mix);
+        vec4 col;
+
+        if (m < 0.002) {
+          col = samplePortrait(u_from, uv);
+        } else if (m > 0.998) {
+          col = samplePortrait(u_to, uv);
+        } else {
+          vec2 p = uv;
+          p.x *= u_aspect;
+          vec2 flow = vec2(0.0, -u_time * 0.18);
+          vec2 pn = vec2(p.x * 0.95, p.y * 0.72);
+
+          vec2 q = vec2(
+            fbm(pn * 1.6 + flow),
+            fbm(pn * 1.6 + flow + vec2(5.2, 1.3))
+          );
+          vec2 r = vec2(
+            fbm(pn * 1.6 + 3.6 * q + flow),
+            fbm(pn * 1.6 + 3.6 * q + flow + vec2(8.3, 2.8))
+          );
+
+          float passage = (1.0 - uv.x) + 0.26 * (r.x - 0.5) + 0.12 * (r.y - 0.5);
+          float width = 0.16 * smoothstep(0.0, 0.15, m) * (1.0 - smoothstep(0.85, 1.0, m)) + 0.02;
+          float paddedMix = mix(-0.25, 1.25, m);
+          float mask = smoothstep(passage - width, passage + width, paddedMix);
+          float envelope = smoothstep(0.0, 0.08, m) * (1.0 - smoothstep(0.92, 1.0, m));
+          float edge = 4.0 * mask * (1.0 - mask) * envelope;
+
+          vec4 a = samplePortrait(u_from, uv);
+          vec4 b = samplePortrait(u_to, uv);
+
+          col = mix(a, b, mask);
+          float silhouette = max(a.a, b.a);
+          float glow = pow(edge, 2.0);
+          col.rgb += vec3(1.0, 0.12, 0.08) * glow * 0.55;
+          col.rgb += vec3(1.0, 0.36, 0.16) * pow(edge, 4.0) * 0.45 * silhouette;
+          col.a = max(col.a, glow * 0.48);
+
+          float leading = step(0.5, mask) * edge;
+          float luma = dot(a.rgb, vec3(0.299, 0.587, 0.114));
+          vec3 ghost = mix(vec3(luma), a.rgb, 0.32) * 0.52;
+          col.rgb = mix(col.rgb, ghost, leading * 0.2);
+        }
+
+        gl_FragColor = finish(col, uv);
+      }
+    `;
+
+    const program = createProgram(gl, vertex, fragment);
+    gl.useProgram(program);
+
+    const buffer = gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
+    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([
+      -1, -1, 1, -1, -1, 1,
+      -1, 1, 1, -1, 1, 1
+    ]), gl.STATIC_DRAW);
+
+    const posLoc = gl.getAttribLocation(program, 'a_position');
+    gl.enableVertexAttribArray(posLoc);
+    gl.vertexAttribPointer(posLoc, 2, gl.FLOAT, false, 0, 0);
+
+    function makeTexture(img, unit) {
+      const tex = gl.createTexture();
+      gl.activeTexture(gl.TEXTURE0 + unit);
+      gl.bindTexture(gl.TEXTURE_2D, tex);
+      gl.pixelStorei(gl.UNPACK_PREMULTIPLY_ALPHA_WEBGL, false);
+      gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true);
+      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+      gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, img);
+      return tex;
+    }
+
+    loaded.forEach(([img], i) => makeTexture(img, i));
+    loaded.forEach(([img, depth], i) => makeTexture(depth || img, i + 3));
+
+    gl.uniform1i(gl.getUniformLocation(program, 'u_tex0'), 0);
+    gl.uniform1i(gl.getUniformLocation(program, 'u_tex1'), 1);
+    gl.uniform1i(gl.getUniformLocation(program, 'u_tex2'), 2);
+    gl.uniform1i(gl.getUniformLocation(program, 'u_depth0'), 3);
+    gl.uniform1i(gl.getUniformLocation(program, 'u_depth1'), 4);
+    gl.uniform1i(gl.getUniformLocation(program, 'u_depth2'), 5);
+
+    const uniforms = {
+      from: gl.getUniformLocation(program, 'u_from'),
+      to: gl.getUniformLocation(program, 'u_to'),
+      mix: gl.getUniformLocation(program, 'u_mix'),
+      time: gl.getUniformLocation(program, 'u_time'),
+      aspect: gl.getUniformLocation(program, 'u_aspect'),
+      resolution: gl.getUniformLocation(program, 'u_resolution'),
+      mouse: gl.getUniformLocation(program, 'u_mouse'),
+      hover: gl.getUniformLocation(program, 'u_hover')
+    };
+
+    function resize() {
+      const dpr = Math.min(window.devicePixelRatio || 1, 1.8);
+      const rect = canvas.getBoundingClientRect();
+      const w = Math.max(2, Math.floor(rect.width * dpr));
+      const h = Math.max(2, Math.floor(rect.height * dpr));
+      if (canvas.width !== w || canvas.height !== h) {
+        canvas.width = w;
+        canvas.height = h;
+        gl.viewport(0, 0, w, h);
+      }
+      gl.uniform2f(uniforms.resolution, canvas.width, canvas.height);
+      gl.uniform1f(uniforms.aspect, canvas.width / Math.max(1, canvas.height));
+    }
+
+    function render(time, p) {
+      const state = getState(p);
+      resize();
+      gl.clearColor(0, 0, 0, 0);
+      gl.clear(gl.COLOR_BUFFER_BIT);
+      gl.useProgram(program);
+      gl.uniform1f(uniforms.from, state.from);
+      gl.uniform1f(uniforms.to, state.to);
+      gl.uniform1f(uniforms.mix, state.mix);
+      gl.uniform1f(uniforms.time, time * 0.001);
+      gl.uniform2f(uniforms.mouse, mouse.x, 1 - mouse.y);
+      gl.uniform1f(uniforms.hover, mouse.hover);
+      gl.drawArrays(gl.TRIANGLES, 0, 6);
+    }
+
+    window.addEventListener('resize', resize, { passive: true });
+    stage.classList.add('webgl-on');
+    return { render };
+  }
+
+  const observer = new IntersectionObserver(entries => {
+    sectionVisible = entries.some(entry => entry.isIntersecting);
+    if (sectionVisible && !raf) raf = requestAnimationFrame(animate);
+  }, { threshold: [0, 0.01], rootMargin: '120px 0px' });
+  observer.observe(runway);
+
+  window.addEventListener('resize', () => {
+    measure();
+    if (!raf) raf = requestAnimationFrame(animate);
+  }, { passive: true });
+
+  window.addEventListener('scroll', () => {
+    measure();
+    targetProgress = clamp(rawProgress());
+    if (!raf) raf = requestAnimationFrame(animate);
+  }, { passive: true });
+
+  window.addEventListener('pointermove', event => {
+    const rect = stage.getBoundingClientRect();
+    mouse.tx = clamp((event.clientX - rect.left) / Math.max(1, rect.width));
+    mouse.ty = clamp((event.clientY - rect.top) / Math.max(1, rect.height));
+    mouse.thover = event.clientX >= rect.left && event.clientX <= rect.right && event.clientY >= rect.top && event.clientY <= rect.bottom ? 1 : 0;
+    if (!raf) raf = requestAnimationFrame(animate);
+  }, { passive: true });
+
+  function animate(time) {
+    raf = 0;
+    measure();
+    const raw = rawProgress();
+    targetProgress = clamp(raw);
+    smoothProgress = lerp(smoothProgress, targetProgress, 0.12);
+    mouse.x = lerp(mouse.x, mouse.tx, 0.12);
+    mouse.y = lerp(mouse.y, mouse.ty, 0.12);
+    mouse.hover = lerp(mouse.hover, mouse.thover, 0.08);
+    updateDom(smoothProgress, raw);
+
+    if (renderer && sectionVisible) {
+      renderer.render(time, smoothProgress);
+      const moving = Math.abs(targetProgress - smoothProgress) > 0.0008 ||
+        Math.abs(mouse.tx - mouse.x) > 0.002 ||
+        Math.abs(mouse.thover - mouse.hover) > 0.002;
+      if (moving || sectionVisible) raf = requestAnimationFrame(animate);
+    } else if (sectionVisible || Math.abs(targetProgress - smoothProgress) > 0.0008) {
+      raf = requestAnimationFrame(animate);
+    }
+  }
+
+  measure();
+  updateDom(0, rawProgress());
+
+  initWebGL()
+    .then(result => {
+      renderer = result;
+      if (!raf) raf = requestAnimationFrame(animate);
+    })
+    .catch(err => {
+      console.warn('Countries WebGL unavailable. Using image fallback.', err);
+      canvas.style.display = 'none';
+      if (!raf) raf = requestAnimationFrame(animate);
+    });
 })();
 
 
