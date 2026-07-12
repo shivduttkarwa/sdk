@@ -17,11 +17,6 @@
     window.__sdkTechPinInitialized = true;
     gsap.registerPlugin(ScrollTrigger);
 
-    if (isMobile) {
-      gsap.set(cards, { clearProps: 'all' });
-      return true;
-    }
-
     if (portrait) {
       gsap.fromTo(portrait,
         { autoAlpha: 0, xPercent: -5, scale: 1.04 },
@@ -45,10 +40,11 @@
       image.addEventListener('load', () => ScrollTrigger.refresh(), { once: true });
     }
 
-    // Big right-side heading animates in on enter (via initSectionTitleAnims), then
-    // clears out as the section pins and the first card scrolls in.
+    // Big heading animates in on enter (via initSectionTitleAnims). On desktop it sits
+    // on the right and clears out as the first card scrolls in; on mobile it stays
+    // pinned at the top while cards animate over the image below it.
     const intro = root.querySelector('[data-tech-intro]');
-    if (intro) {
+    if (intro && !isMobile) {
       gsap.to(intro, {
         autoAlpha: 0,
         yPercent: -10,

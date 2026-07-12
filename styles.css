@@ -2566,84 +2566,46 @@ img {
 }
 
 @media (max-width: 980px) {
-  .sdk-tech-pin {
-    min-height: auto;
-    overflow: visible;
-  }
-
-  .sdk-tech-pin__sticky {
-    position: relative;
-    height: auto;
-    min-height: 0;
-    border-radius: 1.25rem;
-    padding: 0 1rem 1rem;
-  }
-
-  .sdk-tech-pin__header {
-    position: relative;
-    top: auto;
-    left: auto;
-    width: 100%;
-    padding: 3rem 1rem 1.25rem;
-  }
-
+  /* Keep the pinned mechanism on mobile — only reposition for the narrow layout:
+     title pinned on top, portrait filling the stage, cards animating over it. */
   .sdk-tech-pin__intro {
-    position: relative;
-    top: auto;
-    right: auto;
-    width: 100%;
+    top: clamp(1.5rem, 5vh, 3rem);
+    left: 1.25rem;
+    right: 1.25rem;
+    width: auto;
     transform: none;
-    opacity: 1 !important;
-    visibility: visible !important;
-    padding: 3rem 1rem 0.5rem;
+    text-align: center;
+    z-index: 6;
   }
 
   .sdk-tech-pin__intro .sdk-stack__title {
-    font-size: clamp(3rem, 12vw, 5rem);
-    margin-top: 1rem;
-    margin-bottom: 1.25rem;
+    font-size: clamp(2.4rem, 10vw, 3.8rem);
+    margin-top: 0.5rem;
+    margin-bottom: 0;
+  }
+
+  .sdk-tech-pin__intro .sdk-stack__subtitle {
+    display: none;
   }
 
   .sdk-tech-pin__portrait {
-    position: relative;
+    inset: 0;
     width: 100%;
-    height: 26rem;
+  }
+
+  .sdk-tech-pin__portrait::before,
+  .sdk-tech-pin__portrait::after {
+    display: none;
   }
 
   .sdk-tech-pin__image {
-    left: 50%;
-    bottom: -8%;
-    width: min(110vw, 44rem);
-    height: 115%;
-    transform: translateX(-54%);
-    -webkit-mask-image: radial-gradient(ellipse at 50% 54%, #000 0 44%, rgba(0,0,0,.72) 62%, transparent 82%);
-    mask-image: radial-gradient(ellipse at 50% 54%, #000 0 44%, rgba(0,0,0,.72) 62%, transparent 82%);
-  }
-
-  .sdk-tech-pin__cards {
-    position: relative;
-    inset: auto;
-    display: grid;
-    gap: 1rem;
-    pointer-events: auto;
-  }
-
-  .sdk-tech-card-cms,
-  .sdk-tech-card-cms.is-first,
-  .sdk-tech-card-cms.is-second,
-  .sdk-tech-card-cms.is-third,
-  .sdk-tech-card-cms.is-fourth {
-    position: relative;
-    top: auto;
-    right: auto;
-    width: 100%;
-    opacity: 1;
-    visibility: visible;
-    transform: none;
+    object-position: center 40%;
+    -webkit-mask-image: radial-gradient(ellipse at 50% 60%, #000 0 42%, rgba(0,0,0,.55) 70%, transparent 90%);
+    mask-image: radial-gradient(ellipse at 50% 60%, #000 0 42%, rgba(0,0,0,.55) 70%, transparent 90%);
   }
 
   .sdk-tech-card {
-    min-height: 24rem;
+    min-height: 19rem;
   }
 
   .sdk-tech-pin__steps {
@@ -2765,38 +2727,11 @@ img {
 }
 
 @media (max-width: 980px) {
-  .sdk-tech-title-band {
-    padding: 3.5rem 1.25rem 1.5rem;
-  }
-
-  .sdk-tech-pin {
-    width: auto;
-    min-height: auto;
-    margin-left: 0;
-    margin-right: 0;
-    padding: 0 1rem 1rem;
-    overflow: visible;
-  }
-
-  .sdk-tech-pin__sticky {
-    position: relative;
-    height: auto;
-    min-height: 0;
-  }
-
-  .sdk-tech-card-layer {
-    position: relative;
-    inset: auto;
-    padding-top: 0 !important;
-  }
-
+  /* Cards centered and dropped below the pinned title, still animating over the image. */
   .sdk-tech-card-layer__inner {
-    position: relative;
-    top: auto;
-    height: auto;
-    min-height: 0;
-    display: block;
-    padding: 0;
+    justify-content: center;
+    align-items: center;
+    padding: 14svh 1.25rem 6svh;
   }
 
   .sdk-tech-card-layer .sdk-tech-card-cms,
@@ -2804,8 +2739,7 @@ img {
   .sdk-tech-card-layer .sdk-tech-card-cms.is-second,
   .sdk-tech-card-layer .sdk-tech-card-cms.is-third,
   .sdk-tech-card-layer .sdk-tech-card-cms.is-fourth {
-    width: 100%;
-    transform: none;
+    width: min(88vw, 30rem);
   }
 }
 
@@ -4052,7 +3986,7 @@ img {
     padding: clamp(2.5rem, 6vw, 4rem) var(--work-pad-x) 0;
   }
   .sdk-work__runway { height: 640vh; }
-  .sdk-work__sticky { min-height: 42rem; }
+  .sdk-work__sticky { height: 100svh; min-height: 34rem; }
   .sdk-work__seam { display: none; }
   .sdk-work__head {
     top: clamp(1.5rem, 3.5vh, 3rem);
@@ -4063,13 +3997,13 @@ img {
     letter-spacing: .22em;
   }
   .sdk-work__stage {
-    top: max(42vh, 19rem);
+    top: max(44svh, 17rem);
     bottom: 0;
   }
   .sdk-work-story,
   .sdk-work-story[data-side="left"],
   .sdk-work-story[data-side="right"] {
-    top: clamp(6rem, 11vh, 8rem);
+    top: clamp(5rem, 10svh, 7.5rem);
     left: 50%;
     right: auto;
     width: min(92vw, 34rem);
