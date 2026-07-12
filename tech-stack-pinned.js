@@ -40,25 +40,26 @@
       );
     }
 
-    if (image) {
-      // Translate-only parallax: scaling a filtered + masked image forces a full
-      // re-raster every scroll frame (the tech-stack scroll hitch). Translation is
-      // GPU-composited and cheap, so the parallax stays but the jank goes away.
-      gsap.set(image, { scale: 1.08, transformOrigin: 'center center' });
-      gsap.to(image, {
-        yPercent: -5,
+    // Left portrait is static (blended into the background) — no parallax.
+    if (image && !image.complete) {
+      image.addEventListener('load', () => ScrollTrigger.refresh(), { once: true });
+    }
+
+    // Big right-side heading animates in on enter (via initSectionTitleAnims), then
+    // clears out as the section pins and the first card scrolls in.
+    const intro = root.querySelector('[data-tech-intro]');
+    if (intro) {
+      gsap.to(intro, {
+        autoAlpha: 0,
+        yPercent: -10,
         ease: 'none',
         scrollTrigger: {
           trigger: root,
-          start: 'top bottom',
-          end: 'bottom top',
+          start: 'top top',
+          end: '16% top',
           scrub: true
         }
       });
-
-      if (!image.complete) {
-        image.addEventListener('load', () => ScrollTrigger.refresh(), { once: true });
-      }
     }
 
     cards.forEach((card) => {

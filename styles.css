@@ -2348,6 +2348,27 @@ img {
   max-width: 34ch;
 }
 
+/* Big heading on the right of the pinned stage — animates in, then clears for cards. */
+.sdk-tech-pin__intro {
+  position: absolute;
+  z-index: 2;
+  top: 50%;
+  right: clamp(2rem, 7vw, 8rem);
+  width: min(44vw, 40rem);
+  transform: translateY(-50%);
+  will-change: transform, opacity;
+}
+
+.sdk-tech-pin__intro .sdk-stack__title {
+  font-size: clamp(3.4rem, 7.6vw, 8.5rem);
+  margin-top: 1.25rem;
+  margin-bottom: 1.5rem;
+}
+
+.sdk-tech-pin__intro .sdk-stack__subtitle {
+  max-width: 38ch;
+}
+
 .sdk-tech-pin__portrait {
   position: absolute;
   inset: 0 auto 0 0;
@@ -2434,31 +2455,30 @@ img {
   gap: clamp(2rem, 4vw, 4rem);
   padding: clamp(1.4rem, 2.2vw, 2rem);
   border-radius: var(--radius-sm);
-  background: #f3eee5;
-  color: #221711;
-  box-shadow: 0 2.5rem 7rem rgba(0,0,0,.42);
+  background:
+    linear-gradient(158deg, rgba(42,11,18,.92) 0%, rgba(15,6,13,.95) 56%, rgba(9,4,10,.97) 100%);
+  color: var(--text);
+  border: 1px solid rgba(224,63,79,.20);
+  box-shadow:
+    0 2.5rem 7rem rgba(0,0,0,.58),
+    inset 0 1px 0 rgba(245,242,234,.07),
+    inset 0 0 5rem rgba(224,63,79,.05);
   pointer-events: auto;
   will-change: transform, opacity;
 }
 
-.sdk-tech-card-cms.is-second .sdk-tech-card {
-  background: #ff513d;
-}
-
-.sdk-tech-card-cms.is-third .sdk-tech-card {
-  background: #f5b84a;
-}
-
-.sdk-tech-card-cms.is-fourth .sdk-tech-card {
-  background: #d8e5c2;
-}
+/* Subtle per-card accent so the stack still reads as distinct steps, staying on-theme. */
+.sdk-tech-card-cms.is-first .sdk-tech-card { border-color: rgba(224,63,79,.24); }
+.sdk-tech-card-cms.is-second .sdk-tech-card { border-color: rgba(255,80,60,.24); }
+.sdk-tech-card-cms.is-third .sdk-tech-card { border-color: rgba(216,162,77,.24); }
+.sdk-tech-card-cms.is-fourth .sdk-tech-card { border-color: rgba(224,63,79,.22); }
 
 .sdk-tech-card__top,
 .sdk-tech-card__bottom {
   display: flex;
   justify-content: space-between;
   gap: 1.5rem;
-  border-color: rgba(34,23,17,.24);
+  color: rgba(245,242,234,.5);
   font-family: "Space Grotesk", sans-serif;
   font-size: .74rem;
   font-weight: 800;
@@ -2468,19 +2488,28 @@ img {
 }
 
 .sdk-tech-card__top {
-  border-bottom: 1px solid rgba(34,23,17,.24);
+  border-bottom: 1px solid rgba(245,242,234,.12);
   padding-bottom: 1rem;
+}
+
+.sdk-tech-card__top span:first-child {
+  color: rgba(245,242,234,.9);
+}
+
+.sdk-tech-card__top span:last-child {
+  color: var(--red);
 }
 
 .sdk-tech-card__bottom {
   align-items: flex-end;
-  border-top: 1px solid rgba(34,23,17,.24);
+  border-top: 1px solid rgba(245,242,234,.12);
   padding-top: 1rem;
 }
 
 .sdk-tech-card h3 {
   max-width: 10.5ch;
   margin: 0 0 1rem;
+  color: #f5f0e8;
   font-family: "Bricolage Grotesque", sans-serif;
   font-size: clamp(2.55rem, 4.1vw, 4.8rem);
   font-weight: 800;
@@ -2492,10 +2521,10 @@ img {
 .sdk-tech-card p {
   max-width: 32ch;
   margin: 0;
-  color: rgba(34,23,17,.76);
+  color: rgba(245,242,234,.62);
   font-size: clamp(.95rem, 1vw, 1.1rem);
-  font-weight: 600;
-  line-height: 1.35;
+  font-weight: 500;
+  line-height: 1.4;
 }
 
 .sdk-tech-card__tags {
@@ -2506,14 +2535,16 @@ img {
 }
 
 .sdk-tech-card__tags span {
-  border: 1px solid rgba(34,23,17,.26);
+  border: 1px solid rgba(224,63,79,.28);
   border-radius: 999px;
   padding: .42rem .62rem;
-  background: rgba(255,255,255,.12);
+  background: rgba(224,63,79,.1);
+  color: rgba(245,242,234,.85);
 }
 
 .sdk-tech-card__bottom strong {
   flex-shrink: 0;
+  color: rgba(224,63,79,.55);
   font-family: "Bricolage Grotesque", sans-serif;
   font-size: clamp(2.5rem, 4vw, 4.5rem);
   line-height: .8;
@@ -2554,6 +2585,23 @@ img {
     left: auto;
     width: 100%;
     padding: 3rem 1rem 1.25rem;
+  }
+
+  .sdk-tech-pin__intro {
+    position: relative;
+    top: auto;
+    right: auto;
+    width: 100%;
+    transform: none;
+    opacity: 1 !important;
+    visibility: visible !important;
+    padding: 3rem 1rem 0.5rem;
+  }
+
+  .sdk-tech-pin__intro .sdk-stack__title {
+    font-size: clamp(3rem, 12vw, 5rem);
+    margin-top: 1rem;
+    margin-bottom: 1.25rem;
   }
 
   .sdk-tech-pin__portrait {
