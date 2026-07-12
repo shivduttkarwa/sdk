@@ -55,9 +55,10 @@
 
 html {
   font-size: 16px;
-  scroll-behavior: smooth;
+  /* Lenis owns smooth scrolling — native scroll-behavior fights it and causes stutter. */
   background: #05030a;
   scrollbar-gutter: stable;
+  overflow-anchor: none;
 }
 
 
@@ -2385,6 +2386,9 @@ img {
   opacity: .48;
   filter: saturate(.82) contrast(1.08) brightness(.68);
   transform-origin: center;
+  /* Own compositing layer so the filter + mask rasterize once, not every scroll frame. */
+  will-change: transform;
+  backface-visibility: hidden;
   -webkit-mask-image: linear-gradient(90deg, #000 0%, #000 42%, rgba(0,0,0,.7) 62%, transparent 94%);
   mask-image: linear-gradient(90deg, #000 0%, #000 42%, rgba(0,0,0,.7) 62%, transparent 94%);
 }

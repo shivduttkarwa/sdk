@@ -41,9 +41,12 @@
     }
 
     if (image) {
+      // Translate-only parallax: scaling a filtered + masked image forces a full
+      // re-raster every scroll frame (the tech-stack scroll hitch). Translation is
+      // GPU-composited and cheap, so the parallax stays but the jank goes away.
+      gsap.set(image, { scale: 1.08, transformOrigin: 'center center' });
       gsap.to(image, {
-        yPercent: -4,
-        scale: 1.04,
+        yPercent: -5,
         ease: 'none',
         scrollTrigger: {
           trigger: root,
