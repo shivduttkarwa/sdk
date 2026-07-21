@@ -1,0 +1,15 @@
+# Verbatim content — must never be reformatted (byte-for-byte parity)
+public/styles.css
+src/shaders/**
+src/cores/**
+
+# Build output / deps / media
+docs
+dist
+node_modules
+public/assets
+playwright-report
+test-results
+
+# Pre-port static site (kept verbatim as a reference/baseline)
+original-static
