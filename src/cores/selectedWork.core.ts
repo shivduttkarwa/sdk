@@ -44,7 +44,11 @@ export function mountSelectedWork(): () => void {
         return { in: c - 0.12, out: c + 0.12 };
       });
 
-      let runwayRect = runway.getBoundingClientRect();
+      // Document-space runway metrics, cached so scroll/rAF paths never force layout.
+      // getBoundingClientRect on every scroll event (Lenis fires one per frame) was the
+      // main-thread killer here; scrollY-based math is layout-read free.
+      let runwayTop = 0;
+      let runwayHeight = 1;
       let viewportH = window.innerHeight || document.documentElement.clientHeight;
       let targetProgress = 0;
       let smoothProgress = 0;
@@ -53,17 +57,20 @@ export function mountSelectedWork(): () => void {
       let raf = 0;
       let disposed = false;
       let glResize: (() => void) | undefined;
+      let glCanvasObserver: ResizeObserver | undefined;
       let glRef: WebGLRenderingContext | undefined;
       const mouse = { x: 0.5, y: 0.5, tx: 0.5, ty: 0.5, hover: 0, thover: 0 };
 
       function measure() {
-        runwayRect = runway.getBoundingClientRect();
+        const rect = runway.getBoundingClientRect();
+        runwayTop = rect.top + window.scrollY;
+        runwayHeight = runway.offsetHeight;
         viewportH = window.innerHeight || document.documentElement.clientHeight;
       }
 
       function rawProgress() {
-        const travel = Math.max(1, runway.offsetHeight - viewportH);
-        return -runwayRect.top / travel;
+        const travel = Math.max(1, runwayHeight - viewportH);
+        return (window.scrollY - runwayTop) / travel;
       }
 
       function getState(p: number) {
@@ -79,7 +86,17 @@ export function mountSelectedWork(): () => void {
         return { from, to, mix, active: mix < 0.5 ? from : to };
       }
 
+      // Last-written values so steady frames skip DOM writes entirely (style.filter blur
+      // on text is an expensive repaint — only touch it when the rendered value changes).
+      let lastActive = -1;
+      const lastPatternOpacity = patterns.map(() => '');
+      const lastStory = stories.map(() => ({ opacity: '', filter: '', shift: '' }));
+      let lastProgressVisible: boolean | null = null;
+      let lastProgressValue = '';
+
       function setFallback(active: number) {
+        if (active === lastActive) return;
+        lastActive = active;
         fallbackImgs.forEach((img, i) => img.classList.toggle('is-active', i === active));
       }
 
@@ -89,7 +106,11 @@ export function mountSelectedWork(): () => void {
           if (i === from && i === to) opacity = 1;
           else if (i === from) opacity = 1 - mix;
           else if (i === to) opacity = mix;
-          el.style.opacity = (opacity * 0.5).toFixed(3);
+          const value = (opacity * 0.5).toFixed(3);
+          if (lastPatternOpacity[i] !== value) {
+            lastPatternOpacity[i] = value;
+            el.style.opacity = value;
+          }
         });
       }
 
@@ -97,18 +118,32 @@ export function mountSelectedWork(): () => void {
         stories.forEach((story, i) => {
           const w = storyWindows[i];
           const opacity = smoothstep(w.in, w.in + 0.05, p) * (1 - smoothstep(w.out - 0.05, w.out, p));
-          story.style.opacity = opacity.toFixed(3);
-          story.style.filter = `blur(${((1 - opacity) * 5).toFixed(2)}px)`;
           const push = (1 - opacity) * 2;
           const dir = story.dataset.side === 'right' ? push : -push;
-          story.style.setProperty('--shift', `${dir.toFixed(2)}rem`);
+          const next = {
+            opacity: opacity.toFixed(3),
+            filter: `blur(${((1 - opacity) * 5).toFixed(2)}px)`,
+            shift: `${dir.toFixed(2)}rem`,
+          };
+          const prev = lastStory[i];
+          if (prev.opacity !== next.opacity) { prev.opacity = next.opacity; story.style.opacity = next.opacity; }
+          if (prev.filter !== next.filter) { prev.filter = next.filter; story.style.filter = next.filter; }
+          if (prev.shift !== next.shift) { prev.shift = next.shift; story.style.setProperty('--shift', next.shift); }
         });
       }
 
       function updateDom(p: number, raw: number) {
         const state = getState(p);
-        progress.classList.toggle('is-visible', raw > -0.02 && raw < 1.02);
-        progress.style.setProperty('--progress', clamp(raw).toFixed(4));
+        const progressVisible = raw > -0.02 && raw < 1.02;
+        if (progressVisible !== lastProgressVisible) {
+          lastProgressVisible = progressVisible;
+          progress.classList.toggle('is-visible', progressVisible);
+        }
+        const progressValue = clamp(raw).toFixed(4);
+        if (progressValue !== lastProgressValue) {
+          lastProgressValue = progressValue;
+          progress.style.setProperty('--progress', progressValue);
+        }
         setFallback(state.active);
         setPatterns(state.from, state.to, state.mix);
         updateStories(p);
@@ -364,11 +399,23 @@ export function mountSelectedWork(): () => void {
 
         gl.uniform1f(uniforms.imgAspect, imgAspect);
 
+        // Canvas CSS size cached via ResizeObserver — resize() runs every render frame and
+        // must not call getBoundingClientRect (forced layout per frame).
+        let cssWidth = canvas.clientWidth;
+        let cssHeight = canvas.clientHeight;
+        const canvasObserver = new ResizeObserver((entries) => {
+          for (const entry of entries) {
+            cssWidth = entry.contentRect.width;
+            cssHeight = entry.contentRect.height;
+          }
+        });
+        canvasObserver.observe(canvas);
+        glCanvasObserver = canvasObserver;
+
         function resize() {
           const dpr = Math.min(window.devicePixelRatio || 1, 1.8);
-          const rect = canvas.getBoundingClientRect();
-          const w = Math.max(2, Math.floor(rect.width * dpr));
-          const h = Math.max(2, Math.floor(rect.height * dpr));
+          const w = Math.max(2, Math.floor(cssWidth * dpr));
+          const h = Math.max(2, Math.floor(cssHeight * dpr));
           if (canvas.width !== w || canvas.height !== h) {
             canvas.width = w;
             canvas.height = h;
@@ -413,13 +460,23 @@ export function mountSelectedWork(): () => void {
       window.addEventListener('resize', onResize, { passive: true });
 
       const onScroll = () => {
-        measure();
         targetProgress = clamp(rawProgress());
         if (!raf) raf = requestAnimationFrame(animate);
       };
       window.addEventListener('scroll', onScroll, { passive: true });
 
+      // Pin spacers, late images and font swaps shift the runway's document offset after
+      // init — re-measure on any layout-size change instead of on every scroll event.
+      const layoutObserver = new ResizeObserver(() => {
+        measure();
+        targetProgress = clamp(rawProgress());
+        if (!raf) raf = requestAnimationFrame(animate);
+      });
+      layoutObserver.observe(document.body);
+      layoutObserver.observe(runway);
+
       const onPointerMove = (event: PointerEvent) => {
+        if (!sectionVisible) return;
         const rect = stage.getBoundingClientRect();
         mouse.tx = clamp((event.clientX - rect.left) / Math.max(1, rect.width));
         mouse.ty = clamp((event.clientY - rect.top) / Math.max(1, rect.height));
@@ -431,7 +488,6 @@ export function mountSelectedWork(): () => void {
       function animate(time: number) {
         if (disposed) { raf = 0; return; }
         raf = 0;
-        measure();
         const raw = rawProgress();
         targetProgress = clamp(raw);
         smoothProgress = lerp(smoothProgress, targetProgress, 0.12);
@@ -468,6 +524,8 @@ export function mountSelectedWork(): () => void {
       return () => {
         disposed = true;
         observer.disconnect();
+        layoutObserver.disconnect();
+        glCanvasObserver?.disconnect();
         if (raf) cancelAnimationFrame(raf);
         window.removeEventListener('resize', onResize);
         window.removeEventListener('scroll', onScroll);

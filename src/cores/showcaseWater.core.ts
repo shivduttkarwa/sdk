@@ -142,8 +142,10 @@ export function mountShowcaseWater(): () => void {
   let last=0;
   let disposed=false;
   let raf=0;
-  (function render(t: number){
+  let visible=true;
+  function render(t: number){
     if (disposed) return;
+    if (!visible) { raf = 0; return; }
     raf = requestAnimationFrame(render);
     const dt=Math.min((t-last)*0.001,0.016); last=t;
     if(hasMouse&&Math.abs(dmx)+Math.abs(dmy)>0.0001){
@@ -165,11 +167,21 @@ export function mountShowcaseWater(): () => void {
     gl.bindFramebuffer(gl.FRAMEBUFFER,null); gl.viewport(0,0,canvas!.width||1,canvas!.height||1);
     gl.clearColor(0,0,0,0); gl.clear(gl.COLOR_BUFFER_BIT);
     blit(null,renderProg,(p: any)=>{ tex(0,dye0.tex);u1i(p,'u_dye',0);tex(5,bgTex);u1i(p,'u_bg',5); });
-  })(0);
+  }
+  render(0);
+
+  // The fluid solve (25 pressure iterations + advection) is far too heavy to run while the
+  // section is off-screen — pause the loop and resume on re-entry.
+  const visibilityObserver = new IntersectionObserver((entries) => {
+    visible = entries.some((entry) => entry.isIntersecting);
+    if (visible && !raf && !disposed) raf = requestAnimationFrame(render);
+  }, { rootMargin: '100px 0px' });
+  visibilityObserver.observe(section);
 
   return () => {
     disposed = true;
     cancelAnimationFrame(raf);
+    visibilityObserver.disconnect();
     section.removeEventListener('mousemove', onMouseMove);
     section.removeEventListener('mouseleave', onMouseLeave);
     resizeObserver.disconnect();

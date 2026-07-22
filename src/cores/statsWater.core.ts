@@ -272,8 +272,10 @@ export function mountStatsWater(): () => void {
   let last = 0;
   let disposed = false;
   let raf = 0;
-  (function render(t: number) {
+  let visible = true;
+  function render(t: number) {
     if (disposed) return;
+    if (!visible) { raf = 0; return; }
     raf = requestAnimationFrame(render);
     const dt = Math.min((t - last) * 0.001, 0.016);
     last = t;
@@ -376,11 +378,21 @@ export function mountStatsWater(): () => void {
       tex(7,bgTex[2]); u1i(p,'u_bg2',7);
     });
 
-  })(0);
+  }
+  render(0);
+
+  // The fluid solve (25 pressure iterations + advection) is far too heavy to run while the
+  // stats row is off-screen — pause the loop and resume on re-entry.
+  const visibilityObserver = new IntersectionObserver((entries) => {
+    visible = entries.some((entry) => entry.isIntersecting);
+    if (visible && !raf && !disposed) raf = requestAnimationFrame(render);
+  }, { rootMargin: '100px 0px' });
+  visibilityObserver.observe(row);
 
   return () => {
     disposed = true;
     cancelAnimationFrame(raf);
+    visibilityObserver.disconnect();
     row.removeEventListener('mousemove', onMouseMove as EventListener);
     row.removeEventListener('mouseleave', onMouseLeave);
     resizeObserver.disconnect();

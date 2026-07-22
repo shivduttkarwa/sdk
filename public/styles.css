@@ -76,15 +76,28 @@ body {
   overflow-x: clip;
 }
 
+/* Viewport-fixed backdrop without background-attachment: fixed, which disables composited
+   scrolling and repaints the full viewport every scroll frame. clip-path scopes a
+   position:fixed pseudo-element to this box, so the compositor only blends layers. */
 .sdk-bg-scope,
 .site-footer {
+  position: relative;
+  clip-path: inset(0);
+}
+
+.sdk-bg-scope::before,
+.site-footer::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
   background-image:
     linear-gradient(160deg, rgba(80,8,18,0.82) 0%, rgba(20,4,10,0.88) 40%, rgba(8,4,22,0.90) 70%, rgba(15,5,30,0.85) 100%),
     url('assets/images/hero-main-bg.jpg');
   background-size: cover;
   background-position: center top;
   background-repeat: no-repeat;
-  background-attachment: fixed;
 }
 
 body.sdk-no-scroll {
@@ -3030,9 +3043,21 @@ img {
     background-attachment: scroll;
   }
 
+  /* Mobile keeps the original scroll-attached background painted on the element itself. */
   .sdk-bg-scope,
   .site-footer {
-    background-attachment: scroll;
+    clip-path: none;
+    background-image:
+      linear-gradient(160deg, rgba(80,8,18,0.82) 0%, rgba(20,4,10,0.88) 40%, rgba(8,4,22,0.90) 70%, rgba(15,5,30,0.85) 100%),
+      url('assets/images/hero-main-bg.jpg');
+    background-size: cover;
+    background-position: center top;
+    background-repeat: no-repeat;
+  }
+
+  .sdk-bg-scope::before,
+  .site-footer::before {
+    content: none;
   }
 
   .sdk-stack-section { padding: 5rem 1.25rem 6rem; }

@@ -218,6 +218,7 @@ export function mountHeroBlob(): () => void {
   let smx = 0.15, smy = 0.58;
 
   const onMouseMove = (e: MouseEvent) => {
+    if (!heroVisible) return;
     const r = hero.getBoundingClientRect();
     mx = (e.clientX - r.left)  / r.width;
     my = 1.0 - (e.clientY - r.top) / r.height;
@@ -239,8 +240,13 @@ export function mountHeroBlob(): () => void {
   const heroNameRevealed = document.getElementById('heroNameRevealed');
   let rafId = 0;
   let disposed = false;
+  let heroVisible = true;
   function render() {
     if (disposed) return;
+    if (!heroVisible) {
+      rafId = 0;
+      return;
+    }
     smx += (mx - smx) * 0.08;
     smy += (my - smy) * 0.08;
     const t = (performance.now() - t0) / 1000;
@@ -273,6 +279,17 @@ export function mountHeroBlob(): () => void {
   }
   render();
 
+  // Pause the render loop while the hero is off-screen — a permanently running
+  // full-viewport fbm shader competes with everything else during scroll.
+  const visibilityObserver = new IntersectionObserver(
+    (entries) => {
+      heroVisible = entries.some((entry) => entry.isIntersecting);
+      if (heroVisible && !rafId && !disposed) rafId = requestAnimationFrame(render);
+    },
+    { rootMargin: '120px 0px' },
+  );
+  visibilityObserver.observe(hero);
+
   if (gsap) {
     gsap.to(anim, { smoke: 0, opacity: 1, duration: 1.1, delay: 0.5, ease: 'power3.out' });
   }
@@ -299,6 +316,7 @@ export function mountHeroBlob(): () => void {
   return () => {
     disposed = true;
     if (rafId) cancelAnimationFrame(rafId);
+    visibilityObserver.disconnect();
     document.removeEventListener('mousemove', onMouseMove);
     window.removeEventListener('resize', resize);
     window.removeEventListener('scroll', onScroll);
