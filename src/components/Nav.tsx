@@ -36,7 +36,7 @@ export default function Nav() {
           <div className="sdk-nav__backdrop-fill"></div>
         </div>
         <div className="sdk-nav__topbar">
-          <a href="#home" className="sdk-nav__logo" aria-label="Shivdutt Karwa home">
+          <a href="#/" className="sdk-nav__logo" aria-label="Shivdutt Karwa home">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="36" height="36">
               <rect width="32" height="32" rx="8" fill="#05030a" />
               <text
@@ -74,8 +74,16 @@ export default function Nav() {
               <div className="sdk-nav__panel-row">
                 <div className="sdk-nav__panel-col">
                   <nav className="sdk-nav__links">
-                    <a href="#services" className="sdk-nav__link is-active">
+                    <a href="#/works" className="sdk-nav__link" data-transition-label="Work">
                       <span className="sdk-nav__link-index">01</span>
+                      <span className="sdk-nav__link-body">
+                        <span className="sdk-nav__link-label">Work</span>
+                        <span className="sdk-nav__link-desc">Selected projects</span>
+                      </span>
+                      <span className="sdk-nav__link-arrow">→</span>
+                    </a>
+                    <a href="#services" className="sdk-nav__link is-active">
+                      <span className="sdk-nav__link-index">02</span>
                       <span className="sdk-nav__link-body">
                         <span className="sdk-nav__link-label">Services</span>
                         <span className="sdk-nav__link-desc">What I offer</span>
@@ -83,7 +91,7 @@ export default function Nav() {
                       <span className="sdk-nav__link-arrow">→</span>
                     </a>
                     <a href="#about" className="sdk-nav__link">
-                      <span className="sdk-nav__link-index">02</span>
+                      <span className="sdk-nav__link-index">03</span>
                       <span className="sdk-nav__link-body">
                         <span className="sdk-nav__link-label">About</span>
                         <span className="sdk-nav__link-desc">Background &amp; skills</span>
@@ -91,7 +99,7 @@ export default function Nav() {
                       <span className="sdk-nav__link-arrow">→</span>
                     </a>
                     <a href="#contact" className="sdk-nav__link">
-                      <span className="sdk-nav__link-index">03</span>
+                      <span className="sdk-nav__link-index">04</span>
                       <span className="sdk-nav__link-body">
                         <span className="sdk-nav__link-label">Contact</span>
                         <span className="sdk-nav__link-desc">Let's collaborate</span>

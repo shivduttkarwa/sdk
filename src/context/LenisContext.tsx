@@ -45,6 +45,10 @@ export function LenisProvider({ children }: { children: ReactNode }) {
       if (!link) return;
       const href = link.getAttribute('href');
       if (!href || href === '#') return;
+      // Route links (`#/works`, `#/works/:slug`) belong to the hash router — let the
+      // native hashchange drive it, and never feed them to querySelector (they're not
+      // valid CSS selectors and would throw). Only true in-page anchors scroll here.
+      if (href.startsWith('#/')) return;
       const target = document.querySelector(href);
       if (!target) return;
       event.preventDefault();

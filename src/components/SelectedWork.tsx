@@ -23,6 +23,10 @@ export default function SelectedWork() {
             A selection of products, platforms, and experiences — each one shaped from idea to
             launch.
           </p>
+          <a className="sdk-stack__viewall" href="#/works" data-transition-label="Work">
+            View all work
+            <span aria-hidden="true"> →</span>
+          </a>
         </div>
       </div>
 
