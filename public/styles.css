@@ -2420,6 +2420,9 @@ img {
   opacity: .48;
   filter: saturate(.82) contrast(1.08) brightness(.68);
   transform-origin: center;
+  /* The square source sits low-left when cover-fit into this tall column; zoom slightly
+     and shift the subject up and right so the portrait reads centered. */
+  transform: scale(1.12) translate(3%, -4%);
   /* Own compositing layer so the filter + mask rasterize once, not every scroll frame. */
   will-change: transform;
   backface-visibility: hidden;

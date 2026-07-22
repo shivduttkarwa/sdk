@@ -69,35 +69,35 @@ export default function SelectedWork() {
                 <img
                   className="sdk-work__img is-active"
                   src="assets/images/work-aurora.jpg"
-                  alt="Aurora Commerce project"
+                  alt="Real Gold Properties project"
                   loading="lazy"
                   decoding="async"
                 />
                 <img
                   className="sdk-work__img"
                   src="assets/images/work-nimbus.jpg"
-                  alt="Nimbus Dashboard project"
+                  alt="Shambala Homes project"
                   loading="lazy"
                   decoding="async"
                 />
                 <img
                   className="sdk-work__img"
                   src="assets/images/work-meridian.jpg"
-                  alt="Meridian Studio project"
+                  alt="Cyber Shades project"
                   loading="lazy"
                   decoding="async"
                 />
                 <img
                   className="sdk-work__img"
                   src="assets/images/work-kinetic.jpg"
-                  alt="Kinetic Reel project"
+                  alt="Behna Clothing Studio project"
                   loading="lazy"
                   decoding="async"
                 />
                 <img
                   className="sdk-work__img"
                   src="assets/images/work-vault.jpg"
-                  alt="Vault Finance project"
+                  alt="Bunny Bites project"
                   loading="lazy"
                   decoding="async"
                 />
@@ -108,70 +108,70 @@ export default function SelectedWork() {
               <article className="sdk-work-story" data-side="left">
                 <div className="sdk-work-story__meta">
                   <span className="sdk-work-story__mark">01</span>
-                  <span>Product · Commerce</span>
+                  <span>Real Estate · Platform</span>
                 </div>
                 <h3>
-                  Aurora <span>Headless commerce platform</span>
+                  Real Gold <span>Premium property platform</span>
                 </h3>
                 <p>
-                  A storefront rebuilt from the ground up — headless, fast, and tuned for conversion
-                  at scale.
+                  Premium real estate across Brisbane and the Gold Coast — listings, enquiries, and
+                  consultations in one polished experience.
                 </p>
               </article>
 
               <article className="sdk-work-story" data-side="right">
                 <div className="sdk-work-story__meta">
-                  <span>Web App · Analytics</span>
+                  <span>Architecture · Brand</span>
                   <span className="sdk-work-story__mark">02</span>
                 </div>
                 <h3>
-                  Nimbus <span>Realtime analytics suite</span>
+                  Shambala <span>Luxury home builder site</span>
                 </h3>
                 <p>
-                  Live dashboards that turn a firehose of events into decisions teams can actually
-                  act on.
+                  A cinematic showcase for architectural craftsmanship — where modern design meets
+                  vision, from concept to build.
                 </p>
               </article>
 
               <article className="sdk-work-story" data-side="left">
                 <div className="sdk-work-story__meta">
                   <span className="sdk-work-story__mark">03</span>
-                  <span>Brand · Studio</span>
+                  <span>Studio · Digital</span>
                 </div>
                 <h3>
-                  Meridian <span>Immersive agency site</span>
+                  Cyber Shades <span>Digital studio site</span>
                 </h3>
                 <p>
-                  A cinematic brand experience where motion, type, and craft carry the story end to
-                  end.
+                  The face of a Jaipur digital studio — websites, apps, and connected platforms,
+                  built with a pulse.
                 </p>
               </article>
 
               <article className="sdk-work-story" data-side="right">
                 <div className="sdk-work-story__meta">
-                  <span>Motion · WebGL</span>
+                  <span>Fashion · Boutique</span>
                   <span className="sdk-work-story__mark">04</span>
                 </div>
                 <h3>
-                  Kinetic <span>WebGL showcase reel</span>
+                  Behna <span>Ethnic wear studio</span>
                 </h3>
                 <p>
-                  A shader-driven playground built to push the browser — and prove what the web can
-                  feel like.
+                  A boutique storefront for handcrafted women&apos;s ethnic wear — timeless
+                  elegance, made in Jaipur.
                 </p>
               </article>
 
               <article className="sdk-work-story" data-side="left">
                 <div className="sdk-work-story__meta">
                   <span className="sdk-work-story__mark">05</span>
-                  <span>Platform · Fintech</span>
+                  <span>Brand · Food</span>
                 </div>
                 <h3>
-                  Vault <span>Fintech onboarding flow</span>
+                  Bunny Bites <span>Kids&apos; nutrition brand</span>
                 </h3>
                 <p>
-                  A trust-first onboarding journey — secure, considered, and smooth from first tap
-                  to funded.
+                  A playful, trust-first brand site for nutritious kids&apos; meals — from cravings
+                  to comfort, carefully crafted.
                 </p>
               </article>
             </div>
