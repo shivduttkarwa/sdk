@@ -21,11 +21,11 @@ export function mountSelectedWork(): () => void {
       if (!section || !runway || !sticky || !stage || !canvas || !progress) return () => {};
 
       const items = [
-        { image: 'assets/images/hero-showcase-bg.jpg' },
-        { image: 'assets/images/code-1.jpg' },
-        { image: 'assets/images/2.jpg' },
-        { image: 'assets/images/bg-sdk1.jpg' },
-        { image: 'assets/images/hero-main-bg.jpg' }
+        { image: 'assets/images/work-aurora.jpg' },
+        { image: 'assets/images/work-nimbus.jpg' },
+        { image: 'assets/images/work-meridian.jpg' },
+        { image: 'assets/images/work-kinetic.jpg' },
+        { image: 'assets/images/work-vault.jpg' }
       ];
 
       const total = items.length;
@@ -285,7 +285,9 @@ export function mountSelectedWork(): () => void {
           }
 
           vec4 finish(vec4 col, vec2 uv) {
-            float grain = hash(uv * u_resolution * 0.45 + u_time * 42.0);
+            // Static grain: the time-shifted noise field slid diagonally every frame, which
+            // read as a shimmer/gradient constantly crawling across the whole image.
+            float grain = hash(uv * u_resolution * 0.45);
             col.rgb += (grain - 0.5) * 0.04;
 
             // Cinematic vignette + bottom fade to seat the frame on the dark stage.

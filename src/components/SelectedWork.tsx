@@ -68,35 +68,35 @@ export default function SelectedWork() {
               <div className="sdk-work__fallback" aria-hidden="false">
                 <img
                   className="sdk-work__img is-active"
-                  src="assets/images/hero-showcase-bg.jpg"
+                  src="assets/images/work-aurora.jpg"
                   alt="Aurora Commerce project"
                   loading="lazy"
                   decoding="async"
                 />
                 <img
                   className="sdk-work__img"
-                  src="assets/images/code-1.jpg"
+                  src="assets/images/work-nimbus.jpg"
                   alt="Nimbus Dashboard project"
                   loading="lazy"
                   decoding="async"
                 />
                 <img
                   className="sdk-work__img"
-                  src="assets/images/2.jpg"
+                  src="assets/images/work-meridian.jpg"
                   alt="Meridian Studio project"
                   loading="lazy"
                   decoding="async"
                 />
                 <img
                   className="sdk-work__img"
-                  src="assets/images/bg-sdk1.jpg"
+                  src="assets/images/work-kinetic.jpg"
                   alt="Kinetic Reel project"
                   loading="lazy"
                   decoding="async"
                 />
                 <img
                   className="sdk-work__img"
-                  src="assets/images/hero-main-bg.jpg"
+                  src="assets/images/work-vault.jpg"
                   alt="Vault Finance project"
                   loading="lazy"
                   decoding="async"
