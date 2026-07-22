@@ -4541,9 +4541,9 @@ img {
 }
 
 /* ---- Page transition (lift-out / rise-in with dim) ---- */
-#page-view {
-  will-change: transform, opacity;
-}
+/* NOTE: no `will-change: transform` here — it would make #page-view a containing block for
+   fixed descendants (e.g. the Works hover preview), breaking their viewport positioning once
+   the page is scrolled. gsap applies a transform only transiently during the swap. */
 .page-dim {
   position: fixed;
   inset: 0;
