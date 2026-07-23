@@ -89,6 +89,9 @@ export function mountPreloader({ canvas, arc, num, root }: PreloaderEls): () => 
         root.classList.add('exit');
         hideTimeout = window.setTimeout(function () {
           root.style.display = 'none';
+          // Cue the hero title reveal only once the curtain has fully lifted — otherwise the
+          // title animates in while the preloader is still covering the screen (too early).
+          window.dispatchEvent(new CustomEvent('sdk:preloader-done'));
         }, 1000);
       }, 520);
     }

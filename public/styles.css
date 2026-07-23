@@ -274,7 +274,7 @@ img {
   inset: 0;
   z-index: 10000;
   background: #080808;
-  display: none;
+  display: flex;
   align-items: center;
   justify-content: center;
   transform: translateY(0);
@@ -896,6 +896,19 @@ img {
   letter-spacing: -0.04em;
   line-height: 0.88;
   text-transform: uppercase;
+  /* Mask for the intro slide-up reveal (matches the section-title reveal). */
+  overflow: hidden;
+  padding-top: 0.08em;
+  margin-top: -0.08em;
+}
+
+/* Inner element the JS slides up from under the mask (both name copies + tagline). */
+.sdk-hero__line-inner {
+  display: block;
+  will-change: transform;
+}
+.sdk-hero__tagline {
+  overflow: hidden;
 }
 
 

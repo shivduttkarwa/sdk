@@ -11,16 +11,28 @@ export default function Hero() {
       <div className="sdk-hero__mobile-bg" aria-hidden="true"></div>
 
       <div className="sdk-hero__name sdk-hero__name--primary" aria-label="Shivdutt Karwa">
-        <span className="sdk-hero__name-line">SHIVDUTT</span>
-        <span className="sdk-hero__name-line">KARWA</span>
-        <span className="sdk-hero__tagline">Building digital products from idea to impact</span>
+        <span className="sdk-hero__name-line">
+          <span className="sdk-hero__line-inner">SHIVDUTT</span>
+        </span>
+        <span className="sdk-hero__name-line">
+          <span className="sdk-hero__line-inner">KARWA</span>
+        </span>
+        <span className="sdk-hero__tagline">
+          <span className="sdk-hero__line-inner">Building digital products from idea to impact</span>
+        </span>
       </div>
 
       <div className="sdk-hero__reveal-layer" id="heroSmokeWrap" aria-hidden="true">
         <div className="sdk-hero__name sdk-hero__name--revealed" id="heroNameRevealed">
-          <span className="sdk-hero__name-line">SHIVDUTT</span>
-          <span className="sdk-hero__name-line">KARWA</span>
-          <span className="sdk-hero__tagline">Building digital products from idea to impact</span>
+          <span className="sdk-hero__name-line">
+            <span className="sdk-hero__line-inner">SHIVDUTT</span>
+          </span>
+          <span className="sdk-hero__name-line">
+            <span className="sdk-hero__line-inner">KARWA</span>
+          </span>
+          <span className="sdk-hero__tagline">
+            <span className="sdk-hero__line-inner">Building digital products from idea to impact</span>
+          </span>
         </div>
       </div>
 
