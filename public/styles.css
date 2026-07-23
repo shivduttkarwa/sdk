@@ -2971,6 +2971,9 @@ img {
   max-height: 31.625rem;
   perspective: 93.75rem;
   margin-top: calc(50vh - 15.8125rem);
+  /* Symmetric with margin-top so the sticky image releases exactly when the last step
+     centers — it exits in sync with the sword and left content instead of lingering. */
+  margin-bottom: calc(50vh - 15.8125rem);
   margin-left: auto;
   margin-right: auto;
 }
