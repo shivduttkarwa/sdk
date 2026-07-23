@@ -9,6 +9,10 @@ export default defineConfig({
   timeout: 60_000,
   expect: { timeout: 15_000 },
   fullyParallel: false,
+  // Single worker so the spec files run serially. With the intro preloader (~8s) now on
+  // every page load, running the screenshot + smoke files concurrently caused timing
+  // contention that intermittently failed the scroll spec; serial runs are deterministic.
+  workers: 1,
   reporter: [['list']],
   use: {
     baseURL: 'http://localhost:4173',

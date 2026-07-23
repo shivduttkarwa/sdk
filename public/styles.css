@@ -891,22 +891,33 @@ img {
 
 .sdk-hero__name-line {
   display: block;
-  font-size: clamp(4.25rem, 12.5vw, 12.5rem);
+  /* Reduced 20% from clamp(4.25rem, 12.5vw, 12.5rem). */
+  font-size: clamp(3.4rem, 10vw, 10rem);
   font-weight: 400;
   letter-spacing: -0.04em;
   line-height: 0.88;
   text-transform: uppercase;
-  /* Mask for the intro slide-up reveal (matches the section-title reveal). */
-  overflow: hidden;
-  padding-top: 0.08em;
-  margin-top: -0.08em;
+  overflow: visible;
 }
 
-/* Inner element the JS slides up from under the mask (both name copies + tagline). */
 .sdk-hero__line-inner {
   display: block;
-  will-change: transform;
 }
+
+/* Per-character decode/scramble reveal. Each cell is width-locked by JS (to the final
+   glyph) so scramble glyphs of different widths never reflow the title. */
+.sdk-hero__char-wrap {
+  display: inline-block;
+  overflow: hidden;
+  text-align: center;
+  vertical-align: top;
+}
+.sdk-hero__char {
+  display: inline-block;
+  will-change: opacity, filter;
+}
+
+/* Description keeps a simple single-line slide from under a mask. */
 .sdk-hero__tagline {
   overflow: hidden;
 }
@@ -3656,7 +3667,8 @@ img {
 
   /* ── Name lines: fill width dramatically ── */
   .sdk-hero__name-line {
-    font-size: clamp(2.25rem, 14.25vw, 4.125rem);
+    /* Reduced 20% from clamp(2.25rem, 14.25vw, 4.125rem). */
+    font-size: clamp(1.8rem, 11.4vw, 3.3rem);
     line-height: 0.88;
     letter-spacing: -0.03em;
   }
