@@ -13,13 +13,12 @@ export function mountPreloader({ canvas, arc, num, root }: PreloaderEls): () => 
   const ctx = canvas.getContext('2d');
   if (!ctx) return () => {};
 
-  const kanji = '武士道侍剣魂刃忍鬼龍神将軍忠義';
-  const kana = 'アイウエオカキクケコサシスセソタチツ';
-  const binary = '010110010100110101010011001010';
-  const sym = '{}()<>[];=>/\\&|!?#@*^~%+-_:';
-  const hex = '0123456789ABCDEF';
-  const jpPool = kanji.split('').concat(kana.split(''));
-  const codePool = binary.split('').concat(sym.split('')).concat(hex.split(''));
+  // Pure coding rain — latin letters, digits and code symbols (no kana/kanji).
+  const letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
+  const digits = '0123456789';
+  const sym = '{}()<>[];:=>/\\&|!?#@*^~%+-_.,\'"`$';
+  // Bias slightly toward digits/symbols so streams read as code, not prose.
+  const codePool = (letters + digits + digits + sym + sym).split('');
   let cols: number;
   let drops: number[];
 
@@ -36,20 +35,17 @@ export function mountPreloader({ canvas, arc, num, root }: PreloaderEls): () => 
     ctx!.fillStyle = 'rgba(8,8,8,0.035)';
     ctx!.fillRect(0, 0, canvas.width, canvas.height);
     for (let i = 0; i < cols; i++) {
-      const useJp = Math.random() > 0.48;
-      const ch = useJp
-        ? jpPool[(Math.random() * jpPool.length) | 0]
-        : codePool[(Math.random() * codePool.length) | 0];
+      const ch = codePool[(Math.random() * codePool.length) | 0];
       const rnd = Math.random();
       if (rnd > 0.72) {
         ctx!.fillStyle = 'rgba(255,50,50,0.95)';
-        ctx!.font = useJp ? 'bold 18px serif' : 'bold 16px monospace';
+        ctx!.font = 'bold 16px monospace';
       } else if (rnd > 0.38) {
         ctx!.fillStyle = 'rgba(185,18,18,0.80)';
-        ctx!.font = useJp ? '17px serif' : '15px monospace';
+        ctx!.font = '15px monospace';
       } else {
         ctx!.fillStyle = 'rgba(110,10,10,0.58)';
-        ctx!.font = useJp ? '15px serif' : '13px monospace';
+        ctx!.font = '13px monospace';
       }
       ctx!.fillText(ch, i * 26, drops[i] * 26);
       if (drops[i] * 26 > canvas.height && Math.random() > 0.97) drops[i] = 0;
