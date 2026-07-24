@@ -44,14 +44,15 @@ export function useHeroAnimation() {
     const primaryInners = gsap.utils.toArray<HTMLElement>(
       '.sdk-hero__name--primary .sdk-hero__line-inner',
     );
+    const revealedInners = gsap.utils.toArray<HTMLElement>(
+      '.sdk-hero__name--revealed .sdk-hero__line-inner',
+    );
     const revealedName = document.querySelector<HTMLElement>('.sdk-hero__name--revealed');
     const nameLineCount = Math.max(0, primaryInners.length - 1);
     const descInner = primaryInners[nameLineCount];
 
-    // Split the primary name lines into per-character cells.
-    const lines: HTMLElement[][] = [];
-    for (let i = 0; i < nameLineCount; i++) {
-      const inner = primaryInners[i];
+    // Split a name line into per-character cells (same markup for both layers).
+    const splitToCells = (inner: HTMLElement): HTMLElement[] => {
       const text = (inner.textContent ?? '').trim();
       inner.innerHTML = text
         .split('')
@@ -59,13 +60,27 @@ export function useHeroAnimation() {
           (ch) => `<span class="sdk-hero__char-wrap"><span class="sdk-hero__char">${ch}</span></span>`,
         )
         .join('');
-      const chars = gsap.utils.toArray<HTMLElement>(inner.querySelectorAll('.sdk-hero__char'));
+      return gsap.utils.toArray<HTMLElement>(inner.querySelectorAll('.sdk-hero__char'));
+    };
+
+    // Split the primary (red) name lines — these carry the decode/scramble.
+    const lines: HTMLElement[][] = [];
+    for (let i = 0; i < nameLineCount; i++) {
+      const chars = splitToCells(primaryInners[i]);
       chars.forEach((c) => {
         c.dataset.final = c.textContent ?? '';
       });
       lines.push(chars);
     }
     const allChars = lines.flat();
+
+    // Mirror the split on the revealed (white) layer so its geometry is pixel-identical
+    // to the primary. Otherwise the primary red is slightly wider and leaks out on the
+    // left of each glyph as a ghost/shadow edge where the reveal circle uncovers it.
+    const revealedLines: HTMLElement[][] = [];
+    for (let i = 0; i < nameLineCount && i < revealedInners.length; i++) {
+      revealedLines.push(splitToCells(revealedInners[i]));
+    }
 
     // Showcase headline inners animate independently (below the fold) — unchanged.
     tweens.push(
@@ -103,6 +118,16 @@ export function useHeroAnimation() {
       allChars.forEach((c) => {
         const wrap = c.parentElement as HTMLElement;
         wrap.style.width = `${Math.ceil(c.getBoundingClientRect().width)}px`;
+      });
+
+      // Copy those exact locked widths onto the revealed layer's matching cells so the
+      // white text overlaps the red pixel-for-pixel — no leaking red ghost edge.
+      revealedLines.forEach((chars, li) => {
+        chars.forEach((c, ci) => {
+          const src = lines[li]?.[ci];
+          if (!src?.parentElement) return;
+          (c.parentElement as HTMLElement).style.width = (src.parentElement as HTMLElement).style.width;
+        });
       });
 
       const tl = gsap.timeline();

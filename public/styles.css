@@ -945,7 +945,9 @@ img {
 .sdk-hero__name--revealed .sdk-hero__name-line {
   font-family: "Marcellus", serif;
   color: #fff;
-  font-weight: 300;
+  /* Match the primary (red) layer's weight so the two copies overlap exactly —
+     this removes the old leftward drift that read as an accidental 3D. */
+  font-weight: 400;
 }
 
 
