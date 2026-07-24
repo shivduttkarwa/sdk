@@ -5,19 +5,19 @@ type Killable = { kill: () => void };
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Hero title reveal — TUNING KNOBS (all times in seconds)
-// The title DECODES in: each letter flickers through random katakana / code glyphs
-// (echoing the preloader's matrix rain) and locks into place with a blur→sharp resolve,
-// cascading across the line. The description below slides up as one line.
+// The title RESOLVES in: each letter simply fades up and sharpens from a soft blur,
+// cascading letter-by-letter across the line — calm and elegant, no glyph scramble.
+// The description below slides up as one line.
 // Tweak these to taste; nothing else needs to change.
 // ─────────────────────────────────────────────────────────────────────────────
 const HERO_REVEAL = {
   startDelay: 0.0, // pause after the loader clears before anything moves
 
   lineGap: 0.3, // delay BETWEEN the two name lines
-  charStagger: 0.045, // delay between characters within a line — the decode cascade
-  scrambleDuration: 0.7, // how long each character scrambles before locking to its letter
-  scrambleRate: 0.55, // 0–1 chance to swap glyph each frame (higher = faster flicker)
-  startBlur: 8, // px blur each character resolves from
+  charStagger: 0.055, // delay between characters within a line — the resolve cascade
+  resolveDuration: 0.9, // how long each character takes to fade + un-blur into place
+  resolveEase: 'power2.out', // easing of that fade/un-blur
+  startBlur: 10, // px blur each character resolves from
 
   descGap: 0.5, // delay after the last name line before the description starts
   descDuration: 0.9,
@@ -29,11 +29,6 @@ const HERO_REVEAL = {
 
   maskOffset: 110, // how far below its mask the description starts (yPercent)
 };
-
-// Glyph pool for the scramble — katakana + code symbols, matching the preloader rain.
-const GLYPHS =
-  'アイウエオカキクケコサシスセソタチツテトナニヌネノハヒフ01<>{}[]/=+*#'.split('');
-const randGlyph = () => GLYPHS[(Math.random() * GLYPHS.length) | 0];
 
 export function useHeroAnimation() {
   useEffect(() => {
@@ -63,7 +58,7 @@ export function useHeroAnimation() {
       return gsap.utils.toArray<HTMLElement>(inner.querySelectorAll('.sdk-hero__char'));
     };
 
-    // Split the primary (red) name lines — these carry the decode/scramble.
+    // Split the primary (red) name lines — these carry the per-letter resolve cascade.
     const lines: HTMLElement[][] = [];
     for (let i = 0; i < nameLineCount; i++) {
       const chars = splitToCells(primaryInners[i]);
@@ -113,8 +108,8 @@ export function useHeroAnimation() {
       window.clearTimeout(fallback);
       window.removeEventListener('sdk:preloader-done', play);
 
-      // Width-lock each cell to its final glyph now that fonts are ready — keeps the
-      // variable-width scramble glyphs from reflowing the title.
+      // Width-lock each cell to its glyph now that fonts are ready. This also gives the
+      // revealed layer an exact width to copy (below) so the two layers align pixel-perfect.
       allChars.forEach((c) => {
         const wrap = c.parentElement as HTMLElement;
         wrap.style.width = `${Math.ceil(c.getBoundingClientRect().width)}px`;
@@ -135,29 +130,12 @@ export function useHeroAnimation() {
       lines.forEach((chars, li) => {
         chars.forEach((el, ci) => {
           const at = k.startDelay + li * k.lineGap + ci * k.charStagger;
-          const final = el.dataset.final ?? el.textContent ?? '';
-          const proxy = { p: 0 };
-          // Scramble: flicker random glyphs, then lock to the final letter.
+          // Soft resolve: fade in and sharpen from blur in a staggered wave. No scramble.
           tl.to(
-            proxy,
-            {
-              p: 1,
-              duration: k.scrambleDuration,
-              ease: 'none',
-              onStart: () => {
-                el.style.opacity = '1';
-              },
-              onUpdate: () => {
-                if (Math.random() < k.scrambleRate) el.textContent = randGlyph();
-              },
-              onComplete: () => {
-                el.textContent = final;
-              },
-            },
+            el,
+            { opacity: 1, filter: 'blur(0px)', duration: k.resolveDuration, ease: k.resolveEase },
             at,
           );
-          // Resolve blur → sharp in parallel.
-          tl.to(el, { filter: 'blur(0px)', duration: k.scrambleDuration, ease: 'power2.out' }, at);
         });
       });
 
