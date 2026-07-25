@@ -3066,25 +3066,30 @@ img {
 }
 
 @media (max-width: 900px) {
-  html, body {
-    overflow-x: hidden;
-  }
-
+  /* MUST NOT be `overflow-x: hidden`. `hidden` turns html/body into a scroll container,
+     which silently disables EVERY `position: sticky` panel below (work stage, tech-stack
+     card layers, process frame, stats runway) and forces GSAP ScrollTrigger to fall back
+     from `pinType: "fixed"` to `"transform"` — that combination was the mobile scroll
+     stutter plus the dead, animation-free scroll through Featured Projects. `clip` clips
+     the same horizontal overflow WITHOUT creating a scroll box, so sticky and pinning
+     behave exactly as they do on desktop (which already uses clip — see `body` above). */
   body {
+    overflow-x: clip;
     background-image: none;
     background-attachment: scroll;
   }
 
-  /* Mobile keeps the original scroll-attached background painted on the element itself. */
+  /* Mobile drops the photo backdrop entirely for a flat dark base. The desktop treatment
+     is a viewport-sized `position: fixed` ::before scoped by `clip-path: inset(0)`; that
+     pseudo is disabled here, and painting hero-main-bg.jpg directly on this element meant
+     `background-size: cover` scaling a 16:9 photo across a ~16,000px-tall box — it
+     rendered as a hugely magnified smear. A solid dark ground reads correctly at any
+     document height and costs nothing to scroll. */
   .sdk-bg-scope,
   .site-footer {
     clip-path: none;
-    background-image:
-      linear-gradient(160deg, rgba(80,8,18,0.82) 0%, rgba(20,4,10,0.88) 40%, rgba(8,4,22,0.90) 70%, rgba(15,5,30,0.85) 100%),
-      url('assets/images/hero-main-bg.jpg');
-    background-size: cover;
-    background-position: center top;
-    background-repeat: no-repeat;
+    background-image: none;
+    background-color: var(--bg);
   }
 
   .sdk-bg-scope::before,
@@ -3102,6 +3107,14 @@ img {
     flex-direction: column;
     gap: 0;
     position: relative;
+    /* The mobile sword entrance parks the blade at `x: vw + 200` and the injected step
+       images slide in from `translateX(160)`, so this section is the one real source of
+       horizontal overflow on mobile (it pushed body's scrollWidth to ~666px). That used to
+       be absorbed by `overflow-x: hidden` on html/body — which cost every sticky panel on
+       the page. Clipping it here instead keeps the layout viewport honest at device width.
+       `clip` on x with y left visible does not create a scroll box, so the blade is still
+       free to arc in from above (y: -300) and travel down the rail. */
+    overflow-x: clip;
   }
 
   /* Spine col repositioned as absolute overlay on left line */
@@ -4046,28 +4059,65 @@ img {
   .sdk-work__runway { height: 640vh; }
   .sdk-work__sticky { height: 100svh; min-height: 34rem; }
   .sdk-work__seam { display: none; }
+  /* Clears the fixed nav pill (~4.25rem tall incl. its top offset). On desktop this row
+     splits to the far left/right edges so the centred pill never reaches it; at this width
+     it runs straight underneath, and anything above ~4.5rem is hidden behind the pill. */
   .sdk-work__head {
-    top: clamp(1.5rem, 3.5vh, 3rem);
+    top: clamp(4.75rem, 9svh, 5.5rem);
     flex-direction: column;
     align-items: flex-start;
     gap: .35rem;
     font-size: .64rem;
     letter-spacing: .22em;
   }
+  /* Full-bleed image like desktop: the stage fills the whole 100svh sticky panel and the
+     story copy sits ON the photo, rather than the old split (copy in the top ~44svh, image
+     confined to the band below it). */
   .sdk-work__stage {
-    top: max(44svh, 17rem);
+    top: 0;
     bottom: 0;
   }
+
+  /* Legibility scrim for that overlay. The WebGL shader already darkens its own bottom
+     ~28%, but the <img> fallback (no WebGL / reduced motion) does not, and both the head
+     row and the story now sit over open photo. Darkens top and bottom, leaves the middle
+     of the image clear. Above the canvas (z-index 2) but below the stories (z-index 6).
+     The lower ramp is tuned to the story box, which starts ~74% down the panel: it is
+     already at .72 by the time the meta row begins, so even the busiest cover (the code
+     screenshot) stays behind the copy rather than competing with it. */
+  .sdk-work__stage::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: 3;
+    pointer-events: none;
+    background: linear-gradient(
+      180deg,
+      rgba(5,3,10,.86) 0%,
+      rgba(5,3,10,.42) 24%,
+      rgba(5,3,10,0) 42%,
+      rgba(5,3,10,.46) 60%,
+      rgba(5,3,10,.72) 73%,
+      rgba(5,3,10,.95) 100%
+    );
+  }
+
   .sdk-work-story,
   .sdk-work-story[data-side="left"],
   .sdk-work-story[data-side="right"] {
-    top: clamp(5rem, 10svh, 7.5rem);
+    /* Anchored to the bottom of the frame, over the darkest part of the scrim — the same
+       relationship desktop has (copy over the shader's darkened lower area). `top: auto`
+       is required to cancel the base rule's `top: 50%`. */
+    top: auto;
+    bottom: clamp(3rem, 8svh, 5rem);
     left: 50%;
     right: auto;
     width: min(92vw, 34rem);
     max-width: none;
     text-align: left;
-    transform: translateX(-50%);
+    /* Keeps the JS entrance push (`--shift`, set per-story by selectedWork.core) which the
+       previous bare `translateX(-50%)` silently dropped on mobile. */
+    transform: translateX(calc(-50% + var(--shift, 0rem)));
   }
   .sdk-work-story[data-side="right"] .sdk-work-story__meta {
     justify-content: flex-start;

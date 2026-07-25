@@ -59,13 +59,21 @@ export function useIntroBody() {
 
       const words = el.querySelectorAll('.sdk-intro__word');
 
+      // Reveal window. Desktop keys off the section top, which works there because
+      // `.sdk-intro` is TALLER than the viewport (≈1117px vs 900px). On mobile it is
+      // SHORTER (≈687px vs 844px), so `top 30%` fires far later relative to the paragraph:
+      // measured at the point where the paragraph sits centred in the viewport, only 13 of
+      // 28 words had played on mobile versus 23 of 28 on desktop. Keying off the paragraph
+      // itself with an earlier start restores the desktop feel, and the shorter scrub keeps
+      // it tracking the finger instead of visibly catching up. Evaluated once, matching how
+      // useTechStackPin and processTimeline.core gate their own breakpoints.
+      const isMobile = window.matchMedia('(max-width: 900px)').matches;
+      const revealTrigger = isMobile
+        ? { trigger: el, start: 'top 88%', end: 'top 30%', scrub: 0.6 }
+        : { trigger: '.sdk-intro', start: 'top 30%', end: 'top -20%', scrub: 1.2 };
+
       animTl = gsap.timeline({
-        scrollTrigger: {
-          trigger: '.sdk-intro',
-          start: 'top 30%',
-          end: 'top -20%',
-          scrub: 1.2,
-        },
+        scrollTrigger: revealTrigger,
       });
 
       const dur = 0.25;
