@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { runInitialRefresh } from '@/lib/scrollOrchestrator';
 import { useSectionTitles } from '@/hooks/useSectionTitles';
 import { useReveal } from '@/hooks/useReveal';
+import { usePendingAnchor } from '@/hooks/usePendingAnchor';
 import Preloader from '@/components/Preloader';
 import HeroCta from '@/components/HeroCta';
 import Hero from '@/components/Hero';
@@ -29,6 +30,9 @@ export default function Home() {
   // Runs after every section hook has created its ScrollTriggers (React runs child effects
   // before parent effects), coordinating the single initial refresh.
   useEffect(() => runInitialRefresh(), []);
+
+  // Scroll to a section anchor stashed by a Nav click made from another route.
+  usePendingAnchor();
 
   const [showPreloader] = useState(() => !preloaderDone);
   useEffect(() => {

@@ -192,8 +192,14 @@ export function mountSelectedWork(): () => void {
           powerPreference: 'low-power'
         }) as WebGLRenderingContext;
         if (!gl) throw new Error('WebGL unavailable');
+        // Expose the context immediately so the disposer can loseContext() even when
+        // teardown happens while the cover images below are still loading.
+        glRef = gl;
 
         const loaded = await Promise.all(items.map(item => loadImage(item.image)));
+        // The section can unmount (route change) while the images load; the disposer has
+        // already run at that point, so nothing created past here would ever be cleaned up.
+        if (disposed) throw new Error('Disposed during image load');
 
         const vertex = `
           attribute vec2 a_position;
@@ -445,7 +451,6 @@ export function mountSelectedWork(): () => void {
         window.addEventListener('resize', resize, { passive: true });
         stage.classList.add('webgl-on');
         glResize = resize;
-        glRef = gl;
         return { render };
       }
 
@@ -514,10 +519,12 @@ export function mountSelectedWork(): () => void {
 
       initWebGL()
         .then(result => {
+          if (disposed) return;
           renderer = result;
           if (!raf) raf = requestAnimationFrame(animate);
         })
         .catch(err => {
+          if (disposed) return;
           console.warn('Work WebGL unavailable. Using image fallback.', err);
           canvas.style.display = 'none';
           if (!raf) raf = requestAnimationFrame(animate);

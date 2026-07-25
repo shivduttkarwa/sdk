@@ -6,6 +6,9 @@ import Nav from './components/Nav';
 import PageTransition from './components/PageTransition';
 import Home from './pages/Home';
 import Works from './pages/Works';
+import About from './pages/About';
+import Services from './pages/Services';
+import ContactPage from './pages/ContactPage';
 import ProjectDetail from './pages/ProjectDetail';
 
 // Routing shell. LenisProvider (smooth scroll), Grain (global grain overlay) and Nav
@@ -32,6 +35,9 @@ export default function App() {
       <div id="page-view">
         {route.name === 'home' && <Home />}
         {route.name === 'works' && <Works />}
+        {route.name === 'about' && <About />}
+        {route.name === 'services' && <Services />}
+        {route.name === 'contact' && <ContactPage />}
         {/* Keyed by slug so each project remounts — resets state and replays entrance CSS. */}
         {route.name === 'project' && <ProjectDetail key={route.slug} slug={route.slug} />}
       </div>

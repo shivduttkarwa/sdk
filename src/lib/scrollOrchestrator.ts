@@ -11,11 +11,14 @@ export function runInitialRefresh(): () => void {
 
   let raf1 = 0;
   let raf2 = 0;
+  let cancelled = false;
   const fontsReady =
     (document as Document & { fonts?: { ready: Promise<unknown> } }).fonts?.ready ??
     Promise.resolve();
 
   fontsReady.then(() => {
+    // Home can unmount before fonts resolve; don't fire a stray refresh on the next page.
+    if (cancelled) return;
     // Two rAFs so layout (fonts applied) has fully settled before measuring.
     raf1 = requestAnimationFrame(() => {
       raf2 = requestAnimationFrame(refresh);
@@ -28,6 +31,7 @@ export function runInitialRefresh(): () => void {
   }
 
   return () => {
+    cancelled = true;
     if (raf1) cancelAnimationFrame(raf1);
     if (raf2) cancelAnimationFrame(raf2);
     window.removeEventListener('load', onLoad);

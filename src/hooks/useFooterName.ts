@@ -18,7 +18,16 @@ export function useFooterName() {
     }
 
     fit();
+    // On deep-link loads (no preloader delay) the first fit() measures fallback-font
+    // metrics; refit once the real fonts are in so the signature spans the viewport.
+    let disposed = false;
+    document.fonts.ready.then(() => {
+      if (!disposed) fit();
+    });
     window.addEventListener('resize', fit, { passive: true });
-    return () => window.removeEventListener('resize', fit);
+    return () => {
+      disposed = true;
+      window.removeEventListener('resize', fit);
+    };
   }, []);
 }

@@ -82,7 +82,11 @@ export default function Nav() {
                       </span>
                       <span className="sdk-nav__link-arrow">→</span>
                     </a>
-                    <a href="#services" className="sdk-nav__link is-active">
+                    <a
+                      href="#/services"
+                      className="sdk-nav__link is-active"
+                      data-transition-label="Services"
+                    >
                       <span className="sdk-nav__link-index">02</span>
                       <span className="sdk-nav__link-body">
                         <span className="sdk-nav__link-label">Services</span>
@@ -90,7 +94,7 @@ export default function Nav() {
                       </span>
                       <span className="sdk-nav__link-arrow">→</span>
                     </a>
-                    <a href="#about" className="sdk-nav__link">
+                    <a href="#/about" className="sdk-nav__link" data-transition-label="About">
                       <span className="sdk-nav__link-index">03</span>
                       <span className="sdk-nav__link-body">
                         <span className="sdk-nav__link-label">About</span>
@@ -98,7 +102,7 @@ export default function Nav() {
                       </span>
                       <span className="sdk-nav__link-arrow">→</span>
                     </a>
-                    <a href="#contact" className="sdk-nav__link">
+                    <a href="#/contact" className="sdk-nav__link" data-transition-label="Contact">
                       <span className="sdk-nav__link-index">04</span>
                       <span className="sdk-nav__link-body">
                         <span className="sdk-nav__link-label">Contact</span>

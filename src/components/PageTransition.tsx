@@ -1,5 +1,5 @@
 import { useEffect, useRef } from 'react';
-import { gsap } from '@/lib/gsapSetup';
+import { gsap, ScrollTrigger } from '@/lib/gsapSetup';
 
 // Page transition: the outgoing page lifts up and fades behind a dark dim overlay, the route
 // swaps while hidden, then the incoming page rises from below and fades in — after which its
@@ -40,8 +40,14 @@ export default function PageTransition() {
       const href = link.getAttribute('href');
       if (!href) return;
 
-      if (href === window.location.hash) {
+      // Same-route click (the logo on Home, or the current page's nav link): scroll back
+      // to the top instead of a dead click. '' and '#/' are both Home.
+      if (href === (window.location.hash || '#/')) {
         event.preventDefault();
+        if (animating.current) return;
+        const lenis = window.lenis;
+        if (lenis) lenis.scrollTo(0, { duration: 1.2 });
+        else window.scrollTo({ top: 0, behavior: reduce ? 'auto' : 'smooth' });
         return;
       }
       event.preventDefault();
@@ -64,6 +70,9 @@ export default function PageTransition() {
             gsap.set(dim, { opacity: 0 });
             dim.style.pointerEvents = 'none';
             animating.current = false;
+            // The incoming page's ScrollTriggers were measured while #page-view was still
+            // translated by the transition; re-measure now that the transform is cleared.
+            ScrollTrigger.refresh();
           },
         })
         // Lift the current page away + dim in.
