@@ -1,9 +1,11 @@
 import type { CSSProperties } from 'react';
 
 import { useTechStackPin } from '@/hooks/useTechStackPin';
+import { useTechWater } from '@/hooks/useTechWater';
 
 export default function TechStack() {
   useTechStackPin();
+  useTechWater();
   return (
     <section id="services" className="sdk-stack-section">
       <div className="sdk-stack__inner">

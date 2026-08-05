@@ -2498,6 +2498,30 @@ img {
   mix-blend-mode: screen;
 }
 
+/* Fluid-reveal canvas for the portrait (see techWater.core). Sits under the ::before /
+   ::after gradient overlays (z-index 2) so the column still blends into the stage exactly
+   as before, and carries the same horizontal fade the <img> used so its right edge
+   dissolves toward the cards. */
+.sdk-tech-pin__canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1;
+  pointer-events: none;
+  -webkit-mask-image: linear-gradient(90deg, #000 0%, #000 42%, rgba(0,0,0,.7) 62%, transparent 94%);
+  mask-image: linear-gradient(90deg, #000 0%, #000 42%, rgba(0,0,0,.7) 62%, transparent 94%);
+}
+
+/* Added by techWater.core only once the sim is actually running, so the <img> keeps its
+   original dimmed values wherever WebGL is unavailable (and on mobile, where the sim never
+   mounts). With the veil present the portrait is brightened to near-full, because the
+   dimming is now the veil's job — erasing it is what makes the reveal read. */
+.sdk-tech-pin__portrait.is-fluid .sdk-tech-pin__image {
+  opacity: 1;
+  filter: saturate(.95) contrast(1.06) brightness(.92);
+}
+
 .sdk-tech-pin__image {
   position: absolute;
   inset: 0;
