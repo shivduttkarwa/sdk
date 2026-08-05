@@ -10,6 +10,10 @@ import { fileURLToPath, URL } from 'node:url';
 export default defineConfig({
   plugins: [react()],
   base: './',
+  // `host: true` binds 0.0.0.0 instead of localhost so phones on the same wifi can reach
+  // the dev server and the production preview. Vite prints the LAN URL on start.
+  server: { host: true },
+  preview: { host: true },
   resolve: {
     alias: {
       '@': fileURLToPath(new URL('./src', import.meta.url)),

@@ -17,14 +17,23 @@ export function useShowcasePin() {
     if (heroWrap && showcaseSection) {
       const topInner = showcaseSection.querySelector('.sdk-showcase__headline--top .inner');
       const bottomInner = showcaseSection.querySelector('.sdk-showcase__headline--bottom .inner');
+      // On touch there is no Lenis smoothing (it only lerps wheel), so `scrub: true` maps
+      // raw finger deltas straight onto a width/height layout animation — it steps. A short
+      // catch-up scrub irons that out; desktop keeps `true` because Lenis's lerp already
+      // smooths it and double-smoothing feels laggy. Same breakpoint + once-only evaluation
+      // as useIntroBody and processTimeline.core.
+      const isMobile = window.matchMedia('(max-width: 900px)').matches;
       const tl = gsap.timeline({
         scrollTrigger: {
           trigger: showcaseSection,
           start: 'top top',
           end: '+=100%',
-          scrub: true,
+          scrub: isMobile ? 0.6 : true,
           pin: true,
           pinSpacing: true,
+          // Native touch scroll is async, so the position:fixed swap at pin start lands a
+          // frame late and visibly jumps; anticipatePin applies it one frame early.
+          anticipatePin: 1,
           invalidateOnRefresh: true,
         },
       });
@@ -64,11 +73,25 @@ export function useShowcasePin() {
       }
     }
 
-    // Refresh GSAP when mobile browser chrome shows/hides (changes visual viewport height)
+    // Refresh GSAP on real viewport reflows (orientation, keyboard) — but NOT on browser
+    // chrome show/hide. The chrome collapse fires this on the user's first downward flick,
+    // and the unconditional refresh() it used to trigger recalced every trigger on the page
+    // mid-momentum — the "jerk" approaching the showcase. Chrome deltas are height-only and
+    // ≲100px; orientation changes width and keyboards move height by 250px+, so gating on
+    // (width changed OR height delta > 150) passes exactly the reflows that need a refresh.
     let vvRefreshTimer: number | undefined;
+    let vvW = window.visualViewport?.width ?? window.innerWidth;
+    let vvH = window.visualViewport?.height ?? window.innerHeight;
     const onVvResize = () => {
+      const vv = window.visualViewport;
+      if (!vv) return;
+      if (Math.abs(vv.width - vvW) < 1 && Math.abs(vv.height - vvH) < 150) return;
       clearTimeout(vvRefreshTimer);
-      vvRefreshTimer = window.setTimeout(() => ScrollTrigger.refresh(), 100);
+      vvRefreshTimer = window.setTimeout(() => {
+        vvW = vv.width;
+        vvH = vv.height;
+        ScrollTrigger.refresh();
+      }, 100);
     };
     if (window.visualViewport) {
       window.visualViewport.addEventListener('resize', onVvResize);

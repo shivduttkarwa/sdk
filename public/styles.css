@@ -37,10 +37,12 @@
   --line-strong: rgba(255,255,255,0.24);
   --blue: #2f80ff;
   --purple: #8f5cff;
-  --green: #b91729;
   --gold: #f5d76e;
   --danger: #ff4d8d;
   --red: #E03F4F;
+  /* The hero-title red darkened ~12% (same hue, 354°) for type that needs to sit back a
+     step from the primary accent without reading as a different colour. */
+  --red-deep: #C53746;
   --radius: 1.75rem;
   --radius-sm: 1rem;
   --max: 90rem;
@@ -129,7 +131,7 @@ img {
 
 ::selection {
   color: #050505;
-  background: var(--green);
+  background: var(--red);
 }
 
 .sdk-grain {
@@ -160,7 +162,7 @@ img {
   display: inline-flex;
   align-items: center;
   gap: 0.625rem;
-  color: var(--green);
+  color: var(--red);
   font-size: 0.8125rem;
   font-weight: 800;
   text-transform: uppercase;
@@ -233,7 +235,7 @@ img {
   position: absolute;
   inset: auto 0 0 0;
   height: 0;
-  background: var(--green);
+  background: var(--red);
   transition: height .38s var(--ease);
   z-index: 1;
 }
@@ -1454,7 +1456,7 @@ img {
 }
 
 .sdk-intro__highlight {
-  color: var(--green);
+  color: var(--red);
   font-style: italic;
 }
 
@@ -1547,7 +1549,7 @@ img {
   font-family: "Bricolage Grotesque", sans-serif;
   font-size: clamp(2.25rem, 6vw, 5.625rem);
   font-weight: 800;
-  color: var(--green);
+  color: var(--red);
   transform: translateY(110%);
   display: block;
 }
@@ -1630,7 +1632,7 @@ img {
   transition: color .25s var(--ease);
 }
 
-.footer a:hover { color: var(--green); }
+.footer a:hover { color: var(--red); }
 
 .footer-col h4 {
   color: var(--text);
@@ -1771,13 +1773,24 @@ img {
   }
 
   .sdk-showcase {
-    height: 100dvh;
+    /* Was 100dvh — the only dynamic viewport unit in the file, and it sat on exactly the
+       wrong section: dvh re-resolves when the URL bar collapses, which happens on the first
+       downward flick, i.e. right as this section approaches its pin. The section growing
+       ~60px mid-momentum shoved everything below it down and read as the scroll sticking.
+       lvh is the same height with chrome hidden (the state during the pinned fullscreen
+       reel) but constant, so nothing relayouts under the user's finger. svh would also be
+       constant but leaves a chrome-sized seam of the next section visible while the reel
+       is fullscreen. */
+    height: 100lvh;
   }
 
   .sdk-showcase__reel-wrap {
-    width: 92vw;
-    height: clamp(14rem, 55vh, 22rem);
-    border-radius: 1.75rem;
+    /* 92vw left ~16px gutters — near-full-bleed, so the rounding barely registered and
+       the frame read as too wide. 82vw gives the card real gutters (9vw each side) and
+       room for the corners to show; the scrub still expands it to a full 100vw/100vh. */
+    width: 82vw;
+    height: clamp(13rem, 48vh, 20rem);
+    border-radius: 2rem;
   }
 
   .sdk-showcase .sdk-showcase__headline--top,
@@ -2732,7 +2745,12 @@ img {
   min-height: 42.5rem;
   display: flex;
   align-items: center;
-  justify-content: flex-end;
+  /* The track between the portrait column and the right gutter is 43vw — exactly the card's
+     fluid width — so below ~1190px this is a no-op. Past that the card's 32rem cap stops it
+     growing while the track keeps widening, and flex-end dumped every pixel of the resulting
+     slack on the card's left, stranding it against the right gutter. flex-start throws it all
+     to the right instead, so the card stays tucked against the portrait column at any width. */
+  justify-content: flex-start;
   box-sizing: border-box;
   padding: 0 clamp(2rem, 7vw, 8rem) 0 clamp(25rem, 50vw, 58rem);
 }
@@ -2820,7 +2838,7 @@ img {
   height: auto;
   display: block;
   object-fit: contain;
-  filter: drop-shadow(0 8px 24px rgba(185, 23, 41, 0.6));
+  filter: drop-shadow(0 8px 24px rgba(224,63,79,.6));
 }
 
 .sdk-process__spine-track {
@@ -2835,7 +2853,7 @@ img {
 .sdk-process__spine-fill {
   width: 100%;
   height: 0%;
-  background: var(--green);
+  background: var(--red);
   transition: none;
 }
 
@@ -2857,8 +2875,8 @@ img {
   width: 0.6875rem;
   height: 0.6875rem;
   border-radius: 50%;
-  background: rgba(185,23,41,.12);
-  border: 1px solid rgba(185,23,41,.2);
+  background: rgba(224,63,79,.12);
+  border: 1px solid rgba(224,63,79,.2);
   z-index: 2;
   transition: background .5s ease, border-color .5s ease, box-shadow .5s ease;
 }
@@ -2871,8 +2889,8 @@ img {
   margin: -0.8125rem 0 0 -0.8125rem;
   border-radius: 50%;
   border: 1px solid transparent;
-  border-top-color: rgba(185,23,41,0);
-  border-right-color: rgba(185,23,41,0);
+  border-top-color: rgba(224,63,79,0);
+  border-right-color: rgba(224,63,79,0);
   pointer-events: none;
   transition: border-color .4s ease;
 }
@@ -2884,19 +2902,19 @@ img {
   top: 50%; left: 50%;
   margin: -0.34375rem 0 0 -0.34375rem;
   border-radius: 50%;
-  border: 1px solid rgba(185,23,41,0);
+  border: 1px solid rgba(224,63,79,0);
   pointer-events: none;
 }
 
 .sdk-process__step.is-active .sdk-process__step-marker {
-  background: var(--green);
-  border-color: var(--green);
-  box-shadow: 0 0 5px rgba(185,23,41,1), 0 0 20px rgba(185,23,41,.4), 0 0 40px rgba(185,23,41,.15);
+  background: var(--red);
+  border-color: var(--red);
+  box-shadow: 0 0 5px rgba(224,63,79,1), 0 0 20px rgba(224,63,79,.4), 0 0 40px rgba(224,63,79,.15);
 }
 
 .sdk-process__step.is-active .sdk-process__step-marker::before {
-  border-top-color: rgba(185,23,41,.95);
-  border-right-color: rgba(185,23,41,.25);
+  border-top-color: rgba(224,63,79,.95);
+  border-right-color: rgba(224,63,79,.25);
   animation: proc-orbit 2.2s linear infinite;
 }
 
@@ -2910,8 +2928,8 @@ img {
 }
 
 @keyframes proc-pulse {
-  0%   { border-color: rgba(185,23,41,.7); transform: scale(1); opacity: 1; }
-  100% { border-color: rgba(185,23,41,0); transform: scale(5); opacity: 0; }
+  0%   { border-color: rgba(224,63,79,.7); transform: scale(1); opacity: 1; }
+  100% { border-color: rgba(224,63,79,0); transform: scale(5); opacity: 0; }
 }
 
 
@@ -2921,13 +2939,13 @@ img {
   font-weight: 700;
   line-height: .85;
   letter-spacing: -.04em;
-  color: rgba(185,23,41,.08);
+  color: rgba(224,63,79,.08);
   margin: 0 0 1rem;
   transition: color .7s ease;
 }
 
 .sdk-process__step.is-active .sdk-process__step-index {
-  color: rgba(185,23,41,.32);
+  color: rgba(224,63,79,.32);
 }
 
 .sdk-process__step-title {
@@ -2936,21 +2954,21 @@ img {
   font-weight: 700;
   line-height: 1.05;
   letter-spacing: -.03em;
-  color: var(--green);
+  color: var(--red);
   margin: 0 0 1.6rem;
 }
 
 .sdk-process__step-divider {
   width: 2.5rem;
   height: 1px;
-  background: rgba(185,23,41,.2);
+  background: rgba(224,63,79,.2);
   margin: 0 0 1.6rem;
   transition: width .7s cubic-bezier(.16,1,.3,1), background .5s ease;
 }
 
 .sdk-process__step.is-active .sdk-process__step-divider {
   width: 6rem;
-  background: rgba(185,23,41,.55);
+  background: rgba(224,63,79,.55);
 }
 
 .sdk-process__step-desc {
@@ -3016,7 +3034,7 @@ img {
 }
 
 .sdk-process__frame.is-flipping {
-  box-shadow: 0 0 60px rgba(185,23,41,.12);
+  box-shadow: 0 0 60px rgba(224,63,79,.12);
 }
 
 .sdk-process__frame-stack {
@@ -3056,12 +3074,12 @@ img {
   font-weight: 700;
   letter-spacing: .15em;
   text-transform: uppercase;
-  color: var(--green);
+  color: var(--red);
   background: rgba(5,3,10,.6);
   backdrop-filter: blur(0.375rem);
   padding: 0.25rem 0.625rem;
   border-radius: 999px;
-  border: 1px solid rgba(185,23,41,.12);
+  border: 1px solid rgba(224,63,79,.12);
   z-index: 2;
 }
 
@@ -3115,13 +3133,26 @@ img {
        `clip` on x with y left visible does not create a scroll box, so the blade is still
        free to arc in from above (y: -300) and travel down the rail. */
     overflow-x: clip;
+    /* The clip edge used to land on the section's 1.25rem gutter — exactly where the sword
+       rides. The wrap is centred on the rail (translateX(-50%)) and the blade sits in the
+       middle of a mostly-transparent PNG, so clipping at the box's own left edge sliced the
+       blade down its length. Bleeding the border box out to the screen edge (negative margin
+       cancelled by equal padding) moves the clip edge left of the blade while leaving the
+       content box — and therefore the right-hand clip edge that stops the real overflow —
+       exactly where it was. Overflow to the left of the viewport never extends scrollWidth,
+       so this cannot bring the horizontal scrollbar back. */
+    margin-left: -1.25rem;
+    padding-left: 1.25rem;
   }
 
-  /* Spine col repositioned as absolute overlay on left line */
+  /* Spine col repositioned as absolute overlay on left line. `left` matches the layout's
+     padding-left: the containing block is the layout's padding box, which now starts at the
+     screen edge, so this keeps the sword on the rail that .sdk-process__steps-col::before
+     draws at the content edge. */
   .sdk-process__spine-col {
     display: block;
     position: absolute;
-    left: 0;
+    left: 1.25rem;
     top: 0;
     bottom: 0;
     width: 0;
@@ -3134,7 +3165,11 @@ img {
     position: absolute;
     left: 0;
     top: 0;
-    width: 7rem;
+    /* Ceiling is set by the rail, which sits 1.25rem from the screen edge: the wrap is
+       centred on it and the opaque blade is 18.1% of the PNG's width, so half the blade
+       is 0.0905 x this value and must stay under 20px — i.e. ~13.8rem. 10rem leaves the
+       blade ~5px clear of the edge. Going past that clips the blade lengthwise again. */
+    width: 10rem;
     transform: translateX(-50%);
   }
 
@@ -3171,7 +3206,7 @@ img {
     top: 0;
     bottom: 0;
     width: 1px;
-    background: rgba(185,23,41,0.25);
+    background: rgba(224,63,79,0.25);
   }
 
   .sdk-process__step-marker { right: auto; left: -5.5px; }
@@ -3236,7 +3271,7 @@ img {
   top: -10rem; right: -5rem;
   width: 32.5rem; height: 32.5rem;
   border-radius: 50%;
-  background: radial-gradient(circle, rgba(185,23,41,0.14) 0%, transparent 70%);
+  background: radial-gradient(circle, rgba(224,63,79,0.14) 0%, transparent 70%);
   pointer-events: none;
 }
 
@@ -3392,7 +3427,7 @@ img {
   background: linear-gradient(90deg,
     transparent,
     rgba(245,242,234,0.05) 15%,
-    rgba(185,23,41,0.3) 50%,
+    rgba(224,63,79,0.3) 50%,
     rgba(245,242,234,0.05) 85%,
     transparent
   );
@@ -3414,7 +3449,7 @@ img {
   white-space: nowrap;
   color: transparent;
   -webkit-text-stroke: 1.5px rgba(245,242,234,0.18);
-  background: linear-gradient(135deg, rgba(245,242,234,0.14) 0%, rgba(185,23,41,0.18) 50%, rgba(245,242,234,0.10) 100%);
+  background: linear-gradient(135deg, rgba(245,242,234,0.14) 0%, rgba(224,63,79,0.18) 50%, rgba(245,242,234,0.10) 100%);
   -webkit-background-clip: text;
   background-clip: text;
   user-select: none;
@@ -3928,7 +3963,13 @@ img {
 .sdk-work-story {
   position: absolute;
   top: 50%;
-  max-width: min(32rem, 38vw);
+  /* Sized off the longest single word in a title, not the average: the h3 is
+     clamp(3.4rem, 8.2vw, 8rem) uppercase, so "SHAMBALA" measures 615px at the 8rem cap.
+     At the old 32rem/38vw the word overran the box by ~103px and, on the right-hand
+     stories, ran 22px off the viewport. 40rem/42vw tracks the h3's own scaling and keeps
+     20-33px of clearance from 1000px up. Overridden entirely below 980px, where the
+     stories go full-width and the h3 drops to clamp(2.1rem, 9vw, 3.4rem). */
+  max-width: min(40rem, 42vw);
   opacity: 0;
   transform: translateY(-50%) translateX(var(--shift, 0));
   filter: blur(5px);
