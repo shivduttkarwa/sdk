@@ -34,7 +34,11 @@ export default function Home() {
   // Scroll to a section anchor stashed by a Nav click made from another route.
   usePendingAnchor();
 
-  const [showPreloader] = useState(() => !preloaderDone);
+  // TEMP: preloader switched off for the current device-testing round — every reload was
+  // costing the full intro. Hero reveal is unaffected (useHeroAnimation falls back to its
+  // 150ms no-preloader path). To restore, delete DISABLE_PRELOADER and the `&&` clause.
+  const DISABLE_PRELOADER = true;
+  const [showPreloader] = useState(() => !DISABLE_PRELOADER && !preloaderDone);
   useEffect(() => {
     preloaderDone = true;
   }, []);

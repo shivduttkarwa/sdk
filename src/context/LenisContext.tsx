@@ -33,6 +33,10 @@ export function LenisProvider({ children }: { children: ReactNode }) {
       smoothWheel: true,
       wheelMultiplier: 1,
       touchMultiplier: 1.2,
+      // NOTE: syncTouch: true was tried here (to sync the showcase pin with touch scroll)
+      // and rejected — JS-driven touch scrolling stuttered on a real device. Touch stays
+      // native; sections that must hold at the viewport use CSS position: sticky instead
+      // of ScrollTrigger pins, which the compositor applies exactly at any flick speed.
     });
     window.lenis = instance;
 

@@ -27,8 +27,13 @@ export function useSectionTitles() {
       const eyebrow = sec.querySelector('.sdk-eyebrow');
       const subtitle = sec.querySelector('.sdk-stack__subtitle');
 
+      // Was `once: true` — one play per page load. Next to the scrub/pin-driven neighbours
+      // (intro heading, tech pin, work stories) that replay on every approach, a one-shot
+      // title reads as having no animation at all from the second pass on. restart/reset:
+      // play on every downward entry, re-arm only when scrolled back ABOVE the section
+      // (enterBack stays `none` so returning from below doesn't replay mid-view).
       const tl = gsap.timeline({
-        scrollTrigger: { trigger: sec, start: 'top 65%', once: true },
+        scrollTrigger: { trigger: sec, start: 'top 65%', toggleActions: 'restart none none reset' },
       });
       if (tl.scrollTrigger) created.push(tl.scrollTrigger);
       created.push(tl);

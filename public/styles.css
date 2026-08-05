@@ -954,8 +954,17 @@ img {
 
 
 
-.sdk-showcase {
+/* Scroll runway for the showcase: section height + one viewport of hold, replacing the
+   old ScrollTrigger pin spacer. The sticky section rides it while the reel expansion
+   scrubs across the extra viewport. */
+.sdk-showcase-runway {
   position: relative;
+  height: 200svh;
+}
+
+.sdk-showcase {
+  position: sticky;
+  top: 0;
   height: 100svh;
   display: flex;
   flex-direction: column;
@@ -1782,6 +1791,13 @@ img {
        constant but leaves a chrome-sized seam of the next section visible while the reel
        is fullscreen. */
     height: 100lvh;
+  }
+
+  /* Section (100lvh) + one visible viewport of hold. The hold uses svh on purpose: the
+     scrub window is runway minus viewport, which the browser measures against the visual
+     viewport — svh keeps the hold distance constant whether or not chrome is showing. */
+  .sdk-showcase-runway {
+    height: calc(100lvh + 100svh);
   }
 
   .sdk-showcase__reel-wrap {
@@ -3117,6 +3133,10 @@ img {
 
   .sdk-stack-section { padding: 5rem 1.25rem 6rem; }
   .sdk-intro__inner { padding: 0 1.25rem; }
+  /* The base clamp's fluid term (5.8vw) never wins at phone widths, so the paragraph sat
+     at a flat 36px floor. Re-clamp against a viewport-tracking 11vw so the statement fills
+     more of the screen: 360px -> ~40px, 407px -> ~45px, capped 3.5rem near tablet. */
+  .sdk-intro__body { font-size: clamp(2.5rem, 11vw, 3.5rem); }
   .sdk-stack__grid { grid-template-columns: 1fr; }
   .sdk-stack__card--wide { grid-column: span 1; }
 

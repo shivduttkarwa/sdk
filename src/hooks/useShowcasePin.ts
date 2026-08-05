@@ -14,26 +14,26 @@ export function useShowcasePin() {
 
     const heroWrap = document.getElementById('heroVideoWrap');
     const showcaseSection = document.querySelector('.sdk-showcase');
-    if (heroWrap && showcaseSection) {
+    const runway = document.getElementById('showcaseRunway');
+    if (heroWrap && showcaseSection && runway) {
       const topInner = showcaseSection.querySelector('.sdk-showcase__headline--top .inner');
       const bottomInner = showcaseSection.querySelector('.sdk-showcase__headline--bottom .inner');
-      // On touch there is no Lenis smoothing (it only lerps wheel), so `scrub: true` maps
-      // raw finger deltas straight onto a width/height layout animation — it steps. A short
-      // catch-up scrub irons that out; desktop keeps `true` because Lenis's lerp already
-      // smooths it and double-smoothing feels laggy. Same breakpoint + once-only evaluation
-      // as useIntroBody and processTimeline.core.
+      // No ScrollTrigger pin: CSS sticky holds the section inside the runway (see
+      // Showcase.tsx), so the hold is compositor-applied and exact at any touch velocity —
+      // a ScrollTrigger pin on native touch scroll landed a frame late on fast flicks, and
+      // every compensation (anticipatePin, syncTouch) traded one artifact for another on a
+      // real device. This trigger only drives the expansion scrub across the runway, which
+      // spans [sticky engage .. sticky release] — the exact window the pin used to cover.
+      // Touch has no Lenis smoothing (wheel-only), so mobile takes a short catch-up scrub
+      // to iron raw finger deltas out of the layout animation; desktop keeps `true`
+      // because Lenis's lerp already smooths it (same split as useIntroBody).
       const isMobile = window.matchMedia('(max-width: 900px)').matches;
       const tl = gsap.timeline({
         scrollTrigger: {
-          trigger: showcaseSection,
+          trigger: runway,
           start: 'top top',
-          end: '+=100%',
+          end: 'bottom bottom',
           scrub: isMobile ? 0.6 : true,
-          pin: true,
-          pinSpacing: true,
-          // Native touch scroll is async, so the position:fixed swap at pin start lands a
-          // frame late and visibly jumps; anticipatePin applies it one frame early.
-          anticipatePin: 1,
           invalidateOnRefresh: true,
         },
       });
