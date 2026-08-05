@@ -475,6 +475,11 @@ img {
   transform: translateY(-50%);
 }
 
+/* Hidden on desktop, where the sliding Menu/Close wordmark is used instead. */
+.sdk-nav__burger {
+  display: none;
+}
+
 .sdk-nav__divider {
   position: absolute;
   bottom: 0;
@@ -1761,17 +1766,88 @@ img {
     width: min(100% - 32px, var(--max));
   }
 
+  /* ── Mobile nav: no bar, just the mark and a burger ──────────────────────────
+     The pill (backdrop + border + centred wordmark) is dropped on phones. The SK mark
+     sits in the left corner, the burger in the right, both floating straight over the
+     page. The backdrop is not removed — it is the OPEN panel's background too — it is
+     simply faded out while closed and brought back with the panel. */
   .sdk-nav {
     padding: .55em .65em;
   }
 
+  .sdk-nav__bar {
+    max-width: 100%;
+    border-radius: 0;
+  }
+
+  .sdk-nav__backdrop-fill {
+    opacity: 0;
+    transition: opacity var(--nav-dur) var(--nav-ease);
+  }
+
+  [data-nav-status="active"] .sdk-nav__backdrop-fill {
+    opacity: 1;
+  }
+
+  /* Two columns instead of three, so the burger lands hard right rather than centred. */
   .sdk-nav__topbar {
+    grid-template-columns: auto 1fr;
     min-height: 4rem;
     padding: 0 0.75rem;
   }
 
   .sdk-nav__logo {
     font-size: 1.25rem;
+    justify-self: start;
+  }
+
+  .sdk-nav__toggle {
+    justify-self: end;
+    height: auto;
+    padding: .5rem;
+    margin-right: -.5rem; /* keeps the glyph on the gutter while the tap target overhangs */
+  }
+
+  /* Wordmark out, burger in. */
+  .sdk-nav__toggle-inner {
+    display: none;
+  }
+
+  .sdk-nav__burger {
+    display: block;
+    position: relative;
+    width: 1.6rem;
+    height: 0.85rem;
+  }
+
+  .sdk-nav__burger-bar {
+    position: absolute;
+    left: 0;
+    height: 2px;
+    border-radius: 2px;
+    background: var(--text);
+    /* Width and transform are staggered so the two bars converge in sequence rather than
+       snapping together — the cheap-feeling part of most burger-to-X toggles. */
+    transition:
+      transform .5s var(--nav-ease),
+      width .45s var(--nav-ease),
+      background-color .35s var(--nav-ease);
+  }
+
+  .sdk-nav__burger-bar:nth-child(1) { top: 0; width: 100%; }
+  /* Short lower bar at rest — it lengthens as it rotates into the X. */
+  .sdk-nav__burger-bar:nth-child(2) { bottom: 0; width: 60%; transition-delay: .05s; }
+
+  [data-nav-status="active"] .sdk-nav__burger-bar {
+    width: 100%;
+    background: var(--red);
+  }
+  [data-nav-status="active"] .sdk-nav__burger-bar:nth-child(1) {
+    /* Half the 0.85rem span minus half the bar: both meet on the centre line. */
+    transform: translateY(6px) rotate(45deg);
+  }
+  [data-nav-status="active"] .sdk-nav__burger-bar:nth-child(2) {
+    transform: translateY(-6px) rotate(-45deg);
   }
 
   .sdk-nav__panel-inner {
@@ -3066,7 +3142,11 @@ img {
 .sdk-process__sword-wrap {
   position: absolute;
   left: 50%;
-  width: 30rem;
+  /* Desktop only — the ≤900px block overrides this with its own (rail-constrained) width.
+     The blade is 18.1% of the PNG's width, so this 22rem box renders a ~64px blade, down
+     from ~87px at the previous 30rem. The entrance tween positions in absolute px, so the
+     width can change freely without touching processTimeline.core. */
+  width: 22rem;
   pointer-events: none;
   will-change: transform;
 }

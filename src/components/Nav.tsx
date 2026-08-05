@@ -61,9 +61,15 @@ export default function Nav() {
             aria-expanded={navOpen}
             onClick={() => setNavOpen((o) => !o)}
           >
+            {/* Desktop keeps the sliding Menu/Close wordmark; ≤760px swaps in the burger
+                (CSS decides which is displayed — both are always in the DOM). */}
             <span className="sdk-nav__toggle-inner">
               <span className="sdk-nav__toggle-label">Menu</span>
               <span className="sdk-nav__toggle-label">Close</span>
+            </span>
+            <span className="sdk-nav__burger" aria-hidden="true">
+              <span className="sdk-nav__burger-bar"></span>
+              <span className="sdk-nav__burger-bar"></span>
             </span>
           </button>
           <div className="sdk-nav__divider"></div>
