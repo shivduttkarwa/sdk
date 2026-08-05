@@ -41,10 +41,19 @@ export function mountSelectedWork(): () => void {
         return t * t * (3 - 2 * t);
       };
 
-      // Story visibility windows generated from item count so this scales to any N.
+      // Story visibility windows, derived from the SPACING between slides rather than a
+      // fixed half-width. The old hard-coded 0.12 was sized for the original five slides,
+      // where spacing is 1/4 = 0.25 and the windows therefore almost touched. Dropping to
+      // four widened the spacing to 1/3 while the window stayed put, leaving a 0.093 gap
+      // between every pair — roughly 450px of scrolling with no story on screen at all,
+      // which is the pause between slides. Scaling with the span keeps the windows
+      // shoulder-to-shoulder at any slide count; 0.52 (> 0.5) overlaps them slightly so
+      // one story is already fading in as the previous fades out.
+      const span = 1 / Math.max(1, total - 1);
+      const half = span * 0.52;
       const storyWindows = items.map((_, i) => {
         const c = i / (total - 1);
-        return { in: c - 0.12, out: c + 0.12 };
+        return { in: c - half, out: c + half };
       });
 
       // Document-space runway metrics, cached so scroll/rAF paths never force layout.
