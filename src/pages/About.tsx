@@ -86,7 +86,7 @@ export default function About() {
             </div>
           </div>
           <div className="abt-hero__portrait" data-fx="clip">
-            <img src="assets/shiv-3.webp" alt="Portrait of Shivdutt Karwa" data-parallax="0.08" />
+            <img src="assets/shiv-3-bandana-v2.webp" alt="Portrait of Shivdutt Karwa" data-parallax="0.08" />
             <span className="abt-hero__portrait-frame" aria-hidden="true"></span>
           </div>
         </div>

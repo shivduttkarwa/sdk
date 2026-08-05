@@ -97,8 +97,9 @@ export function mountHeroBlob(): () => void {
 
       // Feathered on BOTH sides now. It used to fade only on the right because the left
       // was flush with the canvas edge; once the strip moves inward a hard left edge would
-      // show as a vertical seam.
-      float feather = pw * 0.13;
+      // show as a vertical seam. Kept narrow (4% of the strip) so the photo reads as an
+      // image with visible left and right edges rather than dissolving into the gradient.
+      float feather = pw * 0.04;
       float x0 = u_portX;
       float x1 = u_portX + pw;
       float inStrip = smoothstep(x0 - feather, x0 + feather, uv.x)
@@ -134,7 +135,9 @@ export function mountHeroBlob(): () => void {
       grad = mix(grad, crimson, redFocus * 0.52);
       grad = mix(grad, coolInk, coolRim * 0.28);
 
-      const float portraitAmbient = 0.62;
+      // How strongly the resting portrait sits over the background. Was 0.62, which mixed
+      // nearly 40% of the gradient back over the photo and left it washed out.
+      const float portraitAmbient = 0.84;
       vec3 baseWithPortrait = mix(bgBase, port, inStrip * portraitAmbient);
       float gradOverlay = mix(u_baseAlpha, u_baseAlpha * 0.25, inStrip);
       vec3 shadedBase = mix(baseWithPortrait, grad, gradOverlay);
@@ -222,8 +225,8 @@ export function mountHeroBlob(): () => void {
   }
 
   loadBitmap('./assets/hero-samurai.webp', 0, texBg);
-  loadBitmap('./assets/shiv-3.webp', 1, texPort,  (w, h) => gl!.uniform1f(uPortAR,  w / h));
-  loadBitmap('./assets/shiv-1.webp', 2, texPort2, (w, h) => gl!.uniform1f(uPortAR2, w / h));
+  loadBitmap('./assets/shiv-3-bandana-v2.webp', 1, texPort,  (w, h) => gl!.uniform1f(uPortAR,  w / h));
+  loadBitmap('./assets/shiv-1-v2.webp', 2, texPort2, (w, h) => gl!.uniform1f(uPortAR2, w / h));
 
   let mx = 0.15, my = 0.58;
   let smx = 0.15, smy = 0.58;
@@ -240,7 +243,7 @@ export function mountHeroBlob(): () => void {
   // be pinned to the left edge (its left edge was implicitly 0), which read as the portrait
   // being shoved into the corner. Raise this to push it further toward the middle; the hero
   // name is right-aligned and starts around 0.5, so much past ~0.32 will start to crowd it.
-  const PORTRAIT_CENTER_X = 0.28;
+  const PORTRAIT_CENTER_X = 0.23;
 
   function resize() {
     canvas!.width  = hero!.clientWidth;
