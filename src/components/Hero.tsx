@@ -82,53 +82,12 @@ export default function Hero() {
         </span>
       </a>
 
-      <div className="sdk-hero__marquee" aria-hidden="true">
-        <div className="sdk-hero__marquee-track">
-          <span>React</span>
-          <span className="sdk-hero__marquee-dot">·</span>
-          <span>Node.js</span>
-          <span className="sdk-hero__marquee-dot">·</span>
-          <span>WebGL</span>
-          <span className="sdk-hero__marquee-dot">·</span>
-          <span>Motion</span>
-          <span className="sdk-hero__marquee-dot">·</span>
-          <span>TypeScript</span>
-          <span className="sdk-hero__marquee-dot">·</span>
-          <span>Next.js</span>
-          <span className="sdk-hero__marquee-dot">·</span>
-          <span>PostgreSQL</span>
-          <span className="sdk-hero__marquee-dot">·</span>
-          <span>GSAP</span>
-          <span className="sdk-hero__marquee-dot">·</span>
-          <span>CMS</span>
-          <span className="sdk-hero__marquee-dot">·</span>
-          <span>Docker</span>
-          <span className="sdk-hero__marquee-dot">·</span>
-          <span>React</span>
-          <span className="sdk-hero__marquee-dot">·</span>
-          <span>Node.js</span>
-          <span className="sdk-hero__marquee-dot">·</span>
-          <span>WebGL</span>
-          <span className="sdk-hero__marquee-dot">·</span>
-          <span>Motion</span>
-          <span className="sdk-hero__marquee-dot">·</span>
-          <span>TypeScript</span>
-          <span className="sdk-hero__marquee-dot">·</span>
-          <span>Next.js</span>
-          <span className="sdk-hero__marquee-dot">·</span>
-          <span>PostgreSQL</span>
-          <span className="sdk-hero__marquee-dot">·</span>
-          <span>GSAP</span>
-          <span className="sdk-hero__marquee-dot">·</span>
-          <span>CMS</span>
-          <span className="sdk-hero__marquee-dot">·</span>
-          <span>Docker</span>
-          <span className="sdk-hero__marquee-dot">·</span>
-        </div>
-      </div>
 
-      <a href="#showcase" className="sdk-scroll-cue" aria-label="Scroll down">
-        ⌄
+      <a href="#showcase" className="sdk-scroll-cue" aria-label="Scroll to showcase">
+        <span className="sdk-scroll-cue__label">Scroll</span>
+        <span className="sdk-scroll-cue__rail" aria-hidden="true">
+          <span className="sdk-scroll-cue__spark"></span>
+        </span>
       </a>
       <svg width="0" height="0" style={{ position: 'absolute' }} aria-hidden="true">
         <defs>

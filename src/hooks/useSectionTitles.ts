@@ -26,6 +26,9 @@ export function useSectionTitles() {
       const chars = [...sec.querySelectorAll('.sdk-stack__title .sdk-split-char')];
       const eyebrow = sec.querySelector('.sdk-eyebrow');
       const subtitle = sec.querySelector('.sdk-stack__subtitle');
+      // Only Selected Work carries a "View all work" link today; the lookup is per-section
+      // so any future section with one joins the sequence automatically.
+      const viewall = sec.querySelector('.sdk-stack__viewall');
 
       // Trigger on the TITLE, not the section. Keying off the section made the reveal fire
       // at a different point for every section and every breakpoint, because the title sits
@@ -64,6 +67,14 @@ export function useSectionTitles() {
 
       if (subtitle) {
         tl.from(subtitle, { y: 22, opacity: 0, duration: 0.75, ease: 'power3.out' }, '-=0.55');
+      }
+
+      // Tail of the sequence, overlapping the subtitle so the header lands as one gesture.
+      // Safe to move: .sdk-stack__viewall is inline-flex (transforms apply — see the
+      // .sdk-split-char note) and its CSS transition covers only colour/border/gap, so
+      // nothing fights the tween.
+      if (viewall) {
+        tl.from(viewall, { y: 20, opacity: 0, duration: 0.65, ease: 'power3.out' }, '-=0.45');
       }
     });
 

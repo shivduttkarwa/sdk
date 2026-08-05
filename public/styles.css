@@ -824,43 +824,6 @@ img {
 
 
 
-.sdk-hero__marquee {
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  z-index: 6;
-  overflow: hidden;
-  padding: 0.875rem 0;
-  border-top: 1px solid rgba(255,255,255,0.07);
-  mask-image: linear-gradient(to right, transparent 0%, black 8%, black 92%, transparent 100%);
-  -webkit-mask-image: linear-gradient(to right, transparent 0%, black 8%, black 92%, transparent 100%);
-}
-
-.sdk-hero__marquee-track {
-  display: flex;
-  align-items: center;
-  gap: 2.25rem;
-  width: max-content;
-  animation: marquee-scroll 22s linear infinite;
-  font-family: "Space Grotesk", sans-serif;
-  font-size: 1.3125rem;
-  font-weight: 500;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  color: rgba(255,255,255,0.45);
-}
-
-.sdk-hero__marquee-dot {
-  color: #e03f4f;
-  opacity: 0.7;
-}
-
-@keyframes marquee-scroll {
-  from { transform: translateX(0); }
-  to   { transform: translateX(-50%); }
-}
-
 
 .sdk-hero__tagline {
   display: block;
@@ -1396,20 +1359,61 @@ img {
 
 @keyframes borderTravel { to { stroke-dashoffset: -100; } }
 
+/* Scroll cue: a hairline with a red spark running down it, echoing the rule/progress
+   language used by .sdk-stats__rule and .sdk-work__progress rather than the old bouncing
+   chevron glyph. Pure CSS — nothing here touches the scroll path. */
 .sdk-scroll-cue {
   position: absolute;
   bottom: 2.125rem;
   left: 50%;
   transform: translateX(-50%);
   z-index: 20;
-  color: rgba(255,255,255,.38);
-  font-size: 1.375rem;
-  animation: bounce 1.8s ease-in-out infinite;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: .7rem;
+  text-decoration: none;
+  color: rgba(245,242,234,.45);
+  transition: color .35s var(--ease);
 }
 
-@keyframes bounce {
-  0%, 100% { transform: translate(-50%, 0); }
-  50%       { transform: translate(-50%, 0.5rem); }
+.sdk-scroll-cue:hover,
+.sdk-scroll-cue:focus-visible {
+  color: var(--red);
+}
+
+.sdk-scroll-cue__label {
+  font-family: "Space Grotesk", sans-serif;
+  font-size: .58rem;
+  font-weight: 700;
+  letter-spacing: .34em;
+  text-transform: uppercase;
+  /* Cancels the trailing letter-space so the word sits optically centred on the rail. */
+  text-indent: .34em;
+}
+
+.sdk-scroll-cue__rail {
+  position: relative;
+  display: block;
+  width: 1px;
+  height: 3.25rem;
+  overflow: hidden;
+  background: linear-gradient(180deg, rgba(245,242,234,.26), rgba(245,242,234,0));
+}
+
+.sdk-scroll-cue__spark {
+  position: absolute;
+  inset: 0 0 auto 0;
+  height: 45%;
+  background: linear-gradient(180deg, transparent, currentColor);
+  animation: scrollCueTravel 2.2s cubic-bezier(.65, 0, .35, 1) infinite;
+}
+
+@keyframes scrollCueTravel {
+  0%   { transform: translateY(-100%); opacity: 0; }
+  25%  { opacity: 1; }
+  75%  { opacity: 1; }
+  100% { transform: translateY(222%); opacity: 0; }
 }
 
 @keyframes rotateGlow {
@@ -3372,6 +3376,13 @@ img {
 }
 
 @media (prefers-reduced-motion: reduce) {
+  /* The cue's spark is the one always-running loop on the homepage; hold it static and
+     visible rather than removing the affordance entirely. */
+  .sdk-scroll-cue__spark {
+    animation: none;
+    transform: translateY(120%);
+    opacity: 1;
+  }
 }
 
 
