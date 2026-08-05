@@ -51,7 +51,7 @@ export const projects: Project[] = [
       'Consultation booking funnel',
       'Fast, responsive and SEO-ready',
     ],
-    cover: 'assets/images/work-aurora.jpg',
+    cover: 'assets/images/work-aurora.webp',
   },
   {
     slug: 'shambala',
@@ -77,7 +77,7 @@ export const projects: Project[] = [
       '"Start your project" enquiry journey',
       'Refined typographic system',
     ],
-    cover: 'assets/images/work-nimbus.jpg',
+    cover: 'assets/images/work-nimbus.webp',
   },
   {
     slug: 'cyber-shades',
@@ -103,7 +103,7 @@ export const projects: Project[] = [
       'Work showcase with case studies',
       'Contact and project-start flow',
     ],
-    cover: 'assets/images/work-meridian.jpg',
+    cover: 'assets/images/work-meridian.webp',
   },
   {
     slug: 'behna',
@@ -129,7 +129,7 @@ export const projects: Project[] = [
       'WhatsApp and call quick-contact',
       'Mobile-first shopping experience',
     ],
-    cover: 'assets/images/work-kinetic.jpg',
+    cover: 'assets/images/work-kinetic.webp',
   },
   {
     slug: 'bunny-bites',
@@ -155,7 +155,7 @@ export const projects: Project[] = [
       'How-it-works and menu sections',
       'Clear "order now" conversion path',
     ],
-    cover: 'assets/images/work-vault.jpg',
+    cover: 'assets/images/work-vault.webp',
   },
 ];
 

@@ -75,7 +75,7 @@ export default function Process() {
 
         <div className="sdk-process__spine-col" id="procMid">
           <div className="sdk-process__sword-wrap" id="procSword">
-            <img className="sdk-process__sword" src="assets/sword-red.png" alt="" />
+            <img className="sdk-process__sword" src="assets/sword-red.webp" alt="" />
           </div>
         </div>
 
@@ -84,22 +84,22 @@ export default function Process() {
             <div className="sdk-process__frame" id="procFrame">
               <div className="sdk-process__frame-stack">
                 <div className="sdk-process__frame-slide" data-img="0">
-                  <img src="assets/images/process-1.jpg" alt="Study phase" loading="lazy" />
+                  <img src="assets/images/process-1.webp" alt="Study phase" loading="lazy" />
                   <div className="sdk-process__frame-overlay"></div>
                   <span className="sdk-process__frame-label">01 · Study</span>
                 </div>
                 <div className="sdk-process__frame-slide" data-img="1">
-                  <img src="assets/images/process-2.jpg" alt="Forge phase" loading="lazy" />
+                  <img src="assets/images/process-2.webp" alt="Forge phase" loading="lazy" />
                   <div className="sdk-process__frame-overlay"></div>
                   <span className="sdk-process__frame-label">02 · Forge</span>
                 </div>
                 <div className="sdk-process__frame-slide" data-img="2">
-                  <img src="assets/images/process-3.jpg" alt="Temper phase" loading="lazy" />
+                  <img src="assets/images/process-3.webp" alt="Temper phase" loading="lazy" />
                   <div className="sdk-process__frame-overlay"></div>
                   <span className="sdk-process__frame-label">03 · Temper</span>
                 </div>
                 <div className="sdk-process__frame-slide" data-img="3">
-                  <img src="assets/images/process-4.jpg" alt="Honour phase" loading="lazy" />
+                  <img src="assets/images/process-4.webp" alt="Honour phase" loading="lazy" />
                   <div className="sdk-process__frame-overlay"></div>
                   <span className="sdk-process__frame-label">04 · Honour</span>
                 </div>

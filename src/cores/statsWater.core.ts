@@ -28,7 +28,7 @@ export function mountStatsWater(): () => void {
   return mountFluidReveal({
     host: row,
     canvasClass: 'sdk-stats__canvas',
-    images: ['assets/stats-1.png', 'assets/stats-2.png', 'assets/stats-3.png'],
+    images: ['assets/stats-1.webp', 'assets/stats-2.webp', 'assets/stats-3.webp'],
     renderFS: RENDER_FS,
     sim: { w: 256, h: 96 },
   });

@@ -96,7 +96,7 @@ body {
   pointer-events: none;
   background-image:
     linear-gradient(160deg, rgba(80,8,18,0.82) 0%, rgba(20,4,10,0.88) 40%, rgba(8,4,22,0.90) 70%, rgba(15,5,30,0.85) 100%),
-    url('assets/images/hero-main-bg.jpg');
+    url('assets/images/hero-main-bg.webp');
   background-size: cover;
   background-position: center top;
   background-repeat: no-repeat;
@@ -556,7 +556,7 @@ img {
     position: absolute;
     inset: 0;
     z-index: 1;
-    background-image: url('assets/shiv-1.png');
+    background-image: url('assets/shiv-1.webp');
     background-size: cover;
     background-position: center top;
     background-repeat: no-repeat;
@@ -931,7 +931,7 @@ img {
   height: 100svh;
   display: flex;
   flex-direction: column;
-  background: url('assets/images/hero-showcase-bg.jpg') center/cover no-repeat;
+  background: url('assets/hero-showcase-bg.webp') center/cover no-repeat;
   align-items: center;
   justify-content: center;
   gap: max(1.125rem, 2.6vw);
@@ -3172,7 +3172,7 @@ img {
 
   /* Mobile drops the photo backdrop entirely for a flat dark base. The desktop treatment
      is a viewport-sized `position: fixed` ::before scoped by `clip-path: inset(0)`; that
-     pseudo is disabled here, and painting hero-main-bg.jpg directly on this element meant
+     pseudo is disabled here, and painting hero-main-bg.webp directly on this element meant
      `background-size: cover` scaling a 16:9 photo across a ~16,000px-tall box — it
      rendered as a hugely magnified smear. A solid dark ground reads correctly at any
      document height and costs nothing to scroll. */

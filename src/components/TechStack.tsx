@@ -26,7 +26,7 @@ export default function TechStack() {
               </p>
             </div>
             <div className="sdk-tech-pin__portrait" aria-hidden="true">
-              <img src="shiv-big.png" alt="" className="sdk-tech-pin__image" data-tech-pin-image />
+              <img src="shiv-big.webp" alt="" className="sdk-tech-pin__image" data-tech-pin-image />
             </div>
           </div>
 

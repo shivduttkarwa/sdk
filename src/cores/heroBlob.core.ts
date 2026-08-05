@@ -210,9 +210,9 @@ export function mountHeroBlob(): () => void {
       .catch(e => console.warn('[blob] texture load failed:', url, e));
   }
 
-  loadBitmap('./assets/hero-samurai.png', 0, texBg);
-  loadBitmap('./assets/shiv-3.png', 1, texPort,  (w, h) => gl!.uniform1f(uPortAR,  w / h));
-  loadBitmap('./assets/shiv-1.png', 2, texPort2, (w, h) => gl!.uniform1f(uPortAR2, w / h));
+  loadBitmap('./assets/hero-samurai.webp', 0, texBg);
+  loadBitmap('./assets/shiv-3.webp', 1, texPort,  (w, h) => gl!.uniform1f(uPortAR,  w / h));
+  loadBitmap('./assets/shiv-1.webp', 2, texPort2, (w, h) => gl!.uniform1f(uPortAR2, w / h));
 
   let mx = 0.15, my = 0.58;
   let smx = 0.15, smy = 0.58;
