@@ -18,7 +18,6 @@ export function useTechStackPin() {
     const cards = Array.from(root.querySelectorAll('[data-service-card]'));
     const portrait = root.querySelector('.sdk-tech-pin__portrait');
     const image = root.querySelector('[data-tech-pin-image]') as HTMLImageElement | null;
-    const isMobile = window.matchMedia('(max-width: 980px)').matches;
 
     if (!cards.length) return;
 
@@ -55,38 +54,54 @@ export function useTechStackPin() {
       image.addEventListener('load', onImgLoad, { once: true });
     }
 
-    // Big heading animates in on enter (via useSectionTitles). On desktop it sits on the right
-    // and clears out as the first card scrolls in; on mobile it stays pinned at the top.
-    const intro = root.querySelector('[data-tech-intro]');
-    if (intro && !isMobile) {
-      const t = gsap.to(intro, {
-        autoAlpha: 0,
-        yPercent: -10,
-        ease: 'none',
-        scrollTrigger: {
-          trigger: root,
-          start: 'top top',
-          end: '16% top',
-          scrub: true,
-        },
-      });
-      tweens.push(t);
-      if (t.scrollTrigger) created.push(t.scrollTrigger);
-    }
+    // The heading animates in on enter (via useSectionTitles) and then STAYS: it holds the
+    // left of the stage while the cards cycle through on the right. It used to scrub to
+    // autoAlpha 0 between 'top top' and '16% top', which made sense when the heading and the
+    // cards shared the right-hand side and had to take turns — with them on opposite sides
+    // there is nothing to clear out of the way, and fading it left the stage half empty.
 
-    cards.forEach((card) => {
-      const t = gsap.from(card, {
-        yPercent: 15,
-        scale: 1.25,
-        rotation: gsap.utils.random(-25, 25, 5),
-        ease: 'back.out',
-        scrollTrigger: {
-          trigger: card,
-          start: 'top bottom',
-          end: 'center center',
-          scrub: 0.5,
-        },
-      });
+    // Cards 02-04 drop in from the upper RIGHT and rotate upright as they land, so they
+    // share one direction of travel. (Rotation used to be gsap.utils.random(-25, 25), which
+    // sent each card in at a different angle — the reason they read as unrelated.) Card 01
+    // is excluded and just fades up; see below.
+    const FALL_FROM = {
+      xPercent: 45,
+      yPercent: -70,
+      rotation: 20,
+      scale: 1.1,
+      autoAlpha: 0,
+    } as const;
+
+    cards.forEach((card, i) => {
+      const t =
+        i === 0
+          ? // Card 01 does NOT use the drop — it simply fades up a little. It is the card
+            // already sitting at rest when the section arrives, so throwing it in from off
+            // screen fought that. The drop belongs to 02-04, which actually travel in.
+            gsap.from(card, {
+              autoAlpha: 0,
+              y: 46,
+              duration: 0.9,
+              ease: 'power3.out',
+              scrollTrigger: {
+                // 'top 45%' fired while the heading was still rising, so the card arrived
+                // first; 25% puts it clearly after the title has landed.
+                trigger: root,
+                start: 'top 25%',
+                toggleActions: 'play none none reverse',
+              },
+            })
+          : // 02-04 genuinely travel up the runway, so theirs stays scrubbed to the scroll.
+            gsap.from(card, {
+              ...FALL_FROM,
+              ease: 'power2.out',
+              scrollTrigger: {
+                trigger: card,
+                start: 'top bottom',
+                end: 'center center',
+                scrub: 0.5,
+              },
+            });
       tweens.push(t);
       if (t.scrollTrigger) created.push(t.scrollTrigger);
     });
