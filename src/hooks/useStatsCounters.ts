@@ -13,6 +13,49 @@ export function useStatsCounters() {
     const dividers = section.querySelectorAll('.sdk-stats__divider');
     const items = section.querySelectorAll('.sdk-stat');
 
+    // Mobile: the stats restack as full-width ledger rows (see the ≤900px CSS), and each
+    // row reveals independently as it enters — no count-up: the number sits at its final
+    // value and rises from under the num-clip mask, kanji watermark fading in behind
+    // and the row's hairline sweeping across. restart/reset so it replays on every downward
+    // pass, matching useSectionTitles. Desktop keeps the original master timeline +
+    // counter verbatim. Same breakpoint + once-only evaluation as the other hooks.
+    const isMobile = window.matchMedia('(max-width: 900px)').matches;
+    if (isMobile) {
+      const tls: gsap.core.Timeline[] = [];
+      items.forEach((item) => {
+        const num = item.querySelector('.sdk-stat__number') as HTMLElement;
+        const sup = item.querySelector('.sdk-stat__suffix');
+        const foot = item.querySelector('.sdk-stat__footer');
+        const glyph = item.querySelector('.sdk-stat__glyph');
+        const rule = item.querySelector('.sdk-stat__rule');
+
+        num.textContent = num.dataset.target || '0';
+
+        const tl = gsap.timeline({
+          scrollTrigger: { trigger: item, start: 'top 80%', toggleActions: 'restart none none reset' },
+        });
+        if (glyph) {
+          tl.fromTo(
+            glyph,
+            { opacity: 0, scale: 0.94 },
+            { opacity: 1, scale: 1, duration: 1.1, ease: 'power2.out' },
+            0,
+          );
+        }
+        tl.to([num, sup], { y: '0%', duration: 0.9, ease: 'power4.out' }, 0.05);
+        if (rule) tl.to(rule, { scaleX: 1, duration: 0.7, ease: 'power3.inOut' }, 0.2);
+        tl.to(foot, { opacity: 1, y: 0, duration: 0.55, ease: 'power3.out' }, 0.35);
+        tls.push(tl);
+      });
+
+      return () => {
+        tls.forEach((tl) => {
+          tl.scrollTrigger?.kill();
+          tl.kill();
+        });
+      };
+    }
+
     const master = gsap.timeline({
       scrollTrigger: { trigger: section, start: 'top 50%', toggleActions: 'play none none none' },
     });

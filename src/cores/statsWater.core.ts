@@ -2,9 +2,19 @@
 // raw-WebGL float-FBO fluid sim behind the stats row. Every shader byte, number,
 // FBO, draw call and listener is unchanged. The ONLY additions vs the original are
 // the tracked handles (named mouse handlers, ResizeObserver var, rAF id, disposed
-// guard) and the returned disposer.
+// guard), the returned disposer, and the mobile bail-out below.
+//
+// DESKTOP ONLY. The sim is cursor-driven (mousemove wake), which has no equivalent on
+// touch: a finger is either scrolling or not there at all. A touch-driven variant was
+// built and tested on-device — GL initialised fine (float FBOs, 60fps, textures loaded)
+// but the wake never appeared, and chasing it further wasn't worth the complexity for a
+// section that reads well static. Mobile gets the ledger layout instead (≤900px CSS +
+// useStatsCounters' mobile fork): kanji watermark, per-row rules, mask reveal. Skipping
+// the mount also spares phones a 25-iteration pressure solve every frame.
 
 export function mountStatsWater(): () => void {
+  if (window.matchMedia('(max-width: 900px)').matches) return () => {};
+
   const row = document.querySelector('.sdk-stats__row');
   if (!row) return () => {};
 
