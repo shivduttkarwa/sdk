@@ -27,13 +27,31 @@ export function useSectionTitles() {
       const eyebrow = sec.querySelector('.sdk-eyebrow');
       const subtitle = sec.querySelector('.sdk-stack__subtitle');
 
-      // Was `once: true` — one play per page load. Next to the scrub/pin-driven neighbours
-      // (intro heading, tech pin, work stories) that replay on every approach, a one-shot
-      // title reads as having no animation at all from the second pass on. restart/reset:
-      // play on every downward entry, re-arm only when scrolled back ABOVE the section
-      // (enterBack stays `none` so returning from below doesn't replay mid-view).
+      // Trigger on the TITLE, not the section. Keying off the section made the reveal fire
+      // at a different point for every section and every breakpoint, because the title sits
+      // a different distance below its section's top (measured: #work 148px desktop / 106px
+      // mobile, #services 342px / 96px — the last of which fired at 103% of the viewport,
+      // i.e. entirely off-screen on desktop, so that title simply never appeared to animate).
+      // Anchoring to the title itself means every heading reveals at the same point in its
+      // own travel up the screen, identically on mobile and desktop, whatever the section
+      // wraps it in — sticky pin, tall runway, or nothing.
+      //
+      // toggleActions (was `once: true` — one play per page load, which read as "no
+      // animation" from the second pass on): restart on every downward entry, re-arm only
+      // when scrolled back ABOVE it (enterBack stays `none` so returning from below doesn't
+      // replay mid-view).
+      // NB: no `invalidateOnRefresh` here. These are gsap.from() tweens, so invalidate
+      // re-reads each element's CURRENT value as the tween's destination — and refreshes
+      // (runInitialRefresh fires on fonts-ready and window load) land while the chars are
+      // parked at yPercent 110, which bakes 110 in as the target. The reveal then animates
+      // 110 -> 110 and the titles stay masked out permanently.
+      const titleEl = sec.querySelector('.sdk-stack__title');
       const tl = gsap.timeline({
-        scrollTrigger: { trigger: sec, start: 'top 65%', toggleActions: 'restart none none reset' },
+        scrollTrigger: {
+          trigger: titleEl ?? sec,
+          start: 'top 88%',
+          toggleActions: 'restart none none reset',
+        },
       });
       if (tl.scrollTrigger) created.push(tl.scrollTrigger);
       created.push(tl);

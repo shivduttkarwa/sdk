@@ -2239,6 +2239,29 @@ img {
 
 .sdk-stack__title-line {
   display: block;
+  /* Mask the character reveal (useSectionTitles animates the chars in from yPercent 110).
+     The mask lives on the line rather than on each .sdk-char-wrap because the title runs
+     line-height: .88 — a per-character overflow box is shorter than the glyphs and would
+     shave their tops. Bottom is left flush with the line box (which already sits ~.15em
+     below the baseline) so the chars emerge cleanly; the top gets .16em of room, cancelled
+     by an equal negative margin, so caps aren't clipped and layout is unchanged. */
+  overflow: hidden;
+  padding-top: .16em;
+  margin-top: -.16em;
+}
+
+/* Spans injected by useSectionTitles. Without display: inline-block the reveal is dead on
+   arrival: CSS transforms do not apply to non-replaced inline elements, so GSAP was writing
+   `transform: translate(0%, 110%)` on these and the browser ignored it — the titles rendered
+   static while every measurement of .style.transform looked perfectly healthy. (The intro
+   heading always animated because .sdk-intro__char carries inline-block.) */
+.sdk-char-wrap {
+  display: inline-block;
+}
+
+.sdk-split-char {
+  display: inline-block;
+  will-change: transform;
 }
 
 .sdk-stack__title-dim {
