@@ -34,6 +34,7 @@ export function mountHeroBlob(): () => void {
     uniform float     u_radius;
     uniform vec2      u_res;
     uniform float     u_portW;
+    uniform float     u_portX;
     uniform float     u_portAR;
     uniform float     u_smoke;
     uniform float     u_opacity;
@@ -71,7 +72,9 @@ export function mountHeroBlob(): () => void {
       float pw    = max(u_portW, 0.001);
       float sAR   = pw * u_res.x / u_res.y;
       float ratio = max(u_portAR, 0.001) / sAR;
-      float su    = uv.x / pw;
+      // u_portX is the strip's left edge, so the portrait can sit away from the canvas
+      // edge instead of being pinned to it.
+      float su    = (uv.x - u_portX) / pw;
       float xScale = min(1.0, 1.0 / ratio);
       float yScale = min(1.0, ratio);
       vec2  pUV  = vec2(su * xScale + 0.5 * (1.0 - xScale),
@@ -92,7 +95,14 @@ export function mountHeroBlob(): () => void {
       vec3 port2 = texture2D(u_portrait2, pUV2).rgb;
       port = mix(port, port2, mask);
 
-      float inStrip = 1.0 - smoothstep(pw * 0.82, pw * 1.08, uv.x);
+      // Feathered on BOTH sides now. It used to fade only on the right because the left
+      // was flush with the canvas edge; once the strip moves inward a hard left edge would
+      // show as a vertical seam.
+      float feather = pw * 0.13;
+      float x0 = u_portX;
+      float x1 = u_portX + pw;
+      float inStrip = smoothstep(x0 - feather, x0 + feather, uv.x)
+                    * (1.0 - smoothstep(x1 - feather, x1 + feather, uv.x));
       vec3 bgBase = texture2D(u_bg, uv).rgb * 0.88;
       vec3 inner = mix(bgBase, port, inStrip * 1.0);
       vec3 col   = inner * mask;
@@ -164,6 +174,7 @@ export function mountHeroBlob(): () => void {
   const uRadius  = gl.getUniformLocation(prog, 'u_radius');
   const uRes     = gl.getUniformLocation(prog, 'u_res');
   const uPortW   = gl.getUniformLocation(prog, 'u_portW');
+  const uPortX   = gl.getUniformLocation(prog, 'u_portX');
   const uPortAR  = gl.getUniformLocation(prog, 'u_portAR');
   gl.uniform1f(uPortAR, 1.0);
   const uPort2   = gl.getUniformLocation(prog, 'u_portrait2');
@@ -225,13 +236,23 @@ export function mountHeroBlob(): () => void {
   };
   document.addEventListener('mousemove', onMouseMove);
 
+  // Where the portrait strip's CENTRE sits, as a fraction of hero width. The strip used to
+  // be pinned to the left edge (its left edge was implicitly 0), which read as the portrait
+  // being shoved into the corner. Raise this to push it further toward the middle; the hero
+  // name is right-aligned and starts around 0.5, so much past ~0.32 will start to crowd it.
+  const PORTRAIT_CENTER_X = 0.28;
+
   function resize() {
     canvas!.width  = hero!.clientWidth;
     canvas!.height = hero!.clientHeight;
     gl!.viewport(0, 0, canvas!.width, canvas!.height);
     const w = canvas!.width || 1;
     const vidW = Math.min(960, Math.max(320, w * 0.62));
-    gl!.uniform1f(uPortW, (w - vidW) / 2 / w);
+    // Width is unchanged — the strip is still the leftover margin beside the centre
+    // reserve; only its position moves.
+    const portW = (w - vidW) / 2 / w;
+    gl!.uniform1f(uPortW, portW);
+    gl!.uniform1f(uPortX, Math.max(0, PORTRAIT_CENTER_X - portW / 2));
   }
   resize();
   window.addEventListener('resize', resize);
