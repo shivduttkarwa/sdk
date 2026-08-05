@@ -82,7 +82,12 @@ export function useIntroBody() {
           word,
           { clipPath: 'inset(-20% 105% -20% 0%)', opacity: 0.05, filter: 'blur(10px)', skewX: -4 },
           {
-            clipPath: 'inset(-20% 0%   -20% 0%)',
+            // End inset overshoots to -20% on the right for the same reason the top/bottom are
+            // negative: the clip box is the word's advance width, but italic glyphs (the final
+            // "g" of "engineering", "anything.") overhang it. Landing on 0% shaved that tail off,
+            // and since GSAP leaves the inline clip-path in place the cut stayed after the reveal.
+            // -10% is ample headroom for the overhang while keeping the wipe's timing unchanged.
+            clipPath: 'inset(-20% -10% -20% 0%)',
             opacity: 1,
             filter: 'blur(0px)',
             skewX: 0,
