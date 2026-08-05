@@ -5234,9 +5234,12 @@ img {
   margin-top: 1.25rem;
 }
 .svc-hero__title-line, .abt-hero__title-line, .ctc-hero__title-line { display: block; }
+/* Was `color: transparent` + a 1px text-stroke. At heading size a hairline outline reads
+   as a wireframe rather than as type. This is the dim FILLED second line the homepage
+   section titles and the Works hero use, so the solid/dim device is identical everywhere. */
 .svc-hero__title-dim, .abt-hero__title-dim, .ctc-hero__title-dim {
-  color: transparent;
-  -webkit-text-stroke: 1px rgba(245, 242, 234, .32);
+  color: rgba(245, 242, 234, .35);
+  font-weight: 200;
 }
 .pd-hero__lead, .svc-hero__lead, .abt-hero__lead, .ctc-hero__lead {
   color: var(--muted);
@@ -5628,7 +5631,10 @@ img {
   padding-top: clamp(8rem, 16vh, 12rem);
   padding-bottom: clamp(3rem, 6vh, 5rem);
 }
-.svc-hero__title { font-size: clamp(4rem, 15vw, 14rem); }
+/* Was clamp(4rem, 15vw, 14rem) — ~216px at 1440, the other oversized page hero alongside
+   Works. Matched to the same scale so every page heading lands in one family. */
+.svc-hero__title { font-size: clamp(3.2rem, 9.5vw, 9rem); line-height: .9; }
+
 .svc-hero__lead { margin-top: 2rem; }
 .svc-list-section { padding: clamp(2rem, 6vh, 5rem) 0; }
 .svc-list { list-style: none; border-top: 1px solid var(--line); }
@@ -5668,12 +5674,6 @@ img {
   transition: color .35s var(--ease);
 }
 .svc-row__head:hover .svc-row__title, .svc-row.is-open .svc-row__title { color: var(--red); }
-.svc-row__kanji {
-  font-family: "Noto Serif JP", serif;
-  font-size: .42em;
-  color: rgba(224, 63, 79, .55);
-  letter-spacing: 0;
-}
 .svc-row__tagline {
   font-size: .92rem;
   color: var(--muted);
@@ -5840,7 +5840,8 @@ img {
   gap: clamp(2.5rem, 6vw, 7rem);
   align-items: center;
 }
-.abt-hero__title { font-size: clamp(3.6rem, 11vw, 10rem); }
+/* Matched to the Works / Services scale so every page heading lands in one family. */
+.abt-hero__title { font-size: clamp(3.2rem, 9.5vw, 9rem); line-height: .9; }
 .abt-hero__lead { margin-top: 2rem; }
 .abt-hero__hud { margin-top: 2.4rem; display: flex; flex-wrap: wrap; gap: .8rem; }
 .abt-hero__chip {
@@ -6068,7 +6069,7 @@ img {
 @keyframes ctcOrbA { to { transform: translate(-5rem, 4rem) scale(1.15); } }
 @keyframes ctcOrbB { to { transform: translate(4rem, -3.5rem) scale(1.1); } }
 .ctc-hero__inner { position: relative; z-index: 1; padding-top: clamp(7rem, 12vh, 9rem); }
-.ctc-hero__title { font-size: clamp(3.4rem, 10.5vw, 9.5rem); }
+.ctc-hero__title { font-size: clamp(3.2rem, 9.5vw, 9rem); line-height: .9; }
 .ctc-hero__lead { margin-top: 2rem; }
 .ctc-hero__actions {
   margin-top: clamp(2.5rem, 5vh, 4rem);

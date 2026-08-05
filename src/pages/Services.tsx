@@ -58,12 +58,7 @@ export default function Services() {
                     onClick={() => setOpen(isOpen ? -1 : i)}
                   >
                     <span className="svc-row__num">{service.num}</span>
-                    <span className="svc-row__title">
-                      {service.title}
-                      <span className="svc-row__kanji" aria-hidden="true">
-                        {service.kanji}
-                      </span>
-                    </span>
+                    <span className="svc-row__title">{service.title}</span>
                     <span className="svc-row__tagline">{service.tagline}</span>
                     <span className="svc-row__toggle" aria-hidden="true">
                       <span></span>
