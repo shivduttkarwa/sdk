@@ -35,6 +35,8 @@ export function mountHeroBlob(): () => void {
     uniform vec2      u_res;
     uniform float     u_portW;
     uniform float     u_portX;
+    uniform float     u_portY;
+    uniform float     u_portH;
     uniform float     u_portAR;
     uniform float     u_smoke;
     uniform float     u_opacity;
@@ -70,15 +72,20 @@ export function mountHeroBlob(): () => void {
       float mask    = 1.0 - smoothstep(r - edgeSz, r + edgeSz, bDist);
 
       float pw    = max(u_portW, 0.001);
-      float sAR   = pw * u_res.x / u_res.y;
+      // The panel is now bounded vertically too (u_portY/u_portH) instead of running the
+      // full canvas height. That is what sets the subject's scale: the image's full height
+      // maps onto the panel's height, so a shorter panel renders a smaller person.
+      float ph    = max(u_portH, 0.001);
+      float sAR   = (pw * u_res.x) / (ph * u_res.y);
       float ratio = max(u_portAR, 0.001) / sAR;
-      // u_portX is the strip's left edge, so the portrait can sit away from the canvas
-      // edge instead of being pinned to it.
+      // u_portX / u_portY are the panel's left and bottom edges, so it can sit away from
+      // the canvas edges instead of being pinned to them.
       float su    = (uv.x - u_portX) / pw;
+      float sv    = (uv.y - u_portY) / ph;
       float xScale = min(1.0, 1.0 / ratio);
       float yScale = min(1.0, ratio);
       vec2  pUV  = vec2(su * xScale + 0.5 * (1.0 - xScale),
-                        uv.y * yScale + 0.5 * (1.0 - yScale));
+                        sv * yScale + 0.5 * (1.0 - yScale));
 
       float edgeDist = abs(bDist - r);
       float ca = smoothstep(0.06, 0.0, edgeDist) * 0.010;
@@ -91,7 +98,7 @@ export function mountHeroBlob(): () => void {
       float xScale2 = min(1.0, 1.0 / ratio2);
       float yScale2 = min(1.0, ratio2);
       vec2  pUV2 = vec2(su * xScale2 + 0.5 * (1.0 - xScale2),
-                        uv.y * yScale2 + 0.5 * (1.0 - yScale2));
+                        sv * yScale2 + 0.5 * (1.0 - yScale2));
       vec3 port2 = texture2D(u_portrait2, pUV2).rgb;
       port = mix(port, port2, mask);
 
@@ -99,11 +106,20 @@ export function mountHeroBlob(): () => void {
       // was flush with the canvas edge; once the strip moves inward a hard left edge would
       // show as a vertical seam. Kept narrow (4% of the strip) so the photo reads as an
       // image with visible left and right edges rather than dissolving into the gradient.
-      float feather = pw * 0.04;
+      // Superelliptical falloff rather than a rectangle. A rectangular mask always shows
+      // its straight sides and corners no matter how wide the feather is — widen it and
+      // the photo dissolves, narrow it and you get the hard cut. A superellipse has no
+      // corners and curves away on every side, so the panel melts into the gradient while
+      // its centre stays at full strength.
+      //   EXP    3.0 = close to rectangular (keeps most of the photo). Lower = more oval.
+      //   FADE0  where the falloff begins, as a fraction of the half-extent.
       float x0 = u_portX;
-      float x1 = u_portX + pw;
-      float inStrip = smoothstep(x0 - feather, x0 + feather, uv.x)
-                    * (1.0 - smoothstep(x1 - feather, x1 + feather, uv.x));
+      float y0 = u_portY;
+      vec2 pc = vec2((uv.x - (x0 + pw * 0.5)) / (pw * 0.5),
+                     (uv.y - (y0 + ph * 0.5)) / (ph * 0.5));
+      vec2 q  = max(abs(pc), vec2(1e-4));
+      float sd = pow(pow(q.x, 3.0) + pow(q.y, 3.0), 0.3333333);
+      float inStrip = 1.0 - smoothstep(0.62, 1.03, sd);
       vec3 bgBase = texture2D(u_bg, uv).rgb * 0.88;
       vec3 inner = mix(bgBase, port, inStrip * 1.0);
       vec3 col   = inner * mask;
@@ -178,6 +194,8 @@ export function mountHeroBlob(): () => void {
   const uRes     = gl.getUniformLocation(prog, 'u_res');
   const uPortW   = gl.getUniformLocation(prog, 'u_portW');
   const uPortX   = gl.getUniformLocation(prog, 'u_portX');
+  const uPortY   = gl.getUniformLocation(prog, 'u_portY');
+  const uPortH   = gl.getUniformLocation(prog, 'u_portH');
   const uPortAR  = gl.getUniformLocation(prog, 'u_portAR');
   gl.uniform1f(uPortAR, 1.0);
   const uPort2   = gl.getUniformLocation(prog, 'u_portrait2');
@@ -244,6 +262,13 @@ export function mountHeroBlob(): () => void {
   // being shoved into the corner. Raise this to push it further toward the middle; the hero
   // name is right-aligned and starts around 0.5, so much past ~0.32 will start to crowd it.
   const PORTRAIT_CENTER_X = 0.23;
+  // Panel height as a fraction of hero height. This is the subject's scale dial: the
+  // image's full height maps onto the panel, so 0.66 renders the person a third smaller
+  // than the old full-bleed strip did. Lower = smaller.
+  const PORTRAIT_HEIGHT = 0.82;
+  // Vertical centre, measured from the TOP for readability (converted below — uv.y is
+  // bottom-up in clip space).
+  const PORTRAIT_CENTER_Y = 0.52;
 
   function resize() {
     canvas!.width  = hero!.clientWidth;
@@ -251,11 +276,12 @@ export function mountHeroBlob(): () => void {
     gl!.viewport(0, 0, canvas!.width, canvas!.height);
     const w = canvas!.width || 1;
     const vidW = Math.min(960, Math.max(320, w * 0.62));
-    // Width is unchanged — the strip is still the leftover margin beside the centre
-    // reserve; only its position moves.
+    // Width is unchanged — still the leftover margin beside the centre reserve.
     const portW = (w - vidW) / 2 / w;
     gl!.uniform1f(uPortW, portW);
     gl!.uniform1f(uPortX, Math.max(0, PORTRAIT_CENTER_X - portW / 2));
+    gl!.uniform1f(uPortH, PORTRAIT_HEIGHT);
+    gl!.uniform1f(uPortY, 1 - PORTRAIT_CENTER_Y - PORTRAIT_HEIGHT / 2);
   }
   resize();
   window.addEventListener('resize', resize);
