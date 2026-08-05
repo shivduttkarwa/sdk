@@ -84,7 +84,11 @@ export function mountHeroBlob(): () => void {
       float sv    = (uv.y - u_portY) / ph;
       float xScale = min(1.0, 1.0 / ratio);
       float yScale = min(1.0, ratio);
-      vec2  pUV  = vec2(su * xScale + 0.5 * (1.0 - xScale),
+      // Horizontal focal point of the crop. Centred (0.5) cut the katana off — its hilt
+      // runs from x 0.66 to 0.83 in the source — so the window is biased right to include
+      // it while still holding the face.
+      const float FOCAL_X = 0.44;
+      vec2  pUV  = vec2(su * xScale + FOCAL_X * (1.0 - xScale),
                         sv * yScale + 0.5 * (1.0 - yScale));
 
       float edgeDist = abs(bDist - r);
@@ -97,7 +101,7 @@ export function mountHeroBlob(): () => void {
       float ratio2  = max(u_portAR2, 0.001) / sAR;
       float xScale2 = min(1.0, 1.0 / ratio2);
       float yScale2 = min(1.0, ratio2);
-      vec2  pUV2 = vec2(su * xScale2 + 0.5 * (1.0 - xScale2),
+      vec2  pUV2 = vec2(su * xScale2 + FOCAL_X * (1.0 - xScale2),
                         sv * yScale2 + 0.5 * (1.0 - yScale2));
       vec3 port2 = texture2D(u_portrait2, pUV2).rgb;
       port = mix(port, port2, mask);
@@ -121,7 +125,18 @@ export function mountHeroBlob(): () => void {
       float sd = pow(pow(q.x, 3.0) + pow(q.y, 3.0), 0.3333333);
       float inStrip = 1.0 - smoothstep(0.62, 1.03, sd);
       vec3 bgBase = texture2D(u_bg, uv).rgb * 0.88;
-      vec3 inner = mix(bgBase, port, inStrip * 1.0);
+      // Knock the background artwork down UNDER the portrait. Without this its tech marks
+      // (the React atom especially) read straight through the subject's hair wherever the
+      // panel is still fading in, because that region is a blend of bg and photo. The
+      // suppression field is deliberately wider and softer than inStrip so the logos are
+      // already gone before the portrait starts fading up.
+      // Only knocked down to 0.45, not 0.10. Crushing it to near-black removed the very
+      // background the portrait is supposed to blend INTO, which is the other half of why
+      // it looked pasted on; this is enough to stop the React mark reading through the
+      // hair while leaving the gradient present underneath.
+      float bgHide = 1.0 - smoothstep(0.42, 1.28, sd);
+      vec3 bgUnder = bgBase * mix(1.0, 0.45, bgHide);
+      vec3 inner = mix(bgUnder, port, inStrip * 1.0);
       vec3 col   = inner * mask;
 
       float glow = exp(-edgeDist * 36.0) * 0.5;
@@ -151,10 +166,12 @@ export function mountHeroBlob(): () => void {
       grad = mix(grad, crimson, redFocus * 0.52);
       grad = mix(grad, coolInk, coolRim * 0.28);
 
-      // How strongly the resting portrait sits over the background. Was 0.62, which mixed
-      // nearly 40% of the gradient back over the photo and left it washed out.
-      const float portraitAmbient = 0.84;
-      vec3 baseWithPortrait = mix(bgBase, port, inStrip * portraitAmbient);
+      // Back to the original 0.62 (was briefly 0.84). That extra 22% is what made the
+      // resting portrait read as a sharp photo pasted onto the hero rather than something
+      // sitting inside it — letting ~38% of the gradient through is exactly what gives the
+      // masked layer its soft, embedded quality.
+      const float portraitAmbient = 0.62;
+      vec3 baseWithPortrait = mix(bgUnder, port, inStrip * portraitAmbient);
       float gradOverlay = mix(u_baseAlpha, u_baseAlpha * 0.25, inStrip);
       vec3 shadedBase = mix(baseWithPortrait, grad, gradOverlay);
       float revealAlpha = clamp(mask + glow * 0.55, 0.0, 1.0) * u_opacity;
@@ -269,15 +286,23 @@ export function mountHeroBlob(): () => void {
   // Vertical centre, measured from the TOP for readability (converted below — uv.y is
   // bottom-up in clip space).
   const PORTRAIT_CENTER_Y = 0.52;
+  // Panel width as a fraction of its height. Drives how much of the square source is
+  // visible: 0.54 opens the crop to ~54% of the image width, enough to hold the face and
+  // the katana together. Wider = more of the photo, same subject scale.
+  const PORTRAIT_ASPECT = 0.68;
 
   function resize() {
     canvas!.width  = hero!.clientWidth;
     canvas!.height = hero!.clientHeight;
     gl!.viewport(0, 0, canvas!.width, canvas!.height);
     const w = canvas!.width || 1;
-    const vidW = Math.min(960, Math.max(320, w * 0.62));
-    // Width is unchanged — still the leftover margin beside the centre reserve.
-    const portW = (w - vidW) / 2 / w;
+    // Width now derives from the panel's own height and aspect rather than from the
+    // leftover margin beside the centre reserve. The old margin-derived width (~270px at
+    // 1440) cropped to the middle 37% of the source, which cut the katana off entirely.
+    // Widening the panel shows MORE of the photo at the SAME scale — cover-fit still maps
+    // the image's full height onto the panel height, so the subject does not grow.
+    const h = canvas!.height || 1;
+    const portW = (PORTRAIT_HEIGHT * h * PORTRAIT_ASPECT) / w;
     gl!.uniform1f(uPortW, portW);
     gl!.uniform1f(uPortX, Math.max(0, PORTRAIT_CENTER_X - portW / 2));
     gl!.uniform1f(uPortH, PORTRAIT_HEIGHT);

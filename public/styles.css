@@ -1446,7 +1446,7 @@ img {
 .sdk-intro__heading {
   font-family: "Bricolage Grotesque", sans-serif;
   font-size: clamp(3.25rem, 9vw, 10rem);
-  font-weight: 800;
+  font-weight: 600;
   line-height: 0.9;
   letter-spacing: -.04em;
   color: #fff;
@@ -2309,7 +2309,10 @@ img {
 .sdk-stack__title {
   font-family: "Bricolage Grotesque", sans-serif;
   font-size: clamp(3rem, 8vw, 9rem);
-  font-weight: 800;
+  /* Was 800. Lightened across every section title so the display type reads as
+     editorial rather than shouted; the dim second line drops with it to keep the
+     two-tone contrast the same. */
+  font-weight: 600;
   line-height: .88;
   letter-spacing: -.04em;
   text-transform: uppercase;
@@ -2346,7 +2349,7 @@ img {
 
 .sdk-stack__title-dim {
   color: rgba(245,242,234,.35);
-  font-weight: 300;
+  font-weight: 200;
 }
 
 .sdk-stack__subtitle {
@@ -4708,18 +4711,25 @@ img {
 }
 .works-hero__title {
   font-family: "Bricolage Grotesque", sans-serif;
-  font-weight: 700;
-  font-size: clamp(4rem, 16vw, 15rem);
-  line-height: .86;
+  font-weight: 500;
+  /* Was clamp(4rem, 16vw, 15rem) — ~230px at 1440, far past every other hero on the site
+     (About/Contact/Project sit at 10.5–11vw) and past the homepage section titles. Brought
+     into that family so page headings read at one scale. */
+  font-size: clamp(3.2rem, 9.5vw, 9rem);
+  line-height: .9;
   letter-spacing: -.03em;
   margin-top: 1.5rem;
 }
 .works-hero__title-line {
   display: block;
 }
+/* Was `color: transparent` + a 1px text-stroke. At this size a hairline outline reads as
+   a faint wireframe rather than type — it was the weakest element on the page. Switched to
+   the dim FILLED second line the homepage section titles use, so the two-tone device is
+   consistent site-wide and actually holds its weight. */
 .works-hero__title-dim {
-  color: transparent;
-  -webkit-text-stroke: 1px rgba(245, 242, 234, .32);
+  color: rgba(245, 242, 234, .35);
+  font-weight: 200;
 }
 .works-hero__lead {
   margin-top: 2rem;
@@ -5218,7 +5228,7 @@ img {
 /* Shared page-hero primitives */
 .pd-hero__title, .svc-hero__title, .abt-hero__title, .ctc-hero__title {
   font-family: "Bricolage Grotesque", sans-serif;
-  font-weight: 700;
+  font-weight: 500;
   line-height: .88;
   letter-spacing: -.03em;
   margin-top: 1.25rem;
