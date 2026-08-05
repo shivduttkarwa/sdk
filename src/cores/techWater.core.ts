@@ -1,7 +1,7 @@
 import { mountFluidReveal } from './fluidReveal.core';
 
 // The Tech Stack instance of the fluid reveal — same solver as the stats row, pointed at
-// the portrait column.
+// the full-width portrait stage.
 //
 // Unlike the stats row (which paints hidden artwork INTO the wake) this one draws no image
 // at all: the canvas is a dark veil laid over the existing <img>, and the wake erases it.
@@ -40,11 +40,9 @@ export function mountTechWater(): () => void {
     canvasClass: 'sdk-tech-pin__canvas',
     images: [],
     renderFS: RENDER_FS,
-    // Portrait column is roughly 3:4, so the grid is taller than the stats row's 256x96.
-    // 128x192 keeps the per-frame cost (25 pressure iterations over 24,576 cells) identical.
-    sim: { w: 128, h: 192 },
-    // The column itself is pointer-events: none and only covers the left of the stage;
-    // listening on the sticky lets the wake track the cursor across the whole section.
+    // Match the wide image without increasing the previous simulation's cell count.
+    sim: { w: 192, h: 108 },
+    // The image layer is pointer-events: none; listen on the sticky stage instead.
     pointerEl: sticky,
     splatRadius: 0.0035,
     setRenderUniforms: (prog, h) => {

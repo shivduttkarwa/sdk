@@ -12,6 +12,7 @@ import Stats from '@/components/Stats';
 import SelectedWork from '@/components/SelectedWork';
 import TechStack from '@/components/TechStack';
 import Process from '@/components/Process';
+import Testimonials from '@/components/Testimonials';
 import Contact from '@/components/Contact';
 
 // The intro preloader is a first-visit affair. This module-level flag keeps it from
@@ -58,6 +59,7 @@ export default function Home() {
           <SelectedWork />
           <TechStack />
           <Process />
+          <Testimonials />
           <Contact />
         </div>
       </main>

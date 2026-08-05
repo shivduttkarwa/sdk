@@ -2280,6 +2280,178 @@ img {
   max-width: 44ch;
 }
 
+/* ── Testimonials ─────────────────────────────────────────────────────────────
+   Editorial two-column: a sticky title rail on the left, quotes running down the right.
+   Sticky rather than pinned on purpose — the page already carries three pinned/sticky
+   stages and this needs no scroll-jacking to work. */
+.sdk-voices {
+  position: relative;
+  padding-top: clamp(5rem, 10vw, 9rem);
+  padding-bottom: clamp(5rem, 10vw, 10rem);
+}
+
+.sdk-voices__grid {
+  display: grid;
+  grid-template-columns: minmax(0, .82fr) minmax(0, 1.18fr);
+  gap: clamp(3rem, 7vw, 8rem);
+  /* No align-items here on purpose: the default `stretch` is what gives the sticky rail
+     a grid area tall enough to travel inside. */
+}
+
+.sdk-voices__aside {
+  position: sticky;
+  top: clamp(7rem, 20vh, 12rem);
+  align-self: start;
+  isolation: isolate;
+}
+
+.sdk-voices__kanji {
+  position: absolute;
+  top: -2.75rem;
+  left: -1.5rem;
+  z-index: -1;
+  font-size: clamp(11rem, 20vw, 20rem);
+  line-height: 1;
+  color: rgba(224,63,79,.045);
+  pointer-events: none;
+  user-select: none;
+}
+
+.sdk-voices__counter {
+  display: flex;
+  align-items: center;
+  gap: .85rem;
+  margin-top: clamp(2rem, 4vw, 3rem);
+  font-family: "Space Grotesk", sans-serif;
+  font-size: .72rem;
+  font-weight: 700;
+  letter-spacing: .2em;
+}
+
+.sdk-voices__counter-now { color: var(--red); }
+.sdk-voices__counter-total { color: rgba(245,242,234,.34); }
+
+.sdk-voices__counter-rule {
+  width: clamp(1.75rem, 4vw, 3rem);
+  height: 1px;
+  background: rgba(245,242,234,.22);
+}
+
+.sdk-voices__list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: clamp(2.5rem, 5vw, 4.5rem);
+}
+
+/* Each quote holds a generous block of its own rather than stacking tightly: it gives the
+   sticky rail something to travel against, lets the counter actually cycle, and keeps one
+   quote at a time in the reader's eye. */
+.sdk-voice {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  min-height: clamp(16rem, 38vh, 24rem);
+  padding-top: clamp(1.5rem, 2.5vw, 2.25rem);
+}
+
+.sdk-voice__rule {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, var(--red) 0%, rgba(245,242,234,.14) 55%, transparent 100%);
+  transform: scaleX(0);
+  transform-origin: left;
+}
+
+.sdk-voice__index {
+  display: block;
+  margin-bottom: clamp(1rem, 2vw, 1.6rem);
+  font-family: "Space Grotesk", sans-serif;
+  font-size: .68rem;
+  font-weight: 700;
+  letter-spacing: .26em;
+  color: var(--red);
+}
+
+.sdk-voice__quote {
+  margin: 0;
+  font-family: "Bricolage Grotesque", sans-serif;
+  font-size: clamp(1.35rem, 2.15vw, 2.2rem);
+  font-weight: 400;
+  line-height: 1.4;
+  letter-spacing: -.02em;
+  color: #f5f0e8;
+  /* The reveal animates clip-path; own layer so the large type is not re-rasterised
+     every frame. */
+  will-change: clip-path, transform;
+}
+
+/* Same italic-red emphasis the intro paragraph uses, so the two read as one voice. */
+.sdk-voice__quote em {
+  color: var(--red);
+  font-style: italic;
+}
+
+.sdk-voice__by {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: .55rem .9rem;
+  margin-top: clamp(1.25rem, 2.5vw, 2rem);
+}
+
+.sdk-voice__author {
+  font-family: "Space Grotesk", sans-serif;
+  font-size: .74rem;
+  font-weight: 700;
+  letter-spacing: .18em;
+  text-transform: uppercase;
+  color: rgba(245,242,234,.9);
+}
+
+.sdk-voice__role {
+  font-family: "Space Grotesk", sans-serif;
+  font-size: .72rem;
+  letter-spacing: .06em;
+  color: rgba(245,242,234,.42);
+}
+
+@media (max-width: 900px) {
+  /* Rail becomes a normal header above the quotes; sticky is dropped so nothing holds
+     position while the list scrolls past on a phone. */
+  .sdk-voices__grid {
+    grid-template-columns: minmax(0, 1fr);
+    gap: clamp(2.5rem, 8vw, 3.5rem);
+  }
+
+  .sdk-voices__aside {
+    position: static;
+  }
+
+  .sdk-voices__kanji {
+    top: -3.25rem;
+    left: auto;
+    right: -1rem;
+    font-size: clamp(9rem, 42vw, 13rem);
+  }
+
+  .sdk-voice__quote {
+    font-size: clamp(1.3rem, 5.4vw, 1.75rem);
+    line-height: 1.42;
+  }
+
+  /* Phones do not need the tall reading blocks — the quotes simply follow one another. */
+  .sdk-voice {
+    min-height: 0;
+  }
+}
+
 .sdk-stack__grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
@@ -2472,8 +2644,8 @@ img {
 
 .sdk-tech-pin__portrait {
   position: absolute;
-  inset: 0 auto 0 0;
-  width: min(52vw, 58rem);
+  inset: 0;
+  width: 100%;
   pointer-events: none;
   overflow: hidden;
 }
@@ -2489,7 +2661,7 @@ img {
 
 .sdk-tech-pin__portrait::before {
   background:
-    linear-gradient(90deg, rgba(5,3,10,.1) 0%, rgba(5,3,10,.16) 42%, rgba(5,3,10,.72) 74%, #05030a 100%),
+    linear-gradient(90deg, rgba(5,3,10,.08) 0%, rgba(5,3,10,.12) 42%, rgba(5,3,10,.34) 74%, rgba(5,3,10,.62) 100%),
     linear-gradient(0deg, #05030a 0%, rgba(5,3,10,.72) 12%, transparent 28%, transparent 72%, rgba(5,3,10,.92) 100%);
 }
 
@@ -2498,10 +2670,9 @@ img {
   mix-blend-mode: screen;
 }
 
-/* Fluid-reveal canvas for the portrait (see techWater.core). Sits under the ::before /
-   ::after gradient overlays (z-index 2) so the column still blends into the stage exactly
-   as before, and carries the same horizontal fade the <img> used so its right edge
-   dissolves toward the cards. */
+/* Fluid-reveal canvas for the full-width portrait (see techWater.core). It sits beneath
+   the gradient overlays so the office remains legible while the right-side copy and cards
+   retain enough contrast. */
 .sdk-tech-pin__canvas {
   position: absolute;
   inset: 0;
@@ -2509,8 +2680,6 @@ img {
   height: 100%;
   z-index: 1;
   pointer-events: none;
-  -webkit-mask-image: linear-gradient(90deg, #000 0%, #000 42%, rgba(0,0,0,.7) 62%, transparent 94%);
-  mask-image: linear-gradient(90deg, #000 0%, #000 42%, rgba(0,0,0,.7) 62%, transparent 94%);
 }
 
 /* Added by techWater.core only once the sim is actually running, so the <img> keeps its
@@ -2528,18 +2697,14 @@ img {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  object-position: 32% 56%;
-  opacity: .48;
-  filter: saturate(.82) contrast(1.08) brightness(.68);
+  object-position: center 52%;
+  opacity: .64;
+  filter: saturate(.86) contrast(1.06) brightness(.76);
   transform-origin: center;
-  /* The square source sits low-left when cover-fit into this tall column; zoom slightly
-     and shift the subject up and right so the portrait reads centered. */
-  transform: scale(1.12) translate(3%, -4%);
+  transform: none;
   /* Own compositing layer so the filter + mask rasterize once, not every scroll frame. */
   will-change: transform;
   backface-visibility: hidden;
-  -webkit-mask-image: linear-gradient(90deg, #000 0%, #000 42%, rgba(0,0,0,.7) 62%, transparent 94%);
-  mask-image: linear-gradient(90deg, #000 0%, #000 42%, rgba(0,0,0,.7) 62%, transparent 94%);
 }
 
 .sdk-tech-pin__cards {
@@ -2727,9 +2892,9 @@ img {
   }
 
   .sdk-tech-pin__image {
-    object-position: center 40%;
-    -webkit-mask-image: radial-gradient(ellipse at 50% 60%, #000 0 42%, rgba(0,0,0,.55) 70%, transparent 90%);
-    mask-image: radial-gradient(ellipse at 50% 60%, #000 0 42%, rgba(0,0,0,.55) 70%, transparent 90%);
+    object-position: 10% 50%;
+    -webkit-mask-image: radial-gradient(ellipse at 34% 60%, #000 0 42%, rgba(0,0,0,.55) 70%, transparent 90%);
+    mask-image: radial-gradient(ellipse at 34% 60%, #000 0 42%, rgba(0,0,0,.55) 70%, transparent 90%);
   }
 
   .sdk-tech-card {
