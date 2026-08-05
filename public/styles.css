@@ -3742,7 +3742,9 @@ img {
 
 .sdk-work__runway {
   position: relative;
-  height: 800vh;
+  /* ~160vh of scroll per project (4 projects). Keep this proportional to the slide count
+     in cores/selectedWork.core.ts, or each slide's dwell time stretches/compresses. */
+  height: 640vh;
 }
 
 .sdk-work__sticky {
@@ -4056,7 +4058,7 @@ img {
     --work-pad-x: clamp(1.25rem, 5vw, 2rem);
     padding: clamp(2.5rem, 6vw, 4rem) var(--work-pad-x) 0;
   }
-  .sdk-work__runway { height: 640vh; }
+  .sdk-work__runway { height: 512vh; }
   .sdk-work__sticky { height: 100svh; min-height: 34rem; }
   .sdk-work__seam { display: none; }
   /* Clears the fixed nav pill (~4.25rem tall incl. its top offset). On desktop this row

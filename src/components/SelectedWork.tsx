@@ -34,9 +34,9 @@ export default function SelectedWork() {
         <div className="sdk-work__progress" id="sdk-work-progress" aria-hidden="true">
           <div className="sdk-work__progress-track">
             <span className="sdk-work__progress-fill" id="sdk-work-progress-fill"></span>
-            <i className="sdk-work__progress-mark" style={{ left: '25%' }}></i>
-            <i className="sdk-work__progress-mark" style={{ left: '50%' }}></i>
-            <i className="sdk-work__progress-mark" style={{ left: '75%' }}></i>
+            {/* One mark per slide boundary: N projects → N-1 marks at even fractions. */}
+            <i className="sdk-work__progress-mark" style={{ left: '33.333%' }}></i>
+            <i className="sdk-work__progress-mark" style={{ left: '66.666%' }}></i>
           </div>
         </div>
 
@@ -47,7 +47,6 @@ export default function SelectedWork() {
               <span className="sdk-work__pattern sdk-work__pattern--p2"></span>
               <span className="sdk-work__pattern sdk-work__pattern--p3"></span>
               <span className="sdk-work__pattern sdk-work__pattern--p4"></span>
-              <span className="sdk-work__pattern sdk-work__pattern--p5"></span>
             </div>
             <div className="sdk-work__topo" aria-hidden="true">
               <svg viewBox="0 0 1920 1080" preserveAspectRatio="xMidYMid slice" fill="none">
@@ -64,7 +63,7 @@ export default function SelectedWork() {
               <span>
                 <span className="sdk-work__jp">作</span> Selected Work
               </span>
-              <span>Five projects · one craft</span>
+              <span>Four projects · one craft</span>
             </header>
 
             <div className="sdk-work__stage" id="sdk-work-stage">
@@ -72,54 +71,51 @@ export default function SelectedWork() {
               <div className="sdk-work__fallback" aria-hidden="false">
                 <img
                   className="sdk-work__img is-active"
-                  src="assets/images/work-aurora.jpg"
-                  alt="Real Gold Properties project"
+                  src="assets/images/project-nomad-nest.webp"
+                  alt="Nomad &amp; Nest project"
                   loading="lazy"
                   decoding="async"
                 />
                 <img
                   className="sdk-work__img"
-                  src="assets/images/work-nimbus.jpg"
+                  src="assets/images/project-shambala-homes.webp"
                   alt="Shambala Homes project"
                   loading="lazy"
                   decoding="async"
                 />
                 <img
                   className="sdk-work__img"
-                  src="assets/images/work-meridian.jpg"
-                  alt="Cyber Shades project"
+                  src="assets/images/project-saturday-themes.webp"
+                  alt="Saturday Themes project"
                   loading="lazy"
                   decoding="async"
                 />
                 <img
                   className="sdk-work__img"
-                  src="assets/images/work-kinetic.jpg"
-                  alt="Behna Clothing Studio project"
-                  loading="lazy"
-                  decoding="async"
-                />
-                <img
-                  className="sdk-work__img"
-                  src="assets/images/work-vault.jpg"
-                  alt="Bunny Bites project"
+                  src="assets/images/project-voyage-nest.webp"
+                  alt="Voyage Nest project"
                   loading="lazy"
                   decoding="async"
                 />
               </div>
             </div>
 
+            {/* PLACEHOLDER COPY: only Shambala Homes is a real, verified entry. The category,
+                subtitle and summary for Nomad & Nest, Saturday Themes and Voyage Nest were
+                inferred from their names and need replacing with the real details. Story order
+                must match `items` in cores/selectedWork.core.ts. */}
             <div className="sdk-work__stories" aria-label="Project stories">
               <article className="sdk-work-story" data-side="left">
                 <div className="sdk-work-story__meta">
                   <span className="sdk-work-story__mark">01</span>
-                  <span>Real Estate · Platform</span>
+                  <span>Travel · Stays</span>
                 </div>
                 <h3>
-                  Real Gold <span>Premium property platform</span>
+                  Nomad &amp; Nest <span>Boutique stays platform</span>
                 </h3>
                 <p>
-                  Premium real estate across Brisbane and the Gold Coast — listings, enquiries, and
-                  consultations in one polished experience.
+                  Hand-picked places to land between journeys — browsing, availability, and booking
+                  in one unhurried experience.
                 </p>
               </article>
 
@@ -129,7 +125,7 @@ export default function SelectedWork() {
                   <span className="sdk-work-story__mark">02</span>
                 </div>
                 <h3>
-                  Shambala <span>Luxury home builder site</span>
+                  Shambala Homes <span>Luxury home builder site</span>
                 </h3>
                 <p>
                   A cinematic showcase for architectural craftsmanship — where modern design meets
@@ -140,42 +136,28 @@ export default function SelectedWork() {
               <article className="sdk-work-story" data-side="left">
                 <div className="sdk-work-story__meta">
                   <span className="sdk-work-story__mark">03</span>
-                  <span>Studio · Digital</span>
+                  <span>Product · Themes</span>
                 </div>
                 <h3>
-                  Cyber Shades <span>Digital studio site</span>
+                  Saturday Themes <span>Premium theme studio</span>
                 </h3>
                 <p>
-                  The face of a Jaipur digital studio — websites, apps, and connected platforms,
-                  built with a pulse.
+                  A storefront for polished, production-ready website themes — previewed, compared,
+                  and shipped in an afternoon.
                 </p>
               </article>
 
               <article className="sdk-work-story" data-side="right">
                 <div className="sdk-work-story__meta">
-                  <span>Fashion · Boutique</span>
+                  <span>Travel · Planning</span>
                   <span className="sdk-work-story__mark">04</span>
                 </div>
                 <h3>
-                  Behna <span>Ethnic wear studio</span>
+                  Voyage Nest <span>Trip planning experience</span>
                 </h3>
                 <p>
-                  A boutique storefront for handcrafted women&apos;s ethnic wear — timeless
-                  elegance, made in Jaipur.
-                </p>
-              </article>
-
-              <article className="sdk-work-story" data-side="left">
-                <div className="sdk-work-story__meta">
-                  <span className="sdk-work-story__mark">05</span>
-                  <span>Brand · Food</span>
-                </div>
-                <h3>
-                  Bunny Bites <span>Kids&apos; nutrition brand</span>
-                </h3>
-                <p>
-                  A playful, trust-first brand site for nutritious kids&apos; meals — from cravings
-                  to comfort, carefully crafted.
+                  Itineraries that build themselves as you dream — routes, stays, and timings
+                  gathered into one calm plan.
                 </p>
               </article>
             </div>

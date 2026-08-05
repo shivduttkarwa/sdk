@@ -20,12 +20,15 @@ export function mountSelectedWork(): () => void {
 
       if (!section || !runway || !sticky || !stage || !canvas || !progress) return () => {};
 
+      // One entry per `.sdk-work-story` / `.sdk-work__img` in SelectedWork.tsx, in order.
+      // Everything downstream (storyWindows, getState, the progress fill) derives from
+      // items.length, so changing the project count only means editing this list and the
+      // markup — but the two MUST stay the same length or slides desync from their images.
       const items = [
-        { image: 'assets/images/work-aurora.jpg' },
-        { image: 'assets/images/work-nimbus.jpg' },
-        { image: 'assets/images/work-meridian.jpg' },
-        { image: 'assets/images/work-kinetic.jpg' },
-        { image: 'assets/images/work-vault.jpg' }
+        { image: 'assets/images/project-nomad-nest.webp' },
+        { image: 'assets/images/project-shambala-homes.webp' },
+        { image: 'assets/images/project-saturday-themes.webp' },
+        { image: 'assets/images/project-voyage-nest.webp' }
       ];
 
       const total = items.length;
