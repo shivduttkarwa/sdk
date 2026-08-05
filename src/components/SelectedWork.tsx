@@ -60,9 +60,7 @@ export default function SelectedWork() {
             <div className="sdk-work__seam" aria-hidden="true"></div>
 
             <header className="sdk-work__head">
-              <span>
-                <span className="sdk-work__jp">作</span> Selected Work
-              </span>
+              <span>Selected Work</span>
               <span>Four projects · one craft</span>
             </header>
 
@@ -117,6 +115,13 @@ export default function SelectedWork() {
                   Hand-picked places to land between journeys — browsing, availability, and booking
                   in one unhurried experience.
                 </p>
+                <a
+                  className="sdk-work-story__cta"
+                  href="#/works"
+                  data-transition-label="Work"
+                >
+                  View project <span aria-hidden="true">→</span>
+                </a>
               </article>
 
               <article className="sdk-work-story" data-side="right">
@@ -131,6 +136,13 @@ export default function SelectedWork() {
                   A cinematic showcase for architectural craftsmanship — where modern design meets
                   vision, from concept to build.
                 </p>
+                <a
+                  className="sdk-work-story__cta"
+                  href="#/works"
+                  data-transition-label="Work"
+                >
+                  View project <span aria-hidden="true">→</span>
+                </a>
               </article>
 
               <article className="sdk-work-story" data-side="left">
@@ -145,6 +157,13 @@ export default function SelectedWork() {
                   A storefront for polished, production-ready website themes — previewed, compared,
                   and shipped in an afternoon.
                 </p>
+                <a
+                  className="sdk-work-story__cta"
+                  href="#/works"
+                  data-transition-label="Work"
+                >
+                  View project <span aria-hidden="true">→</span>
+                </a>
               </article>
 
               <article className="sdk-work-story" data-side="right">
@@ -159,6 +178,13 @@ export default function SelectedWork() {
                   Itineraries that build themselves as you dream — routes, stays, and timings
                   gathered into one calm plan.
                 </p>
+                <a
+                  className="sdk-work-story__cta"
+                  href="#/works"
+                  data-transition-label="Work"
+                >
+                  View project <span aria-hidden="true">→</span>
+                </a>
               </article>
             </div>
           </div>

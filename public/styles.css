@@ -3874,7 +3874,6 @@ img {
   color: rgba(245,242,234,.88);
 }
 
-.sdk-work__jp,
 .sdk-work-story__mark {
   font-family: "Noto Serif JP", serif;
   color: var(--red);
@@ -4002,6 +4001,54 @@ img {
   margin-left: auto;
 }
 
+.sdk-work-story__cta {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: .75rem;
+  min-height: 2.9rem;
+  margin-top: 1.5rem;
+  padding: .8rem 1.15rem;
+  border: 1px solid rgba(224,63,79,.72);
+  background: rgba(5,5,5,.42);
+  color: #f5f0e8;
+  font-family: "Space Grotesk", sans-serif;
+  font-size: .7rem;
+  font-weight: 800;
+  line-height: 1;
+  letter-spacing: .2em;
+  text-decoration: none;
+  text-transform: uppercase;
+  pointer-events: none;
+  backdrop-filter: blur(8px);
+  transition:
+    color .25s var(--ease),
+    background-color .25s var(--ease),
+    border-color .25s var(--ease),
+    transform .25s var(--ease);
+}
+
+.sdk-work-story[data-side="right"] .sdk-work-story__cta {
+  margin-left: auto;
+}
+
+.sdk-work-story.is-interactive .sdk-work-story__cta {
+  pointer-events: auto;
+}
+
+.sdk-work-story__cta:hover,
+.sdk-work-story__cta:focus-visible {
+  border-color: var(--red);
+  background: var(--red);
+  color: #fff;
+  transform: translateY(-2px);
+}
+
+.sdk-work-story__cta:focus-visible {
+  outline: 2px solid #f5f0e8;
+  outline-offset: 3px;
+}
+
 .sdk-work__progress {
   position: fixed;
   z-index: 80;
@@ -4127,6 +4174,9 @@ img {
   .sdk-work-story[data-side="right"] p {
     margin-left: 0;
   }
+  .sdk-work-story[data-side="right"] .sdk-work-story__cta {
+    margin-left: 0;
+  }
   .sdk-work-story__meta {
     margin-bottom: .6rem;
     font-size: .62rem;
@@ -4144,6 +4194,12 @@ img {
     max-width: 54ch;
     font-size: .88rem;
     line-height: 1.45;
+  }
+  .sdk-work-story__cta {
+    min-height: 2.65rem;
+    margin-top: 1rem;
+    padding: .72rem 1rem;
+    font-size: .64rem;
   }
 }
 

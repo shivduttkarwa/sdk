@@ -93,7 +93,12 @@ export function mountSelectedWork(): () => void {
       // on text is an expensive repaint — only touch it when the rendered value changes).
       let lastActive = -1;
       const lastPatternOpacity = patterns.map(() => '');
-      const lastStory = stories.map(() => ({ opacity: '', filter: '', shift: '' }));
+      const lastStory = stories.map(() => ({
+        opacity: '',
+        filter: '',
+        shift: '',
+        interactive: null as boolean | null,
+      }));
       let lastProgressVisible: boolean | null = null;
       let lastProgressValue = '';
 
@@ -127,11 +132,18 @@ export function mountSelectedWork(): () => void {
             opacity: opacity.toFixed(3),
             filter: `blur(${((1 - opacity) * 5).toFixed(2)}px)`,
             shift: `${dir.toFixed(2)}rem`,
+            interactive: opacity > 0.5,
           };
           const prev = lastStory[i];
           if (prev.opacity !== next.opacity) { prev.opacity = next.opacity; story.style.opacity = next.opacity; }
           if (prev.filter !== next.filter) { prev.filter = next.filter; story.style.filter = next.filter; }
           if (prev.shift !== next.shift) { prev.shift = next.shift; story.style.setProperty('--shift', next.shift); }
+          if (prev.interactive !== next.interactive) {
+            prev.interactive = next.interactive;
+            story.classList.toggle('is-interactive', next.interactive);
+            story.toggleAttribute('inert', !next.interactive);
+            story.setAttribute('aria-hidden', String(!next.interactive));
+          }
         });
       }
 
