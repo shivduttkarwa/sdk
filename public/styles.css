@@ -4362,11 +4362,12 @@ img {
   position: absolute;
   top: 50%;
   /* Sized off the longest single word in a title, not the average: the h3 is
-     clamp(3.4rem, 8.2vw, 8rem) uppercase, so "SHAMBALA" measures 615px at the 8rem cap.
-     At the old 32rem/38vw the word overran the box by ~103px and, on the right-hand
-     stories, ran 22px off the viewport. 40rem/42vw tracks the h3's own scaling and keeps
-     20-33px of clearance from 1000px up. Overridden entirely below 980px, where the
-     stories go full-width and the h3 drops to clamp(2.1rem, 9vw, 3.4rem). */
+     clamp(2.18rem, 5.25vw, 5.12rem) uppercase, so "SHAMBALA" measures ~394px at the
+     5.12rem cap. At the old 32rem/38vw the word overran the box and, on the right-hand
+     stories, ran off the viewport. 40rem/42vw tracks the h3's own scaling; the h3 has
+     since come down 36% from that sizing, so it clears with room to spare at every
+     width. Overridden entirely below 860px, where the stories go full-width and the h3
+     drops to clamp(1.34rem, 5.76vw, 2.18rem). */
   max-width: min(40rem, 42vw);
   opacity: 0;
   transform: translateY(-50%) translateX(var(--shift, 0));
@@ -4410,8 +4411,8 @@ img {
   margin: 0 0 .9rem;
   color: #f5f0e8;
   font-family: "Bricolage Grotesque", sans-serif;
-  font-size: clamp(3.4rem, 8.2vw, 8rem);
-  font-weight: 800;
+  font-size: clamp(2.18rem, 5.25vw, 5.12rem);
+  font-weight: 512;
   line-height: .86;
   letter-spacing: -.035em;
   text-transform: uppercase;
@@ -4612,7 +4613,7 @@ img {
   }
   .sdk-work-story h3 {
     margin-bottom: .5rem;
-    font-size: clamp(2.1rem, 9vw, 3.4rem);
+    font-size: clamp(1.34rem, 5.76vw, 2.18rem);
   }
   .sdk-work-story h3 span {
     margin-top: .5rem;
