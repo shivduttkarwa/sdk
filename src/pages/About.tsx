@@ -2,6 +2,7 @@ import { useRef } from 'react';
 import Contact from '@/components/Contact';
 import PageHeroTitle from '@/components/PageHeroTitle';
 import { usePageFx } from '@/hooks/usePageFx';
+import { usePageHeroIntro } from '@/hooks/usePageHeroIntro';
 
 // /about — the person behind the pixels. Portrait hero with a parallax kanji watermark,
 // a per-line manifesto reveal, a journey timeline whose spine draws itself on scroll,
@@ -58,6 +59,7 @@ const toolbox = [
 export default function About() {
   const rootRef = useRef<HTMLElement>(null);
   usePageFx(rootRef);
+  usePageHeroIntro();
 
   return (
     <main className="abt" ref={rootRef}>
@@ -66,7 +68,7 @@ export default function About() {
           侍
         </span>
         <div className="container abt-hero__grid">
-          <div className="abt-hero__copy">
+          <div className="abt-hero__copy" data-hero-intro>
             <span className="sdk-eyebrow">Developer · Designer · Craftsman</span>
             <PageHeroTitle lines={['Shivdutt', 'Karwa']} />
             <p className="abt-hero__lead">

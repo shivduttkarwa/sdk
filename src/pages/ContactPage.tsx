@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import PageHeroTitle from '@/components/PageHeroTitle';
 import { usePageFx } from '@/hooks/usePageFx';
+import { usePageHeroIntro } from '@/hooks/usePageHeroIntro';
 import { useEmberField } from '@/hooks/useEmberField';
 import { useFooterName } from '@/hooks/useFooterName';
 
@@ -52,6 +53,7 @@ export default function ContactPage() {
   const time = useIstClock();
 
   usePageFx(rootRef);
+  usePageHeroIntro();
   useEmberField(canvasRef);
   useFooterName();
 
@@ -77,7 +79,7 @@ export default function ContactPage() {
         <span className="ctc-hero__kanji" aria-hidden="true" data-parallax="0.2">
           縁
         </span>
-        <div className="container ctc-hero__inner">
+        <div className="container ctc-hero__inner" data-hero-intro>
           <span className="sdk-eyebrow">Contact</span>
           <PageHeroTitle lines={['Let’s build', 'something magical']} />
           <p className="ctc-hero__lead">

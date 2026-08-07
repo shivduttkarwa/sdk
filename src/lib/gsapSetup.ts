@@ -4,8 +4,9 @@
 // same 3.12.5 code.
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import { CustomEase } from 'gsap/CustomEase';
 
-gsap.registerPlugin(ScrollTrigger);
+gsap.registerPlugin(ScrollTrigger, CustomEase);
 
 // Mobile browser chrome (URL bar) collapsing on the first downward flick fires a window
 // resize, and ScrollTrigger's default handler answers with a full refresh() — recalcing
@@ -15,4 +16,4 @@ gsap.registerPlugin(ScrollTrigger);
 // useShowcasePin, which gates on exactly those.
 ScrollTrigger.config({ ignoreMobileResize: true });
 
-export { gsap, ScrollTrigger };
+export { gsap, ScrollTrigger, CustomEase };

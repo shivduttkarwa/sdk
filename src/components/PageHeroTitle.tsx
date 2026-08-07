@@ -13,6 +13,10 @@ import type { ReactNode } from 'react';
  * `lines` is one entry per visual line. The last line gets the site's dim second-line
  * treatment — but only when there is more than one, so a single-line title (project
  * detail, whose text comes from the project data) stays solid.
+ *
+ * The lines are also what the hero entrance animates — hooks/usePageHeroIntro expands the
+ * title into them when building its timeline, so a two-line title reads as two staggered
+ * lines rather than one block.
  */
 export type PageHeroTitleProps = {
   lines: ReactNode[];

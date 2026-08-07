@@ -3,6 +3,7 @@ import { services, processSteps } from '@/data/services';
 import Contact from '@/components/Contact';
 import PageHeroTitle from '@/components/PageHeroTitle';
 import { usePageFx } from '@/hooks/usePageFx';
+import { usePageHeroIntro } from '@/hooks/usePageHeroIntro';
 
 // /services — what I offer, as an expanding accordion of large numbered rows (the
 // awwwards pattern the /works list already speaks), a process strip whose connecting
@@ -11,6 +12,7 @@ export default function Services() {
   const rootRef = useRef<HTMLElement>(null);
   const [open, setOpen] = useState(0);
   usePageFx(rootRef);
+  usePageHeroIntro();
 
   const marqueeItems = [
     'Web Design',
@@ -31,7 +33,7 @@ export default function Services() {
         <span className="svc-hero__kanji" aria-hidden="true" data-parallax="0.22">
           技
         </span>
-        <div className="container">
+        <div className="container" data-hero-intro>
           <span className="sdk-eyebrow">What I offer</span>
           <PageHeroTitle lines={['Services', '& craft']} />
           <p className="svc-hero__lead">

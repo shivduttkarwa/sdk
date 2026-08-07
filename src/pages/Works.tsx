@@ -2,12 +2,14 @@ import { useEffect, useRef } from 'react';
 import { projects } from '@/data/projects';
 import Contact from '@/components/Contact';
 import PageHeroTitle from '@/components/PageHeroTitle';
+import { usePageHeroIntro } from '@/hooks/usePageHeroIntro';
 
 // The /works index: a full page — cinematic hero, an awwwards-style hover-reveal list,
 // then the shared contact footer. Hovering a row dims the others, tints it red, and
 // floats that project's cover near the cursor. The floating preview is driven by one rAF
 // lerp loop that only runs while the pointer is over the list, so an idle page costs nothing.
 export default function Works() {
+  usePageHeroIntro();
   const listRef = useRef<HTMLDivElement>(null);
   const previewRef = useRef<HTMLDivElement>(null);
   const imgRef = useRef<HTMLImageElement>(null);
@@ -83,27 +85,13 @@ export default function Works() {
   return (
     <main className="works" id="work-index">
       <section className="works-hero">
-        <div className="container">
+        <div className="container" data-hero-intro>
           <span className="sdk-eyebrow">Portfolio · 2021 — 2024</span>
           <PageHeroTitle lines={['Selected', 'Work']} />
           <p className="works-hero__lead">
             A selection of products, platforms and brands I&apos;ve designed and built — from
             the first idea to launch day.
           </p>
-          <div className="works-hero__meta">
-            <div className="works-hero__stat">
-              <strong>{String(projects.length).padStart(2, '0')}</strong>
-              <span>Projects</span>
-            </div>
-            <div className="works-hero__stat">
-              <strong>05</strong>
-              <span>Industries</span>
-            </div>
-            <div className="works-hero__stat">
-              <strong>02</strong>
-              <span>Countries</span>
-            </div>
-          </div>
         </div>
         <a className="works-hero__scroll" href="#work-list">
           <span>Scroll to explore</span>

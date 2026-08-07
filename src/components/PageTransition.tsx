@@ -3,8 +3,8 @@ import { gsap, ScrollTrigger } from '@/lib/gsapSetup';
 
 // Page transition: the outgoing page lifts up and fades behind a dark dim overlay, the route
 // swaps while hidden, then the incoming page rises from below and fades in — after which its
-// hero headings cascade in via the SplitText-style line reveal (see `riseReveal` in the
-// stylesheet). Core motion uses cubic-bezier(.60,.30,.01,.99). Honors reduced-motion.
+// hero headings cascade in via the SplitText-style line reveal (see hooks/usePageHeroIntro).
+// Core motion uses cubic-bezier(.60,.30,.01,.99). Honors reduced-motion.
 const EASE = 'cubic-bezier(.60,.30,.01,.99)';
 
 export default function PageTransition() {

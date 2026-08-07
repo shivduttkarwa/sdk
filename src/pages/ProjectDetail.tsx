@@ -3,6 +3,7 @@ import { getProject, getNextProject } from '@/data/projects';
 import Contact from '@/components/Contact';
 import PageHeroTitle from '@/components/PageHeroTitle';
 import { usePageFx } from '@/hooks/usePageFx';
+import { usePageHeroIntro } from '@/hooks/usePageHeroIntro';
 
 // /works/:slug — cinematic case study. Hero with an oversized index watermark, a
 // clip-revealed parallax cover, editorial overview with a sticky kanji rail, animated
@@ -12,6 +13,7 @@ export default function ProjectDetail({ slug }: { slug: string }) {
   const rootRef = useRef<HTMLElement>(null);
   const project = getProject(slug);
   usePageFx(rootRef);
+  usePageHeroIntro();
 
   if (!project) {
     return (
@@ -38,7 +40,7 @@ export default function ProjectDetail({ slug }: { slug: string }) {
         <span className="pd-hero__num" aria-hidden="true" data-parallax="0.25">
           {project.num}
         </span>
-        <div className="container">
+        <div className="container" data-hero-intro>
           <a className="pd__back" href="#/works" data-transition-label="Work">
             <span className="pd__back-arrow" aria-hidden="true">
               ←
