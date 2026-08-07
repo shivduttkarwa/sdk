@@ -4307,29 +4307,6 @@ img {
   mix-blend-mode: screen;
 }
 
-.sdk-work__head {
-  position: absolute;
-  z-index: 8;
-  top: clamp(2rem, 5vh, 4rem);
-  left: clamp(1.75rem, 6vw, 7.5rem);
-  right: clamp(1.75rem, 6vw, 7.5rem);
-  display: flex;
-  justify-content: space-between;
-  gap: 1.5rem;
-  padding-bottom: .75rem;
-  border-bottom: 1px dashed rgba(224,63,79,.28);
-  color: rgba(245,242,234,.48);
-  font-family: "Space Grotesk", sans-serif;
-  font-size: .72rem;
-  font-weight: 700;
-  letter-spacing: .28em;
-  text-transform: uppercase;
-}
-
-.sdk-work__head span:first-child {
-  color: rgba(245,242,234,.88);
-}
-
 .sdk-work-story__mark {
   font-family: "Noto Serif JP", serif;
   color: var(--red);
@@ -4570,17 +4547,6 @@ img {
   .sdk-work__runway { height: 512vh; }
   .sdk-work__sticky { height: 100svh; min-height: 34rem; }
   .sdk-work__seam { display: none; }
-  /* Clears the fixed nav pill (~4.25rem tall incl. its top offset). On desktop this row
-     splits to the far left/right edges so the centred pill never reaches it; at this width
-     it runs straight underneath, and anything above ~4.5rem is hidden behind the pill. */
-  .sdk-work__head {
-    top: clamp(4.75rem, 9svh, 5.5rem);
-    flex-direction: column;
-    align-items: flex-start;
-    gap: .35rem;
-    font-size: .64rem;
-    letter-spacing: .22em;
-  }
   /* Full-bleed image like desktop: the stage fills the whole 100svh sticky panel and the
      story copy sits ON the photo, rather than the old split (copy in the top ~44svh, image
      confined to the band below it). */
@@ -4590,8 +4556,8 @@ img {
   }
 
   /* Legibility scrim for that overlay. The WebGL shader already darkens its own bottom
-     ~28%, but the <img> fallback (no WebGL / reduced motion) does not, and both the head
-     row and the story now sit over open photo. Darkens top and bottom, leaves the middle
+     ~28%, but the <img> fallback (no WebGL / reduced motion) does not, and the story now
+     sits over open photo. Darkens top and bottom, leaves the middle
      of the image clear. Above the canvas (z-index 2) but below the stories (z-index 6).
      The lower ramp is tuned to the story box, which starts ~74% down the panel: it is
      already at .72 by the time the meta row begins, so even the busiest cover (the code

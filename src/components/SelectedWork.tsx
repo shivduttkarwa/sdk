@@ -59,11 +59,6 @@ export default function SelectedWork() {
             </div>
             <div className="sdk-work__seam" aria-hidden="true"></div>
 
-            <header className="sdk-work__head">
-              <span>Selected Work</span>
-              <span>Four projects · one craft</span>
-            </header>
-
             <div className="sdk-work__stage" id="sdk-work-stage">
               <canvas id="sdk-work-fx" aria-hidden="true"></canvas>
               <div className="sdk-work__fallback" aria-hidden="false">
