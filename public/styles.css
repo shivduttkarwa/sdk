@@ -5771,6 +5771,13 @@ img {
   display: flex;
   gap: .5rem;
   height: clamp(28rem, 68vh, 44rem);
+
+  /* Width an open panel settles at, derived rather than guessed: the rack is the
+     container's own min(90rem, 100vw - 4rem), less the four .5rem gaps, times the open
+     panel's share of the flex line (4.6 against four spines of 1 = .535). Rounded down to
+     .52 for slack, since 100vw counts the scrollbar and the container's 100% does not.
+     .svc-panel__body is sized from this so it never re-wraps mid-transition. */
+  --open-w: calc((min(90rem, 100vw - 4rem) - 2rem) * .52);
 }
 
 .svc-panel {
@@ -5868,7 +5875,14 @@ img {
 /* ---- Body (open state) ---- */
 .svc-panel__body {
   position: absolute;
-  inset: 0;
+  /* `right: auto` on purpose — with left AND right pinned, the body's width would track
+     the panel's animating width, so the copy would re-wrap on every frame of the grow.
+     Bottom-aligned, that reflow reads as the title sliding downward into place: the block
+     starts many lines tall at spine width and collapses as it widens. Laying the body out
+     at its final width instead means the panel's overflow simply UNCOVERS finished text —
+     nothing reflows, so nothing drifts. */
+  inset: 0 auto 0 0;
+  width: var(--open-w);
   z-index: 2;
   display: flex;
   flex-direction: column;
@@ -5881,7 +5895,7 @@ img {
   padding: clamp(1.5rem, 3.5vh, 2.8rem);
   opacity: 0;
   pointer-events: none;
-  transition: opacity .45s var(--ease) .1s;
+  transition: opacity .4s var(--ease);
 }
 .svc-panel.is-active .svc-panel__body {
   opacity: 1;
@@ -5946,8 +5960,11 @@ img {
 .svc-panel.is-active .svc-panel__body > *:nth-child(5) { animation-delay: .28s; }
 .svc-panel.is-active .svc-panel__body > *:nth-child(6) { animation-delay: .34s; }
 
+/* A short lift, not a drop. Kept small deliberately: the panel is already travelling
+   sideways underneath, and a tall vertical entrance on top of that reads as the copy
+   fighting the panel rather than arriving with it. */
 @keyframes svcPanelIn {
-  from { opacity: 0; transform: translateY(1rem); }
+  from { opacity: 0; transform: translateY(.5rem); }
   to { opacity: 1; transform: translateY(0); }
 }
 
@@ -5985,6 +6002,9 @@ img {
   .svc-panel__body {
     position: relative;
     inset: auto;
+    /* Stacked rows open downward, not sideways, so there is no width animation to
+       out-run — the body goes back to filling its row. */
+    width: auto;
     justify-content: flex-start;
     padding: 1.3rem 1.15rem 1.6rem;
   }
