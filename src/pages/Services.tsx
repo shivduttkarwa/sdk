@@ -1,6 +1,7 @@
 import { useRef, useState } from 'react';
 import { services, processSteps } from '@/data/services';
 import Contact from '@/components/Contact';
+import PageHeroTitle from '@/components/PageHeroTitle';
 import { usePageFx } from '@/hooks/usePageFx';
 
 // /services — what I offer, as an expanding accordion of large numbered rows (the
@@ -32,10 +33,7 @@ export default function Services() {
         </span>
         <div className="container">
           <span className="sdk-eyebrow">What I offer</span>
-          <h1 className="svc-hero__title">
-            <span className="svc-hero__title-line">Services</span>
-            <span className="svc-hero__title-line svc-hero__title-dim">&amp; craft</span>
-          </h1>
+          <PageHeroTitle lines={['Services', '& craft']} />
           <p className="svc-hero__lead">
             Five disciplines, one pair of hands. Every engagement runs the full arc — from the
             first question to the last deploy — so nothing gets lost between specialists.

@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
+import PageHeroTitle from '@/components/PageHeroTitle';
 import { usePageFx } from '@/hooks/usePageFx';
 import { useEmberField } from '@/hooks/useEmberField';
 import { useFooterName } from '@/hooks/useFooterName';
@@ -78,10 +79,7 @@ export default function ContactPage() {
         </span>
         <div className="container ctc-hero__inner">
           <span className="sdk-eyebrow">Contact</span>
-          <h1 className="ctc-hero__title">
-            <span className="ctc-hero__title-line">Let&apos;s build</span>
-            <span className="ctc-hero__title-line ctc-hero__title-dim">something magical</span>
-          </h1>
+          <PageHeroTitle lines={['Let’s build', 'something magical']} />
           <p className="ctc-hero__lead">
             Every great website begins with a conversation. Tell me what you&apos;re dreaming
             about — I&apos;ll help you shape it into something real.

@@ -1,5 +1,6 @@
 import { useRef } from 'react';
 import Contact from '@/components/Contact';
+import PageHeroTitle from '@/components/PageHeroTitle';
 import { usePageFx } from '@/hooks/usePageFx';
 
 // /about — the person behind the pixels. Portrait hero with a parallax kanji watermark,
@@ -67,10 +68,7 @@ export default function About() {
         <div className="container abt-hero__grid">
           <div className="abt-hero__copy">
             <span className="sdk-eyebrow">Developer · Designer · Craftsman</span>
-            <h1 className="abt-hero__title">
-              <span className="abt-hero__title-line">Shivdutt</span>
-              <span className="abt-hero__title-line abt-hero__title-dim">Karwa</span>
-            </h1>
+            <PageHeroTitle lines={['Shivdutt', 'Karwa']} />
             <p className="abt-hero__lead">
               I&apos;m a full-stack developer from Rajasthan, India, building cinematic web
               experiences where design, motion and engineering are one discipline — not three

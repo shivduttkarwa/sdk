@@ -1,6 +1,7 @@
 import { useRef } from 'react';
 import { getProject, getNextProject } from '@/data/projects';
 import Contact from '@/components/Contact';
+import PageHeroTitle from '@/components/PageHeroTitle';
 import { usePageFx } from '@/hooks/usePageFx';
 
 // /works/:slug — cinematic case study. Hero with an oversized index watermark, a
@@ -47,7 +48,7 @@ export default function ProjectDetail({ slug }: { slug: string }) {
           <p className="sdk-eyebrow">
             {project.category} · {project.year}
           </p>
-          <h1 className="pd-hero__title">{project.title}</h1>
+          <PageHeroTitle lines={[project.title]} size="lg" />
           <p className="pd-hero__sub">{project.subtitle}</p>
           <div className="pd-hero__foot">
             <p className="pd-hero__lead">{project.summary}</p>

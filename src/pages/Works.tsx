@@ -1,6 +1,7 @@
 import { useEffect, useRef } from 'react';
 import { projects } from '@/data/projects';
 import Contact from '@/components/Contact';
+import PageHeroTitle from '@/components/PageHeroTitle';
 
 // The /works index: a full page — cinematic hero, an awwwards-style hover-reveal list,
 // then the shared contact footer. Hovering a row dims the others, tints it red, and
@@ -84,10 +85,7 @@ export default function Works() {
       <section className="works-hero">
         <div className="container">
           <span className="sdk-eyebrow">Portfolio · 2021 — 2024</span>
-          <h1 className="works-hero__title">
-            <span className="works-hero__title-line">Selected</span>
-            <span className="works-hero__title-line works-hero__title-dim">Work</span>
-          </h1>
+          <PageHeroTitle lines={['Selected', 'Work']} />
           <p className="works-hero__lead">
             A selection of products, platforms and brands I&apos;ve designed and built — from
             the first idea to launch day.

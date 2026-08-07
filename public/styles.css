@@ -179,6 +179,38 @@ img {
   box-shadow: 0 0 1.125rem currentColor;
 }
 
+/* The <h1> of every internal page hero — Works, Services, About, Contact, Project detail.
+   Rendered by components/PageHeroTitle. Replaces five per-page namespaces
+   (.works-hero__title, .svc-hero__title, .abt-hero__title, .ctc-hero__title,
+   .pd-hero__title) whose declarations were byte-identical apart from project detail's
+   larger step, which is now the --lg modifier. */
+.sdk-hero-title {
+  font-family: "Bricolage Grotesque", sans-serif;
+  font-weight: 500;
+  font-size: clamp(2.56rem, 7.6vw, 7.2rem);
+  line-height: .9;
+  letter-spacing: -.03em;
+  margin-top: 1.25rem;
+}
+
+/* Project detail: the title IS the page, with no eyebrow-sized siblings competing. */
+.sdk-hero-title--lg {
+  font-size: clamp(2.88rem, 8.8vw, 8.4rem);
+  line-height: .88;
+}
+
+.sdk-hero-title__line {
+  display: block;
+}
+
+/* Was `color: transparent` + a 1px text-stroke. At heading size a hairline outline reads
+   as a wireframe rather than as type. This is the dim FILLED last line the homepage
+   section titles use, so the solid/dim device is identical everywhere. */
+.sdk-hero-title__line--dim {
+  color: rgba(245, 242, 234, .35);
+  font-weight: 200;
+}
+
 .section-title {
   font-family: "Space Grotesk", sans-serif;
   font-size: clamp(3rem, 8vw, 8.625rem);
@@ -4697,28 +4729,6 @@ img {
   padding-top: clamp(8rem, 16vh, 12rem);
   padding-bottom: clamp(3rem, 6vh, 5rem);
 }
-.works-hero__title {
-  font-family: "Bricolage Grotesque", sans-serif;
-  font-weight: 500;
-  /* Was clamp(4rem, 16vw, 15rem) — ~230px at 1440, far past every other hero on the site
-     (About/Contact/Project sit at 10.5–11vw) and past the homepage section titles. Brought
-     into that family so page headings read at one scale. */
-  font-size: clamp(3.2rem, 9.5vw, 9rem);
-  line-height: .9;
-  letter-spacing: -.03em;
-  margin-top: 1.5rem;
-}
-.works-hero__title-line {
-  display: block;
-}
-/* Was `color: transparent` + a 1px text-stroke. At this size a hairline outline reads as
-   a faint wireframe rather than type — it was the weakest element on the page. Switched to
-   the dim FILLED second line the homepage section titles use, so the two-tone device is
-   consistent site-wide and actually holds its weight. */
-.works-hero__title-dim {
-  color: rgba(245, 242, 234, .35);
-  font-weight: 200;
-}
 .works-hero__lead {
   margin-top: 2rem;
   max-width: 44ch;
@@ -5213,22 +5223,8 @@ img {
   z-index: 1;
 }
 
-/* Shared page-hero primitives */
-.pd-hero__title, .svc-hero__title, .abt-hero__title, .ctc-hero__title {
-  font-family: "Bricolage Grotesque", sans-serif;
-  font-weight: 500;
-  line-height: .88;
-  letter-spacing: -.03em;
-  margin-top: 1.25rem;
-}
-.svc-hero__title-line, .abt-hero__title-line, .ctc-hero__title-line { display: block; }
-/* Was `color: transparent` + a 1px text-stroke. At heading size a hairline outline reads
-   as a wireframe rather than as type. This is the dim FILLED second line the homepage
-   section titles and the Works hero use, so the solid/dim device is identical everywhere. */
-.svc-hero__title-dim, .abt-hero__title-dim, .ctc-hero__title-dim {
-  color: rgba(245, 242, 234, .35);
-  font-weight: 200;
-}
+/* Shared page-hero primitives. The hero <h1> itself lives with the other site-wide
+   primitives as .sdk-hero-title (see components/PageHeroTitle). */
 .pd-hero__lead, .svc-hero__lead, .abt-hero__lead, .ctc-hero__lead {
   color: var(--muted);
   font-size: clamp(1rem, 1.35vw, 1.2rem);
@@ -5321,7 +5317,6 @@ img {
 .pd__back-arrow { transition: transform .35s var(--ease); }
 .pd__back:hover { color: var(--text); }
 .pd__back:hover .pd__back-arrow { transform: translateX(-.35rem); }
-.pd-hero__title { font-size: clamp(3.6rem, 11vw, 10.5rem); }
 .pd-hero__sub {
   margin-top: 1.4rem;
   font-family: "Marcellus", serif;
@@ -5621,8 +5616,6 @@ img {
 }
 /* Was clamp(4rem, 15vw, 14rem) — ~216px at 1440, the other oversized page hero alongside
    Works. Matched to the same scale so every page heading lands in one family. */
-.svc-hero__title { font-size: clamp(3.2rem, 9.5vw, 9rem); line-height: .9; }
-
 .svc-hero__lead { margin-top: 2rem; }
 .svc-list-section { padding: clamp(2rem, 6vh, 5rem) 0; }
 .svc-list { list-style: none; border-top: 1px solid var(--line); }
@@ -5829,7 +5822,6 @@ img {
   align-items: center;
 }
 /* Matched to the Works / Services scale so every page heading lands in one family. */
-.abt-hero__title { font-size: clamp(3.2rem, 9.5vw, 9rem); line-height: .9; }
 .abt-hero__lead { margin-top: 2rem; }
 .abt-hero__hud { margin-top: 2.4rem; display: flex; flex-wrap: wrap; gap: .8rem; }
 .abt-hero__chip {
@@ -6057,7 +6049,6 @@ img {
 @keyframes ctcOrbA { to { transform: translate(-5rem, 4rem) scale(1.15); } }
 @keyframes ctcOrbB { to { transform: translate(4rem, -3.5rem) scale(1.1); } }
 .ctc-hero__inner { position: relative; z-index: 1; padding-top: clamp(7rem, 12vh, 9rem); }
-.ctc-hero__title { font-size: clamp(3.2rem, 9.5vw, 9rem); line-height: .9; }
 .ctc-hero__lead { margin-top: 2rem; }
 .ctc-hero__actions {
   margin-top: clamp(2.5rem, 5vh, 4rem);
