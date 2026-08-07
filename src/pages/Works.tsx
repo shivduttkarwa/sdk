@@ -1,89 +1,31 @@
-import { useEffect, useRef } from 'react';
+import { useMemo, useRef } from 'react';
 import { projects } from '@/data/projects';
 import Contact from '@/components/Contact';
 import PageHeroTitle from '@/components/PageHeroTitle';
 import { usePageHeroIntro } from '@/hooks/usePageHeroIntro';
+import { useWorksStage } from '@/hooks/useWorksStage';
 
-// The /works index: a full page — cinematic hero, an awwwards-style hover-reveal list,
-// then the shared contact footer. Hovering a row dims the others, tints it red, and
-// floats that project's cover near the cursor. The floating preview is driven by one rAF
-// lerp loop that only runs while the pointer is over the list, so an idle page costs nothing.
+// The /works index: cinematic hero, then a single full-bleed WebGL stage where each
+// project's cover ripples into the next as you scroll, with the copy for the frontmost
+// project composited over it. Closes on the shared contact footer.
+//
+// This replaced a text-only hover-reveal list whose covers followed the cursor — a list
+// that showed no imagery at all on touch (the floating preview was display:none under
+// `hover: none`) and used none of the copy in data/projects beyond title/category/year.
+//
+// The stage is scroll-driven, so the copy for four of the five projects is only reachable
+// by scrolling. The visually-hidden index at the bottom of the section keeps every case
+// one Tab away regardless — see `.sdk-sr-only`.
 export default function Works() {
+  const rootRef = useRef<HTMLElement>(null);
   usePageHeroIntro();
-  const listRef = useRef<HTMLDivElement>(null);
-  const previewRef = useRef<HTMLDivElement>(null);
-  const imgRef = useRef<HTMLImageElement>(null);
 
-  useEffect(() => {
-    const list = listRef.current;
-    const preview = previewRef.current;
-    const img = imgRef.current;
-    if (!list || !preview || !img) return;
-
-    let tx = 0;
-    let ty = 0;
-    let x = 0;
-    let y = 0;
-    let raf = 0;
-    let active = false;
-
-    const tick = () => {
-      x += (tx - x) * 0.15;
-      y += (ty - y) * 0.15;
-      preview.style.transform = `translate3d(${x.toFixed(1)}px, ${y.toFixed(1)}px, 0) translate(-50%, -50%)`;
-      if (active && (Math.abs(tx - x) > 0.4 || Math.abs(ty - y) > 0.4)) {
-        raf = requestAnimationFrame(tick);
-      } else {
-        raf = 0;
-      }
-    };
-
-    const onEnter = (event: PointerEvent) => {
-      x = tx = event.clientX;
-      y = ty = event.clientY;
-      active = true;
-      preview.classList.add('is-visible');
-      if (!raf) raf = requestAnimationFrame(tick);
-    };
-
-    const onMove = (event: PointerEvent) => {
-      tx = event.clientX;
-      ty = event.clientY;
-      if (active && !raf) raf = requestAnimationFrame(tick);
-    };
-
-    const onLeave = () => {
-      active = false;
-      preview.classList.remove('is-visible');
-      list.querySelectorAll('.works__row').forEach((r) => r.classList.remove('is-dimmed'));
-    };
-
-    const onOver = (event: PointerEvent) => {
-      const row = (event.target as Element).closest<HTMLElement>('.works__row');
-      if (!row) return;
-      const cover = row.dataset.cover;
-      if (cover) img.src = cover;
-      list.querySelectorAll<HTMLElement>('.works__row').forEach((r) => {
-        r.classList.toggle('is-dimmed', r !== row);
-      });
-    };
-
-    list.addEventListener('pointerenter', onEnter);
-    list.addEventListener('pointermove', onMove);
-    list.addEventListener('pointerleave', onLeave);
-    list.addEventListener('pointerover', onOver);
-
-    return () => {
-      list.removeEventListener('pointerenter', onEnter);
-      list.removeEventListener('pointermove', onMove);
-      list.removeEventListener('pointerleave', onLeave);
-      list.removeEventListener('pointerover', onOver);
-      if (raf) cancelAnimationFrame(raf);
-    };
-  }, []);
+  const covers = useMemo(() => projects.map((p) => p.cover), []);
+  const active = useWorksStage(covers);
+  const project = projects[active] ?? projects[0];
 
   return (
-    <main className="works" id="work-index">
+    <main className="works" id="work-index" ref={rootRef}>
       <section className="works-hero">
         <div className="container" data-hero-intro>
           <span className="sdk-eyebrow">Portfolio · 2021 — 2024</span>
@@ -101,32 +43,90 @@ export default function Works() {
         </a>
       </section>
 
-      <section className="works-list-section" id="work-list">
-        <div className="container">
-          <div className="works__list" ref={listRef}>
-            {projects.map((project) => (
+      <section className="works-stage-section" id="work-list">
+        {/* Tall runway: the sticky panel holds while this scrolls past, and the distance
+            travelled is what drives the morph. One viewport per transition. */}
+        <div
+          className="works-stage__runway"
+          id="sdk-works-runway"
+          style={{ height: `${projects.length * 100}vh` }}
+        >
+          <div className="works-stage" id="sdk-works-stage">
+            <canvas className="works-stage__fx" id="sdk-works-fx" aria-hidden="true"></canvas>
+
+            {/* Shown when WebGL is unavailable or reduced motion is on; the core toggles
+                `is-active` on these exactly as it drives the shader. */}
+            <div className="works-stage__fallback" aria-hidden="true">
+              {projects.map((p, i) => (
+                <img
+                  key={p.slug}
+                  className={i === 0 ? 'works-stage__img is-active' : 'works-stage__img'}
+                  src={p.cover}
+                  alt=""
+                  loading="lazy"
+                  decoding="async"
+                />
+              ))}
+            </div>
+
+            <div className="works-stage__scrim" aria-hidden="true"></div>
+
+            <header className="works-stage__hud">
+              <span className="works-stage__hud-label">Selected Work</span>
+              <span className="works-stage__count">
+                <b>{project.num}</b>
+                <i aria-hidden="true">/</i>
+                <span>{String(projects.length).padStart(2, '0')}</span>
+              </span>
+            </header>
+
+            {/* Keyed on the slug so every field re-mounts and replays its entrance when the
+                frontmost project changes. */}
+            <div className="works-stage__panel" key={project.slug}>
+              <div className="works-stage__meta">
+                <span>{project.category}</span>
+                <span className="works-stage__dot" aria-hidden="true"></span>
+                <span>{project.year}</span>
+              </div>
+              <h2 className="works-stage__name">{project.title}</h2>
+              <p className="works-stage__sub">{project.subtitle}</p>
+              <p className="works-stage__summary">{project.summary}</p>
               <a
-                key={project.slug}
-                className="works__row"
+                className="works-stage__cta"
                 href={`#/works/${project.slug}`}
-                data-cover={project.cover}
                 data-transition-label={project.title}
               >
-                <span className="works__num">{project.num}</span>
-                <span className="works__name">{project.title}</span>
-                <span className="works__cat">{project.category}</span>
-                <span className="works__year">{project.year}</span>
-                <span className="works__arrow" aria-hidden="true">
+                View case
+                <span className="works-stage__cta-arrow" aria-hidden="true">
                   →
                 </span>
               </a>
-            ))}
+            </div>
+
+            <div className="works-stage__rail" aria-hidden="true">
+              <span className="works-stage__rail-fill"></span>
+              {projects.slice(1).map((p, i) => (
+                <i
+                  key={p.slug}
+                  className="works-stage__rail-tick"
+                  style={{ left: `${((i + 1) / (projects.length - 1)) * 100}%` }}
+                />
+              ))}
+            </div>
           </div>
         </div>
 
-        <div className="works__preview" ref={previewRef} aria-hidden="true">
-          <img className="works__preview-img" ref={imgRef} alt="" />
-        </div>
+        <nav className="sdk-sr-only" aria-label="All projects">
+          <ul>
+            {projects.map((p) => (
+              <li key={p.slug}>
+                <a href={`#/works/${p.slug}`}>
+                  {p.title} — {p.subtitle}
+                </a>
+              </li>
+            ))}
+          </ul>
+        </nav>
       </section>
 
       <Contact />

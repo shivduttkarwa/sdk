@@ -4698,6 +4698,13 @@ img {
   color: var(--text);
   overflow: hidden;
 }
+/* .works alone opts out of `hidden`. The works stage below is position: sticky, and an
+   ancestor with overflow: hidden becomes that sticky's scroll container — so the panel
+   pins to a box that never scrolls and just rides away with the page. `clip` clips
+   identically without establishing a scroll container, so the pin survives. */
+.works {
+  overflow: clip;
+}
 .works::before,
 .project::before {
   content: "";
@@ -4766,115 +4773,266 @@ img {
   50% { transform: translateY(4px); }
 }
 
-/* ---- Works index list ---- */
-.works-list-section {
-  padding-bottom: clamp(4rem, 9vh, 8rem);
-}
-.works__list {
-  border-top: 1px solid var(--line);
-}
-.works__row {
-  display: grid;
-  grid-template-columns: 4.5rem minmax(0, 1fr) auto auto 3rem;
-  align-items: center;
-  gap: clamp(1rem, 3vw, 3rem);
-  padding: clamp(1.4rem, 3.2vw, 2.6rem) 0;
-  border-bottom: 1px solid var(--line);
-  color: var(--text);
-  text-decoration: none;
-  transition: opacity .4s var(--ease), background-color .4s var(--ease),
-    padding-left .45s var(--ease), padding-right .45s var(--ease);
-  /* Entrance */
-  animation: worksRowIn .7s var(--ease) both;
-}
-.works__list:hover .works__row.is-dimmed {
-  opacity: .32;
-}
-.works__row:hover {
-  padding-left: clamp(.75rem, 2vw, 1.75rem);
-  padding-right: clamp(.75rem, 2vw, 1.75rem);
-}
-.works__num {
-  font-family: "Space Grotesk", monospace;
-  font-size: .95rem;
-  color: var(--red);
-  letter-spacing: .05em;
-}
-.works__name {
-  font-family: "Bricolage Grotesque", sans-serif;
-  font-weight: 600;
-  font-size: clamp(1.9rem, 6vw, 4.75rem);
-  line-height: 1;
-  letter-spacing: -.02em;
-  color: var(--text);
-  transition: color .35s var(--ease), transform .45s var(--ease);
-}
-.works__row:hover .works__name {
-  color: var(--red);
-  transform: translateX(.35rem);
-}
-.works__cat,
-.works__year {
-  font-family: "Space Grotesk", "Inter", sans-serif;
-  font-size: .82rem;
-  font-weight: 500;
-  letter-spacing: .12em;
-  text-transform: uppercase;
-  color: var(--muted);
-  white-space: nowrap;
-}
-.works__arrow {
-  justify-self: end;
-  font-size: 1.5rem;
-  color: var(--muted);
-  opacity: 0;
-  transform: translateX(-.6rem);
-  transition: opacity .4s var(--ease), transform .4s var(--ease), color .4s var(--ease);
-}
-.works__row:hover .works__arrow {
-  opacity: 1;
-  transform: translateX(0);
-  color: var(--red);
+/* ---- Works index: scroll-driven WebGL stage ----
+   A tall runway scrolls past a sticky full-viewport panel. cores/worksStage owns the
+   canvas and writes `--progress` on `.works-stage` every frame; everything below reads
+   that variable or is keyed off the active project by React. */
+.works-stage-section {
+  position: relative;
 }
 
-/* Floating cursor preview */
-.works__preview {
-  position: fixed;
+.works-stage__runway {
+  position: relative;
+  /* Height is set inline from the project count — one viewport per transition. */
+}
+
+.works-stage {
+  position: sticky;
   top: 0;
-  left: 0;
-  z-index: 60;
-  width: clamp(15rem, 20vw, 23rem);
-  aspect-ratio: 4 / 3;
-  border-radius: 1rem;
+  height: 100svh;
   overflow: hidden;
-  pointer-events: none;
+  background: #05030a;
+  --progress: 0;
+}
+
+.works-stage__fx,
+.works-stage__fallback {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.works-stage__fx {
+  z-index: 1;
+  display: block;
+}
+
+/* Image fallback for no-WebGL / reduced motion. Hidden the moment the shader is live so
+   the two never composite on top of each other. */
+.works-stage__fallback {
+  z-index: 0;
+}
+.works-stage.is-webgl .works-stage__fallback {
   opacity: 0;
-  scale: .82;
-  transition: opacity .4s var(--ease), scale .4s var(--ease);
-  box-shadow: 0 1.5rem 4rem rgba(0, 0, 0, .6), 0 0 0 1px rgba(224, 63, 79, .35);
-  will-change: transform;
 }
-.works__preview.is-visible {
-  opacity: 1;
-  scale: 1;
-}
-.works__preview-img {
+.works-stage__img {
+  position: absolute;
+  inset: 0;
   width: 100%;
   height: 100%;
   object-fit: cover;
-  filter: saturate(.9) contrast(1.05);
+  opacity: 0;
+  transition: opacity .6s var(--ease);
+}
+.works-stage__img.is-active {
+  opacity: 1;
 }
 
-@keyframes worksRowIn {
-  from { opacity: 0; transform: translateY(2.5rem); }
-  to { opacity: 1; transform: translateY(0); }
+/* Legibility scrim. The shader darkens the frame overall but not directionally, and the
+   copy sits bottom-left over open photo — so this ramps the bottom and left specifically,
+   leaving the middle of the image clear. */
+.works-stage__scrim {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
+  background:
+    linear-gradient(180deg, rgba(5,3,10,.72) 0%, rgba(5,3,10,.18) 26%, rgba(5,3,10,0) 46%, rgba(5,3,10,.62) 74%, rgba(5,3,10,.94) 100%),
+    linear-gradient(90deg, rgba(5,3,10,.78) 0%, rgba(5,3,10,.22) 42%, rgba(5,3,10,0) 68%);
 }
-.works__row:nth-child(1) { animation-delay: .05s; }
-.works__row:nth-child(2) { animation-delay: .12s; }
-.works__row:nth-child(3) { animation-delay: .19s; }
-.works__row:nth-child(4) { animation-delay: .26s; }
-.works__row:nth-child(5) { animation-delay: .33s; }
-.works__row:nth-child(6) { animation-delay: .40s; }
+
+.works-stage__hud,
+.works-stage__panel,
+.works-stage__rail {
+  position: absolute;
+  z-index: 3;
+}
+
+/* ---- HUD ---- */
+.works-stage__hud {
+  top: clamp(4.75rem, 10svh, 6.5rem);
+  left: clamp(1.5rem, 6vw, 5rem);
+  right: clamp(1.5rem, 6vw, 5rem);
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 1.5rem;
+  padding-bottom: .8rem;
+  border-bottom: 1px solid rgba(245, 242, 234, .14);
+  font-family: "Space Grotesk", sans-serif;
+  font-size: .72rem;
+  font-weight: 700;
+  letter-spacing: .28em;
+  text-transform: uppercase;
+  color: rgba(245, 242, 234, .5);
+}
+.works-stage__hud-label {
+  color: rgba(245, 242, 234, .86);
+}
+.works-stage__count {
+  display: inline-flex;
+  align-items: baseline;
+  gap: .45rem;
+  letter-spacing: .1em;
+}
+.works-stage__count b {
+  font-family: "Bricolage Grotesque", sans-serif;
+  font-size: 1.5rem;
+  font-weight: 700;
+  line-height: 1;
+  color: var(--red);
+}
+.works-stage__count i {
+  font-style: normal;
+  color: rgba(245, 242, 234, .3);
+}
+
+/* ---- Project panel ---- */
+.works-stage__panel {
+  left: clamp(1.5rem, 6vw, 5rem);
+  right: clamp(1.5rem, 6vw, 5rem);
+  bottom: clamp(5rem, 14svh, 8.5rem);
+  max-width: 40rem;
+}
+
+/* Each field steps in as the panel re-mounts on the active project changing. The panel is
+   keyed on the slug in Works.tsx, so this replays per project without any JS. */
+.works-stage__panel > * {
+  animation: worksPanelIn .7s var(--ease) both;
+}
+.works-stage__panel > *:nth-child(1) { animation-delay: .02s; }
+.works-stage__panel > *:nth-child(2) { animation-delay: .08s; }
+.works-stage__panel > *:nth-child(3) { animation-delay: .14s; }
+.works-stage__panel > *:nth-child(4) { animation-delay: .20s; }
+.works-stage__panel > *:nth-child(5) { animation-delay: .26s; }
+
+@keyframes worksPanelIn {
+  from { opacity: 0; transform: translateY(1.4rem); filter: blur(6px); }
+  to { opacity: 1; transform: translateY(0); filter: blur(0); }
+}
+
+.works-stage__meta {
+  display: flex;
+  align-items: center;
+  gap: .8rem;
+  color: rgba(245, 242, 234, .68);
+  font-family: "Space Grotesk", sans-serif;
+  font-size: .74rem;
+  font-weight: 700;
+  letter-spacing: .22em;
+  text-transform: uppercase;
+}
+.works-stage__dot {
+  width: .3rem;
+  height: .3rem;
+  border-radius: 50%;
+  background: var(--red);
+}
+
+.works-stage__name {
+  margin-top: .9rem;
+  font-family: "Bricolage Grotesque", sans-serif;
+  font-weight: 600;
+  font-size: clamp(2.6rem, 7vw, 6.5rem);
+  line-height: .92;
+  letter-spacing: -.03em;
+  color: #f5f2ea;
+}
+
+.works-stage__sub {
+  margin-top: .7rem;
+  font-family: "Marcellus", serif;
+  font-size: clamp(1.05rem, 1.7vw, 1.5rem);
+  letter-spacing: .02em;
+  color: rgba(245, 242, 234, .72);
+}
+
+.works-stage__summary {
+  margin-top: 1.1rem;
+  max-width: 42ch;
+  color: rgba(245, 242, 234, .58);
+  font-size: clamp(.92rem, 1.1vw, 1.02rem);
+  line-height: 1.65;
+}
+
+.works-stage__cta {
+  margin-top: 1.8rem;
+  display: inline-flex;
+  align-items: center;
+  gap: .75rem;
+  padding: .95rem 1.7rem;
+  border: 1px solid rgba(245, 242, 234, .28);
+  border-radius: 99rem;
+  background: rgba(5, 3, 10, .35);
+  backdrop-filter: blur(8px);
+  color: #f5f2ea;
+  font-family: "Space Grotesk", sans-serif;
+  font-size: .76rem;
+  font-weight: 700;
+  letter-spacing: .18em;
+  text-transform: uppercase;
+  text-decoration: none;
+  transition: background-color .3s var(--ease), border-color .3s var(--ease), color .3s var(--ease);
+}
+.works-stage__cta:hover,
+.works-stage__cta:focus-visible {
+  background: var(--red);
+  border-color: var(--red);
+  color: #fff;
+}
+.works-stage__cta-arrow {
+  transition: transform .3s var(--ease);
+}
+.works-stage__cta:hover .works-stage__cta-arrow {
+  transform: translateX(.35rem);
+}
+
+/* ---- Progress rail ---- */
+.works-stage__rail {
+  left: clamp(1.5rem, 6vw, 5rem);
+  right: clamp(1.5rem, 6vw, 5rem);
+  bottom: clamp(2rem, 6svh, 3.5rem);
+  height: 1px;
+  background: rgba(245, 242, 234, .16);
+}
+.works-stage__rail-fill {
+  position: absolute;
+  inset: 0 auto 0 0;
+  /* Driven straight off the core's per-frame custom property — no JS style writes here. */
+  width: calc(var(--progress) * 100%);
+  background: var(--red);
+  box-shadow: 0 0 1.2rem rgba(224, 63, 79, .8);
+}
+.works-stage__rail-tick {
+  position: absolute;
+  top: -3px;
+  width: 1px;
+  height: 7px;
+  background: rgba(245, 242, 234, .3);
+}
+
+@media (max-width: 860px) {
+  .works-stage__panel {
+    max-width: none;
+    bottom: clamp(4rem, 12svh, 6rem);
+  }
+  .works-stage__summary {
+    max-width: none;
+    font-size: .88rem;
+  }
+  .works-stage__hud {
+    font-size: .62rem;
+    letter-spacing: .2em;
+  }
+  .works-stage__count b {
+    font-size: 1.2rem;
+  }
+  .works-stage__cta {
+    margin-top: 1.3rem;
+    padding: .85rem 1.4rem;
+  }
+}
 
 /* ---- Project detail ---- */
 .project__back {
@@ -5126,18 +5284,7 @@ img {
   to { opacity: 1; transform: scale(1) translateY(0); }
 }
 
-@media (hover: none) {
-  .works__preview { display: none; }
-}
-
 @media (max-width: 860px) {
-  .works__row {
-    grid-template-columns: 3rem minmax(0, 1fr) auto;
-    gap: 1rem 1.25rem;
-  }
-  .works__cat { display: none; }
-  .works__year { grid-column: 3; }
-  .works__arrow { display: none; }
   .project__grid {
     grid-template-columns: 1fr;
   }
@@ -5149,11 +5296,17 @@ img {
 
 @media (prefers-reduced-motion: reduce) {
   /* The hero entrance is not listed here: usePageHeroIntro checks reduced motion itself
-     and never builds the timeline, so those elements are already at rest. */
-  .works__row,
+     and never builds the timeline, so those elements are already at rest. Nor are the
+     case rows' reveals — usePageFx opts out the same way. What remains are the hover
+     affordances, which are pure CSS and do need stilling. */
   .project__cover,
   .works-hero__scroll-arrow { animation: none; }
-  .works__preview { transition: opacity .2s linear; }
+  /* The stage's shader never initialises under reduced motion (the core throws before
+     touching GL), so what is left to still is the panel's per-project entrance and the
+     fallback image crossfade. */
+  .works-stage__panel > * { animation: none; }
+  .works-stage__img,
+  .works-stage__cta-arrow { transition: none; }
 }
 
 

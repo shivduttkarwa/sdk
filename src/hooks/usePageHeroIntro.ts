@@ -15,7 +15,7 @@ const RISE_EASE = CustomEase.create('pageHeroRise', 'M0,0 C0.6,0.3 0.01,0.99 1,1
 const HERO_INTRO = {
   startDelay: 0.06, // pause after mount before the first element moves
   itemStagger: 0.1, // delay between successive hero elements (eyebrow → title → lead → …)
-  lineStagger: 0.12, // delay between the title's own lines, within the title's slot
+  lineStagger: 0.15, // delay between the title's own lines, within the title's slot
 
   duration: 0.95, // how long each element takes to rise and unmask
   ease: RISE_EASE,
