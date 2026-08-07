@@ -3,10 +3,17 @@ import Contact from '@/components/Contact';
 import PageHeroTitle from '@/components/PageHeroTitle';
 import { usePageFx } from '@/hooks/usePageFx';
 import { usePageHeroIntro } from '@/hooks/usePageHeroIntro';
+import { usePortraitParticles } from '@/hooks/usePortraitParticles';
 
-// /about — the person behind the pixels. Portrait hero with a parallax kanji watermark,
-// a per-line manifesto reveal, a journey timeline whose spine draws itself on scroll,
-// count-up numbers (same figures as the homepage stats) and three values cards.
+// /about — the person behind the pixels. The hero portrait is a WebGL point cloud that
+// assembles on arrival, scatters from the cursor and comes apart again as the section
+// scrolls away (cores/portraitParticles); below it, a per-line manifesto, count-up
+// numbers, a journey timeline whose spine draws itself, three values and the toolbox.
+//
+// The cloud draws POINTS rather than a full-screen quad on purpose — the homepage
+// showcase and the /works stage are both quad shaders, so a third would read as a habit.
+
+const PORTRAIT = 'assets/shiv-1-v2.webp';
 
 const journey = [
   {
@@ -58,8 +65,13 @@ const toolbox = [
 
 export default function About() {
   const rootRef = useRef<HTMLElement>(null);
+  const portraitRef = useRef<HTMLCanvasElement>(null);
   usePageFx(rootRef);
   usePageHeroIntro();
+  // True only when the cloud cannot run. The photograph is otherwise never shown, so
+  // arriving at the page does not spoil the convergence by displaying the finished image
+  // first.
+  const needsFallback = usePortraitParticles(portraitRef, PORTRAIT);
 
   return (
     <main className="abt" ref={rootRef}>
@@ -85,9 +97,19 @@ export default function About() {
               <span className="abt-hero__chip">IST · UTC+5:30</span>
             </div>
           </div>
-          <div className="abt-hero__portrait" data-fx="clip">
-            <img src="assets/shiv-1-v2.webp" alt="Portrait of Shivdutt Karwa" data-parallax="0.08" />
-            <span className="abt-hero__portrait-frame" aria-hidden="true"></span>
+          <div className={`abt-portrait${needsFallback ? ' is-fallback' : ''}`}>
+            <canvas
+              className="abt-portrait__fx"
+              ref={portraitRef}
+              aria-hidden="true"
+            ></canvas>
+            {/* Hidden unless the cloud cannot run — this is the reduced-motion and
+                no-WebGL rendering, not a placeholder shown while the cloud starts. */}
+            <img
+              className="abt-portrait__img"
+              src={PORTRAIT}
+              alt="Portrait of Shivdutt Karwa"
+            />
           </div>
         </div>
       </section>

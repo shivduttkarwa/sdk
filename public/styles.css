@@ -5348,7 +5348,6 @@ img {
    the bottom so the hero resolves into the section beneath it. */
 .works-hero::before,
 .svc-hero::before,
-.abt-hero::before,
 .ctc-hero::before {
   content: "";
   position: absolute;
@@ -5366,15 +5365,19 @@ img {
 
 .works-hero { --hero-img: url('assets/hero-images/work.webp'); }
 .svc-hero { --hero-img: url('assets/hero-images/services.webp'); }
-.abt-hero { --hero-img: url('assets/hero-images/about.webp'); }
+/* About deliberately has NO photographic backdrop, unlike its three siblings. The portrait
+   here is a cloud of small translucent points, and any image behind it shows through the
+   gaps between them — about.webp is a bright sunset sitting directly under the portrait
+   column, which turned the whole face to mud. A clean dark field is what lets the points
+   read as a photograph. The page's own radial glow still provides the atmosphere. */
 .ctc-hero { --hero-img: url('assets/hero-images/contact.webp'); }
+
 
 /* Portrait phones get the image pulled toward its right side, where these shots keep
    their subject — centre-cropping a 16:9 photo into a tall box loses it entirely. */
 @media (max-width: 700px) {
   .works-hero::before,
   .svc-hero::before,
-  .abt-hero::before,
   .ctc-hero::before {
     background-position: 72% center;
   }
@@ -5407,7 +5410,8 @@ img {
 
 /* Hero entrance: the shared GSAP timeline in hooks/usePageHeroIntro, opted into by
    `data-hero-intro` on the element wrapping the hero copy. */
-.abt-hero__portrait { animation: projCoverIn 1.1s cubic-bezier(.60,.30,.01,.99) .35s both; }
+/* The portrait no longer uses projCoverIn — the point cloud performs its own arrival,
+   converging from a scattered ring (see cores/portraitParticles). */
 
 /* Shared section heading style */
 .pd-info__heading, .pd-high__heading, .svc-process__heading, .abt-journey__heading,
@@ -6129,29 +6133,86 @@ img {
   box-shadow: 0 0 .9rem #4ade80;
   animation: avail-pulse 2s ease-in-out infinite;
 }
-.abt-hero__portrait {
+/* ---- Portrait point cloud (cores/portraitParticles) ----
+   No frame, no card, no crop: the cloud has to bleed into the page or the illusion that
+   the portrait is made of loose points dies at the container edge. The old bordered 4:5
+   card with its inner rule is gone for exactly that reason. */
+.abt-portrait {
   position: relative;
-  border-radius: var(--radius);
-  overflow: hidden;
-  aspect-ratio: 4 / 5;
-  border: 1px solid var(--line);
-  box-shadow: 0 2rem 6rem rgba(0, 0, 0, .5), 0 0 4rem rgba(224, 63, 79, .14);
-  background: linear-gradient(200deg, rgba(224, 63, 79, .18), rgba(8, 4, 15, .6) 60%);
+  aspect-ratio: 1 / 1;
+  isolation: isolate;
 }
-.abt-hero__portrait img {
-  width: 100%;
-  height: 112%;
-  object-fit: cover;
-  object-position: center top;
-  display: block;
-  filter: saturate(.92) contrast(1.04);
-}
-.abt-hero__portrait-frame {
+
+/* A soft pool of dark under the cloud. Much lighter than it needed to be when a sunset
+   backdrop sat behind — now it only has to deepen the page's own glow so the darkest
+   points (the suit) still separate from the field. Bled past the container so it fades
+   out as atmosphere rather than ending on an edge. */
+.abt-portrait::before {
+  content: "";
   position: absolute;
-  inset: 1rem;
-  border: 1px solid rgba(245, 242, 234, .16);
-  border-radius: calc(var(--radius) - .6rem);
+  inset: -14%;
+  z-index: 0;
   pointer-events: none;
+  background: radial-gradient(
+    ellipse 54% 58% at 50% 47%,
+    rgba(5, 3, 10, .72) 0%,
+    rgba(5, 3, 10, .52) 45%,
+    rgba(5, 3, 10, .20) 70%,
+    rgba(5, 3, 10, 0) 84%
+  );
+}
+.abt-portrait__img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+/* The canvas is far larger than the portrait box on purpose. Scattered points have to be
+   able to travel well outside the finished portrait, and anything drawn past the canvas
+   edge is simply gone — so a canvas the size of the portrait clipped the scatter into a
+   hard square and the cloud looked penned in. The core sizes the assembled face against
+   the BOX, not the canvas, so inflating this does not scale the portrait up with it. */
+.abt-portrait__fx {
+  position: absolute;
+  /* Sized explicitly rather than by opposing insets: <canvas> is a REPLACED element, so
+     `width: auto` resolves to its intrinsic attribute size (300x150 by default) instead
+     of stretching between left and right. 224% = 100% + 2 x 62% of overhang per side. */
+  top: -62%;
+  left: -62%;
+  width: 224%;
+  height: 224%;
+  z-index: 2;
+  display: block;
+  opacity: 0;
+  pointer-events: none;
+  /* Short: the convergence itself is the entrance, so a long fade on top of it just
+     hides the scattered opening frames. */
+  transition: opacity .3s var(--ease);
+}
+.abt-portrait__fx.is-live {
+  opacity: 1;
+}
+
+/* The fallback is HIDDEN by default and shown only when the cloud cannot run. Inverted
+   from the obvious arrangement on purpose: as the visible default it appeared for a beat
+   on arrival and was then swapped for scattered particles, so the finished portrait was
+   given away before it assembled. Masked to the same ellipse the sampler uses, so the two
+   renderings share a silhouette. */
+.abt-portrait__img {
+  z-index: 1;
+  object-fit: cover;
+  object-position: center 42%;
+  filter: saturate(.92) contrast(1.04);
+  -webkit-mask-image: radial-gradient(ellipse 46% 54% at 50% 47%, #000 62%, transparent 100%);
+  mask-image: radial-gradient(ellipse 46% 54% at 50% 47%, #000 62%, transparent 100%);
+  opacity: 0;
+  transition: opacity .5s var(--ease);
+}
+.abt-portrait.is-fallback .abt-portrait__img {
+  opacity: 1;
+}
+
 }
 .abt-manifesto { padding: clamp(5rem, 12vh, 10rem) 0; border-top: 1px solid var(--line); }
 .abt-manifesto__text {
@@ -6493,7 +6554,7 @@ img {
   .pd-info__heading { margin-top: 0; }
   .pd-info__rule { display: none; }
   .abt-hero__grid { grid-template-columns: 1fr; }
-  .abt-hero__portrait { max-width: 26rem; }
+  .abt-portrait { max-width: 26rem; margin-inline: auto; }
 }
 @media (max-width: 860px) {
   .pd-meta__row, .ctc-grid { grid-template-columns: repeat(2, 1fr); }
@@ -6519,7 +6580,6 @@ img {
 /* -------------------------------------------------------- Reduced motion */
 @media (prefers-reduced-motion: reduce) {
   /* Hero entrance omitted deliberately — usePageHeroIntro opts out of it in JS. */
-  .abt-hero__portrait,
   .svc-marquee__track,
   .ctc-hero__orb,
   .abt-hero__chip-dot,
