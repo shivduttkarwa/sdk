@@ -3078,13 +3078,19 @@ img {
   min-height: 42.5rem;
   display: flex;
   align-items: center;
-  /* Cards sit opposite the title but tucked in beside it rather than pinned to the right
-     gutter — flex-end pushed them hard against the screen edge. flex-start parks each card
-     immediately after the reserved title column, so the pair reads as one composition with
-     the slack falling on the outside instead of between them. */
-  justify-content: flex-start;
+  /* Cards are anchored to the RIGHT gutter. With flex-end the card's position is set by one
+     value — the right padding below — instead of having to hand-tune a left padding against
+     the card's own fixed width at every breakpoint, and it stays a constant distance from
+     the edge at any viewport. The left padding is now only a guard: it reserves the title's
+     column so a card can never reach it. */
+  justify-content: flex-end;
   box-sizing: border-box;
-  padding: 0 clamp(2rem, 7vw, 8rem) 0 clamp(24rem, 57vw, 55rem);
+  /*  >>> CARD POSITION DIAL <<<  The middle value of the RIGHT padding (7.4vw) is the only
+      number that moves the cards horizontally. Bigger = further LEFT, smaller = further
+      RIGHT, and it scales with the viewport so it holds at every width.
+      Reference at 1440px:  6vw -> x857   7.4vw -> x837   13.8vw -> x745   18vw -> x685
+      (vw, not vh — vh is the vertical unit and would not track screen width.) */
+  padding: 0 clamp(2rem, 13.8vw, 14rem) 0 clamp(20rem, 45vw, 42rem);
 }
 
 .sdk-tech-card-layer .sdk-tech-card-cms,
