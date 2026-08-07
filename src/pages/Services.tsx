@@ -5,12 +5,19 @@ import PageHeroTitle from '@/components/PageHeroTitle';
 import { usePageFx } from '@/hooks/usePageFx';
 import { usePageHeroIntro } from '@/hooks/usePageHeroIntro';
 
-// /services — what I offer, as an expanding accordion of large numbered rows (the
-// awwwards pattern the /works list already speaks), a process strip whose connecting
-// line draws itself on scroll, a capability marquee and a magnetic CTA band.
+// /services — the five disciplines as a horizontal panel rack: each service is a
+// full-height column showing only its number, kanji and a vertical title until it opens,
+// at which point it takes half the rack and the others fall back to spines. Then a
+// capability marquee and the process strip, closing on the shared contact footer — which
+// is itself a full CTA, so the page carries no separate one.
+//
+// This replaced a vertical accordion of numbered rows — the same pattern the /works list
+// used to run — chosen partly so this page is driven by INTERACTION rather than scroll.
+// The homepage and /works are both scroll-driven WebGL; a third would read as a habit.
 export default function Services() {
   const rootRef = useRef<HTMLElement>(null);
-  const [open, setOpen] = useState(0);
+  // One panel is always open — a rack of five closed spines has nothing to read.
+  const [active, setActive] = useState(0);
   usePageFx(rootRef);
   usePageHeroIntro();
 
@@ -43,44 +50,66 @@ export default function Services() {
         </div>
       </section>
 
-      <section className="svc-list-section">
+      <section className="svc-rack-section" aria-label="Services">
         <div className="container">
-          <ul className="svc-list" data-fx-stagger>
+          <div className="svc-rack">
             {services.map((service, i) => {
-              const isOpen = open === i;
+              const isActive = active === i;
               return (
-                <li key={service.num} className={`svc-row${isOpen ? ' is-open' : ''}`}>
+                <div
+                  key={service.num}
+                  className={`svc-panel${isActive ? ' is-active' : ''}`}
+                  // Mouse opens on hover; pen and touch are left to the click below, so a
+                  // tap does not both hover-open and click-open in the same gesture.
+                  onPointerEnter={(event) => {
+                    if (event.pointerType === 'mouse') setActive(i);
+                  }}
+                >
+                  {/* The hit target covers the whole column so the entire panel is
+                      clickable. It carries the disclosure semantics; the visible spine and
+                      body are decoration hung off it. Nothing inside either is focusable,
+                      so this overlay traps nothing. */}
                   <button
                     type="button"
-                    className="svc-row__head"
-                    aria-expanded={isOpen}
-                    aria-controls={`svc-panel-${service.num}`}
-                    onClick={() => setOpen(isOpen ? -1 : i)}
+                    className="svc-panel__hit"
+                    aria-expanded={isActive}
+                    aria-controls={`svc-body-${service.num}`}
+                    onClick={() => setActive(i)}
+                    onFocus={() => setActive(i)}
                   >
-                    <span className="svc-row__num">{service.num}</span>
-                    <span className="svc-row__title">{service.title}</span>
-                    <span className="svc-row__tagline">{service.tagline}</span>
-                    <span className="svc-row__toggle" aria-hidden="true">
-                      <span></span>
-                      <span></span>
-                    </span>
+                    <span className="sdk-sr-only">{service.title}</span>
                   </button>
-                  <div className="svc-row__panel" id={`svc-panel-${service.num}`}>
-                    <div className="svc-row__panel-inner">
-                      <p className="svc-row__desc">{service.description}</p>
-                      <div className="svc-row__tags">
-                        {service.deliverables.map((item) => (
-                          <span key={item} className="svc-row__tag">
-                            {item}
-                          </span>
-                        ))}
-                      </div>
-                    </div>
+
+                  <div className="svc-panel__spine" aria-hidden="true">
+                    <span className="svc-panel__num">{service.num}</span>
+                    <span className="svc-panel__label">{service.title}</span>
+                    <span className="svc-panel__kanji">{service.kanji}</span>
                   </div>
-                </li>
+
+                  <div
+                    className="svc-panel__body"
+                    id={`svc-body-${service.num}`}
+                    // Matches aria-expanded: a closed panel is out of the accessibility
+                    // tree, and tabbing to its button opens it (onFocus above).
+                    aria-hidden={!isActive}
+                  >
+                    <span className="svc-panel__kanji svc-panel__kanji--wash" aria-hidden="true">
+                      {service.kanji}
+                    </span>
+                    <span className="svc-panel__num">{service.num}</span>
+                    <h3 className="svc-panel__heading">{service.title}</h3>
+                    <p className="svc-panel__tagline">{service.tagline}</p>
+                    <p className="svc-panel__desc">{service.description}</p>
+                    <ul className="svc-panel__list">
+                      {service.deliverables.map((item) => (
+                        <li key={item}>{item}</li>
+                      ))}
+                    </ul>
+                  </div>
+                </div>
               );
             })}
-          </ul>
+          </div>
         </div>
       </section>
 
@@ -107,30 +136,18 @@ export default function Services() {
               A straight line from idea to launch
             </h2>
           </div>
-          <span className="svc-process__line" data-fx="draw" aria-hidden="true"></span>
           <ol className="svc-process__steps" data-fx-stagger>
             {processSteps.map((step) => (
               <li key={step.num} className="svc-process__step">
-                <span className="svc-process__num">{step.num}</span>
+                <span className="svc-process__num" aria-hidden="true">
+                  {step.num}
+                </span>
+                <span className="svc-process__rule" aria-hidden="true"></span>
                 <h3 className="svc-process__title">{step.title}</h3>
                 <p className="svc-process__text">{step.text}</p>
               </li>
             ))}
           </ol>
-        </div>
-      </section>
-
-      <section className="svc-cta">
-        <div className="container svc-cta__inner">
-          <p className="svc-cta__kicker" data-fx="rise">
-            Have a project in mind?
-          </p>
-          <a className="svc-cta__btn" href="#/contact" data-magnetic="0.25" data-fx="rise" data-fx-delay="0.1">
-            <span>Start a conversation</span>
-            <span className="svc-cta__btn-arrow" aria-hidden="true">
-              →
-            </span>
-          </a>
         </div>
       </section>
 

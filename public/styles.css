@@ -5336,6 +5336,50 @@ img {
   z-index: 1;
 }
 
+/* Photographic backdrop behind every internal page hero.
+
+   Carried on a ::before rather than on the section's own background for two reasons: the
+   scrim and the image travel together as one layered background so all four pages stay in
+   step, and z-index: -1 drops it behind the hero's copy without disturbing the page's
+   radial glow. Each page only supplies its image through --hero-img.
+
+   The scrim is directional, not a flat wash: heavy down the left where the copy sits,
+   nearly clear at 68% across so the photograph is actually legible, then dark again at
+   the bottom so the hero resolves into the section beneath it. */
+.works-hero::before,
+.svc-hero::before,
+.abt-hero::before,
+.ctc-hero::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background-image:
+    linear-gradient(100deg, rgba(5,3,10,.92) 0%, rgba(5,3,10,.70) 34%, rgba(5,3,10,.28) 68%, rgba(5,3,10,.50) 100%),
+    linear-gradient(180deg, rgba(5,3,10,.50) 0%, rgba(5,3,10,0) 34%, rgba(5,3,10,0) 60%, rgba(5,3,10,.88) 100%),
+    var(--hero-img);
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+.works-hero { --hero-img: url('assets/hero-images/work.webp'); }
+.svc-hero { --hero-img: url('assets/hero-images/services.webp'); }
+.abt-hero { --hero-img: url('assets/hero-images/about.webp'); }
+.ctc-hero { --hero-img: url('assets/hero-images/contact.webp'); }
+
+/* Portrait phones get the image pulled toward its right side, where these shots keep
+   their subject — centre-cropping a 16:9 photo into a tall box loses it entirely. */
+@media (max-width: 700px) {
+  .works-hero::before,
+  .svc-hero::before,
+  .abt-hero::before,
+  .ctc-hero::before {
+    background-position: 72% center;
+  }
+}
+
 /* Shared page-hero primitives. The hero <h1> itself lives with the other site-wide
    primitives as .sdk-hero-title (see components/PageHeroTitle). */
 .pd-hero__lead, .svc-hero__lead, .abt-hero__lead, .ctc-hero__lead {
@@ -5570,7 +5614,7 @@ img {
 }
 .pd-stack__tags { display: flex; flex-wrap: wrap; gap: .6rem; }
 .pd-stack__tag,
-.svc-row__tag,
+.svc-panel__list li,
 .abt-toolbox__chip {
   padding: .5rem 1.05rem;
   border-radius: 99rem;
@@ -5583,7 +5627,7 @@ img {
   color: rgba(245, 242, 234, .8);
   transition: border-color .3s var(--ease), color .3s var(--ease), background .3s var(--ease);
 }
-.pd-stack__tag:hover, .svc-row__tag:hover, .abt-toolbox__chip:hover {
+.pd-stack__tag:hover, .svc-panel__list li:hover, .abt-toolbox__chip:hover {
   border-color: rgba(224, 63, 79, .6);
   color: #fff;
   background: rgba(224, 63, 79, .12);
@@ -5715,95 +5759,243 @@ img {
 /* Was clamp(4rem, 15vw, 14rem) — ~216px at 1440, the other oversized page hero alongside
    Works. Matched to the same scale so every page heading lands in one family. */
 .svc-hero__lead { margin-top: 2rem; }
-.svc-list-section { padding: clamp(2rem, 6vh, 5rem) 0; }
-.svc-list { list-style: none; border-top: 1px solid var(--line); }
-.svc-row { border-bottom: 1px solid var(--line); transition: background .45s var(--ease); }
-.svc-row.is-open { background: rgba(255, 255, 255, .025); }
-.svc-row__head {
-  display: grid;
-  grid-template-columns: 4.5rem 1fr minmax(0, 22rem) 3rem;
-  align-items: center;
-  gap: clamp(1rem, 2.5vw, 2.5rem);
-  width: 100%;
-  padding: clamp(1.8rem, 3.5vh, 2.8rem) .8rem;
-  background: none;
-  border: 0;
-  color: inherit;
-  text-align: left;
-  cursor: pointer;
-  transition: padding-left .4s var(--ease);
+/* ---- Services rack: horizontal expanding panels ----
+   Five columns share the row via flex-grow. The open one takes ~half, the rest fall back
+   to spines showing only number, vertical title and kanji. Everything animates off one
+   property (flex-grow) so the browser has a single thing to interpolate per panel. */
+.svc-rack-section {
+  padding: clamp(2rem, 6vh, 5rem) 0 clamp(3rem, 8vh, 6rem);
 }
-.svc-row__head:hover { padding-left: 1.8rem; }
-.svc-row__num {
-  font-family: "Space Grotesk", sans-serif;
-  font-size: .85rem;
+
+.svc-rack {
+  display: flex;
+  gap: .5rem;
+  height: clamp(28rem, 68vh, 44rem);
+}
+
+.svc-panel {
+  position: relative;
+  flex: 1 1 0;
+  min-width: 0;
+  overflow: hidden;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+  background: var(--card);
+  transition:
+    flex-grow .75s var(--ease),
+    background-color .5s var(--ease),
+    border-color .5s var(--ease);
+}
+/* 4.6 against four spines of 1 gives the open panel a little over half the rack — wide
+   enough for a 42ch measure at the container's max width. */
+.svc-panel.is-active {
+  flex-grow: 4.6;
+  border-color: rgba(224, 63, 79, .42);
+  background: linear-gradient(160deg, rgba(224, 63, 79, .10), rgba(255, 255, 255, .03) 42%);
+}
+
+/* Covers the column. Transparent — the spine and body below are what you actually see. */
+.svc-panel__hit {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  width: 100%;
+  height: 100%;
+  padding: 0;
+  border: 0;
+  background: none;
+  cursor: pointer;
+  appearance: none;
+}
+.svc-panel__hit:focus-visible {
+  outline: 2px solid var(--red);
+  outline-offset: -4px;
+  border-radius: var(--radius-sm);
+}
+
+/* ---- Spine (closed state) ---- */
+.svc-panel__spine {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.6rem;
+  padding: clamp(1.2rem, 2.5vh, 2rem) .75rem;
+  opacity: 1;
+  transition: opacity .35s var(--ease);
+}
+.svc-panel.is-active .svc-panel__spine {
+  opacity: 0;
+  /* Out fast so it is gone before the body arrives — the two never overlap mid-swap. */
+  transition-duration: .18s;
+}
+
+.svc-panel__label {
+  /* Vertical only while closed. Not animated between orientations: writing-mode does not
+     interpolate, so the spine crossfades out and the body's horizontal heading fades in
+     rather than one label trying to rotate. */
+  writing-mode: vertical-rl;
+  text-orientation: mixed;
+  font-family: "Bricolage Grotesque", sans-serif;
+  font-weight: 600;
+  font-size: clamp(1.1rem, 1.5vw, 1.45rem);
+  letter-spacing: .02em;
+  color: rgba(245, 242, 234, .82);
+  white-space: nowrap;
+}
+.svc-panel:hover .svc-panel__label {
+  color: #f5f2ea;
+}
+
+.svc-panel__num {
+  font-family: "Space Grotesk", monospace;
+  font-size: .8rem;
   font-weight: 700;
-  letter-spacing: .18em;
+  letter-spacing: .2em;
   color: var(--red);
 }
-.svc-row__title {
-  font-family: "Bricolage Grotesque", sans-serif;
-  font-weight: 700;
-  font-size: clamp(1.8rem, 4.2vw, 3.6rem);
-  letter-spacing: -.02em;
-  line-height: 1;
-  display: inline-flex;
-  align-items: baseline;
-  gap: 1.1rem;
-  transition: color .35s var(--ease);
+
+.svc-panel__kanji {
+  margin-top: auto;
+  font-family: "Noto Serif JP", serif;
+  font-size: clamp(1.4rem, 2vw, 1.9rem);
+  color: rgba(224, 63, 79, .5);
+  user-select: none;
 }
-.svc-row__head:hover .svc-row__title, .svc-row.is-open .svc-row__title { color: var(--red); }
-.svc-row__tagline {
-  font-size: .92rem;
-  color: var(--muted);
-  line-height: 1.5;
-}
-.svc-row__toggle {
-  position: relative;
-  justify-self: end;
-  width: 2.6rem;
-  height: 2.6rem;
-  border-radius: 50%;
-  border: 1px solid var(--line-strong);
-  transition: border-color .35s var(--ease), background .35s var(--ease), transform .5s var(--ease);
-}
-.svc-row__toggle span {
+
+/* ---- Body (open state) ---- */
+.svc-panel__body {
   position: absolute;
-  top: 50%; left: 50%;
-  width: .9rem;
-  height: 2px;
-  background: var(--text);
-  transform: translate(-50%, -50%);
-  transition: transform .5s var(--ease), background .35s var(--ease);
+  inset: 0;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  /* Deliberately NOT align-items: flex-start. In a column flex container that sizes each
+     child to its max-content width, so the heading and tagline stretch past the panel and
+     get sliced off by the overflow: hidden above. Default stretch + text-align keeps them
+     inside the column and wrapping. */
+  justify-content: flex-end;
+  text-align: left;
+  padding: clamp(1.5rem, 3.5vh, 2.8rem);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity .45s var(--ease) .1s;
 }
-.svc-row__toggle span:last-child { transform: translate(-50%, -50%) rotate(90deg); }
-.svc-row__head:hover .svc-row__toggle { border-color: var(--red); background: rgba(224, 63, 79, .12); }
-.svc-row.is-open .svc-row__toggle { transform: rotate(135deg); border-color: var(--red); }
-.svc-row.is-open .svc-row__toggle span { background: var(--red); }
-.svc-row__panel {
-  display: grid;
-  grid-template-rows: 0fr;
-  transition: grid-template-rows .65s var(--ease);
+.svc-panel.is-active .svc-panel__body {
+  opacity: 1;
 }
-.svc-row.is-open .svc-row__panel { grid-template-rows: 1fr; }
-.svc-row__panel-inner {
-  overflow: hidden;
-  min-height: 0;
+
+/* The kanji again, this time as a watermark filling the open panel. */
+.svc-panel__kanji--wash {
+  position: absolute;
+  top: -.15em;
+  right: -.08em;
+  margin: 0;
+  z-index: -1;
+  font-size: clamp(11rem, 22vw, 20rem);
+  line-height: 1;
+  color: rgba(224, 63, 79, .09);
+  pointer-events: none;
+}
+
+.svc-panel__heading {
+  margin-top: .8rem;
+  font-family: "Bricolage Grotesque", sans-serif;
+  font-weight: 600;
+  font-size: clamp(1.9rem, 3.1vw, 3.1rem);
+  line-height: 1.02;
+  letter-spacing: -.025em;
+  color: #f5f2ea;
+}
+
+.svc-panel__tagline {
+  margin-top: .6rem;
+  font-family: "Marcellus", serif;
+  font-size: clamp(1rem, 1.4vw, 1.28rem);
+  letter-spacing: .02em;
+  color: var(--red);
+}
+
+.svc-panel__desc {
+  margin-top: 1.1rem;
+  max-width: 42ch;
+  font-size: clamp(.9rem, 1.05vw, 1rem);
+  line-height: 1.72;
+  color: var(--muted);
+}
+
+.svc-panel__list {
+  margin-top: 1.5rem;
   display: flex;
   flex-wrap: wrap;
-  align-items: flex-start;
-  gap: 2rem;
-  padding: 0 .8rem 0 clamp(4.5rem, 7vw, 7rem);
+  gap: .55rem;
+  padding: 0;
+  list-style: none;
 }
-.svc-row.is-open .svc-row__panel-inner { padding-bottom: clamp(1.8rem, 3.5vh, 2.8rem); }
-.svc-row__desc {
-  flex: 1 1 32rem;
-  font-size: 1.02rem;
-  line-height: 1.8;
-  color: rgba(245, 242, 234, .72);
-  max-width: 60ch;
+
+/* Each field steps in behind the panel's own opacity, so opening reads as a small
+   cascade rather than one block appearing. */
+.svc-panel.is-active .svc-panel__body > *:not(.svc-panel__kanji--wash) {
+  animation: svcPanelIn .55s var(--ease) both;
 }
-.svc-row__tags { display: flex; flex-wrap: wrap; gap: .6rem; max-width: 24rem; }
+.svc-panel.is-active .svc-panel__body > *:nth-child(2) { animation-delay: .10s; }
+.svc-panel.is-active .svc-panel__body > *:nth-child(3) { animation-delay: .16s; }
+.svc-panel.is-active .svc-panel__body > *:nth-child(4) { animation-delay: .22s; }
+.svc-panel.is-active .svc-panel__body > *:nth-child(5) { animation-delay: .28s; }
+.svc-panel.is-active .svc-panel__body > *:nth-child(6) { animation-delay: .34s; }
+
+@keyframes svcPanelIn {
+  from { opacity: 0; transform: translateY(1rem); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Stacked rows below the rack's usable width. The same flex-grow mechanism works in a
+   column, so only the axis and the label's orientation change. */
+@media (max-width: 900px) {
+  .svc-rack {
+    flex-direction: column;
+    height: auto;
+    gap: .6rem;
+  }
+  .svc-panel {
+    flex: 0 0 auto;
+    height: 4.75rem;
+    transition: height .6s var(--ease), background-color .5s var(--ease), border-color .5s var(--ease);
+  }
+  .svc-panel.is-active {
+    height: auto;
+    min-height: 26rem;
+  }
+  .svc-panel__spine {
+    flex-direction: row;
+    align-items: center;
+    gap: 1rem;
+    padding: 0 1.15rem;
+  }
+  .svc-panel__label {
+    writing-mode: horizontal-tb;
+    font-size: 1.15rem;
+  }
+  .svc-panel__kanji {
+    margin-top: 0;
+    margin-left: auto;
+  }
+  .svc-panel__body {
+    position: relative;
+    inset: auto;
+    justify-content: flex-start;
+    padding: 1.3rem 1.15rem 1.6rem;
+  }
+  .svc-panel__kanji--wash {
+    font-size: 11rem;
+  }
+  .svc-panel__desc {
+    max-width: none;
+  }
+}
+
 .svc-marquee {
   overflow: hidden;
   border-block: 1px solid var(--line);
@@ -5836,31 +6028,38 @@ img {
 }
 @keyframes svcMarquee { to { transform: translateX(-50%); } }
 .svc-process { padding: clamp(5rem, 11vh, 9rem) 0; }
-.svc-process__head { margin-bottom: 3rem; max-width: 40rem; }
-.svc-process__line {
-  display: block;
-  height: 2px;
-  margin-bottom: 2.6rem;
-  background: linear-gradient(90deg, var(--red), rgba(224, 63, 79, .1));
-}
+.svc-process__head { margin-bottom: clamp(2.5rem, 6vh, 4rem); max-width: 40rem; }
 .svc-process__steps {
   list-style: none;
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   gap: clamp(1.5rem, 3vw, 3rem);
 }
+/* Outlined numerals, sized as display type rather than as a label — the step number is
+   the loudest thing in each cell, and the rule under it carries the eye along the row. */
 .svc-process__num {
-  font-family: "Space Grotesk", sans-serif;
-  font-size: .8rem;
+  display: block;
+  font-family: "Bricolage Grotesque", sans-serif;
+  font-size: clamp(3.4rem, 6vw, 5.5rem);
   font-weight: 700;
-  letter-spacing: .22em;
-  color: var(--red);
+  line-height: .85;
+  letter-spacing: -.04em;
+  color: transparent;
+  -webkit-text-stroke: 1px rgba(224, 63, 79, .55);
+}
+.svc-process__step:hover .svc-process__num {
+  color: rgba(224, 63, 79, .14);
+}
+.svc-process__rule {
+  display: block;
+  height: 1px;
+  margin: 1.25rem 0 1.4rem;
+  background: linear-gradient(90deg, var(--red), rgba(224, 63, 79, .06));
 }
 .svc-process__title {
-  margin-top: .9rem;
   font-family: "Bricolage Grotesque", sans-serif;
   font-weight: 700;
-  font-size: 1.5rem;
+  font-size: clamp(1.25rem, 1.8vw, 1.6rem);
   letter-spacing: -.01em;
 }
 .svc-process__text {
@@ -5869,40 +6068,6 @@ img {
   line-height: 1.7;
   color: var(--muted);
 }
-.svc-cta { padding: clamp(4rem, 10vh, 8rem) 0; border-top: 1px solid var(--line); }
-.svc-cta__inner {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 2rem;
-  text-align: center;
-}
-.svc-cta__kicker {
-  font-family: "Marcellus", serif;
-  font-size: clamp(1.6rem, 3.4vw, 2.8rem);
-  color: rgba(245, 242, 234, .85);
-}
-.svc-cta__btn {
-  display: inline-flex;
-  align-items: center;
-  gap: 1rem;
-  padding: 1.3rem 2.8rem;
-  border-radius: 99rem;
-  background: var(--red);
-  color: #fff;
-  font-family: "Space Grotesk", sans-serif;
-  font-weight: 700;
-  font-size: 1rem;
-  letter-spacing: .1em;
-  text-transform: uppercase;
-  box-shadow: 0 0 3rem rgba(224, 63, 79, .4);
-  transition: background .35s var(--ease), box-shadow .35s var(--ease);
-  cursor: pointer;
-  will-change: transform;
-}
-.svc-cta__btn:hover { background: #eb5563; box-shadow: 0 0 5rem rgba(224, 63, 79, .6); }
-.svc-cta__btn-arrow { transition: transform .35s var(--ease); }
-.svc-cta__btn:hover .svc-cta__btn-arrow { transform: translateX(.4rem); }
 
 /* ------------------------------------------------------------------ About */
 .abt-hero {
@@ -6315,9 +6480,6 @@ img {
   .pd-meta__cell:nth-child(2n), .ctc-cell:nth-child(2n) { border-right: 0; padding-left: 1.6rem; }
   .pd-meta__cell:nth-child(2n+1), .ctc-cell:nth-child(2n+1) { padding-left: 0; }
   .pd-meta__cell:nth-child(n+3), .ctc-cell:nth-child(n+3) { border-top: 1px solid var(--line); }
-  .svc-row__head { grid-template-columns: 3rem 1fr 3rem; }
-  .svc-row__tagline { display: none; }
-  .svc-row__panel-inner { padding-left: .8rem; }
   .svc-process__steps { grid-template-columns: repeat(2, 1fr); }
   .abt-values__grid, .ctc-steps__list { grid-template-columns: 1fr; }
   .abt-toolbox__grid { grid-template-columns: 1fr; }
@@ -6342,5 +6504,9 @@ img {
   .ctc-hero__orb,
   .abt-hero__chip-dot,
   .ctc-cell__pulse { animation: none; }
-  .pd-next__bg img, .abt-value, .ctc-step, .pd-high__item, .svc-row__head { transition: none; }
+  /* The rack's open/close is a width (or height) change rather than decoration, so it
+     stays — stilling it would leave panels unable to open. Only the entrance cascade
+     inside an opening panel is dropped. */
+  .svc-panel__body > * { animation: none; }
+  .pd-next__bg img, .abt-value, .ctc-step, .pd-high__item { transition: none; }
 }
