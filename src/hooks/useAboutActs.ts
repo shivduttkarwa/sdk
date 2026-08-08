@@ -16,9 +16,10 @@ const ACTS = {
   falloff: 2,
   /** Vertical travel of an item across its window, in rem. */
   drift: 3.2,
-  /** Extra scroll the belief act holds for, as a % of viewport height. The manifesto has
-   *  to be readable at particle resolution, which takes longer than reading it as type. */
-  beliefHold: 170,
+  /** Extra scroll the belief act holds for, as a % of viewport height. Long enough to read
+   *  the manifesto at particle resolution, but no longer — at 170 the hold outlasted the
+   *  reading and the page felt stalled before the next act arrived. */
+  beliefHold: 85,
 };
 
 /**

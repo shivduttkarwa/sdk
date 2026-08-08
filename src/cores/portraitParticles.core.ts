@@ -47,9 +47,17 @@ export interface PortraitParticlesOptions {
   onCapable?: (capable: boolean) => void;
 }
 
-const SAMPLE = 420;
-const MASK_CENTRE = { x: 0.5, y: 0.47 };
-const MASK_RADIUS = { x: 0.46, y: 0.54 };
+// Grid resolution across the image. Raised with the portrait's on-screen size: at 420 the
+// points had to be drawn far wider than their spacing to close the gaps, and that overlap
+// is what softened the face.
+const SAMPLE = 500;
+// The ellipse must fit INSIDE the source frame. At centre .47 / radius .54 it reached to
+// v = -0.07, above the top of the photograph — and since no samples exist there, the mask
+// ended abruptly at the image edge and the assembled portrait had a flat cut across its
+// crown. Centred with a radius that stays inside 0..1, it closes properly all the way
+// round.
+const MASK_CENTRE = { x: 0.5, y: 0.5 };
+const MASK_RADIUS = { x: 0.46, y: 0.47 };
 const MASK_FEATHER = 0.86;
 
 const PORTRAIT_FILL = 1.2;
@@ -71,8 +79,10 @@ const S = {
 /** Alpha per kind of form. The abstract shapes sit behind live copy; the portrait is it. */
 const ALPHA = { portrait: 1, words: 1, abstract: 0.62, watermark: 0.32 };
 
-/** How quickly the rendered shape chases the scroll-derived one. Lower drifts more. */
-const SHAPE_EASE = 0.075;
+/** How quickly the rendered shape chases the scroll-derived one. Lower drifts more.
+ *  0.075 read as the cloud reacting late rather than being carried — it took roughly half
+ *  a second to catch a change, which on a page this scroll-linked feels like lag. */
+const SHAPE_EASE = 0.14;
 
 export function mountPortraitParticles({
   canvas,
@@ -161,11 +171,17 @@ export function mountPortraitParticles({
     const rEnd = R.top + R.height - viewH;
     const cEnd = C.top + C.height - viewH;
 
+    // From the very first pixel of scroll, so the portrait begins coming apart exactly
+    // when the page starts moving. Reaching 1 at the belief act's top means the words are
+    // fully gathered the moment that act takes the screen.
     if (y < B.top) {
-      return S.portrait + smoothstep(B.top - viewH * 0.85, B.top, y);
+      return S.portrait + smoothstep(0, B.top, y);
     }
+    // Words hold for the whole of the belief pin, then morph across the last viewport into
+    // the first road form. Both ends line up exactly with the branch boundaries, so there
+    // is no step in the sequence where it hands over.
     if (y < R.top) {
-      return S.words + smoothstep(B.top + B.height - viewH * 1.25, R.top, y);
+      return S.words + smoothstep(B.top + B.height - viewH, R.top, y);
     }
     if (y < rEnd) {
       const steps = S.roadLast - S.roadFirst;
@@ -639,11 +655,12 @@ export function mountPortraitParticles({
       );
       gl!.uniform1f(u.lift, words);
 
-      // Size each point to the spacing it must cover at hero scale. 1.8x closes the
-      // interstices — circles on a square grid need 1.41x just to touch at the diagonals,
-      // and these have soft rims.
+      // Size each point to the spacing it must cover at hero scale. Circles on a square
+      // grid need 1.41x just to touch at the diagonals; 1.6x closes the interstices with a
+      // little to spare. Every step above that is overlap, and overlap is blur — the
+      // finer grid above is what allows this to come down from 1.8.
       const spacing = ((heroScale / 2) * h) / pts.sampleH;
-      gl!.uniform1f(u.pointScale, Math.max(1.5, spacing * 1.8));
+      gl!.uniform1f(u.pointScale, Math.max(1.4, spacing * 1.6));
 
       gl!.drawArrays(gl!.POINTS, 0, pts.count);
     }
