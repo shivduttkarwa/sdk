@@ -111,11 +111,14 @@ export default function SelectedWork() {
                   in one unhurried experience.
                 </p>
                 <a
-                  className="sdk-work-story__cta"
+                  className="sdk-btn sdk-btn--hair sdk-work-story__cta"
                   href="#/works"
                   data-transition-label="Work"
                 >
-                  View project <span aria-hidden="true">→</span>
+                  <span>View project</span>
+                  <span className="sdk-btn__arrow" aria-hidden="true">
+                    ↗
+                  </span>
                 </a>
               </article>
 
@@ -132,11 +135,14 @@ export default function SelectedWork() {
                   vision, from concept to build.
                 </p>
                 <a
-                  className="sdk-work-story__cta"
+                  className="sdk-btn sdk-btn--hair sdk-work-story__cta"
                   href="#/works"
                   data-transition-label="Work"
                 >
-                  View project <span aria-hidden="true">→</span>
+                  <span>View project</span>
+                  <span className="sdk-btn__arrow" aria-hidden="true">
+                    ↗
+                  </span>
                 </a>
               </article>
 
@@ -153,11 +159,14 @@ export default function SelectedWork() {
                   and shipped in an afternoon.
                 </p>
                 <a
-                  className="sdk-work-story__cta"
+                  className="sdk-btn sdk-btn--hair sdk-work-story__cta"
                   href="#/works"
                   data-transition-label="Work"
                 >
-                  View project <span aria-hidden="true">→</span>
+                  <span>View project</span>
+                  <span className="sdk-btn__arrow" aria-hidden="true">
+                    ↗
+                  </span>
                 </a>
               </article>
 
@@ -174,11 +183,14 @@ export default function SelectedWork() {
                   gathered into one calm plan.
                 </p>
                 <a
-                  className="sdk-work-story__cta"
+                  className="sdk-btn sdk-btn--hair sdk-work-story__cta"
                   href="#/works"
                   data-transition-label="Work"
                 >
-                  View project <span aria-hidden="true">→</span>
+                  <span>View project</span>
+                  <span className="sdk-btn__arrow" aria-hidden="true">
+                    ↗
+                  </span>
                 </a>
               </article>
             </div>

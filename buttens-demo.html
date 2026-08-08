@@ -1,0 +1,366 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Button studies — SDK</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,200..800&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+/* ===========================================================================
+   Button studies, round two.
+
+   01 Hairline is kept unchanged — it was the one that worked. The other four
+   are new, and all four are pulled toward it rather than away: no inverted
+   fills, no growing blobs, no shapes that look unfinished at rest. Each one
+   now starts as a complete object and changes by a single idea.
+
+   Shared across all five:
+     · Space Grotesk, .7rem, 800, .2em tracking, uppercase — the label voice
+     · one easing curve, so they read as one family
+     · a real :focus-visible ring, never hover alone
+     · NOTHING animates transform on the button itself, so data-magnetic can
+       still translate it without the two fighting each other
+     · no property that changes layout, so a row of them never reflows
+   =========================================================================== */
+
+:root {
+  --bg: #05030a;
+  --ink: #f5f2ea;
+  --red: #E03F4F;
+  --line: rgba(245, 242, 234, .16);
+  --muted: #8d8a94;
+  --ease: cubic-bezier(.16, 1, .3, 1);
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  background: var(--bg);
+  color: var(--ink);
+  font-family: "Space Grotesk", system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  padding: clamp(2rem, 6vw, 5rem);
+}
+
+.head { max-width: 46rem; margin-bottom: clamp(3rem, 8vw, 5rem); }
+.head h1 {
+  font-family: "Bricolage Grotesque", sans-serif;
+  font-weight: 600;
+  font-size: clamp(2rem, 5vw, 3.4rem);
+  letter-spacing: -.03em;
+  line-height: 1;
+}
+.head p { margin-top: 1.2rem; color: var(--muted); font-size: .95rem; line-height: 1.7; }
+
+.study {
+  padding: clamp(2rem, 4vw, 3rem) 0;
+  border-top: 1px solid rgba(245, 242, 234, .1);
+  display: grid;
+  grid-template-columns: minmax(0, 15rem) minmax(0, 1fr);
+  gap: clamp(1.5rem, 4vw, 4rem);
+  align-items: start;
+}
+@media (max-width: 780px) { .study { grid-template-columns: 1fr; gap: 1.5rem; } }
+
+.study__meta h2 {
+  font-family: "Bricolage Grotesque", sans-serif;
+  font-size: 1.35rem;
+  font-weight: 600;
+  letter-spacing: -.01em;
+}
+.study__no {
+  display: block;
+  margin-bottom: .5rem;
+  font-size: .66rem;
+  font-weight: 700;
+  letter-spacing: .3em;
+  color: var(--red);
+}
+.study__meta p { margin-top: .7rem; color: var(--muted); font-size: .84rem; line-height: 1.65; }
+.keep { color: var(--red); }
+
+.bench { display: flex; flex-wrap: wrap; align-items: center; gap: 1rem; }
+/* The real test: the same buttons over a photograph, where a translucent dark
+   fill has almost no edge to read. */
+.bench--photo {
+  margin-top: 1.1rem;
+  padding: 1.6rem;
+  border-radius: .4rem;
+  background:
+    linear-gradient(105deg, rgba(5,3,10,.86) 0%, rgba(5,3,10,.55) 45%, rgba(5,3,10,.2) 100%),
+    linear-gradient(45deg, #2b2740, #6d4a55 40%, #b98a6a 70%, #f0cba8);
+}
+
+/* ---------------------------------------------------------------- shared */
+.b {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: .7rem;
+  min-height: 2.85rem;
+  padding: .85rem 1.5rem;
+  border: 0;
+  background: none;
+  color: var(--ink);
+  font: inherit;
+  font-size: .7rem;
+  font-weight: 800;
+  line-height: 1;
+  letter-spacing: .2em;
+  text-transform: uppercase;
+  text-decoration: none;
+  cursor: pointer;
+  isolation: isolate;
+  -webkit-tap-highlight-color: transparent;
+}
+.b:focus-visible { outline: 2px solid var(--red); outline-offset: 4px; }
+/* Every child rides above any fill. A positioned ::before with z-index 0 paints
+   over in-flow text, so labels are elements rather than bare text nodes. */
+.b > * { position: relative; z-index: 1; }
+.b .lb { display: inline-block; }
+.b .ar { font-size: 1.05em; line-height: 0; }
+
+/* ========================================================= 01 · HAIRLINE  ✓
+   Unchanged. One rule changes colour in place; only the arrow moves. */
+.b-hair {
+  border: 1px solid var(--line);
+  transition: border-color .45s var(--ease), color .45s var(--ease);
+}
+.b-hair .ar { transition: transform .45s var(--ease); }
+.b-hair:hover { border-color: var(--red); }
+.b-hair:hover .ar { transform: translate(.28rem, -.28rem); }
+
+/* ============================================================= 02 · INSET
+   A second hairline draws inside the first, like the mat around a framed
+   print. Two lines instead of one — the whole gesture, and nothing fills. */
+.b-inset {
+  border: 1px solid var(--line);
+  transition: border-color .5s var(--ease);
+}
+.b-inset::after {
+  content: "";
+  position: absolute;
+  inset: 4px;
+  z-index: 0;
+  border: 1px solid var(--red);
+  opacity: 0;
+  transform: scale(1.035);
+  pointer-events: none;
+  transition: opacity .45s var(--ease), transform .6s var(--ease);
+}
+.b-inset:hover { border-color: rgba(245, 242, 234, .38); }
+.b-inset:hover::after { opacity: .8; transform: scale(1); }
+.b-inset .ar { transition: transform .45s var(--ease); }
+.b-inset:hover .ar { transform: translate(.28rem, -.28rem); }
+
+/* ============================================================== 03 · ROLL
+   The label rolls up and its twin arrives from below. The frame never moves
+   and nothing changes colour — the motion IS the feedback. */
+.b-roll {
+  border: 1px solid var(--line);
+  transition: border-color .5s var(--ease);
+}
+.b-roll .lb {
+  position: relative;
+  display: inline-block;
+  overflow: hidden;
+  height: 1em;
+  vertical-align: bottom;
+}
+.b-roll .lb i {
+  display: block;
+  font-style: normal;
+  transition: transform .55s var(--ease);
+}
+/* The twin sits exactly one line below and rises into its place. */
+.b-roll .lb i + i { position: absolute; inset: 0; transform: translateY(105%); }
+.b-roll:hover { border-color: var(--red); }
+.b-roll:hover .lb i { transform: translateY(-105%); }
+.b-roll:hover .lb i + i { transform: translateY(0); }
+.b-roll .ar { transition: transform .45s var(--ease); }
+.b-roll:hover .ar { transform: translate(.28rem, -.28rem); }
+
+/* ============================================================== 04 · DRAW
+   At rest a single rule beneath the label; on hover the rest of the frame
+   draws itself around, left to right. Complete at rest, completed on hover —
+   which is what the earlier crop-marks version got wrong by looking broken
+   until you touched it. */
+.b-draw {
+  border-bottom: 1px solid var(--line);
+  transition: border-color .35s var(--ease);
+}
+.b-draw::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  border: 1px solid var(--red);
+  /* Revealed by clip rather than by scaling, so the border keeps its 1px
+     weight the whole way across instead of stretching. */
+  clip-path: inset(0 100% 0 0);
+  pointer-events: none;
+  transition: clip-path .6s var(--ease);
+}
+.b-draw:hover { border-bottom-color: transparent; }
+.b-draw:hover::after { clip-path: inset(0 0 0 0); }
+.b-draw .ar { transition: transform .45s var(--ease); }
+.b-draw:hover .ar { transform: translate(.28rem, -.28rem); }
+
+/* ============================================================ 05 · SETTLE
+   A whisper of light opens from the centre and the rule warms. The softest
+   of the five: no inversion, no travel, nothing to read as a state change
+   except that the button has come forward slightly. */
+.b-settle {
+  border: 1px solid var(--line);
+  overflow: hidden;
+  transition: border-color .5s var(--ease), color .4s var(--ease);
+}
+.b-settle::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  background: linear-gradient(90deg, rgba(224,63,79,0), rgba(224,63,79,.16), rgba(224,63,79,0));
+  transform: scaleX(0);
+  transition: transform .65s var(--ease);
+}
+.b-settle:hover { border-color: rgba(224, 63, 79, .68); color: #fff; }
+.b-settle:hover::before { transform: scaleX(1); }
+.b-settle .ar { transition: transform .45s var(--ease); }
+.b-settle:hover .ar { transform: translate(.28rem, -.28rem); }
+
+/* Anyone asking for less movement keeps the colour change and loses the rest.
+   Every study stays legible without its animation. */
+@media (prefers-reduced-motion: reduce) {
+  .b, .b *, .b::before, .b::after { transition-duration: .01ms !important; }
+}
+
+.foot {
+  margin-top: clamp(3rem, 8vw, 5rem);
+  padding-top: 2rem;
+  border-top: 1px solid rgba(245, 242, 234, .1);
+  color: var(--muted);
+  font-size: .78rem;
+  line-height: 1.7;
+}
+code { font-family: "Space Grotesk", monospace; color: var(--ink); }
+</style>
+</head>
+<body>
+
+<div class="head">
+  <h1>Button studies</h1>
+  <p>
+    01 is unchanged. The other four are new and all pulled toward it rather than away —
+    no inverted fills, no growing blobs, nothing that looks unfinished until you touch it.
+    Each starts as a complete object and changes by one idea. Shown on flat ground and
+    again over a photograph, since that is where a translucent dark fill has no edge left
+    to read. Hover them, and tab to them — every one has a real focus ring.
+  </p>
+</div>
+
+<section class="study">
+  <div class="study__meta">
+    <span class="study__no">01</span>
+    <h2>Hairline <span class="keep">· kept</span></h2>
+    <p>One rule changes colour in place. Only the arrow moves. The quietest of the five.</p>
+  </div>
+  <div>
+    <div class="bench">
+      <a class="b b-hair" href="#"><span class="lb">Write to me</span> <span class="ar" aria-hidden="true">↗</span></a>
+      <button class="b b-hair" type="button"><span class="lb">Copy address</span></button>
+    </div>
+    <div class="bench bench--photo">
+      <a class="b b-hair" href="#"><span class="lb">Write to me</span> <span class="ar" aria-hidden="true">↗</span></a>
+      <button class="b b-hair" type="button"><span class="lb">Copy address</span></button>
+    </div>
+  </div>
+</section>
+
+<section class="study">
+  <div class="study__meta">
+    <span class="study__no">02</span>
+    <h2>Inset</h2>
+    <p>A second hairline draws inside the first, like the mat around a framed print. Two
+      lines instead of one, and nothing fills.</p>
+  </div>
+  <div>
+    <div class="bench">
+      <a class="b b-inset" href="#"><span class="lb">Write to me</span> <span class="ar" aria-hidden="true">↗</span></a>
+      <button class="b b-inset" type="button"><span class="lb">Copy address</span></button>
+    </div>
+    <div class="bench bench--photo">
+      <a class="b b-inset" href="#"><span class="lb">Write to me</span> <span class="ar" aria-hidden="true">↗</span></a>
+      <button class="b b-inset" type="button"><span class="lb">Copy address</span></button>
+    </div>
+  </div>
+</section>
+
+<section class="study">
+  <div class="study__meta">
+    <span class="study__no">03</span>
+    <h2>Roll</h2>
+    <p>The label rolls up and its twin arrives from below. The frame never moves and no
+      colour changes — the motion is the whole feedback.</p>
+  </div>
+  <div>
+    <div class="bench">
+      <a class="b b-roll" href="#"><span class="lb"><i>Write to me</i><i aria-hidden="true">Write to me</i></span> <span class="ar" aria-hidden="true">↗</span></a>
+      <button class="b b-roll" type="button"><span class="lb"><i>Copy address</i><i aria-hidden="true">Copy address</i></span></button>
+    </div>
+    <div class="bench bench--photo">
+      <a class="b b-roll" href="#"><span class="lb"><i>Write to me</i><i aria-hidden="true">Write to me</i></span> <span class="ar" aria-hidden="true">↗</span></a>
+      <button class="b b-roll" type="button"><span class="lb"><i>Copy address</i><i aria-hidden="true">Copy address</i></span></button>
+    </div>
+  </div>
+</section>
+
+<section class="study">
+  <div class="study__meta">
+    <span class="study__no">04</span>
+    <h2>Draw</h2>
+    <p>A single rule under the label at rest; on hover the rest of the frame draws itself
+      around, left to right. Complete at rest, completed on hover.</p>
+  </div>
+  <div>
+    <div class="bench">
+      <a class="b b-draw" href="#"><span class="lb">Write to me</span> <span class="ar" aria-hidden="true">↗</span></a>
+      <button class="b b-draw" type="button"><span class="lb">Copy address</span></button>
+    </div>
+    <div class="bench bench--photo">
+      <a class="b b-draw" href="#"><span class="lb">Write to me</span> <span class="ar" aria-hidden="true">↗</span></a>
+      <button class="b b-draw" type="button"><span class="lb">Copy address</span></button>
+    </div>
+  </div>
+</section>
+
+<section class="study">
+  <div class="study__meta">
+    <span class="study__no">05</span>
+    <h2>Settle</h2>
+    <p>A whisper of light opens from the centre and the rule warms. The softest of the
+      five — nothing reads as a state change except that it has come forward.</p>
+  </div>
+  <div>
+    <div class="bench">
+      <a class="b b-settle" href="#"><span class="lb">Write to me</span> <span class="ar" aria-hidden="true">↗</span></a>
+      <button class="b b-settle" type="button"><span class="lb">Copy address</span></button>
+    </div>
+    <div class="bench bench--photo">
+      <a class="b b-settle" href="#"><span class="lb">Write to me</span> <span class="ar" aria-hidden="true">↗</span></a>
+      <button class="b b-settle" type="button"><span class="lb">Copy address</span></button>
+    </div>
+  </div>
+</section>
+
+<p class="foot">
+  Pick one and I'll make it the shared <code>.sdk-cta</code> — contact hero, address block
+  and the homepage work section all drawing from it, so there is one button on the site
+  rather than three that drift apart.
+</p>
+
+</body>
+</html>

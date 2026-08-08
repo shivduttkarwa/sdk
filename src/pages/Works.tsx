@@ -92,13 +92,13 @@ export default function Works() {
               <p className="works-stage__sub">{project.subtitle}</p>
               <p className="works-stage__summary">{project.summary}</p>
               <a
-                className="works-stage__cta"
+                className="sdk-btn sdk-btn--settle works-stage__cta"
                 href={`#/works/${project.slug}`}
                 data-transition-label={project.title}
               >
-                View case
-                <span className="works-stage__cta-arrow" aria-hidden="true">
-                  →
+                <span>View case</span>
+                <span className="sdk-btn__arrow" aria-hidden="true">
+                  ↗
                 </span>
               </a>
             </div>

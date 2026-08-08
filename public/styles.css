@@ -211,6 +211,104 @@ img {
   font-weight: 200;
 }
 
+/* ============================================================ Button system
+   ONE button for the whole site, in two weights.
+
+     .sdk-btn            base — the shared voice and geometry
+     .sdk-btn--hair      quiet. A hairline that warms to red in place.
+     .sdk-btn--settle    emphasis. Light opens from the centre as it warms.
+     .sdk-btn__arrow     the outbound nudge, so callers do not each invent one
+
+   Three rules hold across both, all three learned from buttons that failed on
+   real pages:
+
+   1. A button NEVER MOVES. No lift, no magnetic drift. A drifting button reads
+      as broken rather than responsive — at the left edge of a container it looks
+      like the border is being clipped — so data-magnetic is off every .sdk-btn
+      on the site and the only thing that travels is the arrow.
+   2. Nothing animates `transform` on the button itself, which is what let the
+      old lift-on-hover fight data-magnetic: both wrote transform on the same
+      element and overwrote each other every frame.
+   3. Nothing animates a property that affects layout, so hovering one button in
+      a row never nudges its neighbours.
+
+   Replaces .btn/.btn-primary/.btn-secondary, .sdk-cta__btn, .project__cta,
+   .works-stage__cta, .pd__cta, and the visual half of .sdk-work-story__cta. The
+   homepage hero keeps .sdk-hero__cta — that one is a bespoke animated showpiece
+   rather than a standard action. */
+.sdk-btn {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: .7rem;
+  min-height: 2.85rem;
+  padding: .85rem 1.5rem;
+  border: 1px solid rgba(245, 242, 234, .16);
+  background: none;
+  color: var(--text);
+  font-family: "Space Grotesk", sans-serif;
+  font-size: .7rem;
+  font-weight: 800;
+  line-height: 1;
+  letter-spacing: .2em;
+  text-transform: uppercase;
+  text-decoration: none;
+  cursor: pointer;
+  isolation: isolate;
+  -webkit-tap-highlight-color: transparent;
+  transition: border-color .5s var(--ease), color .4s var(--ease);
+}
+/* Children ride above any fill: a positioned ::before with z-index 0 paints over
+   in-flow text, so labels must be elements, not bare text nodes. */
+.sdk-btn > * {
+  position: relative;
+  z-index: 1;
+}
+.sdk-btn:focus-visible {
+  outline: 2px solid var(--red);
+  outline-offset: 4px;
+}
+
+.sdk-btn__arrow {
+  font-size: 1.05em;
+  line-height: 0;
+  transition: transform .45s var(--ease);
+}
+.sdk-btn:hover .sdk-btn__arrow,
+.sdk-btn:focus-visible .sdk-btn__arrow {
+  transform: translate(.28rem, -.28rem);
+}
+
+/* ---- quiet ---- */
+.sdk-btn--hair:hover,
+.sdk-btn--hair:focus-visible {
+  border-color: var(--red);
+}
+
+/* ---- emphasis ---- */
+.sdk-btn--settle {
+  overflow: hidden;
+}
+.sdk-btn--settle::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  background: linear-gradient(90deg, rgba(224,63,79,0), rgba(224,63,79,.16), rgba(224,63,79,0));
+  transform: scaleX(0);
+  transition: transform .65s var(--ease);
+}
+.sdk-btn--settle:hover,
+.sdk-btn--settle:focus-visible {
+  border-color: rgba(224, 63, 79, .68);
+  color: #fff;
+}
+.sdk-btn--settle:hover::before,
+.sdk-btn--settle:focus-visible::before {
+  transform: scaleX(1);
+}
+
 .section-title {
   font-family: "Space Grotesk", sans-serif;
   font-size: clamp(3rem, 8vw, 8.625rem);
@@ -231,62 +329,6 @@ img {
   font-size: clamp(1.0625rem, 1.5vw, 1.375rem);
   line-height: 1.6;
   margin-top: 1.5rem;
-}
-
-.btn {
-  position: relative;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.625rem;
-  min-height: 3.375rem;
-  padding: 0 1.375rem;
-  border-radius: 999px;
-  font-weight: 800;
-  letter-spacing: -.02em;
-  overflow: hidden;
-  transform-style: preserve-3d;
-  transition: transform .35s var(--ease), color .35s var(--ease), border-color .35s var(--ease);
-  will-change: transform;
-}
-
-.btn span {
-  position: relative;
-  z-index: 2;
-}
-
-.btn-primary {
-  color: #050505;
-  background: var(--text);
-  box-shadow: 0 1rem 3.75rem rgba(245,242,234,.12);
-}
-
-.btn-primary::before,
-.btn-secondary::before {
-  content: "";
-  position: absolute;
-  inset: auto 0 0 0;
-  height: 0;
-  background: var(--red);
-  transition: height .38s var(--ease);
-  z-index: 1;
-}
-
-.btn-primary:hover::before,
-.btn-secondary:hover::before {
-  height: 100%;
-}
-
-.btn-secondary {
-  color: var(--text);
-  border: 1px solid var(--line-strong);
-  background: rgba(255,255,255,.04);
-  backdrop-filter: blur(12px);
-}
-
-.btn-secondary:hover {
-  color: #050505;
-  border-color: transparent;
 }
 
 .wiggle:hover {
@@ -4047,41 +4089,6 @@ img {
   letter-spacing: 0.01em;
 }
 
-.sdk-cta__btn {
-  pointer-events: all;
-  display: inline-flex;
-  align-items: center;
-  gap: 0.55rem;
-  padding: 0.8rem 2rem;
-  background: #E03F4F;
-  color: #fff;
-  font-family: 'Space Grotesk', sans-serif;
-  font-size: 0.9rem;
-  font-weight: 600;
-  letter-spacing: 0.04em;
-  text-decoration: none;
-  border-radius: 100px;
-  border: 1.5px solid transparent;
-  transition: background 0.2s ease, border-color 0.2s ease, transform 0.2s ease;
-  margin-top: 0.4rem;
-}
-
-.sdk-cta__btn:hover {
-  background: transparent;
-  border-color: #E03F4F;
-  color: #E03F4F;
-  transform: scale(1.04);
-}
-
-.sdk-cta__btn svg { transition: transform 0.2s ease; }
-.sdk-cta__btn:hover svg { transform: translateX(3px); }
-
-@media (max-width: 600px) {
-  .sdk-cta__headline { line-height: 1.08; }
-}
-
-
-/* ── Mobile hero CTA: same visuals as desktop button, hidden on desktop ── */
 .sdk-hero__m-cta {
   display: none;
   width: 13.65rem;
@@ -4473,52 +4480,17 @@ img {
   margin-left: auto;
 }
 
+/* The site's reusable action pill.
+   Lifted out of the homepage work story so other pages use the same button rather than a
+   near-copy that drifts. The story keeps two of its own declarations: a top margin, and
+   pointer-events: none, which is specific to it only being clickable while it is the
+   active slide — inheriting that anywhere else would make the button dead on arrival. */
+/* Position and interactivity only — the look comes from .sdk-btn. pointer-events
+   is specific to this one: the story is clickable solely while it is the active
+   slide, and the core toggles .is-interactive to release it. */
 .sdk-work-story__cta {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: .75rem;
-  min-height: 2.9rem;
   margin-top: 1.5rem;
-  padding: .8rem 1.15rem;
-  border: 1px solid rgba(224,63,79,.72);
-  background: rgba(5,5,5,.42);
-  color: #f5f0e8;
-  font-family: "Space Grotesk", sans-serif;
-  font-size: .7rem;
-  font-weight: 800;
-  line-height: 1;
-  letter-spacing: .2em;
-  text-decoration: none;
-  text-transform: uppercase;
   pointer-events: none;
-  backdrop-filter: blur(8px);
-  transition:
-    color .25s var(--ease),
-    background-color .25s var(--ease),
-    border-color .25s var(--ease),
-    transform .25s var(--ease);
-}
-
-.sdk-work-story[data-side="right"] .sdk-work-story__cta {
-  margin-left: auto;
-}
-
-.sdk-work-story.is-interactive .sdk-work-story__cta {
-  pointer-events: auto;
-}
-
-.sdk-work-story__cta:hover,
-.sdk-work-story__cta:focus-visible {
-  border-color: var(--red);
-  background: var(--red);
-  color: #fff;
-  transform: translateY(-2px);
-}
-
-.sdk-work-story__cta:focus-visible {
-  outline: 2px solid #f5f0e8;
-  outline-offset: 3px;
 }
 
 .sdk-work__progress {
@@ -4956,39 +4928,6 @@ img {
   line-height: 1.65;
 }
 
-.works-stage__cta {
-  margin-top: 1.8rem;
-  display: inline-flex;
-  align-items: center;
-  gap: .75rem;
-  padding: .95rem 1.7rem;
-  border: 1px solid rgba(245, 242, 234, .28);
-  border-radius: 99rem;
-  background: rgba(5, 3, 10, .35);
-  backdrop-filter: blur(8px);
-  color: #f5f2ea;
-  font-family: "Space Grotesk", sans-serif;
-  font-size: .76rem;
-  font-weight: 700;
-  letter-spacing: .18em;
-  text-transform: uppercase;
-  text-decoration: none;
-  transition: background-color .3s var(--ease), border-color .3s var(--ease), color .3s var(--ease);
-}
-.works-stage__cta:hover,
-.works-stage__cta:focus-visible {
-  background: var(--red);
-  border-color: var(--red);
-  color: #fff;
-}
-.works-stage__cta-arrow {
-  transition: transform .3s var(--ease);
-}
-.works-stage__cta:hover .works-stage__cta-arrow {
-  transform: translateX(.35rem);
-}
-
-/* ---- Progress rail ---- */
 .works-stage__rail {
   left: clamp(1.5rem, 6vw, 5rem);
   right: clamp(1.5rem, 6vw, 5rem);
@@ -5079,28 +5018,6 @@ img {
   line-height: 1.65;
   color: var(--muted);
 }
-.project__cta {
-  display: inline-flex;
-  align-items: center;
-  gap: .4rem;
-  margin-top: 2.25rem;
-  padding: .95rem 1.8rem;
-  border-radius: 999px;
-  background: var(--red);
-  color: #fff;
-  font-family: "Space Grotesk", "Inter", sans-serif;
-  font-size: .9rem;
-  font-weight: 700;
-  letter-spacing: .04em;
-  text-decoration: none;
-  transition: transform .35s var(--ease), box-shadow .35s var(--ease), background-color .35s var(--ease);
-}
-.project__cta:hover {
-  transform: translateY(-2px);
-  background: #ef5666;
-  box-shadow: 0 .9rem 2.2rem rgba(224, 63, 79, .38);
-}
-
 .project__cover {
   width: min(var(--max), calc(100% - 4rem));
   margin: clamp(3rem, 6vw, 5rem) auto;
@@ -5472,27 +5389,6 @@ img {
   gap: 2rem;
 }
 .pd-hero__actions { display: flex; flex-direction: column; align-items: flex-start; gap: .8rem; }
-.pd__cta {
-  display: inline-flex;
-  align-items: center;
-  gap: .8rem;
-  padding: 1.05rem 2.1rem;
-  border-radius: 99rem;
-  background: var(--red);
-  color: #fff;
-  font-family: "Space Grotesk", sans-serif;
-  font-weight: 700;
-  font-size: .92rem;
-  letter-spacing: .1em;
-  text-transform: uppercase;
-  box-shadow: 0 0 2.6rem rgba(224, 63, 79, .35);
-  transition: box-shadow .35s var(--ease), background .35s var(--ease);
-  cursor: pointer;
-  will-change: transform;
-}
-.pd__cta:hover { background: #eb5563; box-shadow: 0 0 4rem rgba(224, 63, 79, .55); }
-.pd__cta-arrow { transition: transform .35s var(--ease); }
-.pd__cta:hover .pd__cta-arrow { transform: translate(.2rem, -.2rem); }
 .pd__cta-domain {
   padding-left: .4rem;
   font-family: "Space Grotesk", sans-serif;
@@ -6591,6 +6487,12 @@ img {
   justify-content: space-between;
   gap: 1rem;
 }
+.ctc-hero__actions {
+  margin-top: clamp(1.8rem, 4vh, 2.6rem);
+  display: flex;
+  flex-wrap: wrap;
+  gap: .9rem;
+}
 .ctc-hero__lead {
   margin-top: 2rem;
   max-width: 46ch;
@@ -6675,26 +6577,12 @@ img {
   outline-offset: .6rem;
 }
 
-/* A text button, not a pill: a second bordered control beside a six-rem address would
-   read as an equal choice, and it is not. */
-.ctc-address__copy {
-  margin-top: clamp(1.4rem, 3vh, 2.2rem);
-  padding: 0;
-  border: 0;
-  border-bottom: 1px solid rgba(245, 242, 234, .24);
-  background: none;
-  color: rgba(245, 242, 234, .6);
-  font-family: "Space Grotesk", sans-serif;
-  font-size: .78rem;
-  font-weight: 600;
-  letter-spacing: .12em;
-  text-transform: uppercase;
-  cursor: pointer;
-  transition: color .3s var(--ease), border-color .3s var(--ease);
-}
-.ctc-address__copy:hover {
-  color: var(--text);
-  border-color: var(--red);
+/* The address itself is the primary target; the actions sit under it as shared pills. */
+.ctc-address__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .9rem;
+  margin-top: clamp(1.6rem, 3.5vh, 2.4rem);
 }
 
 /* ---- Meta line ---- */

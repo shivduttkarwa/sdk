@@ -56,14 +56,13 @@ export default function ProjectDetail({ slug }: { slug: string }) {
             <p className="pd-hero__lead">{project.summary}</p>
             <div className="pd-hero__actions">
               <a
-                className="pd__cta"
-                data-magnetic="0.3"
+                className="sdk-btn sdk-btn--settle"
                 href={project.url}
                 target="_blank"
                 rel="noopener noreferrer"
               >
                 <span>Visit live site</span>
-                <span className="pd__cta-arrow" aria-hidden="true">
+                <span className="sdk-btn__arrow" aria-hidden="true">
                   ↗
                 </span>
               </a>

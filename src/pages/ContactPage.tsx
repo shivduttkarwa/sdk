@@ -104,6 +104,22 @@ export default function ContactPage() {
             Every great website begins with a conversation. Tell me what you&apos;re dreaming
             about — I&apos;ll help you shape it into something real.
           </p>
+          {/* No data-fx-stagger here. This row is a direct child of [data-hero-intro], so
+              usePageHeroIntro already animates it; adding usePageFx's stagger on top left
+              the buttons parked at their from-state transform — 48px below where they
+              belong — because the two systems were writing the same properties. */}
+          <div className="ctc-hero__actions">
+            {/* .sdk-cta is the shared pill the homepage work section uses. */}
+            <a className="sdk-btn sdk-btn--settle" href={`mailto:${EMAIL}`}>
+              <span>Write to me</span>
+              <span className="sdk-btn__arrow" aria-hidden="true">
+                ↗
+              </span>
+            </a>
+            <a className="sdk-btn sdk-btn--hair" href="#/works" data-transition-label="Work">
+              <span>See the work</span>
+            </a>
+          </div>
         </div>
       </section>
 
@@ -112,15 +128,28 @@ export default function ContactPage() {
       <section className="ctc-address">
         <div className="container">
           <span className="ctc-address__label">Write to me</span>
-          <a className="ctc-address__link" href={`mailto:${EMAIL}`} data-magnetic="0.12">
+          <a className="ctc-address__link" href={`mailto:${EMAIL}`}>
             <span className="ctc-address__text">{EMAIL}</span>
             <span className="ctc-address__arrow" aria-hidden="true">
               ↗
             </span>
           </a>
-          <button type="button" className="ctc-address__copy" onClick={copyEmail}>
-            {copied ? 'Copied to clipboard ✓' : 'or copy the address'}
-          </button>
+          <div className="ctc-address__actions">
+            <button type="button" className="sdk-btn sdk-btn--hair" onClick={copyEmail}>
+              <span>{copied ? 'Copied ✓' : 'Copy address'}</span>
+            </button>
+            <a
+              className="sdk-btn sdk-btn--hair"
+              href="https://www.linkedin.com"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <span>Message on LinkedIn</span>
+              <span className="sdk-btn__arrow" aria-hidden="true">
+                ↗
+              </span>
+            </a>
+          </div>
         </div>
       </section>
 
