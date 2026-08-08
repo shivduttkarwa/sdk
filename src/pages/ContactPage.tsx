@@ -2,15 +2,29 @@ import { useEffect, useRef, useState } from 'react';
 import PageHeroTitle from '@/components/PageHeroTitle';
 import { usePageFx } from '@/hooks/usePageFx';
 import { usePageHeroIntro } from '@/hooks/usePageHeroIntro';
-import { useEmberField } from '@/hooks/useEmberField';
 import { useFooterName } from '@/hooks/useFooterName';
+import { useHeroRipple } from '@/hooks/useHeroRipple';
 
-// /contact — a destination, not a footer. Rising ember canvas + drifting glow orbs
-// behind a full-height hero, a magnetic email CTA with copy-to-clipboard, live IST
-// clock, and a "what happens next" strip so reaching out feels like the start of a
-// process rather than a shot in the dark.
+// /contact — the address IS the page.
+//
+// Below the hero there is no backdrop effect at all, deliberately: on a page whose entire
+// job is one email address, anything moving behind the words works against them. What
+// carries it is scale, hairline rules and space.
+//
+// The hero is the exception. Its backdrop photograph is rendered on a canvas as a water
+// surface (cores/heroRipple), so the pointer and every click send rings across it and the
+// image refracts along their slope. Contained to the hero, where there is no copy to
+// fight — the address below sits on flat ground.
 
 const EMAIL = 'shivdutt@example.com';
+// The same file the CSS backdrop uses, so the canvas and the fallback show one image.
+const HERO_IMAGE = 'assets/hero-images/contact.webp';
+
+const elsewhere = [
+  { name: 'Instagram', href: 'https://www.instagram.com' },
+  { name: 'LinkedIn', href: 'https://www.linkedin.com' },
+  { name: 'YouTube', href: 'https://www.youtube.com' },
+];
 
 const steps = [
   {
@@ -47,15 +61,15 @@ function useIstClock(): string {
 
 export default function ContactPage() {
   const rootRef = useRef<HTMLElement>(null);
-  const canvasRef = useRef<HTMLCanvasElement>(null);
+  const heroFxRef = useRef<HTMLCanvasElement>(null);
   const [copied, setCopied] = useState(false);
   const copyTimer = useRef(0);
   const time = useIstClock();
 
   usePageFx(rootRef);
   usePageHeroIntro();
-  useEmberField(canvasRef);
   useFooterName();
+  useHeroRipple(heroFxRef, HERO_IMAGE);
 
   useEffect(() => () => window.clearTimeout(copyTimer.current), []);
 
@@ -73,87 +87,75 @@ export default function ContactPage() {
   return (
     <main className="ctc" ref={rootRef}>
       <section className="ctc-hero">
-        <canvas className="ctc-hero__embers" ref={canvasRef} aria-hidden="true"></canvas>
-        <span className="ctc-hero__orb ctc-hero__orb--a" aria-hidden="true"></span>
-        <span className="ctc-hero__orb ctc-hero__orb--b" aria-hidden="true"></span>
-        <span className="ctc-hero__kanji" aria-hidden="true" data-parallax="0.2">
-          縁
-        </span>
+        {/* Draws the same photograph and the same scrim the CSS backdrop draws, so at rest
+            this hero matches the others exactly — the difference is that it ripples. If it
+            cannot run, the CSS backdrop underneath is already painting. */}
+        <canvas className="ctc-hero__fx" ref={heroFxRef} aria-hidden="true"></canvas>
         <div className="container ctc-hero__inner" data-hero-intro>
-          <span className="sdk-eyebrow">Contact</span>
+          <div className="ctc-hero__top">
+            <span className="sdk-eyebrow">Contact</span>
+            <span className="ctc-status">
+              <span className="ctc-status__dot" aria-hidden="true"></span>
+              Available for work
+            </span>
+          </div>
           <PageHeroTitle lines={['Let’s build', 'something magical']} />
           <p className="ctc-hero__lead">
             Every great website begins with a conversation. Tell me what you&apos;re dreaming
             about — I&apos;ll help you shape it into something real.
           </p>
-          <div className="ctc-hero__actions" data-fx-stagger>
-            <a className="ctc-hero__mail" href={`mailto:${EMAIL}`} data-magnetic="0.22">
-              <span className="ctc-hero__mail-text">{EMAIL}</span>
-              <span className="ctc-hero__mail-arrow" aria-hidden="true">
-                ↗
-              </span>
-            </a>
-            <button type="button" className="ctc-hero__copy" onClick={copyEmail}>
-              {copied ? 'Copied ✓' : 'Copy address'}
-            </button>
-          </div>
         </div>
       </section>
 
-      <section className="ctc-grid-section">
+      {/* The centrepiece. Set as large as the address will go, because on a page with one
+          job the address should be the largest thing on it — larger than the headline. */}
+      <section className="ctc-address">
         <div className="container">
-          <div className="ctc-grid" data-fx-stagger>
-            <div className="ctc-cell">
-              <span className="ctc-cell__label">Location</span>
-              <span className="ctc-cell__value">Suratgarh · Jaipur</span>
-              <span className="ctc-cell__sub">Rajasthan, India</span>
-            </div>
-            <div className="ctc-cell">
-              <span className="ctc-cell__label">Local time</span>
-              <span className="ctc-cell__value ctc-cell__value--mono">{time}</span>
-              <span className="ctc-cell__sub">IST · UTC+5:30</span>
-            </div>
-            <div className="ctc-cell">
-              <span className="ctc-cell__label">Status</span>
-              <span className="ctc-cell__value">
-                <span className="ctc-cell__pulse" aria-hidden="true"></span>
-                Available
-              </span>
-              <span className="ctc-cell__sub">Taking new projects</span>
-            </div>
-            <div className="ctc-cell">
-              <span className="ctc-cell__label">Elsewhere</span>
-              <span className="ctc-cell__value ctc-cell__socials">
-                <a href="https://www.instagram.com" target="_blank" rel="noopener noreferrer">
-                  Instagram
-                </a>
-                <a href="https://www.linkedin.com" target="_blank" rel="noopener noreferrer">
-                  LinkedIn
-                </a>
-                <a href="https://www.youtube.com" target="_blank" rel="noopener noreferrer">
-                  YouTube
-                </a>
-              </span>
-              <span className="ctc-cell__sub">Say hi anywhere</span>
-            </div>
-          </div>
+          <span className="ctc-address__label">Write to me</span>
+          <a className="ctc-address__link" href={`mailto:${EMAIL}`} data-magnetic="0.12">
+            <span className="ctc-address__text">{EMAIL}</span>
+            <span className="ctc-address__arrow" aria-hidden="true">
+              ↗
+            </span>
+          </a>
+          <button type="button" className="ctc-address__copy" onClick={copyEmail}>
+            {copied ? 'Copied to clipboard ✓' : 'or copy the address'}
+          </button>
         </div>
       </section>
 
-      <section className="ctc-steps">
+      <section className="ctc-meta">
+        <div className="container ctc-meta__row">
+          <span>Suratgarh · Jaipur, India</span>
+          <span className="ctc-meta__time">{time} IST</span>
+          <span className="ctc-meta__links">
+            {elsewhere.map((l) => (
+              <a key={l.name} href={l.href} target="_blank" rel="noopener noreferrer">
+                {l.name}
+              </a>
+            ))}
+          </span>
+        </div>
+      </section>
+
+      <section className="ctc-next">
         <div className="container">
-          <div className="ctc-steps__head">
-            <span className="sdk-eyebrow">What happens next</span>
-            <h2 className="ctc-steps__heading" data-fx="rise">
-              From hello to handshake
-            </h2>
-          </div>
-          <ol className="ctc-steps__list" data-fx-stagger>
-            {steps.map((step) => (
-              <li key={step.num} className="ctc-step">
-                <span className="ctc-step__num">{step.num}</span>
-                <h3 className="ctc-step__title">{step.title}</h3>
-                <p className="ctc-step__text">{step.text}</p>
+          <span className="ctc-next__label">What happens next</span>
+          <ol className="ctc-next__list">
+            {steps.map((step, i) => (
+              <li
+                key={step.num}
+                className="ctc-next__step"
+                data-fx="rise"
+                data-fx-delay={String(i * 0.08)}
+              >
+                <span className="ctc-next__num" aria-hidden="true">
+                  {step.num}
+                </span>
+                <div className="ctc-next__body">
+                  <h2 className="ctc-next__title">{step.title}</h2>
+                  <p className="ctc-next__text">{step.text}</p>
+                </div>
               </li>
             ))}
           </ol>

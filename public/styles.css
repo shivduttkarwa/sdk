@@ -5385,19 +5385,19 @@ img {
 
 /* Shared page-hero primitives. The hero <h1> itself lives with the other site-wide
    primitives as .sdk-hero-title (see components/PageHeroTitle). */
-.pd-hero__lead, .svc-hero__lead, .abt-hero__lead, .ctc-hero__lead {
+.pd-hero__lead, .svc-hero__lead, .abt-hero__lead {
   color: var(--muted);
   font-size: clamp(1rem, 1.35vw, 1.2rem);
   line-height: 1.75;
   max-width: 46ch;
 }
-.svc-hero__kanji, .abt-hero__kanji, .ctc-hero__kanji, .pd-info__kanji, .pd-high__kanji {
+.svc-hero__kanji, .abt-hero__kanji, .pd-info__kanji, .pd-high__kanji {
   font-family: "Noto Serif JP", serif;
   color: var(--red);
   pointer-events: none;
   user-select: none;
 }
-.svc-hero__kanji, .abt-hero__kanji, .ctc-hero__kanji {
+.svc-hero__kanji, .abt-hero__kanji {
   position: absolute;
   top: 8%;
   right: -2%;
@@ -5415,13 +5415,6 @@ img {
 
 /* Shared section heading style */
 .pd-info__heading, .pd-high__heading, .svc-process__heading,
-.ctc-steps__heading {
-  font-family: "Bricolage Grotesque", sans-serif;
-  font-weight: 700;
-  font-size: clamp(2.2rem, 4.5vw, 4rem);
-  letter-spacing: -.02em;
-  line-height: 1.02;
-}
 
 /* ---------------------------------------------------------------- Project */
 .pd-hero {
@@ -6558,198 +6551,273 @@ img {
   .abt-belief__text { text-align: left; }
 }
 
-/* ---------------------------------------------------------------- Contact */
-.ctc-hero {
-  position: relative;
-  min-height: 92vh;
-  display: flex;
-  align-items: center;
-  overflow: hidden;
-}
-.ctc-hero__embers {
+/* ---------------------------------------------------------------- Contact
+   No backdrop effect on this page, by decision rather than omission. Every other page
+   carries a shader; here the whole job is one email address, and anything moving behind
+   the words works against them. Structure comes from scale, hairline rules and space. */
+
+/* Sits above the CSS backdrop (::before, z-index -1) and below the copy, so the canvas
+   simply covers the static image when it comes up — which is what lets the fallback be
+   "do nothing" rather than a second code path. */
+.ctc-hero__fx {
   position: absolute;
   inset: 0;
+  z-index: 0;
   width: 100%;
   height: 100%;
-  z-index: 0;
-  pointer-events: none;
+  display: block;
+  opacity: 0;
+  transition: opacity .6s var(--ease);
 }
-.ctc-hero__orb {
-  position: absolute;
-  border-radius: 50%;
-  filter: blur(70px);
-  pointer-events: none;
-  z-index: 0;
+.ctc-hero__fx.is-live {
+  opacity: 1;
 }
-.ctc-hero__orb--a {
-  width: 34rem; height: 34rem;
-  top: -8rem; right: -6rem;
-  background: radial-gradient(circle, rgba(224, 63, 79, .30), transparent 65%);
-  animation: ctcOrbA 14s ease-in-out infinite alternate;
+.ctc-hero__inner {
+  position: relative;
+  z-index: 1;
 }
-.ctc-hero__orb--b {
-  width: 26rem; height: 26rem;
-  bottom: -6rem; left: -5rem;
-  background: radial-gradient(circle, rgba(143, 92, 255, .18), transparent 65%);
-  animation: ctcOrbB 18s ease-in-out infinite alternate;
+
+.ctc-hero {
+  position: relative;
+  min-height: 82svh;
+  display: flex;
+  align-items: center;
+  padding: clamp(7rem, 13vh, 10rem) 0 clamp(3rem, 7vh, 5rem);
 }
-@keyframes ctcOrbA { to { transform: translate(-5rem, 4rem) scale(1.15); } }
-@keyframes ctcOrbB { to { transform: translate(4rem, -3.5rem) scale(1.1); } }
-.ctc-hero__inner { position: relative; z-index: 1; padding-top: clamp(7rem, 12vh, 9rem); }
-.ctc-hero__lead { margin-top: 2rem; }
-.ctc-hero__actions {
-  margin-top: clamp(2.5rem, 5vh, 4rem);
+.ctc-hero__top {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: 1.4rem;
+  justify-content: space-between;
+  gap: 1rem;
 }
-.ctc-hero__mail {
+.ctc-hero__lead {
+  margin-top: 2rem;
+  max-width: 46ch;
+  color: var(--muted);
+  font-size: clamp(1rem, 1.35vw, 1.2rem);
+  line-height: 1.75;
+}
+
+.ctc-status {
   display: inline-flex;
   align-items: center;
-  gap: 1.1rem;
-  padding: 1.35rem 2.6rem;
-  border-radius: 99rem;
-  background: var(--red);
-  color: #fff;
-  font-family: "Space Grotesk", sans-serif;
-  font-weight: 700;
-  font-size: clamp(.95rem, 1.6vw, 1.25rem);
-  letter-spacing: .04em;
-  box-shadow: 0 0 3.5rem rgba(224, 63, 79, .45);
-  transition: background .35s var(--ease), box-shadow .35s var(--ease);
-  cursor: pointer;
-  will-change: transform;
-}
-.ctc-hero__mail:hover { background: #eb5563; box-shadow: 0 0 6rem rgba(224, 63, 79, .65); }
-.ctc-hero__mail-arrow { transition: transform .35s var(--ease); }
-.ctc-hero__mail:hover .ctc-hero__mail-arrow { transform: translate(.25rem, -.25rem); }
-.ctc-hero__copy {
-  padding: 1.1rem 1.9rem;
-  border-radius: 99rem;
-  border: 1px solid var(--line-strong);
-  background: none;
-  color: rgba(245, 242, 234, .8);
-  font-family: "Space Grotesk", sans-serif;
-  font-size: .82rem;
-  font-weight: 600;
-  letter-spacing: .14em;
-  text-transform: uppercase;
-  cursor: pointer;
-  transition: border-color .3s var(--ease), color .3s var(--ease), background .3s var(--ease);
-}
-.ctc-hero__copy:hover {
-  border-color: var(--red);
-  color: #fff;
-  background: rgba(224, 63, 79, .12);
-}
-.ctc-grid-section { border-block: 1px solid var(--line); }
-.ctc-grid { display: grid; grid-template-columns: repeat(4, 1fr); }
-.ctc-cell {
-  padding: clamp(2rem, 4.5vh, 3rem) 1.6rem clamp(2rem, 4.5vh, 3rem) 0;
-  border-right: 1px solid var(--line);
-  display: flex;
-  flex-direction: column;
   gap: .6rem;
-}
-.ctc-cell:last-child { border-right: 0; }
-.ctc-cell + .ctc-cell { padding-left: 1.6rem; }
-.ctc-cell__label {
   font-family: "Space Grotesk", sans-serif;
   font-size: .68rem;
   font-weight: 700;
-  letter-spacing: .26em;
+  letter-spacing: .24em;
+  text-transform: uppercase;
+  color: rgba(245, 242, 234, .62);
+}
+.ctc-status__dot {
+  width: .48rem;
+  height: .48rem;
+  border-radius: 50%;
+  background: #35d07f;
+  box-shadow: 0 0 0 0 rgba(53, 208, 127, .5);
+  animation: ctcPulse 2.4s ease-out infinite;
+}
+@keyframes ctcPulse {
+  to { box-shadow: 0 0 0 .75rem rgba(53, 208, 127, 0); }
+}
+
+/* ---- The address ---- */
+.ctc-address {
+  padding: clamp(3rem, 9vh, 6rem) 0 clamp(3rem, 8vh, 5rem);
+  border-top: 1px solid rgba(245, 242, 234, .1);
+}
+.ctc-address__label {
+  display: block;
+  font-family: "Space Grotesk", sans-serif;
+  font-size: .66rem;
+  font-weight: 700;
+  letter-spacing: .32em;
   text-transform: uppercase;
   color: var(--red);
 }
-.ctc-cell__value {
+
+/* Sized to the widest the address will go and no smaller. On a page with one job the
+   address should be the largest thing on it — larger than the headline above it. */
+.ctc-address__link {
   display: flex;
-  align-items: center;
-  gap: .7rem;
-  font-size: 1.05rem;
+  align-items: baseline;
+  gap: clamp(.6rem, 2vw, 1.6rem);
+  margin-top: clamp(1.2rem, 3vh, 2rem);
+  color: var(--text);
+  font-family: "Bricolage Grotesque", sans-serif;
   font-weight: 600;
-  color: rgba(245, 242, 234, .88);
+  font-size: clamp(1.85rem, 7.4vw, 6.6rem);
+  line-height: 1;
+  letter-spacing: -.035em;
+  text-decoration: none;
+  /* The address is one long token; without this it overflows rather than breaking on a
+     narrow screen, and there is no space in it for the browser to break at. */
+  overflow-wrap: anywhere;
+  transition: color .35s var(--ease);
 }
-.ctc-cell__value--mono { font-family: "Space Grotesk", monospace; letter-spacing: .1em; }
-.ctc-cell__sub { font-size: .8rem; color: var(--muted); }
-.ctc-cell__pulse {
-  width: .55rem; height: .55rem;
-  border-radius: 50%;
-  background: #4ade80;
-  box-shadow: 0 0 1rem #4ade80;
-  animation: avail-pulse 2s ease-in-out infinite;
-}
-.ctc-cell__socials { flex-wrap: wrap; gap: .4rem 1.1rem; }
-.ctc-cell__socials a {
-  position: relative;
-  transition: color .3s var(--ease);
-}
-.ctc-cell__socials a::after {
-  content: "";
-  position: absolute;
-  left: 0; bottom: -.2rem;
-  width: 100%;
-  height: 1px;
-  background: var(--red);
-  transform: scaleX(0);
-  transform-origin: right center;
-  transition: transform .4s var(--ease);
-}
-.ctc-cell__socials a:hover { color: var(--red); }
-.ctc-cell__socials a:hover::after { transform: scaleX(1); transform-origin: left center; }
-.ctc-steps { padding: clamp(5rem, 11vh, 9rem) 0; }
-.ctc-steps__list {
-  list-style: none;
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: clamp(1.2rem, 2.5vw, 2rem);
-}
-.ctc-step {
-  padding: 2.4rem 2rem;
-  border-radius: var(--radius-sm);
-  border: 1px solid var(--line);
-  background: var(--card);
-  transition: border-color .4s var(--ease), transform .4s var(--ease), background .4s var(--ease);
-}
-.ctc-step:hover {
-  border-color: rgba(224, 63, 79, .5);
-  background: rgba(224, 63, 79, .06);
-  transform: translateY(-.4rem);
-}
-.ctc-step__num {
-  font-family: "Space Grotesk", sans-serif;
-  font-size: .8rem;
-  font-weight: 700;
-  letter-spacing: .22em;
+.ctc-address__link:hover,
+.ctc-address__link:focus-visible {
   color: var(--red);
 }
-.ctc-step__title {
-  margin-top: 1rem;
+.ctc-address__arrow {
+  flex: none;
+  font-size: .42em;
+  color: var(--red);
+  transition: transform .35s var(--ease);
+}
+.ctc-address__link:hover .ctc-address__arrow,
+.ctc-address__link:focus-visible .ctc-address__arrow {
+  transform: translate(.35rem, -.35rem);
+}
+.ctc-address__link:focus-visible {
+  outline: 2px solid var(--red);
+  outline-offset: .6rem;
+}
+
+/* A text button, not a pill: a second bordered control beside a six-rem address would
+   read as an equal choice, and it is not. */
+.ctc-address__copy {
+  margin-top: clamp(1.4rem, 3vh, 2.2rem);
+  padding: 0;
+  border: 0;
+  border-bottom: 1px solid rgba(245, 242, 234, .24);
+  background: none;
+  color: rgba(245, 242, 234, .6);
+  font-family: "Space Grotesk", sans-serif;
+  font-size: .78rem;
+  font-weight: 600;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: color .3s var(--ease), border-color .3s var(--ease);
+}
+.ctc-address__copy:hover {
+  color: var(--text);
+  border-color: var(--red);
+}
+
+/* ---- Meta line ---- */
+.ctc-meta {
+  padding: clamp(1.4rem, 3vh, 2rem) 0;
+  border-top: 1px solid rgba(245, 242, 234, .1);
+  border-bottom: 1px solid rgba(245, 242, 234, .1);
+}
+.ctc-meta__row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: clamp(1rem, 4vw, 3rem);
+  font-family: "Space Grotesk", sans-serif;
+  font-size: .74rem;
+  font-weight: 600;
+  letter-spacing: .18em;
+  text-transform: uppercase;
+  color: rgba(245, 242, 234, .48);
+}
+.ctc-meta__time {
+  font-variant-numeric: tabular-nums;
+  color: rgba(245, 242, 234, .78);
+}
+.ctc-meta__links {
+  display: inline-flex;
+  flex-wrap: wrap;
+  gap: 1.2rem;
+  margin-left: auto;
+}
+.ctc-meta__links a {
+  color: rgba(245, 242, 234, .64);
+  text-decoration: none;
+  transition: color .3s var(--ease);
+}
+.ctc-meta__links a:hover {
+  color: var(--red);
+}
+
+/* ---- What happens next ---- */
+.ctc-next {
+  padding: clamp(3.5rem, 9vh, 7rem) 0 clamp(4rem, 11vh, 8rem);
+}
+.ctc-next__label {
+  display: block;
+  margin-bottom: clamp(1.6rem, 4vh, 2.6rem);
+  font-family: "Space Grotesk", sans-serif;
+  font-size: .66rem;
+  font-weight: 700;
+  letter-spacing: .32em;
+  text-transform: uppercase;
+  color: rgba(245, 242, 234, .34);
+}
+.ctc-next__list {
+  list-style: none;
+}
+/* One per row on its own rule: a numbered process is read in sequence, which three equal
+   columns actively fight. */
+.ctc-next__step {
+  display: grid;
+  grid-template-columns: minmax(0, 6.5rem) minmax(0, 1fr);
+  gap: clamp(1rem, 4vw, 3rem);
+  align-items: start;
+  padding: clamp(1.6rem, 3.5vh, 2.4rem) 0;
+  border-top: 1px solid rgba(245, 242, 234, .12);
+}
+.ctc-next__num {
   font-family: "Bricolage Grotesque", sans-serif;
   font-weight: 700;
-  font-size: 1.45rem;
+  font-size: clamp(2.2rem, 4.2vw, 3.4rem);
+  line-height: .9;
+  letter-spacing: -.04em;
+  color: transparent;
+  -webkit-text-stroke: 1px rgba(224, 63, 79, .5);
+  transition: color .35s var(--ease);
 }
-.ctc-step__text { margin-top: .8rem; font-size: .95rem; line-height: 1.75; color: var(--muted); }
-.ctc-foot { border-top: 1px solid rgba(245, 242, 234, .07); }
+.ctc-next__step:hover .ctc-next__num {
+  color: rgba(224, 63, 79, .16);
+}
+.ctc-next__body {
+  max-width: 48ch;
+}
+.ctc-next__title {
+  font-family: "Bricolage Grotesque", sans-serif;
+  font-weight: 700;
+  font-size: clamp(1.35rem, 2.4vw, 2rem);
+  letter-spacing: -.02em;
+}
+.ctc-next__text {
+  margin-top: .7rem;
+  font-size: .96rem;
+  line-height: 1.75;
+  color: var(--muted);
+}
+
+/* ---- Foot ---- */
+.ctc-foot {
+  padding: clamp(2rem, 5vh, 3rem) clamp(1.5rem, 5vw, 4rem) 0;
+  border-top: 1px solid rgba(245, 242, 234, .1);
+}
 .ctc-foot__meta {
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 1rem;
-  padding: 1.6rem 1.5rem .6rem;
+  font-family: "Space Grotesk", sans-serif;
   font-size: .72rem;
-  font-weight: 500;
-  letter-spacing: .08em;
+  letter-spacing: .16em;
   text-transform: uppercase;
-  color: rgba(245, 242, 234, .38);
+  color: rgba(245, 242, 234, .42);
 }
 .ctc-foot__dot {
-  width: .3rem; height: .3rem;
+  width: .3rem;
+  height: .3rem;
   border-radius: 50%;
   background: var(--red);
 }
 
-/* ------------------------------------------------------------- Responsive */
+@media (max-width: 700px) {
+  .ctc-meta__links { margin-left: 0; }
+  .ctc-next__step { grid-template-columns: 1fr; gap: .7rem; }
+}
+
 @media (max-width: 1024px) {
   .pd-info__grid { grid-template-columns: 1fr; }
   .pd-info__rail { position: static; display: flex; align-items: baseline; gap: 1.4rem; }
@@ -6760,18 +6828,17 @@ img {
   .abt-portrait { max-width: 26rem; margin-inline: auto; }
 }
 @media (max-width: 860px) {
-  .pd-meta__row, .ctc-grid { grid-template-columns: repeat(2, 1fr); }
-  .pd-meta__cell:nth-child(2n), .ctc-cell:nth-child(2n) { border-right: 0; padding-left: 1.6rem; }
-  .pd-meta__cell:nth-child(2n+1), .ctc-cell:nth-child(2n+1) { padding-left: 0; }
-  .pd-meta__cell:nth-child(n+3), .ctc-cell:nth-child(n+3) { border-top: 1px solid var(--line); }
+  .pd-meta__row { grid-template-columns: repeat(2, 1fr); }
+  .pd-meta__cell:nth-child(2n) { border-right: 0; padding-left: 1.6rem; }
+  .pd-meta__cell:nth-child(2n+1) { padding-left: 0; }
+  .pd-meta__cell:nth-child(n+3) { border-top: 1px solid var(--line); }
   .svc-process__steps { grid-template-columns: repeat(2, 1fr); }
-  .ctc-steps__list { grid-template-columns: 1fr; }
   .pd-hero__foot { flex-direction: column; align-items: flex-start; }
 }
 @media (max-width: 560px) {
-  .pd-meta__row, .ctc-grid { grid-template-columns: 1fr; }
-  .pd-meta__cell, .ctc-cell { border-right: 0; padding-left: 0 !important; }
-  .pd-meta__cell + .pd-meta__cell, .ctc-cell + .ctc-cell { border-top: 1px solid var(--line); }
+  .pd-meta__row { grid-template-columns: 1fr; }
+  .pd-meta__cell { border-right: 0; padding-left: 0 !important; }
+  .pd-meta__cell + .pd-meta__cell { border-top: 1px solid var(--line); }
   .svc-process__steps { grid-template-columns: 1fr; }
   .pd-cover__frame { aspect-ratio: 16 / 10; }
 }
@@ -6780,12 +6847,11 @@ img {
 @media (prefers-reduced-motion: reduce) {
   /* Hero entrance omitted deliberately — usePageHeroIntro opts out of it in JS. */
   .svc-marquee__track,
-  .ctc-hero__orb,
   .abt-hero__chip-dot,
-  .ctc-cell__pulse { animation: none; }
+  .ctc-status__dot { animation: none; }
   /* The rack's open/close is a width (or height) change rather than decoration, so it
      stays — stilling it would leave panels unable to open. Only the entrance cascade
      inside an opening panel is dropped. */
   .svc-panel__body > * { animation: none; }
-  .pd-next__bg img, .abt-value, .ctc-step, .pd-high__item { transition: none; }
+  .pd-next__bg img, .pd-high__item { transition: none; }
 }
