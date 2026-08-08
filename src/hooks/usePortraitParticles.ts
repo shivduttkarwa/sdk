@@ -20,21 +20,29 @@ import { mountPortraitParticles } from '@/cores/portraitParticles.core';
 export function usePortraitParticles(
   canvasRef: RefObject<HTMLCanvasElement>,
   anchorRef: RefObject<HTMLElement>,
+  textAnchorRef: RefObject<HTMLElement>,
   src: string,
+  lines: string[],
 ) {
   const [needsFallback, setNeedsFallback] = useState(false);
 
   useLayoutEffect(() => {
     const canvas = canvasRef.current;
     const anchor = anchorRef.current;
-    if (!canvas || !anchor) return;
+    const textAnchor = textAnchorRef.current;
+    if (!canvas || !anchor || !textAnchor) return;
     return mountPortraitParticles({
       canvas,
       anchor,
+      textAnchor,
       src,
+      lines,
       onCapable: (capable) => setNeedsFallback(!capable),
     });
-  }, [canvasRef, anchorRef, src]);
+    // `lines` is a module constant in practice; joining keeps a fresh array literal from
+    // tearing down and rebuilding the whole GL context on every render.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [canvasRef, anchorRef, textAnchorRef, src, lines.join('|')]);
 
   return needsFallback;
 }

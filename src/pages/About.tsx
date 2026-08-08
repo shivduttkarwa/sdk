@@ -1,31 +1,50 @@
 import { useRef } from 'react';
 import Contact from '@/components/Contact';
 import PageHeroTitle from '@/components/PageHeroTitle';
-import { usePageFx } from '@/hooks/usePageFx';
 import { usePageHeroIntro } from '@/hooks/usePageHeroIntro';
 import { usePortraitParticles } from '@/hooks/usePortraitParticles';
+import { useAboutActs } from '@/hooks/useAboutActs';
 
-// /about — the person behind the pixels. A WebGL point cloud carries the whole page
-// (cores/portraitParticles): it assembles into the portrait in the hero, breaks into a
-// horizontal streak that travels with the scroll, and gathers again behind the contact
-// block as an oversized watermark. Between them sit a per-line manifesto, count-up
-// numbers, a journey timeline whose spine draws itself, three values and the toolbox.
+// /about — one continuous story rather than a stack of sections.
 //
-// The cloud draws POINTS rather than a full-screen quad on purpose — the homepage
-// showcase and the /works stage are both quad shaders, so a third would read as a habit.
+// The page is five ACTS plus the contact close. Each act owns the viewport; the two
+// middle acts pin and step through their own beats as you scroll, so the journey and the
+// principles are read one at a time instead of scanned as a list or a card grid. A fixed
+// rail down the right edge marks where you are in the story.
+//
+// Running through all of it is a single WebGL point cloud (cores/portraitParticles): it
+// assembles into the portrait for the opening, spells the manifesto out in act two,
+// unwinds into a DNA helix that travels the middle of the page, and gathers again behind
+// the contact block as an oversized watermark. One thread, six forms.
 
 const PORTRAIT = 'assets/shiv-1-v2.webp';
+
+// Single source for the manifesto: the cloud rasterises these to spell them out, and the
+// same array renders the DOM copy that stands in when the cloud cannot run.
+const MANIFESTO = [
+  'Most websites inform.',
+  'The best ones transport.',
+  'I build the second kind — forged with precision, tempered with restraint.',
+];
+
+const ACTS = [
+  { id: 'origin', label: 'Who' },
+  { id: 'belief', label: 'Belief' },
+  { id: 'road', label: 'Road' },
+  { id: 'code', label: 'Code' },
+  { id: 'arsenal', label: 'Arsenal' },
+];
 
 const journey = [
   {
     year: '2019',
     title: 'First lines of code',
-    text: 'Started building for the web — small sites, big curiosity, and the realisation that design and code are the same craft seen from two sides.',
+    text: 'Small sites, big curiosity, and the realisation that design and code are the same craft seen from two sides.',
   },
   {
     year: '2021',
     title: 'Going professional',
-    text: 'First client work shipped. Learned the discipline of deadlines, feedback and building things real people depend on.',
+    text: 'First client work shipped. The discipline of deadlines, feedback, and building things real people depend on.',
   },
   {
     year: '2023',
@@ -33,13 +52,13 @@ const journey = [
     text: 'Grew from interfaces into complete products — APIs, CMS platforms, deployments — owning the whole arc from brief to launch.',
   },
   {
-    year: 'Now',
+    year: 'NOW',
     title: 'Cinematic web experiences',
-    text: 'Focused on premium, motion-driven sites where storytelling, performance and precision meet. This portfolio is built the way I build for clients.',
+    text: 'Premium, motion-driven sites where storytelling, performance and precision meet. This portfolio is built the way I build for clients.',
   },
 ];
 
-const values = [
+const principles = [
   {
     kanji: '精',
     title: 'Precision',
@@ -57,32 +76,45 @@ const values = [
   },
 ];
 
-const toolbox = [
-  { group: 'Design', items: ['Figma', 'Art direction', 'Design systems', 'Typography'] },
-  { group: 'Frontend', items: ['React', 'Next.js', 'TypeScript', 'Tailwind CSS'] },
-  { group: 'Motion', items: ['GSAP', 'ScrollTrigger', 'WebGL', 'Lenis'] },
-  { group: 'Backend', items: ['Node.js', 'REST APIs', 'CMS', 'Deployment'] },
+// Four rows that scroll past each other. Duplicated inline at render so each row can run
+// as a seamless marquee without JS measuring anything.
+const arsenal = [
+  ['React', 'Next.js', 'TypeScript', 'Tailwind CSS', 'Vite'],
+  ['GSAP', 'ScrollTrigger', 'WebGL', 'Lenis', 'Canvas'],
+  ['Figma', 'Art direction', 'Design systems', 'Typography'],
+  ['Node.js', 'REST APIs', 'CMS', 'Deployment'],
 ];
 
 export default function About() {
   const rootRef = useRef<HTMLElement>(null);
   const cloudRef = useRef<HTMLCanvasElement>(null);
   const anchorRef = useRef<HTMLDivElement>(null);
-  usePageFx(rootRef);
+  const manifestoRef = useRef<HTMLElement>(null);
+
   usePageHeroIntro();
+  useAboutActs(rootRef);
   // True only when the cloud cannot run. The photograph is otherwise never shown, so
-  // arriving at the page does not spoil the convergence by displaying the finished image
-  // first.
-  const needsFallback = usePortraitParticles(cloudRef, anchorRef, PORTRAIT);
+  // arriving does not spoil the convergence by displaying the finished image first.
+  const needsFallback = usePortraitParticles(cloudRef, anchorRef, manifestoRef, PORTRAIT, MANIFESTO);
 
   return (
-    <main className="abt" ref={rootRef}>
-      {/* Fixed full-viewport layer, behind every section. It has to live here rather than
-          inside the hero: the cloud travels the length of the page, so a canvas scoped to
-          the hero would clip the streak the moment it left. */}
+    <main className={`abt${needsFallback ? '' : ' is-cloud'}`} ref={rootRef}>
+      {/* Fixed full-viewport layer, behind every act. It has to live here rather than
+          inside an act: the cloud travels the length of the page, so a canvas scoped to
+          one section would clip it the moment it left. */}
       <canvas className="abt-cloud" ref={cloudRef} aria-hidden="true"></canvas>
 
-      <section className="abt-hero">
+      <nav className="abt-rail" aria-hidden="true">
+        {ACTS.map((act, i) => (
+          <span key={act.id} className="abt-rail__mark">
+            <i>{String(i + 1).padStart(2, '0')}</i>
+            <b>{act.label}</b>
+          </span>
+        ))}
+      </nav>
+
+      {/* ── ACT I · WHO ─────────────────────────────────────────────────────── */}
+      <section className="abt-hero" data-act="origin">
         <span className="abt-hero__kanji" aria-hidden="true" data-parallax="0.22">
           侍
         </span>
@@ -104,138 +136,96 @@ export default function About() {
               <span className="abt-hero__chip">IST · UTC+5:30</span>
             </div>
           </div>
-          {/* Holds the hero's share of the grid and gives the cloud something to line
-              the assembled portrait up against — the canvas itself is page-level. */}
+          {/* Holds the hero's share of the grid and gives the cloud something to line the
+              assembled portrait up against — the canvas itself is page-level. */}
           <div
             className={`abt-portrait${needsFallback ? ' is-fallback' : ''}`}
             ref={anchorRef}
           >
             {/* Hidden unless the cloud cannot run — this is the reduced-motion and
                 no-WebGL rendering, not a placeholder shown while the cloud starts. */}
-            <img
-              className="abt-portrait__img"
-              src={PORTRAIT}
-              alt="Portrait of Shivdutt Karwa"
-            />
+            <img className="abt-portrait__img" src={PORTRAIT} alt="Portrait of Shivdutt Karwa" />
           </div>
         </div>
       </section>
 
-      <section className="abt-manifesto">
-        <div className="container">
-          <p className="abt-manifesto__text" data-fx-stagger>
-            <span className="abt-manifesto__line">Most websites inform.</span>
-            <span className="abt-manifesto__line">
-              The best ones <em>transport</em>.
-            </span>
-            <span className="abt-manifesto__line">
-              I build the second kind — forged with precision, tempered with restraint.
-            </span>
-          </p>
-        </div>
-      </section>
-
-      <section className="abt-numbers">
-        <div className="container abt-numbers__row" data-fx-stagger>
-          <div className="abt-numbers__cell">
-            <span className="abt-numbers__value">
-              <span data-count="5" data-count-suffix="+">5+</span>
-            </span>
-            <span className="abt-numbers__label">Years of craft</span>
-          </div>
-          <div className="abt-numbers__cell">
-            <span className="abt-numbers__value">
-              <span data-count="40" data-count-suffix="+">40+</span>
-            </span>
-            <span className="abt-numbers__label">Projects shipped</span>
-          </div>
-          <div className="abt-numbers__cell">
-            <span className="abt-numbers__value">
-              <span data-count="12" data-count-suffix="+">12+</span>
-            </span>
-            <span className="abt-numbers__label">Tech mastered</span>
-          </div>
-        </div>
-      </section>
-
-      <section className="abt-journey">
-        <div className="container">
-          <div className="abt-journey__head">
-            <span className="sdk-eyebrow">The road so far</span>
-            <h2 className="abt-journey__heading" data-fx="rise">
-              Journey
-            </h2>
-          </div>
-          <div className="abt-journey__timeline">
-            <span className="abt-journey__spine" data-fx="drawv" aria-hidden="true"></span>
-            <ol className="abt-journey__list">
-              {journey.map((stop, i) => (
-                <li
-                  key={stop.year}
-                  className="abt-journey__stop"
-                  data-fx="rise"
-                  data-fx-delay={String(i * 0.06)}
-                >
-                  <span className="abt-journey__node" aria-hidden="true"></span>
-                  <span className="abt-journey__year">{stop.year}</span>
-                  <h3 className="abt-journey__title">{stop.title}</h3>
-                  <p className="abt-journey__text">{stop.text}</p>
-                </li>
-              ))}
-            </ol>
-          </div>
-        </div>
-      </section>
-
-      <section className="abt-values">
-        <div className="container">
-          <div className="abt-values__head">
-            <span className="sdk-eyebrow">What I optimise for</span>
-            <h2 className="abt-values__heading" data-fx="rise">
-              Three principles
-            </h2>
-          </div>
-          <div className="abt-values__grid" data-fx-stagger>
-            {values.map((value) => (
-              <article key={value.title} className="abt-value">
-                <span className="abt-value__kanji" aria-hidden="true">
-                  {value.kanji}
+      {/* ── ACT II · BELIEF ─────────────────────────────────────────────────── */}
+      <section className="abt-belief" data-act="belief" ref={manifestoRef}>
+        {/* Pinned, so the words hold still long enough to be read. Unpinned, the cloud's
+            weight for this act rose and fell across a single viewport of scroll and the
+            manifesto assembled and dissolved faster than anyone could finish it. */}
+        <div className="abt-belief__pin">
+          <div className="container">
+            {/* The cloud spells this out in particles, so when it is running the DOM
+                copy is held at opacity 0 — still in the accessibility tree and still
+                holding the act's height. */}
+            <p className="abt-belief__text">
+              {MANIFESTO.map((line) => (
+                <span key={line} className="abt-belief__line">
+                  {line}
                 </span>
-                <h3 className="abt-value__title">{value.title}</h3>
-                <p className="abt-value__text">{value.text}</p>
+              ))}
+            </p>
+          </div>
+        </div>
+      </section>
+
+      {/* ── ACT III · THE ROAD ──────────────────────────────────────────────── */}
+      <section className="abt-seq" data-act="road">
+        <div className="abt-seq__pin">
+          <span className="abt-seq__label">The road so far</span>
+          <div className="abt-seq__stage">
+            {journey.map((stop) => (
+              <article key={stop.year} className="abt-seq__item abt-step">
+                <span className="abt-step__ghost" aria-hidden="true">
+                  {stop.year}
+                </span>
+                <span className="abt-step__year">{stop.year}</span>
+                <h2 className="abt-step__title">{stop.title}</h2>
+                <p className="abt-step__text">{stop.text}</p>
               </article>
             ))}
           </div>
         </div>
       </section>
 
-      <section className="abt-toolbox">
-        <div className="container">
-          <div className="abt-toolbox__head">
-            <span className="sdk-eyebrow">The toolbox</span>
-            <h2 className="abt-toolbox__heading" data-fx="rise">
-              Weapons of choice
-            </h2>
+      {/* ── ACT IV · THE CODE I LIVE BY ─────────────────────────────────────── */}
+      <section className="abt-seq" data-act="code">
+        <div className="abt-seq__pin">
+          <span className="abt-seq__label">The code I live by</span>
+          <div className="abt-seq__stage">
+            {principles.map((p) => (
+              <article key={p.title} className="abt-seq__item abt-tenet">
+                <span className="abt-tenet__ghost" aria-hidden="true">
+                  {p.kanji}
+                </span>
+                <h2 className="abt-tenet__title">{p.title}</h2>
+                <p className="abt-tenet__text">{p.text}</p>
+              </article>
+            ))}
           </div>
-          <div className="abt-toolbox__grid">
-            {toolbox.map((group, i) => (
-              <div
-                key={group.group}
-                className="abt-toolbox__group"
-                data-fx="rise"
-                data-fx-delay={String(i * 0.07)}
-              >
-                <span className="abt-toolbox__group-label">{group.group}</span>
-                <div className="abt-toolbox__chips">
-                  {group.items.map((item) => (
-                    <span key={item} className="abt-toolbox__chip">
+        </div>
+      </section>
+
+      {/* ── ACT V · ARSENAL ─────────────────────────────────────────────────── */}
+      <section className="abt-arsenal" data-act="arsenal">
+        <span className="abt-arsenal__label">What I wield</span>
+        <div className="abt-arsenal__rows" aria-label="Tools and technologies">
+          {arsenal.map((row, i) => (
+            <div key={i} className={`abt-arsenal__row${i % 2 ? ' is-reverse' : ''}`}>
+              {/* Rendered twice so the track can loop by translating exactly one copy. */}
+              {[0, 1].map((copy) => (
+                <div key={copy} className="abt-arsenal__group" aria-hidden={copy === 1}>
+                  {row.map((item) => (
+                    <span key={item} className="abt-arsenal__item">
                       {item}
+                      <i aria-hidden="true">✦</i>
                     </span>
                   ))}
                 </div>
-              </div>
-            ))}
-          </div>
+              ))}
+            </div>
+          ))}
         </div>
       </section>
 

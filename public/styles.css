@@ -5414,8 +5414,8 @@ img {
    converging from a scattered ring (see cores/portraitParticles). */
 
 /* Shared section heading style */
-.pd-info__heading, .pd-high__heading, .svc-process__heading, .abt-journey__heading,
-.abt-values__heading, .abt-toolbox__heading, .ctc-steps__heading {
+.pd-info__heading, .pd-high__heading, .svc-process__heading,
+.ctc-steps__heading {
   font-family: "Bricolage Grotesque", sans-serif;
   font-weight: 700;
   font-size: clamp(2.2rem, 4.5vw, 4rem);
@@ -5618,8 +5618,7 @@ img {
 }
 .pd-stack__tags { display: flex; flex-wrap: wrap; gap: .6rem; }
 .pd-stack__tag,
-.svc-panel__list li,
-.abt-toolbox__chip {
+.svc-panel__list li {
   padding: .5rem 1.05rem;
   border-radius: 99rem;
   border: 1px solid var(--line);
@@ -5631,7 +5630,7 @@ img {
   color: rgba(245, 242, 234, .8);
   transition: border-color .3s var(--ease), color .3s var(--ease), background .3s var(--ease);
 }
-.pd-stack__tag:hover, .svc-panel__list li:hover, .abt-toolbox__chip:hover {
+.pd-stack__tag:hover, .svc-panel__list li:hover {
   border-color: rgba(224, 63, 79, .6);
   color: #fff;
   background: rgba(224, 63, 79, .12);
@@ -6227,147 +6226,336 @@ img {
   opacity: 1;
 }
 
-}
-.abt-manifesto { padding: clamp(5rem, 12vh, 10rem) 0; border-top: 1px solid var(--line); }
-.abt-manifesto__text {
-  font-family: "Marcellus", serif;
-  font-size: clamp(1.8rem, 4.2vw, 3.6rem);
-  line-height: 1.35;
-  max-width: 26ch;
-}
-.abt-manifesto__line { display: block; color: rgba(245, 242, 234, .55); }
-.abt-manifesto__line:nth-child(2) { color: var(--text); }
-.abt-manifesto__line em { font-style: normal; color: var(--red); }
-.abt-manifesto__line:last-child { margin-top: 1.2rem; font-size: .62em; color: rgba(245, 242, 234, .8); }
-.abt-numbers { border-block: 1px solid var(--line); }
-.abt-numbers__row { display: grid; grid-template-columns: repeat(3, 1fr); }
-.abt-numbers__cell {
-  padding: clamp(2.2rem, 5vh, 3.5rem) 1.5rem;
-  border-right: 1px solid var(--line);
-  text-align: center;
-}
-.abt-numbers__cell:last-child { border-right: 0; }
-.abt-numbers__value {
-  font-family: "Bricolage Grotesque", sans-serif;
-  font-weight: 800;
-  font-size: clamp(3rem, 7vw, 5.5rem);
-  line-height: 1;
-  color: var(--text);
-}
-.abt-numbers__label {
-  display: block;
-  margin-top: .9rem;
-  font-family: "Space Grotesk", sans-serif;
-  font-size: .74rem;
-  font-weight: 600;
-  letter-spacing: .24em;
-  text-transform: uppercase;
-  color: var(--muted);
-}
-.abt-journey { padding: clamp(5rem, 12vh, 10rem) 0 clamp(3rem, 7vh, 6rem); }
-.abt-journey__head, .abt-values__head, .abt-toolbox__head, .ctc-steps__head { margin-bottom: 3rem; }
-.abt-journey__timeline { position: relative; padding-left: clamp(1.8rem, 4vw, 3rem); }
-.abt-journey__spine {
-  position: absolute;
-  left: 0;
-  top: .4rem;
-  bottom: .4rem;
-  width: 2px;
-  background: linear-gradient(180deg, var(--red), rgba(224, 63, 79, .08));
-}
-.abt-journey__list {
-  list-style: none;
+/* ---- /about acts ----------------------------------------------------------
+   The page is a sequence of full-viewport acts, not stacked sections. Two of them pin and
+   step through their own beats (see hooks/useAboutActs); the rest simply pass.
+
+   Every item defaults to opacity 1 and no transform. That is deliberate: under reduced
+   motion the hook writes nothing and nothing pins, so the acts have to degrade to a plain
+   readable document on their own rather than sit invisible waiting for JS. */
+
+/* Fixed chapter rail. Hidden on touch and narrow screens, where it would crowd the copy
+   and duplicate a progress signal the scrollbar already gives. */
+.abt-rail {
+  position: fixed;
+  top: 50%;
+  right: clamp(1rem, 2.4vw, 2.4rem);
+  z-index: 5;
   display: flex;
   flex-direction: column;
-  gap: clamp(2.6rem, 6vh, 4.5rem);
+  gap: 1.15rem;
+  transform: translateY(-50%);
+  pointer-events: none;
 }
-.abt-journey__stop { position: relative; max-width: 46rem; }
-.abt-journey__node {
-  position: absolute;
-  left: calc(-1 * clamp(1.8rem, 4vw, 3rem) - .3rem);
-  top: .5rem;
-  width: .65rem; height: .65rem;
-  border-radius: 50%;
-  background: var(--red);
-  box-shadow: 0 0 1.2rem var(--red);
-}
-.abt-journey__year {
+.abt-rail__mark {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: .65rem;
   font-family: "Space Grotesk", sans-serif;
-  font-size: .78rem;
+  font-size: .62rem;
   font-weight: 700;
-  letter-spacing: .26em;
+  letter-spacing: .22em;
   text-transform: uppercase;
+  color: rgba(245, 242, 234, .26);
+  transition: color .45s var(--ease);
+}
+.abt-rail__mark i {
+  font-style: normal;
+  font-variant-numeric: tabular-nums;
+}
+.abt-rail__mark b {
+  width: 4.2rem;
+  font-weight: 700;
+  text-align: left;
+  opacity: 0;
+  transform: translateX(-.4rem);
+  transition: opacity .45s var(--ease), transform .45s var(--ease);
+}
+.abt-rail__mark.is-active {
   color: var(--red);
 }
-.abt-journey__title {
-  margin-top: .7rem;
+.abt-rail__mark.is-active b {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+/* ---- Act II · belief ---- */
+.abt-belief__pin {
+  min-height: 100svh;
+  display: flex;
+  align-items: center;
+  padding: clamp(4rem, 10vh, 8rem) 0;
+}
+.abt-belief__text {
+  max-width: 46rem;
+  margin-inline: auto;
+  text-align: center;
+  font-family: "Marcellus", serif;
+  font-size: clamp(1.6rem, 3.4vw, 2.9rem);
+  line-height: 1.4;
+}
+.abt-belief__line {
+  display: block;
+  color: rgba(245, 242, 234, .55);
+}
+.abt-belief__line:nth-child(2) {
+  color: var(--text);
+}
+.abt-belief__line:last-child {
+  margin-top: 1.2rem;
+  font-size: .58em;
+  color: rgba(245, 242, 234, .8);
+}
+/* Held invisible while the point cloud spells the manifesto out itself. opacity, not
+   display or visibility: the element must keep its height — that scroll distance is the
+   room the words need — and stay in the accessibility tree. */
+.abt.is-cloud .abt-belief__text {
+  opacity: 0;
+}
+
+/* ---- Acts III & IV · pinned sequences ---- */
+.abt-seq__pin {
+  position: relative;
+  min-height: 100svh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  overflow: hidden;
+}
+.abt-seq__label {
+  position: absolute;
+  top: clamp(5rem, 12svh, 7rem);
+  left: 0;
+  right: 0;
+  text-align: center;
+  font-family: "Space Grotesk", sans-serif;
+  font-size: .68rem;
+  font-weight: 700;
+  letter-spacing: .32em;
+  text-transform: uppercase;
+  color: rgba(245, 242, 234, .38);
+}
+
+/* Beats stack on top of each other and cross-fade. The stage carries the height so the
+   pin does not collapse when every beat is absolutely positioned. */
+.abt-seq__stage {
+  position: relative;
+  width: min(var(--max), calc(100% - 4rem));
+  margin-inline: auto;
+  min-height: 26rem;
+}
+.abt-seq__item {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  pointer-events: none;
+  will-change: opacity, transform;
+}
+.abt-seq__item.is-current {
+  pointer-events: auto;
+}
+
+/* ---- Act III · the road ---- */
+.abt-step {
+  max-width: 44rem;
+}
+/* The year as an oversized ghost behind its own beat — the sequence's clock. */
+.abt-step__ghost {
+  position: absolute;
+  z-index: -1;
+  top: 50%;
+  right: -2vw;
+  transform: translateY(-52%);
+  font-family: "Bricolage Grotesque", sans-serif;
+  font-weight: 800;
+  font-size: clamp(9rem, 26vw, 26rem);
+  line-height: .8;
+  letter-spacing: -.05em;
+  color: transparent;
+  -webkit-text-stroke: 1px rgba(224, 63, 79, .16);
+  pointer-events: none;
+  user-select: none;
+  white-space: nowrap;
+}
+.abt-step__year {
+  font-family: "Space Grotesk", monospace;
+  font-size: .82rem;
+  font-weight: 700;
+  letter-spacing: .3em;
+  color: var(--red);
+}
+.abt-step__title {
+  margin-top: 1rem;
   font-family: "Bricolage Grotesque", sans-serif;
   font-weight: 700;
-  font-size: clamp(1.5rem, 2.8vw, 2.2rem);
-  letter-spacing: -.01em;
+  font-size: clamp(2.2rem, 5.2vw, 4.6rem);
+  line-height: 1;
+  letter-spacing: -.03em;
 }
-.abt-journey__text {
-  margin-top: .8rem;
-  font-size: 1rem;
+.abt-step__text {
+  margin-top: 1.4rem;
+  max-width: 40ch;
+  font-size: clamp(.98rem, 1.2vw, 1.12rem);
+  line-height: 1.75;
+  color: var(--muted);
+}
+
+/* ---- Act IV · the code ---- */
+.abt-tenet {
+  align-items: center;
+  text-align: center;
+}
+.abt-tenet__ghost {
+  position: absolute;
+  z-index: -1;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -54%);
+  font-family: "Noto Serif JP", serif;
+  font-size: clamp(14rem, 34vw, 34rem);
+  line-height: 1;
+  color: rgba(224, 63, 79, .085);
+  pointer-events: none;
+  user-select: none;
+}
+.abt-tenet__title {
+  font-family: "Bricolage Grotesque", sans-serif;
+  font-weight: 700;
+  font-size: clamp(2.6rem, 6.5vw, 6rem);
+  line-height: 1;
+  letter-spacing: -.035em;
+}
+.abt-tenet__text {
+  margin: 1.6rem auto 0;
+  max-width: 34ch;
+  font-size: clamp(1rem, 1.3vw, 1.18rem);
   line-height: 1.8;
   color: var(--muted);
-  max-width: 58ch;
 }
-.abt-values { padding: clamp(4rem, 9vh, 7rem) 0; }
-.abt-values__grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: clamp(1.2rem, 2.5vw, 2rem);
-}
-.abt-value {
-  position: relative;
+
+/* ---- Act V · arsenal ---- */
+.abt-arsenal {
+  padding: clamp(5rem, 14vh, 10rem) 0 clamp(6rem, 16vh, 11rem);
   overflow: hidden;
-  padding: 2.4rem 2rem;
-  border-radius: var(--radius-sm);
-  border: 1px solid var(--line);
-  background: var(--card);
-  transition: border-color .4s var(--ease), background .4s var(--ease), transform .4s var(--ease);
 }
-.abt-value:hover {
-  border-color: rgba(224, 63, 79, .5);
-  background: rgba(224, 63, 79, .06);
-  transform: translateY(-.4rem);
-}
-.abt-value__kanji {
+.abt-arsenal__label {
   display: block;
-  font-family: "Noto Serif JP", serif;
-  font-size: 2.6rem;
-  color: var(--red);
-  opacity: .8;
-}
-.abt-value__title {
-  margin-top: 1.2rem;
-  font-family: "Bricolage Grotesque", sans-serif;
-  font-weight: 700;
-  font-size: 1.4rem;
-}
-.abt-value__text { margin-top: .8rem; font-size: .95rem; line-height: 1.75; color: var(--muted); }
-.abt-toolbox { padding: 0 0 clamp(5rem, 11vh, 9rem); }
-.abt-toolbox__grid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: clamp(1.2rem, 2.5vw, 2rem);
-}
-.abt-toolbox__group {
-  padding: 2rem;
-  border-radius: var(--radius-sm);
-  border: 1px solid var(--line);
-  background: var(--card);
-}
-.abt-toolbox__group-label {
+  margin-bottom: clamp(2rem, 5vh, 3.5rem);
+  text-align: center;
   font-family: "Space Grotesk", sans-serif;
-  font-size: .72rem;
+  font-size: .68rem;
   font-weight: 700;
-  letter-spacing: .26em;
+  letter-spacing: .32em;
   text-transform: uppercase;
-  color: var(--red);
+  color: rgba(245, 242, 234, .38);
 }
-.abt-toolbox__chips { margin-top: 1.2rem; display: flex; flex-wrap: wrap; gap: .6rem; }
+.abt-arsenal__rows {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(.3rem, 1vh, .8rem);
+}
+.abt-arsenal__row {
+  display: flex;
+  width: max-content;
+  /* Two identical groups sit side by side, so translating exactly -50% lands the second
+     copy where the first began and the loop is seamless without measuring anything. */
+  animation: abtArsenal 34s linear infinite;
+}
+.abt-arsenal__row.is-reverse {
+  animation-direction: reverse;
+}
+.abt-arsenal__row:nth-child(2) { animation-duration: 44s; }
+.abt-arsenal__row:nth-child(3) { animation-duration: 38s; }
+.abt-arsenal__row:nth-child(4) { animation-duration: 50s; }
+
+@keyframes abtArsenal {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+
+.abt-arsenal__group {
+  display: flex;
+  align-items: center;
+}
+.abt-arsenal__item {
+  display: inline-flex;
+  align-items: center;
+  gap: clamp(1.4rem, 3vw, 3rem);
+  padding-right: clamp(1.4rem, 3vw, 3rem);
+  font-family: "Bricolage Grotesque", sans-serif;
+  font-weight: 600;
+  font-size: clamp(1.8rem, 4.4vw, 3.6rem);
+  letter-spacing: -.02em;
+  white-space: nowrap;
+  color: transparent;
+  -webkit-text-stroke: 1px rgba(245, 242, 234, .30);
+  transition: color .4s var(--ease), -webkit-text-stroke-color .4s var(--ease);
+}
+.abt-arsenal__item:hover {
+  color: rgba(245, 242, 234, .92);
+  -webkit-text-stroke-color: transparent;
+}
+.abt-arsenal__item i {
+  font-style: normal;
+  font-size: .3em;
+  color: var(--red);
+  -webkit-text-stroke: 0;
+}
+
+/* Reduced motion: useAboutActs opts out entirely, so nothing pins and nothing writes
+   opacity. The beats are absolutely stacked for the cross-fade, which without JS would
+   render every one of them on top of the others — so here they un-stack into an ordinary
+   readable column instead. */
+@media (prefers-reduced-motion: reduce) {
+  .abt-seq__pin,
+  .abt-belief__pin {
+    min-height: 0;
+    padding: clamp(4rem, 10vh, 7rem) 0;
+  }
+  .abt-seq__label {
+    position: static;
+    margin-bottom: 2.5rem;
+  }
+  .abt-seq__stage {
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+    gap: clamp(3rem, 8vh, 6rem);
+  }
+  .abt-seq__item {
+    position: relative;
+    inset: auto;
+    opacity: 1 !important;
+    transform: none !important;
+  }
+  .abt-step__ghost,
+  .abt-tenet__ghost {
+    display: none;
+  }
+  .abt-arsenal__row {
+    animation: none;
+    flex-wrap: wrap;
+    width: auto;
+    justify-content: center;
+  }
+  .abt-arsenal__group:nth-child(2) {
+    display: none;
+  }
+}
+
+@media (max-width: 1100px) {
+  .abt-rail { display: none; }
+}
+
+@media (max-width: 860px) {
+  .abt-seq__stage { min-height: 30rem; }
+  .abt-step__ghost { right: auto; left: 50%; transform: translate(-50%, -50%); opacity: .7; }
+  .abt-step__text { max-width: none; }
+  .abt-belief__text { text-align: left; }
+}
 
 /* ---------------------------------------------------------------- Contact */
 .ctc-hero {
@@ -6576,11 +6764,7 @@ img {
   .pd-meta__cell:nth-child(2n+1), .ctc-cell:nth-child(2n+1) { padding-left: 0; }
   .pd-meta__cell:nth-child(n+3), .ctc-cell:nth-child(n+3) { border-top: 1px solid var(--line); }
   .svc-process__steps { grid-template-columns: repeat(2, 1fr); }
-  .abt-values__grid, .ctc-steps__list { grid-template-columns: 1fr; }
-  .abt-toolbox__grid { grid-template-columns: 1fr; }
-  .abt-numbers__row { grid-template-columns: 1fr; }
-  .abt-numbers__cell { border-right: 0; border-bottom: 1px solid var(--line); }
-  .abt-numbers__cell:last-child { border-bottom: 0; }
+  .ctc-steps__list { grid-template-columns: 1fr; }
   .pd-hero__foot { flex-direction: column; align-items: flex-start; }
 }
 @media (max-width: 560px) {
