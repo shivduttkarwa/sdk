@@ -6150,11 +6150,12 @@ img {
 .abt-portrait::before {
   content: "";
   position: absolute;
-  inset: -14%;
+  /* Bled wider than the box because the portrait now overflows it. */
+  inset: -34%;
   z-index: 0;
   pointer-events: none;
   background: radial-gradient(
-    ellipse 54% 58% at 50% 47%,
+    ellipse 42% 46% at 50% 47%,
     rgba(5, 3, 10, .72) 0%,
     rgba(5, 3, 10, .52) 45%,
     rgba(5, 3, 10, .20) 70%,
@@ -6168,31 +6169,44 @@ img {
   height: 100%;
 }
 
-/* The canvas is far larger than the portrait box on purpose. Scattered points have to be
-   able to travel well outside the finished portrait, and anything drawn past the canvas
-   edge is simply gone — so a canvas the size of the portrait clipped the scatter into a
-   hard square and the cloud looked penned in. The core sizes the assembled face against
-   the BOX, not the canvas, so inflating this does not scale the portrait up with it. */
-.abt-portrait__fx {
-  position: absolute;
-  /* Sized explicitly rather than by opposing insets: <canvas> is a REPLACED element, so
-     `width: auto` resolves to its intrinsic attribute size (300x150 by default) instead
-     of stretching between left and right. 224% = 100% + 2 x 62% of overhang per side. */
-  top: -62%;
-  left: -62%;
-  width: 224%;
-  height: 224%;
-  z-index: 2;
-  display: block;
-  opacity: 0;
+/* Page-level cloud layer. Fixed to the viewport so the cloud can travel the whole page:
+   an absolutely positioned canvas would have to be as tall as the document, past the
+   maximum renderbuffer size on a long page.
+
+   Sized in viewport UNITS rather than by insets on purpose. PageTransition puts a
+   transform on the page wrapper while routing, which makes that wrapper the containing
+   block for fixed descendants — with `inset: 0` the canvas would briefly resize itself to
+   the full document height. Explicit 100vw/100svh survives that unchanged. */
+.abt-cloud {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100svh;
+  z-index: 0;
   pointer-events: none;
-  /* Short: the convergence itself is the entrance, so a long fade on top of it just
-     hides the scattered opening frames. */
+  opacity: 0;
+  /* Short: the convergence itself is the entrance, so a long fade on top of it just hides
+     the opening frames. */
   transition: opacity .3s var(--ease);
 }
-.abt-portrait__fx.is-live {
+.abt-cloud.is-live {
   opacity: 1;
 }
+/* Beats the `.abt > *` rule that makes every direct child position: relative / z-index 1,
+   which would otherwise cancel the fixed positioning outright. */
+.abt > .abt-cloud {
+  position: fixed;
+  z-index: 0;
+}
+
+/* The contact block is opaque #05030a everywhere else on the site, which would hide the
+   watermark completely. On About it goes transparent — the page underneath is the same
+   colour, so nothing changes visually except that the cloud can be seen through it. */
+.abt .sdk-contact {
+  background: transparent;
+}
+
 
 /* The fallback is HIDDEN by default and shown only when the cloud cannot run. Inverted
    from the obvious arrangement on purpose: as the visible default it appeared for a beat

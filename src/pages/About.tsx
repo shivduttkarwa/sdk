@@ -5,9 +5,10 @@ import { usePageFx } from '@/hooks/usePageFx';
 import { usePageHeroIntro } from '@/hooks/usePageHeroIntro';
 import { usePortraitParticles } from '@/hooks/usePortraitParticles';
 
-// /about — the person behind the pixels. The hero portrait is a WebGL point cloud that
-// assembles on arrival, scatters from the cursor and comes apart again as the section
-// scrolls away (cores/portraitParticles); below it, a per-line manifesto, count-up
+// /about — the person behind the pixels. A WebGL point cloud carries the whole page
+// (cores/portraitParticles): it assembles into the portrait in the hero, breaks into a
+// horizontal streak that travels with the scroll, and gathers again behind the contact
+// block as an oversized watermark. Between them sit a per-line manifesto, count-up
 // numbers, a journey timeline whose spine draws itself, three values and the toolbox.
 //
 // The cloud draws POINTS rather than a full-screen quad on purpose — the homepage
@@ -65,16 +66,22 @@ const toolbox = [
 
 export default function About() {
   const rootRef = useRef<HTMLElement>(null);
-  const portraitRef = useRef<HTMLCanvasElement>(null);
+  const cloudRef = useRef<HTMLCanvasElement>(null);
+  const anchorRef = useRef<HTMLDivElement>(null);
   usePageFx(rootRef);
   usePageHeroIntro();
   // True only when the cloud cannot run. The photograph is otherwise never shown, so
   // arriving at the page does not spoil the convergence by displaying the finished image
   // first.
-  const needsFallback = usePortraitParticles(portraitRef, PORTRAIT);
+  const needsFallback = usePortraitParticles(cloudRef, anchorRef, PORTRAIT);
 
   return (
     <main className="abt" ref={rootRef}>
+      {/* Fixed full-viewport layer, behind every section. It has to live here rather than
+          inside the hero: the cloud travels the length of the page, so a canvas scoped to
+          the hero would clip the streak the moment it left. */}
+      <canvas className="abt-cloud" ref={cloudRef} aria-hidden="true"></canvas>
+
       <section className="abt-hero">
         <span className="abt-hero__kanji" aria-hidden="true" data-parallax="0.22">
           侍
@@ -97,12 +104,12 @@ export default function About() {
               <span className="abt-hero__chip">IST · UTC+5:30</span>
             </div>
           </div>
-          <div className={`abt-portrait${needsFallback ? ' is-fallback' : ''}`}>
-            <canvas
-              className="abt-portrait__fx"
-              ref={portraitRef}
-              aria-hidden="true"
-            ></canvas>
+          {/* Holds the hero's share of the grid and gives the cloud something to line
+              the assembled portrait up against — the canvas itself is page-level. */}
+          <div
+            className={`abt-portrait${needsFallback ? ' is-fallback' : ''}`}
+            ref={anchorRef}
+          >
             {/* Hidden unless the cloud cannot run — this is the reduced-motion and
                 no-WebGL rendering, not a placeholder shown while the cloud starts. */}
             <img

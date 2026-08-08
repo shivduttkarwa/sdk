@@ -1,69 +1,106 @@
-// /about hero — the portrait rendered as a field of GPU points that converge into the
-// photograph on arrival and come apart again as the hero scrolls away.
+// /about — the portrait as a field of GPU points that follows the whole page.
 //
-// Draws POINTS, not a full-screen quad. That is the whole reason this exists rather than
-// another crossfade: the homepage showcase and the /works stage are both quad shaders, so
-// a third would read as the same trick a third time.
+// Three states, blended by scroll position:
+//   hero     the assembled portrait, anchored to the hero's portrait box
+//   band     a slim vertical DNA helix that travels down the page as you scroll
+//   footer   the portrait again, much larger and dimmed, behind the contact block
 //
-// Sampling is done on the CPU into static attribute buffers rather than by fetching the
-// texture in the vertex shader. Vertex texture fetch is optional in WebGL1
-// (MAX_VERTEX_TEXTURE_IMAGE_UNITS may legitimately be 0), and sampling up front also lets
-// points that would be invisible be dropped before they ever reach the GPU.
+// The canvas is a FIXED full-viewport layer, not a box inside the hero. That is what lets
+// the cloud travel the length of the page: an absolutely positioned canvas would have to
+// be as tall as the document (past the maximum renderbuffer size on a long page), and one
+// confined to the hero would clip the streak the moment it left.
+//
+// Draws POINTS, not a full-screen quad — the homepage showcase and the /works stage are
+// both quad shaders, so a third would read as the same trick a third time. Sampling is
+// done on the CPU into static buffers rather than by vertex texture fetch, which is
+// optional in WebGL1 (MAX_VERTEX_TEXTURE_IMAGE_UNITS may legitimately be 0).
 
 export interface PortraitParticlesOptions {
+  /** Fixed, full-viewport canvas. */
   canvas: HTMLCanvasElement;
+  /** Element the assembled hero portrait is positioned and sized against. */
+  anchor: HTMLElement;
   /** Portrait to sample. */
   src: string;
   /**
    * Whether the cloud can run, reported SYNCHRONOUSLY during mount and again with `false`
    * if setup later fails. Callers use it to decide whether the fallback <img> is shown at
-   * all — see the note on ordering in mountPortraitParticles.
+   * all — see the note on ordering above mountPortraitParticles.
    */
   onCapable?: (capable: boolean) => void;
 }
 
-// Grid resolution across the image. This has to be at least as fine as the cloud is drawn
-// large, or the points cannot tile and the portrait reads as noise rather than a face.
-// 420 across gives roughly 140k points after the mask — still cheap for a POINTS draw,
-// and it is what makes the assembled state legible down to the shirt collar and tie.
+// Grid resolution across the image. Must be at least as fine as the cloud is drawn large
+// or the points cannot tile and the portrait reads as noise. 420 across gives ~140k points
+// after masking — cheap for a POINTS draw, and what makes the assembled face legible.
 const SAMPLE = 420;
 
-// The photograph is a full frame with a busy background — windows, a lamp, framed art —
-// so there is no luminance threshold that isolates the subject. Thresholding would in fact
-// invert the intent: it would keep the bright window and drop the dark suit. Instead the
-// whole frame is sampled and shaped by an ellipse, biased slightly above centre where the
-// head sits, so the cloud fades out through the background rather than ending on a
-// rectangular edge.
+// The photograph is a full frame with a busy background — windows, a lamp, framed art — so
+// no luminance threshold isolates the subject; it would keep the bright window and drop
+// the dark suit. The whole frame is sampled and shaped by an ellipse instead.
 const MASK_CENTRE = { x: 0.5, y: 0.47 };
 const MASK_RADIUS = { x: 0.46, y: 0.54 };
-// Solid until 0.86 of the way out, then a short feather — so the portrait is drawn at full
-// alpha almost everywhere instead of being dimmed from a third of the way out.
 const MASK_FEATHER = 0.86;
 
-// Fraction of the PORTRAIT BOX (not the canvas) the assembled portrait fills. The canvas
-// is deliberately much larger than that box so scattered points have somewhere to go; see
-// .abt-portrait__fx in the stylesheet.
-const PORTRAIT_FILL = 0.93;
+/**
+ * Height of the hero portrait as a fraction of its anchor box. Over 1 on purpose: the box
+ * only reserves the hero's grid column, and the canvas is a full-viewport layer, so the
+ * portrait is free to overflow it. At 0.93 it sat well inside the column and read small.
+ */
+const PORTRAIT_FILL = 1.2;
+/** Height of the footer portrait as a fraction of the viewport — deliberately oversized. */
+const WATERMARK_FILL = 1.15;
 
-// Capability is settled before this function returns, not when the image finishes
-// loading. That ordering is the whole point: the fallback <img> used to be visible by
-// default and hidden only once the cloud was ready, so arriving at the page showed the
-// finished photograph, blanked it, and only then ran the convergence — giving away the
-// reveal before it happened. The caller now hides the fallback in the same tick it mounts.
-export function mountPortraitParticles({ canvas, src, onCapable }: PortraitParticlesOptions) {
+// Scroll windows, as a fraction of total page scroll.
+const HERO_OUT = { from: 0.02, to: 0.14 }; // portrait -> streak
+const FOOT_IN = { from: 0.78, to: 0.97 }; // streak -> watermark
+
+// Alpha per state. The helix and the watermark both sit behind live copy, so neither runs
+// at full strength — though the helix is slim and offset to one side, so it can carry more
+// presence than a full-width band could.
+const BAND_ALPHA = 0.6;
+const WATERMARK_ALPHA = 0.32;
+
+interface State {
+  wHero: number;
+  wFoot: number;
+  bandShift: number;
+  travel: number;
+  alpha: number;
+}
+
+// Capability is settled before this function returns, not when the image finishes loading.
+// That ordering matters: the fallback <img> used to be visible by default and hidden only
+// once the cloud was ready, so arriving showed the finished photograph, blanked it, and
+// only then converged — giving the reveal away before it happened.
+export function mountPortraitParticles({
+  canvas,
+  anchor,
+  src,
+  onCapable,
+}: PortraitParticlesOptions) {
   const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
   const clamp = (v: number, a = 0, b = 1) => Math.max(a, Math.min(b, v));
+  const smoothstep = (a: number, b: number, v: number) => {
+    const t = clamp((v - a) / (b - a || 1));
+    return t * t * (3 - 2 * t);
+  };
 
   let raf = 0;
   let disposed = false;
-  let visible = false;
   let introStart = 0;
-  let heroHeight = 1;
-  /** The element the portrait is sized against — the canvas overflows well past it. */
-  const box = canvas.parentElement as HTMLElement | null;
+
+  // Cached layout, so no frame reads the DOM.
+  let viewW = window.innerWidth;
+  let viewH = window.innerHeight;
+  let scrollSpan = 1;
+  let anchorTopDoc = 0;
+  let anchorLeft = 0;
+  let anchorW = 1;
+  let anchorH = 1;
 
   // Both checks are synchronous, so the answer is known immediately. Only the image load
-  // below is async, and it is the same file the <img> already requested.
+  // is async, and it is the same file the fallback <img> already requested.
   const glRef = reduceMotion
     ? null
     : (canvas.getContext('webgl', {
@@ -76,7 +113,14 @@ export function mountPortraitParticles({ canvas, src, onCapable }: PortraitParti
   onCapable?.(capable);
 
   function measure() {
-    heroHeight = Math.max(1, canvas.closest('section')?.clientHeight ?? window.innerHeight);
+    viewW = window.innerWidth;
+    viewH = window.innerHeight;
+    scrollSpan = Math.max(1, document.documentElement.scrollHeight - viewH);
+    const r = anchor.getBoundingClientRect();
+    anchorTopDoc = r.top + window.scrollY;
+    anchorLeft = r.left;
+    anchorW = Math.max(1, r.width);
+    anchorH = Math.max(1, r.height);
   }
 
   function loadImage(): Promise<HTMLImageElement> {
@@ -93,7 +137,6 @@ export function mountPortraitParticles({ canvas, src, onCapable }: PortraitParti
   /** Gamma lift for one 0-255 channel, so shadow detail survives as points. */
   const lift = (c: number) => Math.min(1, Math.pow(c / 255, 0.86) * 1.12);
 
-  /** Read the image on a 2D canvas and turn it into static point attributes. */
   function sample(img: HTMLImageElement) {
     const w = SAMPLE;
     const h = Math.max(1, Math.round((SAMPLE * img.height) / img.width));
@@ -106,7 +149,6 @@ export function mountPortraitParticles({ canvas, src, onCapable }: PortraitParti
     const { data } = ctx.getImageData(0, 0, w, h);
 
     const base: number[] = [];
-    const scatter: number[] = [];
     const color: number[] = [];
     const seed: number[] = [];
     const imgAspect = img.width / img.height;
@@ -118,37 +160,27 @@ export function mountPortraitParticles({ canvas, src, onCapable }: PortraitParti
 
         const dx = (u - MASK_CENTRE.x) / MASK_RADIUS.x;
         const dy = (v - MASK_CENTRE.y) / MASK_RADIUS.y;
-        const d = Math.sqrt(dx * dx + dy * dy);
-        const t = clamp((1 - d) / (1 - MASK_FEATHER));
+        const t = clamp((1 - Math.sqrt(dx * dx + dy * dy)) / (1 - MASK_FEATHER));
         const mask = t * t * (3 - 2 * t);
         if (mask < 0.04) continue;
 
         const i = (y * w + x) * 4;
-        // Portrait space: x spans +-0.5 * aspect, y is +-0.5 and points up. Jittered off
-        // the exact grid: round points on a perfectly square lattice leave a dark diamond
-        // at every four-way gap, which reads as a mesh laid over the face. A fraction of a
-        // cell of noise breaks the regularity without moving any sample far enough to
-        // matter, and it looks like scattered particles rather than a screen door.
+        // Jittered off the exact grid: round points on a square lattice leave a dark
+        // diamond at every four-way gap, which reads as a mesh laid over the face.
         const jx = (Math.random() - 0.5) * 0.6;
         const jy = (Math.random() - 0.5) * 0.6;
         base.push((u - 0.5 + jx / w) * imgAspect, 0.5 - v + jy / h);
-
-        // Scattered origin. Reaches far outside the portrait on purpose — the canvas is
-        // sized to let points travel well past the portrait box, so assembling reads as a
-        // cloud gathering in from open space rather than a blur tightening in place.
-        const ang = Math.random() * Math.PI * 2;
-        const rad = 0.8 + Math.random() * 1.5;
-        scatter.push(Math.cos(ang) * rad * imgAspect, Math.sin(ang) * rad);
-
         color.push(lift(data[i]), lift(data[i + 1]), lift(data[i + 2]), mask);
-        seed.push(Math.random());
+        // TWO independent randoms, not one. Deriving the band's vertical jitter from
+        // the same value that sets its x makes the jitter a function of x, so the
+        // streak repeats itself ~91 times across its width and reads as a comb.
+        seed.push(Math.random(), Math.random());
       }
     }
 
     return {
-      count: seed.length,
+      count: seed.length / 2,
       base: new Float32Array(base),
-      scatter: new Float32Array(scatter),
       color: new Float32Array(color),
       seed: new Float32Array(seed),
       imgAspect,
@@ -168,46 +200,111 @@ export function mountPortraitParticles({ canvas, src, onCapable }: PortraitParti
 
   const VERT = `
     attribute vec2 a_base;
-    attribute vec2 a_scatter;
     attribute vec4 a_color;
-    attribute float a_seed;
+    attribute vec2 a_seed;
 
-    uniform float u_assemble;
+    uniform vec2 u_heroAnchor;
+    uniform float u_heroScale;
+    uniform vec2 u_footAnchor;
+    uniform float u_footScale;
+    uniform float u_bandShift;
+    uniform float u_travel;
+    uniform float u_wHero;
+    uniform float u_wFoot;
     uniform float u_time;
-    uniform float u_fit;
     uniform float u_aspect;
     uniform float u_pointScale;
 
     varying vec4 v_color;
 
+    const float PI = 3.14159265;
+    // Strand swing, relative to viewport HEIGHT. Slim on purpose — this is a ribbon
+    // running down the page, not a structure spanning it.
+    const float HELIX_AMP = 0.30;
+    // Rungs are snapped onto this many discrete positions along the axis. Left continuous
+    // they spread evenly between the strands and read as a faint sheet rather than a
+    // ladder — quantising the axis is what turns them into bars.
+    const float RUNGS = 30.0;
+
+    // The portrait laid out around an anchor, at a height given in clip units. Dividing x
+    // by the aspect is what keeps the face square on a wide viewport.
+    vec2 portraitAt(vec2 anchorPos, float scale) {
+      return anchorPos + vec2(a_base.x * scale / u_aspect, a_base.y * scale);
+    }
+
     void main() {
-      vec2 p = mix(a_scatter, a_base, u_assemble);
+      // The expanded state is a LINE, not a cloud: seed spreads points along x, well past
+      // both edges, with only a shallow vertical spread. A faint echo of the portrait's
+      // own y keeps the streak from reading as uniform noise.
+      // ---- Expanded state: a DNA double helix laid on its side ----
+      // Axis runs horizontally; the strands swing the full height of the viewport, so the
+      // structure is top-to-bottom while the sequence reads left-to-right.
+      //
+      // Roles come from seed.y, split into three bands. Deliberately NOT derived from
+      // seed.x: that value sets a point's position ALONG the axis, so anything derived
+      // from it would be constant for every point sharing an x — a rung would collapse to
+      // a single dot instead of a bar.
+      float role = a_seed.y;
+      float isRung = step(0.78, role);
+      float isStrandB = step(0.39, role) * (1.0 - isRung);
 
-      // Drift only while the cloud is loose. It falls to nothing as the portrait forms —
-      // a settled face must not shimmer, because any residual jitter at this point size
-      // blurs exactly the detail the higher sample rate was added to recover.
-      float ph = a_seed * 6.2831;
-      float loose = 1.0 - u_assemble;
-      p += vec2(sin(u_time * 0.6 + ph), cos(u_time * 0.5 + ph * 1.3)) * 0.05 * loose * loose;
+      // Strand points sit anywhere along the axis; rung points snap to the nearest of
+      // RUNGS discrete stations, which is what makes them bars instead of a wash.
+      float axis = a_seed.x;
+      float snapped = (floor(axis * RUNGS) + 0.5) / RUNGS;
+      // The axis runs VERTICALLY, so travel moves the helix down the screen with scroll.
+      float ay = (mix(axis, snapped, isRung) * 2.0 - 1.0) * 1.4 + u_travel;
+      float ang = ay * 5.5 + u_time * 0.35;
+      float off = isStrandB * PI;
 
-      gl_Position = vec4(p.x * u_fit / u_aspect, p.y * u_fit, 0.0, 1.0);
-      gl_PointSize = u_pointScale;
-      v_color = a_color;
+      // Swing is horizontal now. Divided by the aspect so the helix keeps the same
+      // proportions on any viewport — measured against height, an amplitude in clip x
+      // would otherwise stretch wider the wider the window gets.
+      float xA = HELIX_AMP * sin(ang) / u_aspect;
+      float xB = HELIX_AMP * sin(ang + PI) / u_aspect;
+      // Position along a rung, remapped from the rung's own slice of the role range.
+      float rungT = (role - 0.78) / 0.22;
+
+      float ax = mix(HELIX_AMP * sin(ang + off) / u_aspect, mix(xA, xB, rungT), isRung);
+      // Strands carry some thickness; rungs stay tight so they read as bars.
+      ax += (fract(role * 91.0) - 0.5) * 0.05 / u_aspect * (1.0 - isRung * 0.8);
+
+      // Depth around the axis. Without it both strands draw identically and the helix
+      // flattens into a plain sine wave — this is what makes one strand pass behind.
+      float z = mix(cos(ang + off), mix(cos(ang), cos(ang + PI), rungT), isRung);
+      float depth = 0.42 + 0.58 * (z * 0.5 + 0.5);
+
+      vec2 band = vec2(u_bandShift + ax, ay);
+
+      vec2 p = mix(band, portraitAt(u_heroAnchor, u_heroScale), u_wHero);
+      p = mix(p, portraitAt(u_footAnchor, u_footScale), u_wFoot);
+
+      // How much of the helix is showing — depth shading applies only to it, never to the
+      // assembled portrait or the watermark.
+      float bandW = (1.0 - u_wHero) * (1.0 - u_wFoot);
+
+      gl_Position = vec4(p, 0.0, 1.0);
+      // Points grow with the watermark so the larger portrait stays as dense as the hero,
+      // and shrink slightly on the far side of the helix.
+      gl_PointSize = u_pointScale
+        * mix(1.0, u_footScale / max(u_heroScale, 0.001), u_wFoot)
+        * mix(1.0, 0.7 + 0.5 * depth, bandW);
+      v_color = vec4(a_color.rgb, a_color.a * mix(1.0, depth, bandW));
     }
   `;
 
   const FRAG = `
     precision mediump float;
     varying vec4 v_color;
-    uniform float u_fade;
+    uniform float u_alpha;
 
     void main() {
-      // Round, and near-solid: feather only the outermost rim. Fading all the way to the
-      // centre meant no point ever reached full opacity and the portrait stayed a haze.
+      // Round, and near-solid: feather only the outermost rim. Fading to the centre meant
+      // no point reached full opacity and the portrait stayed a haze.
       vec2 c = gl_PointCoord - 0.5;
       float d = dot(c, c);
       if (d > 0.25) discard;
-      gl_FragColor = vec4(v_color.rgb, smoothstep(0.25, 0.19, d) * v_color.a * u_fade);
+      gl_FragColor = vec4(v_color.rgb, smoothstep(0.25, 0.19, d) * v_color.a * u_alpha);
     }
   `;
 
@@ -238,97 +335,103 @@ export function mountPortraitParticles({ canvas, src, onCapable }: PortraitParti
       gl.vertexAttribPointer(loc, size, gl.FLOAT, false, 0, 0);
     };
     bind(pts.base, 'a_base', 2);
-    bind(pts.scatter, 'a_scatter', 2);
     bind(pts.color, 'a_color', 4);
-    bind(pts.seed, 'a_seed', 1);
+    bind(pts.seed, 'a_seed', 2);
 
     const u = {
-      assemble: gl.getUniformLocation(program, 'u_assemble'),
+      heroAnchor: gl.getUniformLocation(program, 'u_heroAnchor'),
+      heroScale: gl.getUniformLocation(program, 'u_heroScale'),
+      footAnchor: gl.getUniformLocation(program, 'u_footAnchor'),
+      footScale: gl.getUniformLocation(program, 'u_footScale'),
+      bandShift: gl.getUniformLocation(program, 'u_bandShift'),
+      travel: gl.getUniformLocation(program, 'u_travel'),
+      wHero: gl.getUniformLocation(program, 'u_wHero'),
+      wFoot: gl.getUniformLocation(program, 'u_wFoot'),
       time: gl.getUniformLocation(program, 'u_time'),
-      fit: gl.getUniformLocation(program, 'u_fit'),
       aspect: gl.getUniformLocation(program, 'u_aspect'),
       pointScale: gl.getUniformLocation(program, 'u_pointScale'),
-      fade: gl.getUniformLocation(program, 'u_fade'),
+      alpha: gl.getUniformLocation(program, 'u_alpha'),
     };
 
     gl.disable(gl.DEPTH_TEST);
     gl.enable(gl.BLEND);
     gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
 
-    let cssW = canvas.clientWidth;
-    let cssH = canvas.clientHeight;
-    const ro = new ResizeObserver((entries) => {
-      for (const e of entries) {
-        if (e.target === canvas) {
-          cssW = e.contentRect.width;
-          cssH = e.contentRect.height;
-        }
-      }
-    });
-    ro.observe(canvas);
-
     function resize() {
       const dpr = Math.min(window.devicePixelRatio || 1, 2);
-      const w = Math.max(2, Math.floor(cssW * dpr));
-      const h = Math.max(2, Math.floor(cssH * dpr));
+      const w = Math.max(2, Math.floor(viewW * dpr));
+      const h = Math.max(2, Math.floor(viewH * dpr));
       if (canvas.width !== w || canvas.height !== h) {
         canvas.width = w;
         canvas.height = h;
         gl!.viewport(0, 0, w, h);
       }
-      const aspect = w / Math.max(1, h);
-      gl!.uniform1f(u.aspect, aspect);
-
-      // The assembled portrait is sized against the PORTRAIT BOX, not the canvas, so the
-      // canvas can be inflated to give scattered points room without the face growing to
-      // match. Derived from the live element sizes rather than a constant duplicated in
-      // the stylesheet — change the canvas inset and this simply follows.
-      const boxW = box?.clientWidth || cssW;
-      const boxH = box?.clientHeight || cssH;
-      const targetH = PORTRAIT_FILL * Math.min(boxW / pts.imgAspect, boxH);
-      const fit = (2 * targetH) / Math.max(1, cssH);
-      gl!.uniform1f(u.fit, fit);
-
-      // Size each point to the grid spacing it must cover: the portrait spans (fit / 2) of
-      // the canvas vertically across sampleH rows, so that IS the gap between neighbours.
-      // Circles on a square grid need 1.41x spacing just to touch at the diagonals, and
-      // these have a soft rim, so 1.8x is what actually closes the interstices.
-      const spacing = ((fit / 2) * h) / pts.sampleH;
-      gl!.uniform1f(u.pointScale, Math.max(1.5, spacing * 1.8));
+      return { h, aspect: w / Math.max(1, h) };
     }
 
-    function render(time: number, assemble: number, fade: number) {
-      resize();
+    function render(time: number, s: State) {
+      const { h, aspect } = resize();
       gl!.clearColor(0, 0, 0, 0);
       gl!.clear(gl!.COLOR_BUFFER_BIT);
       gl!.useProgram(program);
-      gl!.uniform1f(u.assemble, assemble);
+
+      // Hero portrait: centred on the anchor box, in clip units, following page scroll.
+      const cx = anchorLeft + anchorW / 2;
+      const cy = anchorTopDoc + anchorH / 2 - window.scrollY;
+      // Capped at 88% of the viewport height so a tall column on a short screen cannot
+      // push the portrait past the top and bottom edges.
+      const heroPx = Math.min(
+        PORTRAIT_FILL * Math.min(anchorW / pts.imgAspect, anchorH),
+        0.88 * viewH,
+      );
+      const heroScale = (2 * heroPx) / viewH;
+
+      gl!.uniform2f(u.heroAnchor, (cx / viewW) * 2 - 1, 1 - (cy / viewH) * 2);
+      gl!.uniform1f(u.heroScale, heroScale);
+      gl!.uniform2f(u.footAnchor, 0, -0.04);
+      gl!.uniform1f(u.footScale, 2 * WATERMARK_FILL);
+      gl!.uniform1f(u.bandShift, s.bandShift);
+      gl!.uniform1f(u.travel, s.travel);
+      gl!.uniform1f(u.wHero, s.wHero);
+      gl!.uniform1f(u.wFoot, s.wFoot);
       gl!.uniform1f(u.time, time * 0.001);
-      gl!.uniform1f(u.fade, fade);
+      gl!.uniform1f(u.aspect, aspect);
+      gl!.uniform1f(u.alpha, s.alpha);
+
+      // Size each point to the spacing it must cover at hero scale: the portrait spans
+      // (heroScale / 2) of the canvas vertically across sampleH rows. 1.8x closes the
+      // interstices — circles on a square grid need 1.41x just to touch at the diagonals,
+      // and these have soft rims.
+      const spacing = ((heroScale / 2) * h) / pts.sampleH;
+      gl!.uniform1f(u.pointScale, Math.max(1.5, spacing * 1.8));
+
       gl!.drawArrays(gl!.POINTS, 0, pts.count);
     }
 
-    if (box) ro.observe(box);
-    return { render, dispose: () => ro.disconnect() };
+    return { render };
   }
 
-  let renderer: { render: (t: number, a: number, f: number) => void; dispose: () => void } | null =
-    null;
+  let renderer: { render: (t: number, s: State) => void } | null = null;
 
-  const observer = new IntersectionObserver(
-    (entries) => {
-      visible = entries.some((e) => e.isIntersecting);
-      if (visible) {
-        if (!introStart) introStart = performance.now();
-        if (!raf) raf = requestAnimationFrame(animate);
-      }
-    },
-    { threshold: [0, 0.05] },
-  );
-  observer.observe(canvas);
-
-  const onResize = () => measure();
+  const onResize = () => {
+    measure();
+    if (!raf) raf = requestAnimationFrame(animate);
+  };
   window.addEventListener('resize', onResize, { passive: true });
+
+  const onScroll = () => {
+    if (!raf) raf = requestAnimationFrame(animate);
+  };
+  window.addEventListener('scroll', onScroll, { passive: true });
+
+  // Images and fonts settling change the page height and the anchor offset well after
+  // mount, so re-measure on layout changes rather than on every scroll event.
+  const layoutObserver = new ResizeObserver(() => {
+    measure();
+    if (!raf) raf = requestAnimationFrame(animate);
+  });
+  layoutObserver.observe(document.body);
+  layoutObserver.observe(anchor);
 
   function animate(time: number) {
     if (disposed) {
@@ -337,31 +440,43 @@ export function mountPortraitParticles({ canvas, src, onCapable }: PortraitParti
     }
     raf = 0;
 
-    // Converge on arrival, then come apart again as the hero scrolls away.
+    const t = clamp(window.scrollY / scrollSpan);
     const introT = introStart ? clamp((time - introStart) / 2000) : 0;
     const intro = 1 - Math.pow(1 - introT, 3);
-    const scrolled = clamp(window.scrollY / heroHeight);
-    const assemble = intro * (1 - scrolled * 0.92);
-    const fade = 1 - clamp((scrolled - 0.55) / 0.45);
 
-    if (renderer && visible) renderer.render(time, assemble, fade);
-    // Once settled and unscrolled there is nothing left to animate, so stop asking for
-    // frames rather than redrawing 140k identical points forever.
-    const settling = introT < 1 || scrolled > 0.001;
-    if (visible && settling) raf = requestAnimationFrame(animate);
+    // Assembled in the hero at the top, gone once the hero has scrolled away, gathered
+    // again into the watermark at the bottom.
+    const wHero = intro * (1 - smoothstep(HERO_OUT.from, HERO_OUT.to, t));
+    const wFoot = smoothstep(FOOT_IN.from, FOOT_IN.to, t);
+
+    const s: State = {
+      wHero,
+      wFoot,
+      // The streak rides down the viewport as the page moves, then centres for the
+      // watermark.
+      // Held just right of centre so the helix clears the left-hand copy column.
+      bandShift: 0.34 * (1 - wFoot),
+      travel: (t - HERO_OUT.to) * 0.55,
+      alpha:
+        BAND_ALPHA +
+        (1 - BAND_ALPHA) * wHero +
+        (WATERMARK_ALPHA - BAND_ALPHA) * wFoot * (1 - wHero),
+    };
+
+    if (renderer) renderer.render(time, s);
+
+    // Only the streak animates on its own; a settled portrait or watermark is static, so
+    // stop asking for frames rather than redrawing 140k identical points forever.
+    const drifting = wHero < 0.995 && wFoot < 0.995;
+    if (introT < 1 || drifting) raf = requestAnimationFrame(animate);
   }
-
-  const onScroll = () => {
-    if (visible && !raf) raf = requestAnimationFrame(animate);
-  };
-  window.addEventListener('scroll', onScroll, { passive: true });
 
   measure();
 
   if (!capable) {
     return () => {
       disposed = true;
-      observer.disconnect();
+      layoutObserver.disconnect();
       window.removeEventListener('resize', onResize);
       window.removeEventListener('scroll', onScroll);
     };
@@ -372,22 +487,21 @@ export function mountPortraitParticles({ canvas, src, onCapable }: PortraitParti
       if (disposed) return;
       renderer = r;
       canvas.classList.add('is-live');
-      if (!introStart && visible) introStart = performance.now();
+      introStart = performance.now();
       if (!raf) raf = requestAnimationFrame(animate);
     })
     .catch((err) => {
       if (disposed) return;
-      // Capability was reported optimistically off the context probe alone, so anything
-      // that fails afterwards — a decode error, sampling, shader compilation — has to
-      // hand the fallback back rather than leave an empty canvas.
+      // Capability was reported optimistically from the context probe alone, so anything
+      // failing afterwards — decode, sampling, shader compilation — has to hand the
+      // fallback back rather than leave an empty canvas.
       console.warn('Portrait particles unavailable. Using image fallback.', err);
       onCapable?.(false);
     });
 
   return () => {
     disposed = true;
-    observer.disconnect();
-    renderer?.dispose();
+    layoutObserver.disconnect();
     if (raf) cancelAnimationFrame(raf);
     window.removeEventListener('resize', onResize);
     window.removeEventListener('scroll', onScroll);
