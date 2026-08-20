@@ -101,14 +101,13 @@ export default function SelectedWork() {
                     <p>{project.summary}</p>
                     <a
                       className="sdk-btn sdk-btn--hair sdk-work-story__cta"
-                      href={project.url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      aria-label={`Visit ${project.title} live site`}
+                      href={`#/works/${project.slug}`}
+                      data-transition-label={project.title}
+                      aria-label={`View ${project.title} case study`}
                     >
                       <span>View project</span>
                       <span className="sdk-btn__arrow" aria-hidden="true">
-                        ↗
+                        →
                       </span>
                     </a>
                   </article>

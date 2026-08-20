@@ -105,14 +105,14 @@ export const projects: Project[] = [
       'Focused project enquiry journey',
       'Refined typographic system',
     ],
-    cover: 'assets/images/project-shambala-homes.webp',
+    cover: 'assets/images/project-shambala-homes-v2.webp',
   },
   {
     slug: 'lumea',
     num: '04',
     title: 'LUMEA',
-    subtitle: 'Modern digital commerce platform',
-    category: 'E-commerce',
+    subtitle: 'Luxury beauty and skincare store',
+    category: 'Beauty & E-commerce',
     year: '2026',
     role: 'Design & Development',
     client: 'LUMEA',
@@ -121,10 +121,10 @@ export const projects: Project[] = [
     stack: ['WordPress', 'WooCommerce', 'PHP', 'JavaScript'],
     services: ['UI/UX Design', 'Frontend', 'CMS', 'E-commerce'],
     summary:
-      'A refined commerce experience built around clear product discovery, confident presentation and an easy path to purchase.',
+      'A refined beauty storefront built around tactile product storytelling, confident presentation and an easy path to purchase.',
     overview: [
-      'LUMEA brings its catalogue into a polished storefront that puts products, imagery and essential information at the centre of the experience.',
-      'The build combines a flexible content system with responsive commerce patterns, making the site straightforward to manage and equally easy to browse.',
+      'LUMEA brings its beauty and skincare catalogue into a polished storefront that puts products, texture and essential information at the centre of the experience.',
+      'The build combines a flexible content system with responsive beauty-commerce patterns, making the site straightforward to manage and equally easy to browse.',
     ],
     highlights: [
       'Clear catalogue and product discovery',
@@ -132,7 +132,7 @@ export const projects: Project[] = [
       'Flexible CMS-backed content',
       'Streamlined path from browse to purchase',
     ],
-    cover: 'assets/images/project-saturday-themes.webp',
+    cover: 'assets/images/project-lumea.webp',
   },
 ];
 
