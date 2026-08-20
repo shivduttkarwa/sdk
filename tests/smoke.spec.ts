@@ -65,3 +65,29 @@ test('scrolling through the page triggers no runtime errors', async ({ page }) =
 
   expect(errors, `runtime errors during scroll:\n${errors.join('\n')}`).toEqual([]);
 });
+
+test('active homepage work project button is clickable', async ({ page }) => {
+  await page.goto('/');
+  await page.waitForFunction(
+    () => getComputedStyle(document.getElementById('sdk-preloader')!).display === 'none',
+    { timeout: 20_000 },
+  );
+
+  await page.evaluate(() => {
+    const runway = document.getElementById('sdk-work-runway');
+    if (!runway) return;
+    const top = runway.getBoundingClientRect().top + window.scrollY;
+    window.lenis?.scrollTo(top, { immediate: true });
+    window.scrollTo(0, top);
+  });
+
+  const story = page.locator('.sdk-work-story').first();
+  const button = story.locator('.sdk-work-story__cta');
+  await expect(story).toHaveClass(/is-interactive/);
+  await expect(button).toHaveCSS('pointer-events', 'auto');
+  await expect(button).toHaveAttribute('href', '#/works/nomad-nest');
+
+  await button.click();
+  await expect(page).toHaveURL(/#\/works\/nomad-nest$/);
+  await expect(page.locator('.pd')).toBeVisible();
+});
