@@ -13,7 +13,7 @@ import { useWorksStage } from '@/hooks/useWorksStage';
 // that showed no imagery at all on touch (the floating preview was display:none under
 // `hover: none`) and used none of the copy in data/projects beyond title/category/year.
 //
-// The stage is scroll-driven, so the copy for four of the five projects is only reachable
+// The stage is scroll-driven, so most project copy is only reachable
 // by scrolling. The visually-hidden index at the bottom of the section keeps every case
 // one Tab away regardless — see `.sdk-sr-only`.
 export default function Works() {
@@ -28,11 +28,11 @@ export default function Works() {
     <main className="works" id="work-index" ref={rootRef}>
       <section className="works-hero">
         <div className="container" data-hero-intro>
-          <span className="sdk-eyebrow">Portfolio · 2021 — 2024</span>
+          <span className="sdk-eyebrow">Portfolio · Recent projects</span>
           <PageHeroTitle lines={['Selected', 'Work']} />
           <p className="works-hero__lead">
-            A selection of products, platforms and brands I&apos;ve designed and built — from
-            the first idea to launch day.
+            A selection of products, platforms and brands I&apos;ve designed and built — from the
+            first idea to launch day.
           </p>
         </div>
         <a className="works-hero__scroll" href="#work-list">
@@ -93,10 +93,12 @@ export default function Works() {
               <p className="works-stage__summary">{project.summary}</p>
               <a
                 className="sdk-btn sdk-btn--settle works-stage__cta"
-                href={`#/works/${project.slug}`}
-                data-transition-label={project.title}
+                href={project.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label={`Visit ${project.title} live site`}
               >
-                <span>View case</span>
+                <span>View project</span>
                 <span className="sdk-btn__arrow" aria-hidden="true">
                   ↗
                 </span>
@@ -120,7 +122,7 @@ export default function Works() {
           <ul>
             {projects.map((p) => (
               <li key={p.slug}>
-                <a href={`#/works/${p.slug}`}>
+                <a href={p.url} target="_blank" rel="noopener noreferrer">
                   {p.title} — {p.subtitle}
                 </a>
               </li>

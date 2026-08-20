@@ -1,4 +1,6 @@
-// Verbatim port of the original "Selected Work — scroll-driven WebGL showcase (5 slides)"
+import { projects } from '@/data/projects';
+
+// Port of the original "Selected Work" scroll-driven WebGL showcase.
 // inline-<script> IIFE (index.original.html lines 839–1288). Every shader byte, number,
 // draw call, listener, IntersectionObserver, and rAF cadence is preserved exactly. The
 // ONLY additions vs the original are (a) tracked handles (named window-listener consts,
@@ -20,16 +22,9 @@ export function mountSelectedWork(): () => void {
 
       if (!section || !runway || !sticky || !stage || !canvas || !progress) return () => {};
 
-      // One entry per `.sdk-work-story` / `.sdk-work__img` in SelectedWork.tsx, in order.
-      // Everything downstream (storyWindows, getState, the progress fill) derives from
-      // items.length, so changing the project count only means editing this list and the
-      // markup — but the two MUST stay the same length or slides desync from their images.
-      const items = [
-        { image: 'assets/images/project-nomad-nest.webp' },
-        { image: 'assets/images/project-shambala-homes.webp' },
-        { image: 'assets/images/project-saturday-themes.webp' },
-        { image: 'assets/images/project-voyage-nest.webp' }
-      ];
+      // SelectedWork.tsx renders from this same project source, keeping stories and images
+      // in the exact order expected by the WebGL transitions.
+      const items = projects.map((project) => ({ image: project.cover }));
 
       const total = items.length;
 

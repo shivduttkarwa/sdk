@@ -4493,6 +4493,10 @@ img {
   pointer-events: none;
 }
 
+.sdk-work-story.is-interactive .sdk-work-story__cta {
+  pointer-events: auto;
+}
+
 .sdk-work__progress {
   position: fixed;
   z-index: 80;

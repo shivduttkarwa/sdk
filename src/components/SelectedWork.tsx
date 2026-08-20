@@ -1,4 +1,5 @@
 import { useSelectedWork } from '@/hooks/useSelectedWork';
+import { projects } from '@/data/projects';
 
 export default function SelectedWork() {
   useSelectedWork();
@@ -35,18 +36,25 @@ export default function SelectedWork() {
           <div className="sdk-work__progress-track">
             <span className="sdk-work__progress-fill" id="sdk-work-progress-fill"></span>
             {/* One mark per slide boundary: N projects → N-1 marks at even fractions. */}
-            <i className="sdk-work__progress-mark" style={{ left: '33.333%' }}></i>
-            <i className="sdk-work__progress-mark" style={{ left: '66.666%' }}></i>
+            {projects.slice(1).map((project, index) => (
+              <i
+                key={project.slug}
+                className="sdk-work__progress-mark"
+                style={{ left: `${((index + 1) / (projects.length - 1)) * 100}%` }}
+              ></i>
+            ))}
           </div>
         </div>
 
         <div className="sdk-work__runway" id="sdk-work-runway">
           <div className="sdk-work__sticky" id="sdk-work-sticky">
             <div className="sdk-work__patterns" aria-hidden="true">
-              <span className="sdk-work__pattern sdk-work__pattern--p1"></span>
-              <span className="sdk-work__pattern sdk-work__pattern--p2"></span>
-              <span className="sdk-work__pattern sdk-work__pattern--p3"></span>
-              <span className="sdk-work__pattern sdk-work__pattern--p4"></span>
+              {projects.map((project, index) => (
+                <span
+                  key={project.slug}
+                  className={`sdk-work__pattern sdk-work__pattern--p${index + 1}`}
+                ></span>
+              ))}
             </div>
             <div className="sdk-work__topo" aria-hidden="true">
               <svg viewBox="0 0 1920 1080" preserveAspectRatio="xMidYMid slice" fill="none">
@@ -62,137 +70,50 @@ export default function SelectedWork() {
             <div className="sdk-work__stage" id="sdk-work-stage">
               <canvas id="sdk-work-fx" aria-hidden="true"></canvas>
               <div className="sdk-work__fallback" aria-hidden="false">
-                <img
-                  className="sdk-work__img is-active"
-                  src="assets/images/project-nomad-nest.webp"
-                  alt="Nomad &amp; Nest project"
-                  loading="lazy"
-                  decoding="async"
-                />
-                <img
-                  className="sdk-work__img"
-                  src="assets/images/project-shambala-homes.webp"
-                  alt="Shambala Homes project"
-                  loading="lazy"
-                  decoding="async"
-                />
-                <img
-                  className="sdk-work__img"
-                  src="assets/images/project-saturday-themes.webp"
-                  alt="Saturday Themes project"
-                  loading="lazy"
-                  decoding="async"
-                />
-                <img
-                  className="sdk-work__img"
-                  src="assets/images/project-voyage-nest.webp"
-                  alt="Voyage Nest project"
-                  loading="lazy"
-                  decoding="async"
-                />
+                {projects.map((project, index) => (
+                  <img
+                    key={project.slug}
+                    className={index === 0 ? 'sdk-work__img is-active' : 'sdk-work__img'}
+                    src={project.cover}
+                    alt={`${project.title} project`}
+                    loading="lazy"
+                    decoding="async"
+                  />
+                ))}
               </div>
             </div>
 
-            {/* PLACEHOLDER COPY: only Shambala Homes is a real, verified entry. The category,
-                subtitle and summary for Nomad & Nest, Saturday Themes and Voyage Nest were
-                inferred from their names and need replacing with the real details. Story order
-                must match `items` in cores/selectedWork.core.ts. */}
             <div className="sdk-work__stories" aria-label="Project stories">
-              <article className="sdk-work-story" data-side="left">
-                <div className="sdk-work-story__meta">
-                  <span className="sdk-work-story__mark">01</span>
-                  <span>Travel · Stays</span>
-                </div>
-                <h3>
-                  Nomad &amp; Nest <span>Boutique stays platform</span>
-                </h3>
-                <p>
-                  Hand-picked places to land between journeys — browsing, availability, and booking
-                  in one unhurried experience.
-                </p>
-                <a
-                  className="sdk-btn sdk-btn--hair sdk-work-story__cta"
-                  href="#/works"
-                  data-transition-label="Work"
-                >
-                  <span>View project</span>
-                  <span className="sdk-btn__arrow" aria-hidden="true">
-                    ↗
-                  </span>
-                </a>
-              </article>
+              {projects.map((project, index) => {
+                const side = index % 2 === 0 ? 'left' : 'right';
+                const mark = <span className="sdk-work-story__mark">{project.num}</span>;
 
-              <article className="sdk-work-story" data-side="right">
-                <div className="sdk-work-story__meta">
-                  <span>Architecture · Brand</span>
-                  <span className="sdk-work-story__mark">02</span>
-                </div>
-                <h3>
-                  Shambala Homes <span>Luxury home builder site</span>
-                </h3>
-                <p>
-                  A cinematic showcase for architectural craftsmanship — where modern design meets
-                  vision, from concept to build.
-                </p>
-                <a
-                  className="sdk-btn sdk-btn--hair sdk-work-story__cta"
-                  href="#/works"
-                  data-transition-label="Work"
-                >
-                  <span>View project</span>
-                  <span className="sdk-btn__arrow" aria-hidden="true">
-                    ↗
-                  </span>
-                </a>
-              </article>
-
-              <article className="sdk-work-story" data-side="left">
-                <div className="sdk-work-story__meta">
-                  <span className="sdk-work-story__mark">03</span>
-                  <span>Product · Themes</span>
-                </div>
-                <h3>
-                  Saturday Themes <span>Premium theme studio</span>
-                </h3>
-                <p>
-                  A storefront for polished, production-ready website themes — previewed, compared,
-                  and shipped in an afternoon.
-                </p>
-                <a
-                  className="sdk-btn sdk-btn--hair sdk-work-story__cta"
-                  href="#/works"
-                  data-transition-label="Work"
-                >
-                  <span>View project</span>
-                  <span className="sdk-btn__arrow" aria-hidden="true">
-                    ↗
-                  </span>
-                </a>
-              </article>
-
-              <article className="sdk-work-story" data-side="right">
-                <div className="sdk-work-story__meta">
-                  <span>Travel · Planning</span>
-                  <span className="sdk-work-story__mark">04</span>
-                </div>
-                <h3>
-                  Voyage Nest <span>Trip planning experience</span>
-                </h3>
-                <p>
-                  Itineraries that build themselves as you dream — routes, stays, and timings
-                  gathered into one calm plan.
-                </p>
-                <a
-                  className="sdk-btn sdk-btn--hair sdk-work-story__cta"
-                  href="#/works"
-                  data-transition-label="Work"
-                >
-                  <span>View project</span>
-                  <span className="sdk-btn__arrow" aria-hidden="true">
-                    ↗
-                  </span>
-                </a>
-              </article>
+                return (
+                  <article key={project.slug} className="sdk-work-story" data-side={side}>
+                    <div className="sdk-work-story__meta">
+                      {side === 'left' && mark}
+                      <span>{project.category}</span>
+                      {side === 'right' && mark}
+                    </div>
+                    <h3>
+                      {project.title} <span>{project.subtitle}</span>
+                    </h3>
+                    <p>{project.summary}</p>
+                    <a
+                      className="sdk-btn sdk-btn--hair sdk-work-story__cta"
+                      href={project.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      aria-label={`Visit ${project.title} live site`}
+                    >
+                      <span>View project</span>
+                      <span className="sdk-btn__arrow" aria-hidden="true">
+                        ↗
+                      </span>
+                    </a>
+                  </article>
+                );
+              })}
             </div>
           </div>
         </div>

@@ -2,16 +2,20 @@
 // step of the story.
 //
 //   0  portrait      the opening, anchored to the hero's portrait box
-//   1  words         the manifesto, spelled out
-//   2  sphere        road · 2019
-//   3  torus         road · 2021
-//   4  wave          road · 2023
-//   5  galaxy        road · now
-//   6  lattice       code · precision
-//   7  vortex        code · motion
-//   8  ribbon        code · story
-//   9  helix         arsenal
+//   1  words         the manifesto — the portrait SPIRALS into it, galaxy-style
+//   2  star birth    road · 2019 — accretion streams feeding a small breathing sun
+//   3  constellation road · 2021 — sixteen stars wired into a network, packets running
+//   4  orbits        road · 2023 — a whole system: sun, rings, planets, one comet
+//   5  galaxy        road · now  — four arms in differential spin, a core, a halo
+//   6  crystal       code · precision — a breathing lattice, light on its lines
+//   7  black hole    code · motion — photon ring, accretion spirals, polar jets
+//   8  river         code · story — an endless braided figure-eight of current
+//   9  storm         arsenal — meteors and their tails through still stars
 //  10  watermark     the close, behind the contact block
+//
+// One sky, many objects: every form is space seen through a builder's eyes, in constant
+// internal motion — falling, orbiting, streaming — with the points twinkling and scaling
+// by depth while the cloud is abstract.
 //
 // The whole sequence is driven by ONE continuous number, u_shape. The shader blends
 // between floor(u_shape) and floor(u_shape) + 1, so every step morphs into the next
@@ -72,7 +76,7 @@ const S = {
   roadLast: 5,
   codeFirst: 6,
   codeLast: 8,
-  helix: 9,
+  storm: 9,
   watermark: 10,
 };
 
@@ -198,7 +202,7 @@ export function mountPortraitParticles({
       return S.codeLast + smoothstep(cEnd, A.top, y);
     }
     return (
-      S.helix + smoothstep(contactTopDoc - viewH * 1.1, contactTopDoc - viewH * 0.25, y)
+      S.storm + smoothstep(contactTopDoc - viewH * 1.1, contactTopDoc - viewH * 0.25, y)
     );
   }
 
@@ -349,6 +353,7 @@ export function mountPortraitParticles({
     return out;
   }
 
+
   function createShader(gl: WebGLRenderingContext, type: number, source: string) {
     const sh = gl.createShader(type)!;
     gl.shaderSource(sh, source);
@@ -391,10 +396,15 @@ export function mountPortraitParticles({
       float c = cos(a); float s = sin(a);
       return vec3(q.x, q.y * c - q.z * s, q.y * s + q.z * c);
     }
+    /* Depth of the last projected point, captured so main() can scale gl_PointSize with
+       it: nearer points draw larger, which is most of what makes the 3D forms read as
+       volumes instead of flat scatters. 0.5263 is the neutral value at z = 0. */
+    float g_persp = 0.5263;
     /* Perspective projection. Depth is kept in the divide so forms that turn actually read
        as solid rather than as flat outlines. */
     vec2 project(vec3 q, float shift, float k) {
       float persp = 1.0 / (1.9 - q.z);
+      g_persp = persp;
       return vec2(shift + q.x * persp * k / u_aspect, q.y * persp * k);
     }
 
@@ -406,104 +416,289 @@ export function mountPortraitParticles({
     }
 
     /* ---- road ---- */
-    vec2 sphereAt() {
-      /* acos of a uniform variable spreads points evenly over the surface; using the angle
-         directly would crowd them at the poles. */
-      float phi = acos(2.0 * a_seed.y - 1.0);
-      float th = a_seed.x * 2.0 * PI + u_time * 0.18;
-      vec3 q = vec3(sin(phi) * cos(th), cos(phi), sin(phi) * sin(th)) * 0.60;
-      return project(rotY(q, 0.0), SIDE, 1.55);
+
+    float hash1(float n) { return fract(sin(n * 12.9898) * 43758.5453); }
+
+    /* 2019 · first lines of code — a STAR IS BORN. Dust on five spiral streams falling
+       inward to feed a small breathing sun, sparks flung off the poles as it ignites.
+       Where it all began. */
+    vec2 starAt() {
+      float role = a_seed.y;
+      float s = a_seed.x;
+      vec3 q;
+      if (role < 0.30) {
+        /* The core, breathing. */
+        float a = fract(role * 91.0) * 6.2832;
+        float b = (fract(role * 173.0) - 0.5) * 3.1416;
+        float rr = pow(s, 1.8) * 0.16 * (1.0 + 0.06 * sin(u_time * 2.2));
+        q = vec3(cos(b) * cos(a), sin(b), cos(b) * sin(a)) * rr;
+      } else if (role < 0.86) {
+        /* The accretion swirl: dust spiralling inward, forever replaced. */
+        float k = floor(fract(role * 51.0) * 5.0);
+        float infall = fract(s * 1.7 + u_time * 0.05);
+        float rr = mix(0.75, 0.10, infall);
+        float ang = k * 1.2566 + infall * 7.0 + u_time * 0.25;
+        float h = (fract(role * 173.0) + fract(role * 311.0) - 1.0) * 0.05 * rr;
+        q = vec3(cos(ang) * rr, h, sin(ang) * rr);
+      } else {
+        /* Ignition sparks off both poles. */
+        float k = floor(s * 30.0);
+        float up = fract(u_time * 0.3 + hash1(k * 3.3));
+        float sgn = step(0.5, fract(role * 57.0)) * 2.0 - 1.0;
+        float a = hash1(k * 7.7) * 6.2832 + u_time;
+        float rr = 0.02 + up * 0.06;
+        q = vec3(cos(a) * rr, sgn * (0.10 + up * 0.45), sin(a) * rr);
+      }
+      return project(rotY(rotX(q, 0.55), u_time * 0.14), SIDE, 1.55);
     }
-    vec2 torusAt() {
-      float a = a_seed.x * 2.0 * PI;
-      float b = a_seed.y * 2.0 * PI + u_time * 0.22;
-      float R = 0.44; float r = 0.17;
-      vec3 q = vec3((R + r * cos(b)) * cos(a), r * sin(b), (R + r * cos(b)) * sin(a));
-      return project(rotX(rotY(q, u_time * 0.14), 1.02), SIDE, 1.55);
+
+    /* 2021 · going professional — a CONSTELLATION. Sixteen bright stars wired into a
+       network, dotted chords between them, packets of light running the wires: the first
+       clients arriving, drawn the way the sky draws its stories. */
+    vec3 starPos(float i) {
+      float a = hash1(i * 3.31 + 0.7) * 6.2832;
+      float b = (hash1(i * 7.13 + 2.1) - 0.5) * 2.6;
+      return vec3(cos(b) * cos(a), sin(b), cos(b) * sin(a)) * 0.55;
     }
-    vec2 waveAt() {
-      float n = 92.0;
-      float i = floor(a_seed.x * (n * n - 1.0));
-      float gx = mod(i, n) / (n - 1.0) - 0.5;
-      float gz = floor(i / n) / (n - 1.0) - 0.5;
-      float h = sin(gx * 9.0 + u_time * 0.9) * 0.075 + cos(gz * 7.5 + u_time * 0.7) * 0.075;
-      vec3 q = vec3(gx * 1.25, h, gz * 1.25);
-      return project(rotX(q, 1.02), SIDE, 1.5);
+    vec2 constAt() {
+      float role = a_seed.y;
+      float s = a_seed.x;
+      vec3 q;
+      if (role < 0.45) {
+        /* The stars themselves: dense little suns. */
+        float i = floor(s * 16.0);
+        float ang = fract(role * 91.0) * 6.2832;
+        float rr = pow(fract(role * 173.0), 1.6) * 0.030;
+        q = starPos(i) + vec3(cos(ang) * rr, sin(ang) * rr, (fract(role * 311.0) - 0.5) * 0.03);
+      } else if (role < 0.86) {
+        /* The wires: dotted chords between paired stars. */
+        float e = floor(fract(role * 37.0) * 18.0);
+        float t2 = (floor(s * 42.0) + 0.5) / 42.0;
+        q = mix(starPos(mod(e, 16.0)), starPos(mod(e * 7.0 + 3.0, 16.0)), t2);
+        q += (vec3(fract(role * 173.0), fract(role * 311.0), fract(role * 97.0)) - 0.5) * 0.008;
+      } else {
+        /* Packets running the wires: the network waking up. */
+        float e = floor(fract(role * 53.0) * 18.0);
+        float t2 = fract(u_time * 0.22 + hash1(e * 9.1) + (fract(role * 131.0) - 0.5) * 0.04);
+        q = mix(starPos(mod(e, 16.0)), starPos(mod(e * 7.0 + 3.0, 16.0)), t2);
+      }
+      return project(rotY(rotX(q, 0.30), u_time * 0.11), SIDE, 1.5);
     }
+
+    /* 2023 · full-stack, full-story — a WHOLE SYSTEM. A small sun, four tilted orbits,
+       planets riding them (the inner ones faster, as Kepler insists), and a comet on a
+       long ellipse with its tail streaming behind. Owning the whole arc, literally. */
+    vec2 orbitsAt() {
+      float role = a_seed.y;
+      float s = a_seed.x;
+      vec3 q;
+      if (role < 0.22) {
+        /* The sun. */
+        float a = fract(role * 91.0) * 6.2832;
+        float b = (fract(role * 173.0) - 0.5) * 3.1416;
+        float rr = pow(s, 1.7) * 0.11 * (1.0 + 0.05 * sin(u_time * 1.8));
+        q = vec3(cos(b) * cos(a), sin(b), cos(b) * sin(a)) * rr;
+      } else if (role < 0.62) {
+        /* Four dotted orbit rings, each tilted its own way. */
+        float k = floor(fract(role * 51.0) * 4.0);
+        float R2 = 0.20 + k * 0.15;
+        float a = (floor(s * 130.0) + 0.5) / 130.0 * 6.2832;
+        q = rotX(vec3(cos(a) * R2, 0.0, sin(a) * R2 * 0.94), 0.10 + k * 0.09);
+        q += (vec3(fract(role * 173.0), fract(role * 311.0), fract(role * 97.0)) - 0.5)
+           * 0.006;
+      } else if (role < 0.92) {
+        /* The planets: glowing beads on their rings. */
+        float k = floor(fract(role * 37.0) * 4.0);
+        float R2 = 0.20 + k * 0.15;
+        float a = u_time * (0.55 / (0.4 + k * 0.28)) + k * 2.2;
+        vec3 c = rotX(vec3(cos(a) * R2, 0.0, sin(a) * R2 * 0.94), 0.10 + k * 0.09);
+        float ang = fract(role * 91.0) * 6.2832;
+        float rr = pow(fract(role * 173.0), 1.5) * (0.020 + k * 0.007);
+        q = c + vec3(cos(ang) * rr, sin(ang) * rr, (fract(role * 311.0) - 0.5) * rr);
+      } else {
+        /* The comet, tail streaming back along its path. */
+        float a = fract(u_time * 0.05) * 6.2832;
+        vec3 c = vec3(cos(a) * 0.72 + 0.22, 0.0, sin(a) * 0.30);
+        vec3 back = normalize(vec3(sin(a) * 0.72, 0.0, -cos(a) * 0.30));
+        float tr = pow(fract(role * 131.0), 1.6) * 0.14;
+        q = rotX(c + back * tr, 0.35);
+        q.y += (fract(role * 173.0) - 0.5) * 0.02 * (0.3 + tr * 4.0);
+      }
+      return project(rotY(rotX(q, 0.42), 0.3 + sin(u_time * 0.07) * 0.3), SIDE, 1.5);
+    }
+
+    /* now · cinematic work — a GALAXY. Four arms in differential rotation (the inside
+       runs faster, so the swirl visibly winds), a dense core, a thin halo. The work went
+       cinematic; the form goes to scale. */
     vec2 galaxyAt() {
-      float arm = floor(a_seed.y * 3.0);
-      float u = a_seed.x;
-      float r = 0.07 + u * 0.70;
-      /* Angle grows with radius, which is what gives the arms their sweep. */
-      float ang = u * 4.2 + arm * (2.0 * PI / 3.0) + u_time * 0.16
-                + (fract(a_seed.y * 17.0) - 0.5) * 0.42;
-      return vec2(SIDE + cos(ang) * r / u_aspect, sin(ang) * r);
+      float role = a_seed.y;
+      float s = a_seed.x;
+      vec3 q;
+      if (role < 0.72) {
+        float arm = floor(fract(role * 51.0) * 4.0);
+        float u = s;
+        float rr = 0.09 + 0.58 * u;
+        float ang = u * 4.6 + arm * 1.5708 + u_time * (0.34 - u * 0.22)
+                  + (fract(role * 91.0) - 0.5) * (0.5 + u * 0.9) * 0.55;
+        float h = (fract(role * 173.0) + fract(role * 311.0) - 1.0) * 0.05 * (1.0 - u * 0.6);
+        q = vec3(cos(ang) * rr, h, sin(ang) * rr);
+      } else if (role < 0.88) {
+        /* The core: a small dense sun. */
+        float a = fract(role * 91.0) * 6.2832;
+        float b = (fract(role * 173.0) - 0.5) * 3.1416;
+        float rr = pow(fract(s * 7.7), 1.7) * 0.14;
+        q = vec3(cos(b) * cos(a), sin(b) * 0.6, cos(b) * sin(a)) * rr;
+      } else {
+        /* Halo stars. */
+        float a = fract(s * 97.0) * 6.2832;
+        float b = (fract(role * 57.0) - 0.5) * 3.1416;
+        float rr = 0.30 + fract(s * 211.0) * 0.45;
+        q = vec3(cos(b) * cos(a), sin(b) * 0.5, cos(b) * sin(a)) * rr;
+      }
+      return project(rotX(q, 1.0), SIDE, 1.5);
     }
 
     /* ---- code ---- */
+
+    /* 精 precision — a CRYSTAL. A cubic lattice of glowing nodes with a spherical wave
+       breathing through it, and light running its lines. Order you can watch working. */
     vec2 latticeAt() {
-      float n = 11.0;
-      float i = floor(a_seed.x * (n * n * n - 1.0));
-      vec3 g = vec3(mod(i, n), mod(floor(i / n), n), floor(i / (n * n))) / (n - 1.0) - 0.5;
-      g += (vec3(a_seed.y, fract(a_seed.y * 37.0), fract(a_seed.x * 17.0)) - 0.5) * 0.012;
-      return project(rotY(g, u_time * 0.22), 0.0, 1.9);
+      float role = a_seed.y;
+      float s = a_seed.x;
+      float N = 9.0;
+      float SP = 0.135;
+      vec3 g;
+      if (role < 0.58) {
+        float i = floor(s * N * N * N);
+        g = vec3(mod(i, N), mod(floor(i / N), N), floor(i / (N * N)));
+        g = (g - (N - 1.0) * 0.5) * SP;
+        g += (vec3(fract(role * 173.0), fract(role * 311.0), fract(role * 97.0)) - 0.5)
+           * 0.016;
+      } else {
+        /* Light running the lattice lines, all three axes at once. */
+        float k = floor(fract(role * 37.0) * N * N);
+        vec2 cell = vec2(mod(k, N), floor(k / N));
+        float run = fract(s + u_time * 0.05) * (N - 1.0);
+        float axis = floor(fract(role * 91.0) * 3.0);
+        g = axis < 0.5 ? vec3(run, cell.x, cell.y)
+          : axis < 1.5 ? vec3(cell.x, run, cell.y)
+                       : vec3(cell.x, cell.y, run);
+        g = (g - (N - 1.0) * 0.5) * SP;
+      }
+      float d = length(g);
+      g *= 1.0 + 0.055 * sin(d * 8.0 - u_time * 1.5);
+      return project(rotY(rotX(g, 0.42), u_time * 0.12), 0.0, 1.45);
     }
-    vec2 vortexAt() {
-      float r = 0.10 + a_seed.x * 0.62;
-      /* Inner points turn faster than outer ones, so the field shears as it spins. */
-      float ang = a_seed.y * 2.0 * PI + u_time * 0.75 / (0.28 + r);
-      return vec2(cos(ang) * r / u_aspect, sin(ang) * r);
+
+    /* 動 motion — a BLACK HOLE, face on. The photon ring, an accretion disc of dust on
+       tightening spirals (faster the deeper it falls), plunge streaks that cross the gap
+       and vanish, and the jets off both poles. The act's copy sits inside the shadow —
+       the one place the light never leaves. */
+    vec2 holeAt() {
+      float role = a_seed.y;
+      float s = a_seed.x;
+      vec2 p;
+      if (role < 0.30) {
+        /* The photon ring: the last light that ever gets out. */
+        float a = s * 6.2832 + u_time * 0.05;
+        float rr = 0.58 + (fract(role * 173.0) + fract(role * 311.0) - 1.0) * 0.022;
+        p = vec2(cos(a), sin(a)) * rr;
+      } else if (role < 0.78) {
+        /* The accretion disc: seven spiral streams, forever replaced. */
+        float k = floor(fract(role * 51.0) * 7.0);
+        float infall = fract(s * 2.3 + u_time * 0.045 + k * 0.14);
+        float rr = mix(1.20, 0.64, infall);
+        float a = k * 0.8976 + infall * 5.5 + u_time * (0.30 / rr);
+        p = vec2(cos(a), sin(a) * 0.92) * rr;
+        p += (vec2(fract(role * 173.0), fract(role * 311.0)) - 0.5) * 0.05 * rr;
+      } else if (role < 0.90) {
+        /* The plunge: streaks crossing the gap, swallowed by the shadow. */
+        float k = floor(fract(role * 67.0) * 10.0);
+        float infall = fract(u_time * 0.16 + hash1(k * 5.3) + (fract(role * 131.0) - 0.5) * 0.06);
+        float a = hash1(k * 3.7) * 6.2832 + u_time * 0.05 + infall * 2.2;
+        p = vec2(cos(a), sin(a)) * mix(0.60, 0.34, infall);
+      } else {
+        /* The jets: what the hole cannot keep, thrown out both poles. */
+        float sgn = step(0.5, fract(role * 57.0)) * 2.0 - 1.0;
+        float k = floor(s * 20.0);
+        float up = fract(u_time * 0.22 + hash1(k * 7.1) + (fract(role * 131.0) - 0.5) * 0.05);
+        p = vec2((fract(role * 173.0) + fract(role * 311.0) - 1.0) * (0.015 + up * 0.10),
+                 sgn * (0.64 + up * 0.85));
+      }
+      return project(vec3(p, 0.0), 0.0, 1.45);
     }
-    vec2 ribbonAt() {
-      float t = a_seed.x * 2.0 * PI;
-      float w = (a_seed.y - 0.5) * 0.30;
-      /* Named twist, not half: half is a RESERVED WORD in GLSL ES, and using it fails the
-         whole program to compile rather than just this function. */
-      float twist = t * 0.5 + u_time * 0.16;
-      float R = 0.44;
-      vec3 q = vec3((R + w * cos(twist)) * cos(t), w * sin(twist), (R + w * cos(twist)) * sin(t));
-      return project(rotX(q, 0.62), 0.0, 1.7);
+
+    /* 物語 story — the RIVER. An endless figure-eight of current, three strands braided
+       around the path, weaving over and under itself where it crosses. A story that
+       never runs out. */
+    vec2 riverAt() {
+      float role = a_seed.y;
+      float s = a_seed.x;
+      float tau = (s + u_time * 0.045) * 6.2832;
+      float den = 1.0 + sin(tau) * sin(tau);
+      vec3 q = vec3(0.82 * cos(tau) / den,
+                    0.62 * sin(tau) * cos(tau) / den,
+                    0.16 * sin(2.0 * tau));
+      float strand = floor(fract(role * 13.0) * 3.0);
+      float wob = tau * 3.0 + strand * 2.0944 + u_time * 0.6;
+      float mist = step(0.86, fract(role * 57.0));
+      float tube = mix(0.020, 0.065, mist) * (0.5 + fract(role * 173.0));
+      q += vec3(cos(wob), sin(wob), sin(wob * 0.7)) * tube;
+      return project(rotX(q, 0.25), 0.0, 1.5);
     }
 
     /* ---- arsenal ---- */
-    vec2 helixAt() {
+
+    /* arsenal — the STORM. Meteors with real tails, all falling the same way through a
+       field of still stars. What I wield, as weather. */
+    vec2 stormAt() {
       float role = a_seed.y;
-      float isRung = step(0.78, role);
-      float isB = step(0.39, role) * (1.0 - isRung);
-      float axis = a_seed.x;
-      /* Rung points snap to discrete stations; left continuous they spread between the
-         strands as a faint sheet instead of a ladder. */
-      float snapped = (floor(axis * 30.0) + 0.5) / 30.0;
-      float ay = (mix(axis, snapped, isRung) * 2.0 - 1.0) * 1.35;
-      float ang = ay * 5.5 + u_time * 0.35;
-      float xA = 0.30 * sin(ang) / u_aspect;
-      float xB = 0.30 * sin(ang + PI) / u_aspect;
-      float rungT = (role - 0.78) / 0.22;
-      float ax = mix(0.30 * sin(ang + isB * PI) / u_aspect, mix(xA, xB, rungT), isRung);
-      ax += (fract(role * 91.0) - 0.5) * 0.05 / u_aspect * (1.0 - isRung * 0.8);
-      return vec2(SIDE + ax, ay);
+      float s = a_seed.x;
+      vec2 p;
+      if (role < 0.78) {
+        float k = floor(s * 30.0);
+        vec2 dir = vec2(-0.794, -0.607);
+        float speed = 0.10 + hash1(k * 7.7) * 0.12;
+        float prog = fract(u_time * speed + hash1(k * 3.1));
+        vec2 start = vec2(-0.6 + hash1(k * 5.3) * 4.6, 0.9 + hash1(k * 9.7) * 1.4);
+        vec2 head = start + dir * prog * 3.6;
+        /* The tail: dense at the head, loosening as it falls behind. */
+        float trail = pow(fract(role * 29.0), 1.4);
+        p = head - dir * trail * (0.22 + hash1(k * 11.3) * 0.30)
+          + vec2(fract(role * 173.0) - 0.5, fract(role * 311.0) - 0.5) * 0.03
+            * (0.2 + trail);
+      } else {
+        /* The night behind: many points folded onto FEW stars (bright, twinkling), spread
+           past every edge of the screen so the field has no visible border. */
+        float k = floor(s * 1400.0);
+        p = vec2((hash1(k * 3.7) - 0.5) * 6.0, (hash1(k * 8.3) - 0.5) * 3.4)
+          + vec2(fract(role * 173.0) - 0.5, fract(role * 311.0) - 0.5) * 0.012;
+      }
+      return project(vec3(p, 0.0), 0.10, 1.5);
     }
 
     vec2 shapeAt(float id) {
       if (id < 0.5) return portraitAt(u_heroAnchor, u_heroScale);
       if (id < 1.5) return wordsAt();
-      if (id < 2.5) return sphereAt();
-      if (id < 3.5) return torusAt();
-      if (id < 4.5) return waveAt();
+      if (id < 2.5) return starAt();
+      if (id < 3.5) return constAt();
+      if (id < 4.5) return orbitsAt();
       if (id < 5.5) return galaxyAt();
       if (id < 6.5) return latticeAt();
-      if (id < 7.5) return vortexAt();
-      if (id < 8.5) return ribbonAt();
-      if (id < 9.5) return helixAt();
+      if (id < 7.5) return holeAt();
+      if (id < 8.5) return riverAt();
+      if (id < 9.5) return stormAt();
       return portraitAt(u_footAnchor, u_footScale);
     }
 
     /* Point size per form: glyph strokes are far narrower than facial features, and the
-       watermark is drawn several times larger than the hero portrait. */
+       watermark is drawn several times larger than the hero portrait. The abstract forms
+       draw FINE — the sparkle of a point cloud only exists while points stay points; at
+       portrait size they fuse into grey clay. */
     float sizeAt(float id) {
       if (id < 0.5) return 1.0;
       if (id < 1.5) return 0.82;
-      if (id < 9.5) return 0.9;
+      if (id < 9.5) return 0.55;
       return u_footScale / max(u_heroScale, 0.001);
     }
 
@@ -511,7 +706,31 @@ export function mountPortraitParticles({
       float f = floor(u_shape);
       float t = smoothstep(0.0, 1.0, u_shape - f);
 
-      vec2 p = mix(shapeAt(f), shapeAt(f + 1.0), t);
+      g_persp = 0.5263;
+      vec2 pa = shapeAt(f);
+      float da = g_persp;
+      g_persp = 0.5263;
+      vec2 pb = shapeAt(f + 1.0);
+      float db = g_persp;
+
+      vec2 p;
+      if (f < 0.5) {
+        /* The portrait does not slide into the words — it spirals into them. Each point
+           orbits its own landing glyph while it closes in, at its own number of turns,
+           with a puff of stardust at mid-flight: the face breaks into a galaxy and the
+           galaxy settles into the manifesto. Still a pure function of scroll, so rolling
+           back up rewinds the same swirl. */
+        vec2 d = (pa - pb) * vec2(u_aspect, 1.0);
+        float ang2 = t * mix(2.2, 4.6, fract(a_seed.y * 3.7));
+        float cs = cos(ang2);
+        float sn = sin(ang2);
+        d = vec2(d.x * cs - d.y * sn, d.x * sn + d.y * cs) * (1.0 - t);
+        p = pb + d / vec2(u_aspect, 1.0);
+        p += vec2(fract(a_seed.x * 91.0) - 0.5, fract(a_seed.y * 131.0) - 0.5)
+           * 0.05 * sin(t * 3.1416);
+      } else {
+        p = mix(pa, pb, t);
+      }
       float size = mix(sizeAt(f), sizeAt(f + 1.0), t);
 
       /* Opening convergence: the cloud gathers in from a scattered ring on arrival. */
@@ -519,8 +738,14 @@ export function mountPortraitParticles({
       float rad = 0.9 + a_seed.y * 1.5;
       p = mix(vec2(cos(ang) * rad / u_aspect, sin(ang) * rad), p, u_intro);
 
+      /* While the cloud is abstract, points size with their depth and twinkle on their
+         own clocks; the portrait, words and watermark stay exact and still. */
+      float ab = clamp(min(u_shape - 1.0, 10.0 - u_shape), 0.0, 1.0);
+      float depth = mix(da, db, t) * 1.9;
+      float tw = 1.0 + 0.45 * ab * sin(u_time * (1.5 + a_seed.y * 4.0) + a_seed.x * 60.0);
+
       gl_Position = vec4(p, 0.0, 1.0);
-      gl_PointSize = u_pointScale * size;
+      gl_PointSize = u_pointScale * size * mix(1.0, depth, ab) * tw;
       v_color = a_color;
       v_kind = u_shape;
     }
@@ -653,7 +878,9 @@ export function mountPortraitParticles({
           ALPHA.watermark * mark +
           ALPHA.abstract * abstract,
       );
-      gl!.uniform1f(u.lift, words);
+      // The illustrated forms lift most of the way to cream too: left in the photograph's
+      // charcoal they read as dust; lifted, they read as drawn light.
+      gl!.uniform1f(u.lift, Math.max(words, abstract * 0.85));
 
       // Size each point to the spacing it must cover at hero scale. Circles on a square
       // grid need 1.41x just to touch at the diagonals; 1.6x closes the interstices with a

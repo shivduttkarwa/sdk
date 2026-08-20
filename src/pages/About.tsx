@@ -13,9 +13,11 @@ import { useAboutActs } from '@/hooks/useAboutActs';
 // rail down the right edge marks where you are in the story.
 //
 // Running through all of it is a single WebGL point cloud (cores/portraitParticles): it
-// assembles into the portrait for the opening, spells the manifesto out in act two,
-// unwinds into a DNA helix that travels the middle of the page, and gathers again behind
-// the contact block as an oversized watermark. One thread, six forms.
+// assembles into the portrait for the opening, spirals galaxy-style into the manifesto
+// for act two, then travels the middle acts as a sky seen through a builder's eyes — a
+// star being born, a constellation network, an orbital system, a galaxy, a breathing
+// crystal, a black hole, an infinity river, a meteor storm — and gathers again behind
+// the contact block as an oversized watermark. One thread, eleven forms.
 
 const PORTRAIT = 'assets/shiv-1-v2.webp';
 
