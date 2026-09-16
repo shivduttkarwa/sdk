@@ -11,7 +11,7 @@ const PLUMES = 3;
 const FILAMENTS = 30;
 const COUNT = { desktop: 58000, mobile: 21000 };
 const INTRO_MS = 2600;
-const TAU_MS = { place: 150, stir: 220, pointer: 70 };
+const TAU_MS = { place: 150, stir: 220, pointer: 70, story: 420 };
 const GLYPH = { mix: 0.055, px: 9, atlas: 512, cols: 8 };
 
 // 64 cells; the most code-shaped tokens repeat at the tail so they come up more often.
@@ -211,19 +211,20 @@ const VERT = `
     return dress(warp(c, 0.015 + 0.06 * s * s), vec2(gG * 0.004, 0.0), a0, 0.05 + 0.12 * s);
   }
 
-  vec4 formWhirl(out float cap) {
-    float arm = mod(gFid, 3.0);
+  /* placeSites parks this in the empty space beside the active project story. */
+  vec4 formMobius(out float cap) {
     float ph = hash(gFid * 2.71);
-    float s = fract(gU + gFlow * 1.0 + ph * 0.29);
-    float r = 0.04 + 0.92 * pow(1.0 - s, 0.8);
-    float spread = (hash(gFid * 9.13) - 0.5) * (0.25 + 0.5 * r) + sin(s * 9.0 + ph * TAU) * 0.05;
-    float ang = arm * TAU / 3.0 + spread - 2.6 * log(r) + gT * 0.16 + gG * 0.05;
-    vec2 c = vec2(cos(ang), sin(ang)) * r;
-    c.y = c.y * 0.58 + 0.16 * pow(1.0 - r, 4.0);
-    cap = smoothstep(0.55, 0.95, s);
-    float a0 = 0.55 * smoothstep(0.0, 0.14, s) * (1.0 - smoothstep(0.8, 1.0, s))
-             * (0.3 + 0.7 * smoothstep(0.0, 0.35, r)) * weight(s * 26.0 + arm);
-    return dress(warp(c, 0.022), vec2(0.0, gG * 0.006), a0, 0.12);
+    float v = (hash(gFid * 5.19) - 0.5) * 0.46 + gG * 0.01;
+    /* Two laps: a thread only meets itself again on the far side of the twist. */
+    float u = (gU + gFlow * 0.5 + ph * 0.02) * 2.0 * TAU + gT * 0.1;
+    float rr = 1.0 + v * cos(u * 0.5);
+    vec3 m = vec3(rr * cos(u), rr * sin(u), v * sin(u * 0.5)) * 0.5;
+    m = rotX(m, 1.15 + 0.08 * sin(gT * 0.2));
+    m = rotY(m, 0.3 * sin(gT * 0.13));
+    float front = clamp(0.5 - m.z * 2.2, 0.0, 1.0);
+    cap = smoothstep(0.6, 1.0, front) * 0.8;
+    float a0 = 0.5 * (0.3 + 0.9 * front) * (0.7 + 0.6 * smoothstep(0.15, 0.23, abs(v))) * weight(u * 3.0);
+    return dress(warp(lens(m), 0.015), vec2(0.0), a0, 0.08);
   }
 
   vec4 formKnot(out float cap) {
@@ -322,7 +323,7 @@ const VERT = `
     if (k < 1.5) return formRing(cap);
     if (k < 2.5) return formPair(cap);
     if (k < 3.5) return formPlume(cap);
-    if (k < 4.5) return formWhirl(cap);
+    if (k < 4.5) return formMobius(cap);
     if (k < 5.5) return formKnot(cap);
     if (k < 6.5) return formCoil(cap);
     if (k < 7.5) return formWave(cap);
@@ -504,6 +505,8 @@ export function mountInkWater({ canvas }: InkWaterOptions) {
   ];
   let tops: number[] = [];
   let boxes: Record<string, Box> = {};
+  let stories: HTMLElement[] = [];
+  const story = { x: 0, y: 0, live: false };
   const sites = new Float32Array(SITES * 3);
 
   function box(sel: string): Box | null {
@@ -523,6 +526,24 @@ export function mountInkWater({ canvas }: InkWaterOptions) {
     }
     boxes = next;
     tops = SECTIONS.map((sel) => boxes[sel]?.top ?? Number.POSITIVE_INFINITY);
+    stories = [...document.querySelectorAll<HTMLElement>('.sdk-work-story')];
+  }
+
+  /** The empty space beside the project story on screen, weighted by the slideshow's fades. */
+  function storyAnchor(unit: number) {
+    let sum = 0;
+    let x = 0;
+    let y = 0;
+    stories.forEach((el, i) => {
+      const w = (parseFloat(el.style.opacity) || 0) + (i === 0 ? 0.001 : 0);
+      if (w < 0.001) return;
+      const r = el.getBoundingClientRect();
+      sum += w;
+      x += (r.left + r.width / 2) * w;
+      // Phones pin the story to the bottom of the stage, so the only room is above it.
+      y += (mobile ? r.top - unit * 0.5 : r.bottom + unit * 0.3) * w;
+    });
+    return sum ? { x: x / sum, y: y / sum } : null;
   }
 
   function placeFor(y: number) {
@@ -534,7 +555,7 @@ export function mountInkWater({ canvas }: InkWaterOptions) {
   }
 
   /** Viewport-space release point (x, y, radius px) per section, kept clear of the copy. */
-  function placeSites(scroll: number) {
+  function placeSites(scroll: number, dt: number) {
     const W = viewW;
     const H = viewH;
     const m = Math.min(W, H);
@@ -556,7 +577,19 @@ export function mountInkWater({ canvas }: InkWaterOptions) {
     set(2, intro.x, intro.y, mobile ? m * 0.72 : H * 0.5);
     const stats = doc('#stats', mobile ? 0.5 : 0.17, mobile ? 0.5 : 0.28);
     set(3, stats.x, stats.y, mobile ? m * 0.75 : H * 0.54);
-    set(4, W * 0.5, H * 0.5, mobile ? m * 0.85 : H * 0.64);
+    // Rects are only read while the ink is at or next to the work slideshow.
+    const workUnit = mobile ? m * 0.75 : H * 0.5;
+    const anchor = Math.abs(place - 4) < 1.5 ? storyAnchor(workUnit) : null;
+    if (!anchor) {
+      story.live = false;
+    } else if (!story.live) {
+      Object.assign(story, anchor, { live: true });
+    } else {
+      const k = ease(dt, TAU_MS.story);
+      story.x += (anchor.x - story.x) * k;
+      story.y += (anchor.y - story.y) * k;
+    }
+    set(4, story.live ? story.x : W * 0.5, story.live ? story.y : H * 0.5, workUnit);
     set(5, mobile ? W * 0.5 : W * 0.19, mobile ? H * 0.4 : H * 0.44, mobile ? m * 0.82 : H * 0.56);
     const spine = boxes['.sdk-process__spine-col'];
     set(6, spine ? spine.left + spine.width / 2 : W * 0.5, H * 0.5, mobile ? m * 0.8 : H * 0.6);
@@ -694,7 +727,7 @@ export function mountInkWater({ canvas }: InkWaterOptions) {
       y: pointer.y + (pointerTarget.y - pointer.y) * pk,
     };
 
-    placeSites(scroll);
+    placeSites(scroll, dt);
     gl!.uniform2f(u.view, viewW, viewH);
     gl!.uniform3fv(u.site, sites);
     gl!.uniform1f(u.place, place);
