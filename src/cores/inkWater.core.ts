@@ -244,35 +244,27 @@ const VERT = `
     return dress(warp(lens(v), 0.02), vec2(gG * 0.006, 0.0), 0.55 * (0.35 + 0.85 * front) * weight(s * 5.0), 0.1);
   }
 
-  vec4 formStreet(out float cap) {
+  vec4 formCoil(out float cap) {
     float ph = hash(gFid * 2.71);
-    float L = 0.44;
-    /* Parity comes from the vortex's own index, so the alternation survives the wrap. */
-    float k = mod(gFid, 6.0);
-    float slot = mod(k + gFlow * 2.2, 6.0);
-    float yk = -1.2 + slot * L;
-    float side = -cos(PI * k);
-    float grow = 0.8 + 0.3 * slot / 6.0;
-    float xk = side * 0.13 * grow;
     float lat = hash(gFid * 5.19) - 0.5;
-    float s = fract(gU + gFlow * 1.5 + ph * 0.1);
-    vec2 c;
-    if (s < 0.4) {
-      float q = s / 0.4;
-      vec2 p0 = vec2(-side * 0.05 + lat * 0.06, yk - L * 0.95);
-      vec2 p1 = vec2(side * 0.22 + lat * 0.05, yk - L * 0.45);
-      vec2 p2 = vec2(xk + side * (0.15 + lat * 0.03) * grow, yk);
-      c = mix(mix(p0, p1, q), mix(p1, p2, q), q);
-    } else {
-      float q = (s - 0.4) / 0.6;
-      float rr = (0.15 + lat * 0.03) * grow * pow(1.0 - q, 1.3) + 0.008;
-      float an = (side > 0.0 ? 0.0 : PI) + side * q * TAU * 1.7;
-      c = vec2(xk + rr * cos(an), yk + rr * sin(an) * 0.92);
-    }
-    cap = smoothstep(0.75, 1.0, s) * 0.7;
-    float a0 = 0.55 * smoothstep(0.0, 0.1, s) * (1.0 - smoothstep(0.92, 1.0, s)) * weight(s * 30.0)
-             * smoothstep(-1.2, -0.85, yk) * (1.0 - smoothstep(0.95, 1.4, yk));
-    return dress(warp(c, 0.02), vec2(gG * 0.006, 0.0), a0, 0.1);
+    float s = fract(gU + gFlow * 1.3 + ph * 0.04);
+    float rad = 0.045 + 0.12 * smoothstep(0.0, 0.3, s) + 0.06 * smoothstep(0.6, 1.0, s)
+              + 0.02 * sin(s * 9.0 + gT * 0.5);
+    float th = s * TAU * 2.6 - gT * 0.7;
+    float z = sin(th) * rad;
+    vec3 v = vec3(cos(th) * rad, mix(0.62, -0.72, s) + lat * 0.07 * (0.5 + s), z);
+    float fray = smoothstep(0.62, 1.0, s);
+    float fa = ph * TAU + s * 6.0 + gT * 0.4;
+    v += vec3(cos(fa), -0.6, sin(fa)) * fray * fray * 0.22 * (0.3 + hash(gFid * 4.41));
+    v = rotX(v, 0.28);
+    /* Depth from the coil's own turn, not the tilted z, or the top half would always read as in front. */
+    float front = clamp(0.5 - z * 2.6, 0.0, 1.0);
+    cap = smoothstep(0.55, 1.0, front) * (1.0 - fray) * 0.9;
+    float blade = (1.0 - smoothstep(0.03, 0.075, abs(v.x))) * step(-0.45, v.y) * step(v.y, 0.46);
+    float a0 = 0.6 * smoothstep(0.0, 0.1, s) * (1.0 - smoothstep(0.78, 1.0, s))
+             * (0.25 + 0.95 * front) * weight(s * 34.0)
+             * (1.0 - 0.9 * blade * (1.0 - smoothstep(0.35, 0.55, front)));
+    return dress(warp(lens(v), 0.012 + 0.03 * fray), vec2(gG * 0.004, 0.0), a0, 0.07);
   }
 
   vec4 formPair(out float cap) {
@@ -332,7 +324,7 @@ const VERT = `
     if (k < 3.5) return formPlume(cap);
     if (k < 4.5) return formWhirl(cap);
     if (k < 5.5) return formKnot(cap);
-    if (k < 6.5) return formStreet(cap);
+    if (k < 6.5) return formCoil(cap);
     if (k < 7.5) return formWave(cap);
     return formGlobe(cap);
   }
