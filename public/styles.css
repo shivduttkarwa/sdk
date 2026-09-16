@@ -149,6 +149,24 @@ img {
   isolation: isolate;
 }
 
+/* Sized in viewport units, not insets: PageTransition transforms the page wrapper while
+   routing, which would otherwise stretch a fixed inset canvas to the document height. */
+.sdk-ink {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100svh;
+  z-index: 40;
+  pointer-events: none;
+  mix-blend-mode: screen;
+  opacity: 0;
+  transition: opacity .6s var(--ease);
+}
+.sdk-ink.is-live {
+  opacity: .46;
+}
+
 .section-pad {
   padding: 8.125rem 2rem;
 }

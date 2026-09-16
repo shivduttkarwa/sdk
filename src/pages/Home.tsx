@@ -1,8 +1,9 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { runInitialRefresh } from '@/lib/scrollOrchestrator';
 import { useSectionTitles } from '@/hooks/useSectionTitles';
 import { useReveal } from '@/hooks/useReveal';
 import { usePendingAnchor } from '@/hooks/usePendingAnchor';
+import { useInkWater } from '@/hooks/useInkWater';
 import Preloader from '@/components/Preloader';
 import HeroCta from '@/components/HeroCta';
 import Hero from '@/components/Hero';
@@ -42,12 +43,18 @@ export default function Home() {
     preloaderDone = true;
   }, []);
 
+  // Crimson ink loose in black water (cores/inkWater) — fixed canvas, so one body of ink
+  // can drift the whole page and re-form beside each section.
+  const inkRef = useRef<HTMLCanvasElement>(null);
+  useInkWater(inkRef);
+
   return (
     <>
       {showPreloader && <Preloader />}
       <HeroCta />
 
       <main className="sdk-page">
+        <canvas className="sdk-ink" ref={inkRef} aria-hidden="true"></canvas>
         <Hero />
 
         <div className="sdk-bg-scope">
