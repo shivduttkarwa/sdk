@@ -27,14 +27,13 @@ export default function Showcase() {
           <div className="sdk-showcase__reel-inner">
             <video
               className="sdk-showcase__reel"
-              autoPlay
               loop
               muted
               playsInline
-              preload="auto"
-              poster="video/showcase-poster.jpg"
+              preload="none"
+              poster="video/showcase-mobile-poster.jpg"
             >
-              <source src="video/showcase.mp4" type="video/mp4" />
+              <source src="video/showcase-mobile.mp4" type="video/mp4" />
             </video>
           </div>
         </div>
@@ -44,6 +43,42 @@ export default function Showcase() {
           <span className="sdk-showcase__kinetic-word">Bold</span>
           <span className="sdk-showcase__kinetic-word">Clean</span>
           <span className="sdk-showcase__kinetic-word">Alive</span>
+        </div>
+
+        <div className="sdk-showcase__devices" aria-hidden="true">
+          <div className="sdk-showcase__stage">
+            <div className="sdk-device sdk-device--laptop">
+              <div className="sdk-device__lid">
+                <div className="sdk-device__display">
+                  <video
+                    className="sdk-device__video"
+                    loop
+                    muted
+                    playsInline
+                    preload="none"
+                    poster="video/showcase-poster.jpg"
+                  >
+                    <source src="video/showcase.mp4" type="video/mp4" />
+                  </video>
+                </div>
+              </div>
+              <div className="sdk-device__base"></div>
+            </div>
+            <div className="sdk-device sdk-device--phone">
+              <div className="sdk-device__display">
+                <video
+                  className="sdk-device__video"
+                  loop
+                  muted
+                  playsInline
+                  preload="none"
+                  poster="video/showcase-mobile-poster.jpg"
+                >
+                  <source src="video/showcase-mobile.mp4" type="video/mp4" />
+                </video>
+              </div>
+            </div>
+          </div>
         </div>
 
         <h1 className="sdk-showcase__headline sdk-showcase__headline--bottom">

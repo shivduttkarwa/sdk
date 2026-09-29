@@ -58,9 +58,9 @@ export default function Home() {
         <Hero />
 
         <div className="sdk-bg-scope">
-          <Showcase />
           <Intro />
           <Stats />
+          <Showcase />
           <SelectedWork />
           <TechStack />
           <Process />

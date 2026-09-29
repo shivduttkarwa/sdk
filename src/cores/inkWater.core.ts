@@ -320,9 +320,9 @@ const VERT = `
 
   vec4 form(float k, out float cap) {
     if (k < 0.5) return formBloom(cap);
-    if (k < 1.5) return formRing(cap);
-    if (k < 2.5) return formPair(cap);
-    if (k < 3.5) return formPlume(cap);
+    if (k < 1.5) return formPair(cap);
+    if (k < 2.5) return formPlume(cap);
+    if (k < 3.5) return formRing(cap);
     if (k < 4.5) return formMobius(cap);
     if (k < 5.5) return formKnot(cap);
     if (k < 6.5) return formCoil(cap);
@@ -494,9 +494,9 @@ export function mountInkWater({ canvas }: InkWaterOptions) {
 
   const SECTIONS = [
     '#home',
-    '#showcaseRunway',
     '#intro',
     '#stats',
+    '#showcaseRunway',
     '#work',
     '#services',
     '#about',
@@ -572,11 +572,11 @@ export function mountInkWater({ canvas }: InkWaterOptions) {
     };
     const hero = doc('#home', mobile ? 0.5 : 0.80, mobile ? 0.28 : 0.24);
     set(0, hero.x, hero.y, mobile ? m * 0.80 : H * 0.56);
-    set(1, W / 2, H * 0.5, mobile ? m * 0.85 : H * 0.62);
     const intro = doc('#intro', mobile ? 0.5 : 0.8, mobile ? 0.78 : 0.72);
-    set(2, intro.x, intro.y, mobile ? m * 0.72 : H * 0.5);
+    set(1, intro.x, intro.y, mobile ? m * 0.72 : H * 0.5);
     const stats = doc('#stats', mobile ? 0.5 : 0.17, mobile ? 0.5 : 0.28);
-    set(3, stats.x, stats.y, mobile ? m * 0.75 : H * 0.54);
+    set(2, stats.x, stats.y, mobile ? m * 0.75 : H * 0.54);
+    set(3, W / 2, H * 0.5, mobile ? m * 0.85 : H * 0.62);
     // Rects are only read while the ink is at or next to the work slideshow.
     const workUnit = mobile ? m * 0.75 : H * 0.5;
     const anchor = Math.abs(place - 4) < 1.5 ? storyAnchor(workUnit) : null;

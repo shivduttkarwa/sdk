@@ -3,14 +3,16 @@ import { gsap, ScrollTrigger } from '@/lib/gsapSetup';
 
 type Killable = { kill: () => void };
 
-// B11: pin `.sdk-showcase`, scrub-expand #heroVideoWrap to fullscreen while the headline
-// inners slide out; refresh ScrollTrigger on visualViewport resize; GSAP fade-up for every
+// B11: pin `.sdk-showcase`; desktop scrub dissolves the words and raises a laptop + phone
+// playing the reel, mobile scrub grows #heroVideoWrap to 90% of the screen while the
+// headline inners slide out; refresh ScrollTrigger on visualViewport resize; GSAP fade-up for every
 // `.sdk-reveal`. Verbatim tween/trigger definitions; created triggers + tweens killed on
 // unmount, visualViewport listener + debounce removed.
 export function useShowcasePin() {
   useEffect(() => {
     const created: Killable[] = [];
     const tweens: Killable[] = [];
+    const mm = gsap.matchMedia();
 
     const heroWrap = document.getElementById('heroVideoWrap');
     const showcaseSection = document.querySelector('.sdk-showcase');
@@ -27,50 +29,72 @@ export function useShowcasePin() {
       // Touch has no Lenis smoothing (wheel-only), so mobile takes a short catch-up scrub
       // to iron raw finger deltas out of the layout animation; desktop keeps `true`
       // because Lenis's lerp already smooths it (same split as useIntroBody).
-      const isMobile = window.matchMedia('(max-width: 900px)').matches;
-      const tl = gsap.timeline({
-        scrollTrigger: {
-          trigger: runway,
-          start: 'top top',
-          end: 'bottom bottom',
-          scrub: isMobile ? 0.6 : true,
-          invalidateOnRefresh: true,
-        },
+      const kinetic = showcaseSection.querySelector('.sdk-showcase__kinetic-wrap');
+      const scrollTrigger = (scrub: number | boolean, onUpdate?: (self: ScrollTrigger) => void) => ({
+        trigger: runway,
+        start: 'top top',
+        end: 'bottom bottom',
+        scrub,
+        invalidateOnRefresh: true,
+        onUpdate,
       });
-      if (tl.scrollTrigger) created.push(tl.scrollTrigger);
-      tweens.push(tl);
 
-      tl.to(
-        heroWrap,
-        {
-          width: '100vw',
-          height: '100vh',
-          borderRadius: 0,
-          ease: 'none',
-        },
-        0,
-      );
+      // Desktop: the words dissolve first, then a laptop and a phone rise in playing the reel.
+      mm.add('(min-width: 901px)', () => {
+        const laptop = showcaseSection.querySelector('.sdk-device--laptop');
+        const phone = showcaseSection.querySelector('.sdk-device--phone');
+        const videos = [...showcaseSection.querySelectorAll<HTMLVideoElement>('.sdk-device__video')];
+        videos.forEach((v) => (v.preload = 'auto'));
 
-      if (topInner && bottomInner) {
-        tl.to(
-          topInner,
-          {
-            yPercent: -115,
-            opacity: 0,
-            ease: 'none',
-          },
-          0,
-        );
-        tl.to(
-          bottomInner,
-          {
-            yPercent: 115,
-            opacity: 0,
-            ease: 'none',
-          },
-          0,
-        );
-      }
+        let shown = false;
+        let onScreen = false;
+        let playing = false;
+        const sync = () => {
+          const on = shown && onScreen;
+          if (on === playing) return;
+          playing = on;
+          videos.forEach((v) => (on ? v.play().catch(() => {}) : v.pause()));
+        };
+        const io = new IntersectionObserver((entries) => {
+          onScreen = entries.some((entry) => entry.isIntersecting);
+          sync();
+        });
+        io.observe(showcaseSection);
+
+        const tl = gsap.timeline({
+          scrollTrigger: scrollTrigger(true, (self) => {
+            shown = self.progress > 0.25;
+            sync();
+          }),
+        });
+        if (topInner) tl.to(topInner, { yPercent: -45, opacity: 0, filter: 'blur(14px)', ease: 'none', duration: 0.34 }, 0);
+        if (bottomInner) tl.to(bottomInner, { yPercent: 45, opacity: 0, filter: 'blur(14px)', ease: 'none', duration: 0.34 }, 0);
+        if (kinetic) tl.to(kinetic, { opacity: 0, scale: 0.9, filter: 'blur(16px)', ease: 'none', duration: 0.3 }, 0.02);
+        if (laptop) tl.fromTo(laptop, { opacity: 0, x: -80, y: 100, scale: 0.92 }, { opacity: 1, x: 0, y: 0, scale: 1, ease: 'power2.out', duration: 0.42 }, 0.3);
+        if (phone) tl.fromTo(phone, { opacity: 0, x: 100, y: 100, rotate: 4 }, { opacity: 1, x: 0, y: 0, rotate: 0, ease: 'power2.out', duration: 0.42 }, 0.4);
+        tl.to({}, { duration: 0.16 });
+
+        return () => {
+          io.disconnect();
+          videos.forEach((v) => v.pause());
+        };
+      });
+
+      // Mobile: the reel card grows to 90% of the screen while the words dissolve.
+      mm.add('(max-width: 900px)', () => {
+        const video = heroWrap.querySelector('video');
+        if (video) {
+          video.preload = 'auto';
+          video.play().catch(() => {});
+        }
+        const tl = gsap.timeline({ scrollTrigger: scrollTrigger(0.6) });
+        tl.to(heroWrap, { width: '90vw', height: '90svh', borderRadius: '1.5rem', ease: 'none' }, 0);
+        if (topInner) tl.to(topInner, { yPercent: -115, opacity: 0, ease: 'none' }, 0);
+        if (bottomInner) tl.to(bottomInner, { yPercent: 115, opacity: 0, ease: 'none' }, 0);
+        if (kinetic) tl.to(kinetic, { opacity: 0, filter: 'blur(12px)', ease: 'none', duration: 0.6 }, 0);
+
+        return () => video?.pause();
+      });
     }
 
     // Refresh GSAP on real viewport reflows (orientation, keyboard) — but NOT on browser
@@ -121,6 +145,7 @@ export function useShowcasePin() {
     });
 
     return () => {
+      mm.revert();
       reelObserver.disconnect();
       root.classList.remove('sdk-reel-live');
       created.forEach((st) => st.kill());

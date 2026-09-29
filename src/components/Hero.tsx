@@ -83,7 +83,7 @@ export default function Hero() {
       </a>
 
 
-      <a href="#showcase" className="sdk-scroll-cue" aria-label="Scroll to showcase">
+      <a href="#intro" className="sdk-scroll-cue" aria-label="Scroll to intro">
         <span className="sdk-scroll-cue__label">Scroll</span>
         <span className="sdk-scroll-cue__rail" aria-hidden="true">
           <span className="sdk-scroll-cue__spark"></span>
