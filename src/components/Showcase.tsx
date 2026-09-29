@@ -25,8 +25,16 @@ export default function Showcase() {
 
         <div className="sdk-showcase__reel-wrap" id="heroVideoWrap">
           <div className="sdk-showcase__reel-inner">
-            <video className="sdk-showcase__reel" autoPlay loop muted playsInline>
-              <source src="assets/hero-vid.mp4" type="video/mp4" />
+            <video
+              className="sdk-showcase__reel"
+              autoPlay
+              loop
+              muted
+              playsInline
+              preload="auto"
+              poster="video/showcase-poster.jpg"
+            >
+              <source src="video/showcase.mp4" type="video/mp4" />
             </video>
           </div>
         </div>

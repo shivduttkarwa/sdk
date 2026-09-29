@@ -743,12 +743,25 @@ export function mountInkWater({ canvas }: InkWaterOptions) {
     gl!.drawArrays(gl!.POINTS, 0, N);
   }
 
+  let reelOnScreen = false;
+  let lastDraw = 0;
+
   function animate(time: number) {
     raf = 0;
     if (disposed) return;
-    render(time);
+    // Drop to ~30fps over the showcase reel so the GPU has room to present every video frame.
+    if (!reelOnScreen || time - lastDraw > 28) {
+      render(time);
+      lastDraw = time;
+    }
     raf = requestAnimationFrame(animate);
   }
+
+  const reel = document.querySelector('.sdk-showcase');
+  const reelObserver = new IntersectionObserver((entries) => {
+    reelOnScreen = entries.some((entry) => entry.isIntersecting);
+  });
+  if (reel) reelObserver.observe(reel);
 
   const onPointer = (e: PointerEvent) => {
     pointerTarget.x = e.clientX;
@@ -788,6 +801,7 @@ export function mountInkWater({ canvas }: InkWaterOptions) {
     disposed = true;
     clearTimeout(introTimer);
     if (raf) cancelAnimationFrame(raf);
+    reelObserver.disconnect();
     layoutObserver.disconnect();
     window.removeEventListener('resize', measure);
     window.removeEventListener('pointermove', onPointer);

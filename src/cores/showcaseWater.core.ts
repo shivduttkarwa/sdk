@@ -134,7 +134,9 @@ export function mountShowcaseWater(): () => void {
   section.addEventListener('mousemove',onMouseMove);
   section.addEventListener('mouseleave',onMouseLeave);
 
-  function resize(){ canvas!.width=section.clientWidth; canvas!.height=section.clientHeight; }
+  const QUIET_STEPS=180;
+  let quiet=0;
+  function resize(){ canvas!.width=section.clientWidth; canvas!.height=section.clientHeight; quiet=0; }
   resize(); const resizeObserver=new ResizeObserver(resize); resizeObserver.observe(section);
 
   const SPLAT_RADIUS=0.002, SPLAT_FORCE=5000, CURL_STR=28, VEL_DISS=0.992, DYE_DISS=0.953, PRESSURE_ITS=25;
@@ -148,7 +150,11 @@ export function mountShowcaseWater(): () => void {
     if (!visible) { raf = 0; return; }
     raf = requestAnimationFrame(render);
     const dt=Math.min((t-last)*0.001,0.016); last=t;
-    if(hasMouse&&Math.abs(dmx)+Math.abs(dmy)>0.0001){
+    const stirred=hasMouse&&Math.abs(dmx)+Math.abs(dmy)>0.0001;
+    // Once the last trail has faded the field is empty: stop solving so the reel video gets the GPU.
+    quiet=stirred?0:quiet+1;
+    if(quiet>QUIET_STEPS) return;
+    if(stirred){
       const ar=(canvas!.width||1)/(canvas!.height||1);
       blit(vel1,splatProg,(p: any)=>{ tex(0,vel0.tex);u1i(p,'u_src',0);u2f(p,'u_point',mx,my);u2f(p,'u_aspect',ar,1.);u3f(p,'u_color',dmx*SPLAT_FORCE,dmy*SPLAT_FORCE,0.);u1f(p,'u_radius',SPLAT_RADIUS); });
       [vel0,vel1]=[vel1,vel0];
