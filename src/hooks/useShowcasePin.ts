@@ -97,6 +97,13 @@ export function useShowcasePin() {
       window.visualViewport.addEventListener('resize', onVvResize);
     }
 
+    // Full-screen blend layers over a playing video force a re-composite every video frame.
+    const root = document.documentElement;
+    const reelObserver = new IntersectionObserver((entries) => {
+      root.classList.toggle('sdk-reel-live', entries.some((entry) => entry.isIntersecting));
+    });
+    if (showcaseSection) reelObserver.observe(showcaseSection);
+
     gsap.utils.toArray<HTMLElement>('.sdk-reveal').forEach((el) => {
       const t = gsap.fromTo(
         el,
@@ -114,6 +121,8 @@ export function useShowcasePin() {
     });
 
     return () => {
+      reelObserver.disconnect();
+      root.classList.remove('sdk-reel-live');
       created.forEach((st) => st.kill());
       tweens.forEach((t) => t.kill());
       if (window.visualViewport) {

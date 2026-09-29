@@ -361,7 +361,7 @@ export function mountHeroBlob(): () => void {
       heroVisible = entries.some((entry) => entry.isIntersecting);
       if (heroVisible && !rafId && !disposed) rafId = requestAnimationFrame(render);
     },
-    { rootMargin: '120px 0px' },
+    { rootMargin: '0px' },
   );
   visibilityObserver.observe(hero);
 

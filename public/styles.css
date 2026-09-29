@@ -141,7 +141,14 @@ img {
   z-index: 9998;
   opacity: .16;
   mix-blend-mode: overlay;
+  transition: opacity .4s var(--ease);
   background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.72' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+}
+
+.sdk-reel-live .sdk-grain {
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity .4s var(--ease), visibility 0s .4s;
 }
 
 .sdk-page {
@@ -1114,9 +1121,7 @@ img {
   top: clamp(1.4rem, 3vw, 2.8rem);
   right: clamp(2rem, 5vw, 5rem);
   z-index: 20;
-  background: rgba(5, 3, 10, 0.72);
-  backdrop-filter: blur(1rem) saturate(1.5);
-  -webkit-backdrop-filter: blur(1rem) saturate(1.5);
+  background: rgba(5, 3, 10, 0.8);
   border: 1px solid rgba(224, 63, 79, 0.16);
   border-radius: 0.75rem;
   padding: 0.9rem 1.15rem;
@@ -1221,9 +1226,7 @@ img {
   bottom: clamp(1.4rem, 3vw, 2.8rem);
   left: clamp(2rem, 5vw, 5rem);
   z-index: 20;
-  background: rgba(5, 3, 10, 0.72);
-  backdrop-filter: blur(1rem) saturate(1.5);
-  -webkit-backdrop-filter: blur(1rem) saturate(1.5);
+  background: rgba(5, 3, 10, 0.8);
   border: 1px solid rgba(224, 63, 79, 0.16);
   border-radius: 1rem;
   padding: 0.9rem 1.15rem;
